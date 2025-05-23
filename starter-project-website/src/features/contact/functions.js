@@ -3,66 +3,66 @@ import Maybe from '../../core/types/maybe.js';
 // Page title content
 export const getPageTitleContent = () => {
     return Maybe.Just({
-        title: "Contact Us",
-        subtitle: "Lets Discuss Your Enterprise Web3 Journey"
+        title: "Lorem Ipsum",
+        subtitle: "Lorem Ipsum Dolor Sit Amet Consectetur"
     });
 };
 
 // Contact options content
 export const getContactOptionsContent = () => {
     return Maybe.Just({
-        formHeading: "Contact Form",
-        directHeading: "Direct Contact",
+        formHeading: "Lorem Ipsum Dolor",
+        directHeading: "Lorem Ipsum",
         contactInfo: [
             {
-                type: "Sales Inquiries:",
-                value: "sales@cryptoversus.io"
+                type: "Lorem Ipsum:",
+                value: "lorem@ipsum.com"
             },
             {
-                type: "Support:",
-                value: "support@cryptoversus.io"
+                type: "Lorem Ipsum:",
+                value: "dolor@ipsum.com"
             },
             {
-                type: "Partnerships:",
-                value: "partners@cryptoversus.io"
+                type: "Lorem Ipsum:",
+                value: "sit@amet.com"
             },
             {
-                type: "Phone:",
-                value: "+1 (555) 123-4567"
+                type: "Lorem:",
+                value: "+1 (555) 000-0000"
             }
         ],
-        locationLabel: "Office Location:",
-        address1: "123 Enterprise Way, Suite 300",
-        address2: "San Francisco, CO",
-        address3: "United States"
+        locationLabel: "Lorem Ipsum:",
+        address1: "123 Lorem Ipsum Street, Suite 000",
+        address2: "Dolor Sit, Amet",
+        address3: "Lorem Ipsum"
     });
 };
 
 // Demo content
 export const getDemoContent = () => {
     return Maybe.Just({
-        heading: "Schedule a Demo",
-        description: "See our enterprise Web3 platform in action with a personalized demonstration."
+        heading: "Lorem Ipsum Dolor",
+        description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore."
     });
 };
 
 // Project consultation content
 export const getProjectConsultationContent = () => {
     return Maybe.Just({
-        heading: "Launch Your Project",
-        description: "Our team specializes in helping innovators navigate the path to decentralization. Whether youre exploring Web3 for the first time or scaling an existing project, we provide the guidance and infrastructure you need."
+        heading: "Lorem Ipsum Dolor",
+        description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris."
     });
 };
 
 // FAQ preview content
 export const getFAQPreviewContent = () => {
     return Maybe.Just({
-        heading: "Frequently Asked Questions",
+        heading: "Lorem Ipsum Dolor Sit",
         questions: [
-            "How quickly can we implement your solutions?",
-            "What security measures are in place?",
-            "How do you handle regulatory compliance?",
-            "How does your platform compare to traditional cloud services?"
+            "Lorem ipsum dolor sit amet consectetur?",
+            "Sed do eiusmod tempor incididunt?",
+            "Ut labore et dolore magna aliqua?",
+            "Quis nostrud exercitation ullamco?"
         ]
     });
 };
@@ -70,8 +70,8 @@ export const getFAQPreviewContent = () => {
 // Locations content
 export const getLocationsContent = () => {
     return Maybe.Just({
-        heading: "Our Locations",
-        headquarters: "Colorado",
-        regionalOffices: "New York, London, Singapore"
+        heading: "Lorem Ipsum",
+        headquarters: "Lorem Ipsum",
+        regionalOffices: "Dolor Sit, Amet Consectetur, Adipiscing Elit"
     });
 }; 

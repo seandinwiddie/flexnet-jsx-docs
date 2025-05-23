@@ -117,12 +117,12 @@ const ServiceSection = ({ service, onNavigate }) => {
                     onClick: safeButtonClick(() => onNavigate('contact')),
                     className: 'font-semibold px-6 py-3 rounded-md shadow-md transition-colors duration-150 ease-in-out transform hover:scale-105',
                     style: styles.buttonPrimary 
-                }, 'Learn More'),
+                }, 'Lorem Ipsum'),
                 jsx('button', {
                     onClick: safeButtonClick(() => onNavigate('contact')),
                     className: 'font-semibold px-6 py-3 rounded-md shadow-md transition-colors duration-150 ease-in-out transform hover:scale-105',
                     style: styles.buttonSecondary
-                }, 'Get Started')
+                }, 'Lorem Ipsum')
             ])
         ])
     ]);
@@ -245,7 +245,7 @@ const ConsultationCTASection = ({ onNavigate }) => {
                 onClick: safeButtonClick(() => onNavigate('contact')),
                 className: 'font-semibold px-8 py-4 rounded-md shadow-md transition-colors duration-150 ease-in-out transform hover:scale-105 text-lg',
                 style: styles.buttonPrimary
-            }, 'Schedule Consultation')
+            }, 'Lorem Ipsum')
         ])
     ]);
 };

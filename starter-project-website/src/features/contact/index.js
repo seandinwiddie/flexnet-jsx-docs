@@ -75,11 +75,11 @@ const PageTitleSection = () => {
             jsx('h1', {
                 className: 'text-4xl sm:text-5xl md:text-6xl font-bold mb-6',
                 style: styles.textPrimary
-            }, content.title || 'Contact Us'),
+            }, content.title || 'Lorem Ipsum'),
             jsx('p', { 
                 className: 'text-xl md:text-2xl',
                 style: styles.textMuted
-            }, content.subtitle || 'Get in touch with our team.')
+            }, content.subtitle || 'Lorem ipsum dolor sit amet consectetur.')
         ])
     ]);
 };
@@ -92,7 +92,7 @@ const ContactOptionsSection = () => {
         event.preventDefault();
         console.log('Contact form submitted');
         // Basic alert, replace with actual submission logic or UI feedback
-        alert('Thank you for your message! We will get back to you soon.');
+        alert('Lorem ipsum dolor sit amet consectetur!');
         event.target.reset(); // Reset form after submission
     };
     
@@ -110,7 +110,7 @@ const ContactOptionsSection = () => {
                 jsx('h2', { 
                     className: 'text-3xl font-bold mb-6',
                     style: styles.textPrimary
-                }, content.formHeading || 'Send Us a Message'),
+                }, content.formHeading || 'Lorem Ipsum Dolor'),
                 jsx('form', { onSubmit: handleSubmit, className: 'space-y-6' }, [
                     jsx('div', { className: 'form-group' }, [
                         jsx('label', { 
@@ -200,7 +200,7 @@ const ContactOptionsSection = () => {
                 jsx('h2', { 
                     className: 'text-3xl font-bold mb-6',
                     style: styles.textPrimary
-                }, content.directHeading || 'Direct Contact'),
+                }, content.directHeading || 'Lorem Ipsum'),
                 jsx('div', { className: 'space-y-4' }, 
                     (content.contactInfo || []).map((info, index) => 
                         jsx('div', { 
@@ -219,7 +219,7 @@ const ContactOptionsSection = () => {
                     jsx('strong', { 
                         className: 'block text-lg',
                         style: styles.textPrimary 
-                    }, content.locationLabel || 'Our Location'),
+                    }, content.locationLabel || 'Lorem Ipsum'),
                     jsx('p', { style: styles.textMuted }, content.address1 || ''),
                     content.address2 ? jsx('p', { style: styles.textMuted }, content.address2) : null,
                     content.address3 ? jsx('p', { style: styles.textMuted }, content.address3) : null
@@ -242,7 +242,7 @@ const DemoSection = ({ onNavigate }) => {
             jsx('h2', { 
                 className: 'text-3xl sm:text-4xl font-bold mb-6',
                 style: styles.textPrimary
-            }, content.heading || 'Schedule a Demo'),
+            }, content.heading || 'Lorem Ipsum Dolor'),
             jsx('p', { 
                 className: 'text-lg leading-relaxed mb-6',
                 style: styles.textMuted
@@ -251,13 +251,13 @@ const DemoSection = ({ onNavigate }) => {
                 className: 'p-4 rounded-md my-6 text-center',
                 style: styles.innerCard
             }, [
-                jsx('span', {style: styles.textMuted}, '📅 Calendar Scheduling Widget Placeholder')
+                jsx('span', {style: styles.textMuted}, '📅 Lorem Ipsum Dolor Sit Placeholder')
             ]),
             jsx('button', {
-                onClick: safeButtonClick(() => alert('Demo scheduling feature coming soon!')),
+                onClick: safeButtonClick(() => alert('Lorem ipsum dolor sit amet!')),
                 className: 'font-semibold px-8 py-3 rounded-md shadow-md',
                 style: styles.buttonPrimary
-            }, 'Schedule Demo')
+            }, 'Lorem Ipsum')
         ])
     ]);
 };
@@ -297,7 +297,7 @@ const FAQPreviewSection = ({ onNavigate }) => {
             jsx('h2', { 
                 className: 'text-3xl sm:text-4xl font-bold mb-6 text-center',
                 style: styles.textPrimary
-            }, content.heading || 'Frequently Asked Questions'),
+            }, content.heading || 'Lorem Ipsum Dolor Sit'),
             jsx('ul', { 
                 className: 'space-y-4 mb-8'
             }, (content.questions || []).map((question, index) => 
@@ -333,21 +333,21 @@ const LocationsSection = () => {
             jsx('h2', { 
                 className: 'text-3xl sm:text-4xl font-bold mb-6',
                 style: styles.textPrimary
-            }, content.heading || 'Our Locations'),
+            }, content.heading || 'Lorem Ipsum'),
             jsx('div', { className: 'grid md:grid-cols-2 gap-6 text-left' }, [
                 jsx('div', {}, [
                     jsx('h3', { 
                         className: 'text-xl font-semibold mb-2',
                         style: styles.textPrimary
-                    }, 'Headquarters'),
-                    jsx('p', { style: styles.textMuted }, content.headquarters || 'Colorado')
+                    }, 'Lorem Ipsum'),
+                    jsx('p', { style: styles.textMuted }, content.headquarters || 'Lorem Ipsum')
                 ]),
                 jsx('div', {}, [
                     jsx('h3', { 
                         className: 'text-xl font-semibold mb-2',
                         style: styles.textPrimary
-                    }, 'Regional Offices'),
-                    jsx('p', { style: styles.textMuted }, content.regionalOffices || 'New York, London, Singapore')
+                    }, 'Lorem Ipsum'),
+                    jsx('p', { style: styles.textMuted }, content.regionalOffices || 'Lorem Ipsum, Dolor Sit, Amet Consectetur')
                 ])
             ])
         ])

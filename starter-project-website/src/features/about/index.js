@@ -61,7 +61,7 @@ const PageTitleSection = () => {
             jsx('h1', {
                 className: 'text-4xl sm:text-5xl md:text-6xl font-bold mb-6',
                 style: styles.textPrimary
-            }, content.title || 'About Us'),
+            }, content.title || 'Lorem Ipsum'),
             jsx('p', { 
                 className: 'text-xl md:text-2xl',
                 style: styles.textMuted
@@ -291,16 +291,16 @@ const CTASection = ({ onNavigate }) => {
             jsx('h2', { 
                 className: 'text-3xl sm:text-4xl font-bold mb-6',
                 style: styles.textPrimary
-            }, content.heading || 'Ready to Transform Your Business?'),
+            }, content.heading || 'Lorem Ipsum Dolor?'),
             jsx('p', { 
                 className: 'text-lg md:text-xl max-w-2xl mx-auto mb-8',
                 style: styles.textMuted
-            }, content.description || 'Join us on the forefront of innovation and let us help you build the future.'),
+            }, content.description || 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt.'),
             jsx('button', {
                 onClick: safeButtonClick(() => onNavigate('contact')),
                 className: 'font-semibold px-8 py-4 rounded-md shadow-md transition-colors duration-150 ease-in-out transform hover:scale-105 text-lg',
                 style: styles.buttonPrimary 
-            }, 'Join Our Journey')
+            }, 'Lorem Ipsum')
         ])
     ]);
 };

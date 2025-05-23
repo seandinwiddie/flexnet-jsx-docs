@@ -81,11 +81,11 @@ const PageTitleSection = () => {
             jsx('h1', {
                 className: 'text-4xl sm:text-5xl md:text-6xl font-bold mb-6',
                 style: styles.textPrimary
-            }, content.title || 'Frequently Asked Questions'),
+            }, content.title || 'Lorem Ipsum Dolor Sit'),
             jsx('p', { 
                 className: 'text-xl md:text-2xl',
                 style: styles.textMuted
-            }, content.subtitle || 'Find answers to common questions.')
+            }, content.subtitle || 'Lorem ipsum dolor sit amet consectetur.')
         ])
     ]);
 };
@@ -220,7 +220,7 @@ const ContactSection = ({ onNavigate }) => {
             jsx('h2', { 
                 className: 'text-3xl sm:text-4xl font-bold mb-6',
                 style: styles.textPrimary
-            }, content.heading || 'Still Have Questions?'),
+            }, content.heading || 'Lorem Ipsum Dolor Sit?'),
             jsx('p', { 
                 className: 'text-lg md:text-xl max-w-2xl mx-auto mb-8',
                 style: styles.textMuted
@@ -229,7 +229,7 @@ const ContactSection = ({ onNavigate }) => {
                 onClick: safeButtonClick(() => onNavigate('contact'), 'faq_contact_us'),
                 className: 'font-semibold px-8 py-4 rounded-md shadow-md transition-colors duration-150 ease-in-out transform hover:scale-105 text-lg',
                 style: styles.buttonPrimary
-            }, 'Contact Us')
+            }, 'Lorem Ipsum')
         ])
     ]);
 };

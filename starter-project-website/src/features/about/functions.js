@@ -3,38 +3,38 @@ import Maybe from '../../core/types/maybe.js';
 // Page title content
 export const getPageTitleContent = () => {
     return Maybe.Just({
-        title: "About Us",
-        subtitle: "Leaders in Enterprise Decentralized Infrastructure"
+        title: "Lorem Ipsum",
+        subtitle: "Lorem Ipsum Dolor Sit Amet Consectetur"
     });
 };
 
 // Company overview content
 export const getCompanyOverviewContent = () => {
     return Maybe.Just({
-        paragraph1: "Founded by Dr. Robert Whetsel, CryptoVersus (a division of ACMEWERX, a Colorado S-Corp) has been at the forefront of bringing decentralized technologies to the enterprise market. Our team combines decades of experience in enterprise IT, cloud infrastructure, and distributed systems.",
-        paragraph2: "Weve built a platform that bridges the gap between cutting-edge Web3 technologies and the reliability, security, and compliance demands of modern enterprises. Our core technology design is based on our patent for Trusted client-centric application architecture and dissertation work on measuring big data variety using Kolmogorovs Complexity."
+        paragraph1: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
+        paragraph2: "Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
     });
 };
 
 // Vision and mission content
 export const getVisionMissionContent = () => {
     return Maybe.Just({
-        visionHeading: "Our Vision",
-        visionStatement: "To build the foundation for a more equitable, efficient, and open digital economy by enabling enterprises to harness the power of decentralized technologies.",
-        missionHeading: "Our Mission",
-        missionStatement: "To provide enterprises with the tools, infrastructure, and expertise needed to successfully implement and scale decentralized solutions that deliver measurable business value."
+        visionHeading: "Lorem Ipsum",
+        visionStatement: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua ut enim ad minim veniam.",
+        missionHeading: "Lorem Ipsum",
+        missionStatement: "Quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat duis aute irure dolor in reprehenderit in voluptate velit esse cillum."
     });
 };
 
 // Leadership team content
 export const getLeadershipTeamContent = () => {
     return Maybe.Just({
-        heading: "Leadership Team",
+        heading: "Lorem Ipsum Dolor",
         members: [
             {
-                name: "Dr. Robert Whetsel",
-                title: "Founder CEO",
-                bio: "With a background in computer science and extensive experience in enterprise architecture, Dr. Whetsels vision drives our innovation in decentralized technology."
+                name: "Lorem Ipsum",
+                title: "Lorem Ipsum",
+                bio: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua ut enim ad minim veniam."
             }
         ]
     });
@@ -43,15 +43,15 @@ export const getLeadershipTeamContent = () => {
 // Approach content
 export const getApproachContent = () => {
     return Maybe.Just({
-        heading: "Enterprise-First Methodology",
-        description: "Unlike many projects in the Web3 space, we approach decentralization from an enterprise perspective. This means we prioritize:",
+        heading: "Lorem Ipsum Dolor Sit",
+        description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua:",
         priorities: [
-            'Security and risk management',
-            'Scalability and performance',
-            'Compliance and governance',
-            'Integration with existing systems',
-            'Measurable business outcomes',
-            'Building in public with transparency'
+            'Lorem ipsum dolor sit amet',
+            'Consectetur adipiscing elit',
+            'Sed do eiusmod tempor',
+            'Incididunt ut labore et dolore',
+            'Magna aliqua ut enim ad minim',
+            'Veniam quis nostrud exercitation'
         ]
     });
 };
@@ -59,28 +59,28 @@ export const getApproachContent = () => {
 // Innovations content
 export const getInnovationsContent = () => {
     return Maybe.Just({
-        heading: "Our Innovations",
-        description: "Were constantly pushing the boundaries of whats possible with decentralized technology:",
+        heading: "Lorem Ipsum",
+        description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor:",
         innovations: [
             {
-                name: "Web3/WEB3 Protocols",
-                description: "Advanced decentralized network protocols"
+                name: "Lorem Ipsum Dolor",
+                description: "Lorem ipsum dolor sit amet consectetur"
             },
             {
-                name: "DeFi Security Protocols",
-                description: "Enterprise-grade security for financial applications"
+                name: "Lorem Ipsum Dolor Sit",
+                description: "Sed do eiusmod tempor incididunt ut labore"
             },
             {
-                name: "Social Crypto Syndication Protocols",
-                description: "Enabling community-driven ecosystems"
+                name: "Lorem Ipsum Dolor Sit Amet",
+                description: "Ut enim ad minim veniam quis nostrud"
             },
             {
-                name: "INDECO (KYC) Protocols",
-                description: "Compliant identity verification"
+                name: "Lorem Ipsum Dolor",
+                description: "Duis aute irure dolor in reprehenderit"
             },
             {
-                name: "VS. Protocols",
-                description: "Zero-trust role-based access control"
+                name: "Lorem Ipsum",
+                description: "Excepteur sint occaecat cupidatat non proident"
             }
         ]
     });
@@ -89,8 +89,8 @@ export const getInnovationsContent = () => {
 // Partners content
 export const getPartnersContent = () => {
     return Maybe.Just({
-        heading: "Trusted By Industry Leaders",
-        description: "[To be filled with partner logos]",
+        heading: "Lorem Ipsum Dolor Sit",
+        description: "[Lorem ipsum dolor sit amet]",
         partners: []
     });
 };
@@ -98,7 +98,7 @@ export const getPartnersContent = () => {
 // CTA content
 export const getCTAContent = () => {
     return Maybe.Just({
-        heading: "Join Our Journey",
-        description: "Become part of the enterprise decentralization movement and transform your organizations digital infrastructure."
+        heading: "Lorem Ipsum Dolor",
+        description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
     });
 }; 

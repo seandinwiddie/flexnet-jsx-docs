@@ -3,8 +3,8 @@ import Maybe from '../../core/types/maybe.js';
 // Page title content
 export const getPageTitleContent = () => {
     return Maybe.Just({
-        title: "Enterprise Web3 Services",
-        subtitle: "Comprehensive Decentralized Infrastructure for Modern Enterprises"
+        title: "Lorem Ipsum Dolor Sit",
+        subtitle: "Lorem Ipsum Dolor Sit Amet Consectetur Adipiscing"
     });
 };
 
@@ -14,80 +14,80 @@ export const getServicesContent = () => {
         services: [
             {
                 id: 'compute',
-                title: 'Decentralized Compute',
+                title: 'Lorem Ipsum Dolor',
                 icon: '⚡',
-                description: 'Deploy applications with enterprise-grade reliability and performance across our distributed consensus network.',
+                description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
                 features: [
-                    'High availability architecture',
-                    'Scalable compute resources',
-                    'Secure execution environment',
-                    'Developer-friendly interfaces',
-                    'AI-powered resource optimization'
+                    'Lorem ipsum dolor sit',
+                    'Consectetur adipiscing elit',
+                    'Sed do eiusmod tempor',
+                    'Incididunt ut labore et dolore',
+                    'Magna aliqua ut enim ad minim'
                 ]
             },
             {
                 id: 'storage',
-                title: 'Web3 Storage Solutions',
+                title: 'Lorem Ipsum Dolor Sit',
                 icon: '💾',
-                description: 'Secure, redundant, and censorship-resistant data storage with enterprise SLAs and compliance features.',
+                description: 'Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.',
                 features: [
-                    'Distributed data architecture',
-                    'Immutable audit trails',
-                    'Automated data verification',
-                    'Regulatory compliance features',
-                    'IPFS and Filecoin integration'
+                    'Duis aute irure dolor',
+                    'In reprehenderit in voluptate',
+                    'Velit esse cillum dolore',
+                    'Eu fugiat nulla pariatur',
+                    'Excepteur sint occaecat cupidatat'
                 ]
             },
             {
                 id: 'networks',
-                title: 'Enterprise Decentralized Networks',
+                title: 'Lorem Ipsum Dolor Sit Amet',
                 icon: '🌐',
-                description: 'Custom private and consortium deployments with governance frameworks tailored to your industry requirements.',
+                description: 'Non proident, sunt in culpa qui officia deserunt mollit anim id est laborum sed ut perspiciatis.',
                 features: [
-                    'Custom network architecture',
-                    'Permissioned access controls',
-                    'Governance frameworks',
-                    'Cross-chain interoperability',
-                    'Zero-trust security model'
+                    'Unde omnis iste natus',
+                    'Error sit voluptatem accusantium',
+                    'Doloremque laudantium totam',
+                    'Rem aperiam eaque ipsa',
+                    'Quae ab illo inventore'
                 ]
             },
             {
                 id: 'contracts',
-                title: 'Smart Contract Platform',
+                title: 'Lorem Ipsum Dolor',
                 icon: '📋',
-                description: 'Deploy, manage, and monitor smart contracts with advanced security features and audit capabilities.',
+                description: 'Veritatis et quasi architecto beatae vitae dicta sunt explicabo nemo enim ipsam voluptatem.',
                 features: [
-                    'Contract templates library',
-                    'Automated security auditing',
-                    'Version control and deployment',
-                    'Monitoring and analytics',
-                    'AI-assisted vulnerability detection'
+                    'Quia voluptas sit aspernatur',
+                    'Aut odit aut fugit',
+                    'Sed quia consequuntur magni',
+                    'Dolores eos qui ratione',
+                    'Voluptatem sequi nesciunt'
                 ]
             },
             {
                 id: 'identity',
-                title: 'Identity & Access Management',
+                title: 'Lorem Ipsum Dolor Sit',
                 icon: '🔐',
-                description: 'Enterprise-grade decentralized identity solutions with seamless integration to existing systems.',
+                description: 'Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit.',
                 features: [
-                    'VS. protocols - zero-trust R/A-BAC',
-                    'INDECO protocols - KYC integration',
-                    'Self-sovereign identity options',
-                    'Legacy system integration',
-                    'Compliance with privacy regulations'
+                    'Lorem ipsum dolor sit amet',
+                    'Consectetur adipiscing elit',
+                    'Sed do eiusmod tempor',
+                    'Incididunt ut labore et dolore',
+                    'Magna aliqua ut enim ad minim'
                 ]
             },
             {
                 id: 'tokenization',
-                title: 'Tokenization Framework',
+                title: 'Lorem Ipsum Dolor',
                 icon: '🪙',
-                description: 'Create, deploy, and manage digital assets with built-in compliance and regulatory considerations.',
+                description: 'Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium.',
                 features: [
-                    'Asset tokenization tools',
-                    'Regulatory compliance checks',
-                    'Lifecycle management',
-                    'Exchange and liquidity options',
-                    'Built-in tokenized economy support'
+                    'Totam rem aperiam eaque',
+                    'Ipsa quae ab illo',
+                    'Inventore veritatis et quasi',
+                    'Architecto beatae vitae dicta',
+                    'Sunt explicabo nemo enim'
                 ]
             }
         ]
@@ -97,14 +97,14 @@ export const getServicesContent = () => {
 // AI Integration content
 export const getAIIntegrationContent = () => {
     return Maybe.Just({
-        heading: "AI-Enhanced Web3 Services",
-        description: "Our platform leverages advanced AI to enhance security, performance, and usability:",
+        heading: "Lorem Ipsum Dolor Sit Amet",
+        description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt:",
         benefits: [
-            'Intelligent security monitoring',
-            'Predictive analytics for resource optimization',
-            'Smart contract analysis and validation',
-            'Natural language interfaces for Web3 accessibility',
-            'Data governance and compliance automation'
+            'Lorem ipsum dolor sit amet',
+            'Consectetur adipiscing elit sed do',
+            'Eiusmod tempor incididunt ut labore',
+            'Et dolore magna aliqua ut enim',
+            'Ad minim veniam quis nostrud'
         ]
     });
 };
@@ -112,34 +112,34 @@ export const getAIIntegrationContent = () => {
 // Pricing packages content
 export const getPricingPackagesContent = () => {
     return Maybe.Just({
-        heading: "Enterprise Service Packages",
+        heading: "Lorem Ipsum Dolor Sit",
         packages: [
             {
-                name: "Starter Package",
+                name: "Lorem Ipsum",
                 features: [
-                    'Core services',
-                    'Basic support',
-                    'Standard SLA',
-                    'Development environment access'
+                    'Lorem ipsum dolor',
+                    'Consectetur adipiscing',
+                    'Sed do eiusmod',
+                    'Tempor incididunt ut labore'
                 ]
             },
             {
-                name: "Growth Package",
+                name: "Lorem Ipsum Dolor",
                 featured: true,
                 features: [
-                    'Advanced services',
-                    'Priority support',
-                    'Enhanced SLA',
-                    'Production deployment assistance'
+                    'Et dolore magna aliqua',
+                    'Ut enim ad minim veniam',
+                    'Quis nostrud exercitation',
+                    'Ullamco laboris nisi ut'
                 ]
             },
             {
-                name: "Enterprise Package",
+                name: "Lorem Ipsum Dolor Sit",
                 features: [
-                    'All services',
-                    '24/7 support',
-                    'Custom SLA',
-                    'Dedicated solution architect'
+                    'Aliquip ex ea commodo',
+                    'Consequat duis aute irure',
+                    'Dolor in reprehenderit',
+                    'In voluptate velit esse'
                 ]
             }
         ]
@@ -149,7 +149,7 @@ export const getPricingPackagesContent = () => {
 // Consultation CTA content
 export const getConsultationCTAContent = () => {
     return Maybe.Just({
-        heading: "Schedule a Service Consultation",
-        description: "Discuss your specific requirements with our solution architects to design the optimal service package for your enterprise."
+        heading: "Lorem Ipsum Dolor Sit Amet",
+        description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
     });
 }; 

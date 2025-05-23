@@ -3,8 +3,8 @@ import Maybe from '../../core/types/maybe.js';
 // Page title content
 export const getPageTitleContent = () => {
     return Maybe.Just({
-        title: "Frequently Asked Questions",
-        subtitle: "Answers to common questions about our enterprise Web3 solutions"
+        title: "Lorem Ipsum Dolor Sit",
+        subtitle: "Lorem ipsum dolor sit amet consectetur adipiscing elit"
     });
 };
 
@@ -12,11 +12,11 @@ export const getPageTitleContent = () => {
 export const getSearchCategoriesContent = () => {
     return Maybe.Just({
         categories: [
-            "General",
-            "Technology",
-            "Implementation",
-            "Security",
-            "Pricing"
+            "Lorem",
+            "Ipsum",
+            "Dolor",
+            "Sit",
+            "Amet"
         ]
     });
 };
@@ -26,82 +26,82 @@ export const getFAQCategoriesContent = () => {
     return Maybe.Just({
         categories: [
             {
-                name: "General Questions",
+                name: "Lorem Ipsum",
                 questions: [
                     {
-                        question: "What is CryptoVersus.io?",
-                        answer: "CryptoVersus is a division of ACMEWERX that provides enterprise-grade decentralized infrastructure, similar to how AWS operates for traditional cloud computing."
+                        question: "Lorem ipsum dolor sit amet?",
+                        answer: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
                     },
                     {
-                        question: "How does CryptoVersus differ from other Web3 platforms?",
-                        answer: "Our platform is built on patented technology specifically designed for enterprise requirements, focusing on security, compliance, and integration with existing systems."
+                        question: "Sed do eiusmod tempor incididunt?",
+                        answer: "Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat."
                     },
                     {
-                        question: "What types of enterprises use your platform?",
-                        answer: "We serve organizations across finance, healthcare, supply chain, government, and creative industries looking to leverage decentralized technologies."
+                        question: "Duis aute irure dolor in reprehenderit?",
+                        answer: "In voluptate velit esse cillum dolore eu fugiat nulla pariatur excepteur sint occaecat cupidatat non proident."
                     }
                 ]
             },
             {
-                name: "Technology",
+                name: "Lorem Ipsum Dolor",
                 questions: [
                     {
-                        question: "What is Web3 and why should enterprises care?",
-                        answer: "Web3 represents the next evolution of internet services built on decentralized technologies, offering greater control, security, and new revenue opportunities for enterprises."
+                        question: "Sunt in culpa qui officia deserunt?",
+                        answer: "Mollit anim id est laborum sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque."
                     },
                     {
-                        question: "How does your consensus network operate?",
-                        answer: "Our platform utilizes multiple consensus mechanisms optimized for enterprise needs, balancing security, performance, and energy efficiency."
+                        question: "Laudantium totam rem aperiam?",
+                        answer: "Eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo."
                     },
                     {
-                        question: "What technologies underpin your platform?",
-                        answer: "Our platform is built on our patent for 'Trusted client-centric application architecture' and incorporates advanced protocols for security, identity, and interoperability."
+                        question: "Nemo enim ipsam voluptatem?",
+                        answer: "Quia voluptas sit aspernatur aut odit aut fugit sed quia consequuntur magni dolores eos qui ratione."
                     },
                     {
-                        question: "Do you support multiple decentralized protocols?",
-                        answer: "Yes, we support a wide range of protocols and can integrate with existing blockchain networks and Web3 standards."
+                        question: "Voluptatem sequi nesciunt neque?",
+                        answer: "Porro quisquam est qui dolorem ipsum quia dolor sit amet consectetur adipisci velit sed quia."
                     }
                 ]
             },
             {
-                name: "Implementation",
+                name: "Lorem Ipsum Sit",
                 questions: [
                     {
-                        question: "How long does implementation typically take?",
-                        answer: "Implementation timelines vary based on complexity, but typically range from 4-12 weeks for initial deployment."
+                        question: "Non numquam eius modi tempora?",
+                        answer: "Incidunt ut labore et dolore magnam aliquam quaerat voluptatem ut enim ad minima veniam."
                     },
                     {
-                        question: "What resources are required from our team?",
-                        answer: "We work with your existing IT staff and provide training to ensure a smooth transition, minimizing additional resource requirements."
+                        question: "Quis nostrum exercitationem ullam?",
+                        answer: "Corporis suscipit laboriosam nisi ut aliquid ex ea commodi consequatur quis autem vel eum."
                     },
                     {
-                        question: "How do you handle integration with legacy systems?",
-                        answer: "Our platform includes purpose-built connectors and APIs designed to seamlessly integrate with existing enterprise systems."
+                        question: "Iure reprehenderit qui in ea?",
+                        answer: "Voluptate velit esse quam nihil molestiae consequuntur vel illum qui dolorem eum fugiat quo voluptas."
                     },
                     {
-                        question: "What training do you provide for our team?",
-                        answer: "We offer comprehensive training programs including documentation, workshops, and ongoing support to ensure your team can effectively manage the platform."
+                        question: "Nulla pariatur at vero eos?",
+                        answer: "Et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque."
                     }
                 ]
             },
             {
-                name: "Security and Compliance",
+                name: "Lorem Ipsum Amet",
                 questions: [
                     {
-                        question: "How do you ensure platform security?",
-                        answer: "Our zero-trust security model, built on VS. protocols, ensures comprehensive protection at all levels of the stack."
+                        question: "Corrupti quos dolores et quas?",
+                        answer: "Molestias excepturi sint occaecati cupiditate non provident similique sunt in culpa qui officia."
                     },
                     {
-                        question: "What compliance standards do you meet?",
-                        answer: "Our platform is designed to support compliance with GDPR, HIPAA, SOC 2, and industry-specific regulations."
+                        question: "Deserunt mollitia animi id est?",
+                        answer: "Laborum et dolorum fuga et harum quidem rerum facilis est et expedita distinctio nam libero."
                     },
                     {
-                        question: "How do you handle data privacy requirements?",
-                        answer: "We implement privacy-by-design principles and provide tools for managing data consent and sovereignty."
+                        question: "Tempore cum soluta nobis est?",
+                        answer: "Eligendi optio cumque nihil impedit quo minus id quod maxime placeat facere possimus."
                     },
                     {
-                        question: "What disaster recovery options are available?",
-                        answer: "Our distributed architecture provides inherent resilience, and we offer additional backup and recovery solutions tailored to your requirements."
+                        question: "Omnis voluptas assumenda est omnis?",
+                        answer: "Dolor repellendus temporibus autem quibusdam et aut officiis debitis aut rerum necessitatibus saepe."
                     }
                 ]
             }
@@ -112,21 +112,21 @@ export const getFAQCategoriesContent = () => {
 // Contact content
 export const getContactContent = () => {
     return Maybe.Just({
-        heading: "Still Have Questions?",
-        description: "Our solution architects are ready to help you with any questions about implementing Web3 technologies in your enterprise."
+        heading: "Lorem Ipsum Dolor Sit?",
+        description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
     });
 };
 
 // Resources content
 export const getResourcesContent = () => {
     return Maybe.Just({
-        heading: "Resources",
-        description: "For more detailed information, check out our:",
+        heading: "Lorem Ipsum",
+        description: "Lorem ipsum dolor sit amet consectetur:",
         resources: [
-            "Documentation",
-            "Whitepapers",
-            "Case Studies",
-            "Development Guides"
+            "Lorem Ipsum",
+            "Dolor Sit",
+            "Amet Consectetur",
+            "Adipiscing Elit"
         ]
     });
 }; 

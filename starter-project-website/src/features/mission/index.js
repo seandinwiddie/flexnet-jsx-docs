@@ -238,7 +238,7 @@ const JoinUsSection = ({ onNavigate }) => {
                     onClick: safeButtonClick(() => onNavigate(button.action), `JoinUs-${button.action}`),
                     className: 'font-semibold px-8 py-3 rounded-md shadow-md transition-colors duration-150 ease-in-out transform hover:scale-105',
                     style: button.type === 'primary' || index === 0 ? styles.buttonPrimary : styles.buttonSecondary // Default first to primary
-                }, button.text || 'Learn More'))
+                }, button.text || 'Lorem Ipsum'))
             )
         ])
     ]);

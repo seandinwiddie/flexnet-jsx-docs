@@ -126,12 +126,12 @@ const HeroSection = ({ onNavigate }) => {
                     onClick: safeButtonClick(() => onNavigate('contact')),
                     className: 'font-semibold px-8 py-3 rounded-md shadow-md transition-colors duration-150 ease-in-out transform hover:scale-105',
                     style: styles.buttonPrimary
-                }, 'Get Started'),
+                }, 'Lorem Ipsum'),
                 jsx('button', {
                     onClick: safeButtonClick(() => onNavigate('services')),
                     className: 'font-semibold px-8 py-3 rounded-md shadow-md transition-colors duration-150 ease-in-out transform hover:scale-105',
                     style: styles.buttonSecondary
-                }, 'Learn More')
+                }, 'Lorem Ipsum')
             ])
         ])
     ]);
@@ -331,7 +331,7 @@ const Footer = () => {
         style: footerStyle
     }, [
         jsx('div', { className: 'container mx-auto px-4 sm:px-6 lg:px-8' }, [
-            jsx('p', {}, `© ${currentYear} CryptoVersus.io. All rights reserved.`),
+            jsx('p', {}, `© ${currentYear} Lorem Ipsum. All rights reserved.`),
             jsx('p', { className: 'mt-2 text-sm' }, [
                 jsx('a', { href: '#', onClick: (e) => { e.preventDefault(); safeNavigate('home'); }, className: 'hover:underline px-2', style: linkStyle }, 'Home'),
                 '|',

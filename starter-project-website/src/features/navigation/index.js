@@ -60,7 +60,7 @@ const Navigation = ({ currentPage, onNavigate }) => {
                 className: 'text-xl font-bold transition-colors', // Removed hover:text-zinc-300, hover will be via style if needed
                 style: navLinkStyle, // Explicit color
                 onClick: safeOnClick(() => onNavigate('home'))
-            }, 'CryptoVersus.io'),
+            }, 'Lorem Ipsum'),
             jsx('ul', {
                 className: 'flex space-x-4'
             }, menuItems.map(item => 

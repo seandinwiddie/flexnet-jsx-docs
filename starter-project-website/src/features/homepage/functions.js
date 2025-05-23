@@ -7,11 +7,11 @@ import Result from '../../core/types/result.js';
 const getHeroContent = () => {
     console.log(`[Homepage Functions] Loading hero content`);
     const content = {
-        siteName: 'CryptoVersus.io',
-        tagline: 'Enterprise Decentralized Infrastructure',
-        headline: 'The Enterprise-Grade Decentralized Platform',
-        subheadline: 'Bridging Enterprises to the Future of Digital Infrastructure',
-        description: 'CryptoVersus delivers a comprehensive suite of Web3 protocols and infrastructure services that enable enterprises to harness emerging technology with the reliability, security, and scalability that businesses demand.'
+        siteName: 'Lorem Ipsum',
+        tagline: 'Lorem Ipsum Dolor Sit',
+        headline: 'Lorem Ipsum Dolor Sit Amet Consectetur',
+        subheadline: 'Lorem Ipsum Dolor Sit Amet Consectetur Adipiscing',
+        description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.'
     };
     console.log(`[Homepage Functions] Hero content loaded successfully`);
     return Maybe.Just(content);
@@ -19,111 +19,111 @@ const getHeroContent = () => {
 
 // Digital transformation section content
 const getDigitalTransformationContent = () => Maybe.Just({
-    heading: 'Your Digital Transformation Partner',
-    content: 'Think of us as AWS for the decentralized web - providing the building blocks, tools, and managed services that allow your organization to innovate without the complexity of building and maintaining underlying decentralized infrastructure.'
+    heading: 'Lorem Ipsum Dolor Sit Amet',
+    content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.'
 });
 
 // Web3 explanation content
 const getWeb3Content = () => Maybe.Just({
-    heading: 'What is Web3 for Enterprises?',
-    description: 'Web3 represents the next evolution of internet services built on decentralized technologies. For enterprises, this means:',
+    heading: 'Lorem Ipsum Dolor Sit Amet?',
+    description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua:',
     benefits: [
-        'GREATER CONTROL over digital assets and data',
-        'ENHANCED SECURITY through distributed systems', 
-        'NEW REVENUE STREAMS via tokenization and digital economies',
-        'IMPROVED TRANSPARENCY in business operations',
-        'REDUCED COSTS by eliminating intermediaries'
+        'Lorem ipsum dolor sit amet consectetur',
+        'Sed do eiusmod tempor incididunt ut labore', 
+        'Ut enim ad minim veniam quis nostrud',
+        'Duis aute irure dolor in reprehenderit',
+        'Excepteur sint occaecat cupidatat non proident'
     ]
 });
 
 // Core services content
 const getCoreServicesContent = () => Maybe.Just({
-    heading: 'Core Services:',
+    heading: 'Lorem Ipsum:',
     services: [
         {
             id: 'compute',
-            title: 'Decentralized Compute Networks',
+            title: 'Lorem Ipsum Dolor Sit',
             icon: '⚡',
-            description: 'High-performance distributed computing infrastructure'
+            description: 'Lorem ipsum dolor sit amet consectetur adipiscing elit'
         },
         {
             id: 'storage', 
-            title: 'Web3 Storage Solutions',
+            title: 'Lorem Ipsum Dolor Sit',
             icon: '🗄️',
-            description: 'Secure, redundant, and censorship-resistant data storage'
+            description: 'Sed do eiusmod tempor incididunt ut labore et dolore'
         },
         {
             id: 'networks',
-            title: 'Enterprise Decentralized Networks',
+            title: 'Lorem Ipsum Dolor Sit Amet',
             icon: '🌐',
-            description: 'Custom private and consortium network deployments'
+            description: 'Ut enim ad minim veniam quis nostrud exercitation'
         },
         {
             id: 'contracts',
-            title: 'Smart Contract Platform',
+            title: 'Lorem Ipsum Dolor',
             icon: '📜',
-            description: 'Deploy and manage smart contracts with advanced security'
+            description: 'Duis aute irure dolor in reprehenderit voluptate'
         },
         {
             id: 'identity',
-            title: 'Zero-Trust Identity & Access Management',
+            title: 'Lorem Ipsum Dolor Sit Amet',
             icon: '🔐',
-            description: 'Enterprise-grade decentralized identity solutions'
+            description: 'Excepteur sint occaecat cupidatat non proident'
         },
         {
             id: 'tokenization',
-            title: 'Tokenization Framework',
+            title: 'Lorem Ipsum Dolor',
             icon: '🪙',
-            description: 'Create and manage digital assets with built-in compliance'
+            description: 'Sunt in culpa qui officia deserunt mollit anim'
         },
         {
             id: 'analytics',
-            title: 'AI-Enhanced Analytics & Security',
+            title: 'Lorem Ipsum Dolor Sit',
             icon: '🤖',
-            description: 'Intelligent monitoring and predictive analytics'
+            description: 'At vero eos et accusamus et iusto odio dignissimos'
         }
     ]
 });
 
 // Why CryptoVersus content
 const getWhyCryptoVersusContent = () => Maybe.Just({
-    heading: 'Why CryptoVersus?',
+    heading: 'Lorem Ipsum Dolor?',
     benefits: [
         {
-            title: 'Enterprise-Ready',
-            description: 'Built from the ground up for business requirements with robust SLAs and support'
+            title: 'Lorem Ipsum',
+            description: 'Lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod'
         },
         {
-            title: 'Patent-Based Technology', 
-            description: 'Founded on our "Trusted client-centric application architecture" patent'
+            title: 'Lorem Ipsum Dolor', 
+            description: 'Tempor incididunt ut labore et dolore magna aliqua ut enim ad minim'
         },
         {
-            title: 'Interoperability',
-            description: 'Seamless integration with existing systems and multiple decentralized protocols'
+            title: 'Lorem Ipsum',
+            description: 'Veniam quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea'
         },
         {
-            title: 'Compliance Focus',
-            description: 'Advanced tools for regulatory adherence across jurisdictions'
+            title: 'Lorem Ipsum Dolor',
+            description: 'Commodo consequat duis aute irure dolor in reprehenderit voluptate'
         },
         {
-            title: 'Operational Simplicity',
-            description: 'Managed services that abstract complexity while maintaining decentralized benefits'
+            title: 'Lorem Ipsum Dolor',
+            description: 'Velit esse cillum dolore eu fugiat nulla pariatur excepteur sint'
         },
         {
-            title: 'Scalable Architecture',
-            description: 'Flexible infrastructure that grows with your initiatives'
+            title: 'Lorem Ipsum Dolor',
+            description: 'Occaecat cupidatat non proident sunt in culpa qui officia deserunt'
         }
     ]
 });
 
 // CTA content
 const getCTAContent = () => Maybe.Just({
-    heading: 'Start Your Enterprise Digital Transformation',
-    description: 'Connect with our solutions team to discuss how CryptoVersus can accelerate your organizations adoption of decentralized technologies.',
+    heading: 'Lorem Ipsum Dolor Sit Amet Consectetur',
+    description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
     buttons: [
-        { text: 'Schedule Consultation', action: 'contact', type: 'primary' },
-        { text: 'View Services', action: 'services', type: 'secondary' },
-        { text: 'Learn More', action: 'about', type: 'secondary' }
+        { text: 'Lorem Ipsum', action: 'contact', type: 'primary' },
+        { text: 'Lorem Ipsum', action: 'services', type: 'secondary' },
+        { text: 'Lorem Ipsum', action: 'about', type: 'secondary' }
     ]
 });
 

@@ -3,41 +3,41 @@ import Maybe from '../../core/types/maybe.js';
 // Page title content
 export const getPageTitleContent = () => {
     return Maybe.Just({
-        title: "Our Mission"
+        title: "Lorem Ipsum"
     });
 };
 
 // Mission statement content
 export const getMissionStatementContent = () => {
     return Maybe.Just({
-        heading: "Our Mission",
-        statement: "To provide enterprises with the tools, infrastructure, and expertise needed to successfully implement and scale decentralized solutions that deliver measurable business value.",
-        tagline: "We Build Builders - Empowering fin-tech innovators with cutting-edge reusable, shareable, and expandable Decentralized Ecosystems."
+        heading: "Lorem Ipsum",
+        statement: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua ut enim ad minim veniam.",
+        tagline: "Lorem Ipsum Dolor Sit - Amet consectetur adipiscing elit sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
     });
 };
 
 // Vision and values content
 export const getVisionValuesContent = () => {
     return Maybe.Just({
-        visionHeading: "Our Vision",
-        visionStatement: "To build the foundation for a more equitable, efficient, and open digital economy by enabling enterprises to harness the power of decentralized technologies.",
-        valuesHeading: "Our Values",
+        visionHeading: "Lorem Ipsum",
+        visionStatement: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua ut enim ad minim veniam quis nostrud.",
+        valuesHeading: "Lorem Ipsum",
         values: [
             {
-                name: "Innovation",
-                description: "We constantly push boundaries while maintaining enterprise-grade reliability."
+                name: "Lorem Ipsum",
+                description: "Lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor."
             },
             {
-                name: "Security",
-                description: "We make no compromises when it comes to protecting our clients data and systems."
+                name: "Lorem Ipsum",
+                description: "Incididunt ut labore et dolore magna aliqua ut enim ad minim veniam quis."
             },
             {
-                name: "Transparency",
-                description: "We believe in open communication and visibility in all our operations."
+                name: "Lorem Ipsum",
+                description: "Nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat."
             },
             {
-                name: "Collaboration",
-                description: "We work closely with our clients as true partners in their digital journey."
+                name: "Lorem Ipsum",
+                description: "Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore."
             }
         ]
     });
@@ -46,14 +46,14 @@ export const getVisionValuesContent = () => {
 // Impact goals content
 export const getImpactGoalsContent = () => {
     return Maybe.Just({
-        heading: "Our Impact Goals",
-        introduction: "By 2030, we aim to:",
+        heading: "Lorem Ipsum Dolor",
+        introduction: "Lorem ipsum dolor:",
         goals: [
-            "Enable 1000+ enterprises to successfully implement decentralized solutions",
-            "Reduce enterprise infrastructure costs by $1B through decentralized architectures",
-            "Eliminate 100M+ tons of carbon emissions through more efficient digital infrastructure",
-            "Create an ecosystem supporting 10,000+ developers building enterprise Web3 solutions",
-            "Establish new standards for transparent, ethical business operations through decentralized governance"
+            "Lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod",
+            "Tempor incididunt ut labore et dolore magna aliqua ut enim ad minim veniam",
+            "Quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo",
+            "Consequat duis aute irure dolor in reprehenderit in voluptate velit esse",
+            "Cillum dolore eu fugiat nulla pariatur excepteur sint occaecat cupidatat"
         ]
     });
 };
@@ -61,28 +61,28 @@ export const getImpactGoalsContent = () => {
 // Leadership message content
 export const getLeadershipMessageContent = () => {
     return Maybe.Just({
-        heading: "From Our Founder",
-        quote: "Our mission at CryptoVersus goes beyond technology - were creating a new paradigm for how enterprises operate in the digital economy. By providing reliable, secure infrastructure for decentralized applications, were empowering businesses to innovate while maintaining the standards their stakeholders expect. Our journey began with the vision of bringing the benefits of Web3 to the enterprise world in a way that addresses their unique needs for security, scalability, and compliance. Today, were proud to be building the foundation that allows companies to transform their operations and create new value for their customers.",
-        attribution: "Dr. Robert Whetsel, Founder CEO"
+        heading: "Lorem Ipsum Dolor",
+        quote: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
+        attribution: "Lorem Ipsum, Lorem Ipsum"
     });
 };
 
 // Join us content
 export const getJoinUsContent = () => {
     return Maybe.Just({
-        heading: "Join Our Mission",
-        description: "Become part of the enterprise decentralization movement and transform your organizations digital future. Whether youre a developer, enterprise customer, or potential partner, theres a place for you in our ecosystem as we build the next generation of digital infrastructure.",
+        heading: "Lorem Ipsum Dolor",
+        description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
         buttons: [
             {
-                text: "Get Started",
+                text: "Lorem Ipsum",
                 action: "contact"
             },
             {
-                text: "View Services",
+                text: "Lorem Ipsum",
                 action: "services"
             },
             {
-                text: "Learn More",
+                text: "Lorem Ipsum",
                 action: "about"
             }
         ]
