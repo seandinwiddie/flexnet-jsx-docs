@@ -148,8 +148,8 @@ A comprehensive implementation demonstrating all framework features:
 ```bash
 # Quick start
 cd starter-project
-python -m http.server
-# Open http://localhost:8000
+python -m http.server 3000
+# Open http://localhost:3000
 ```
 
 ### ⚡ Minimal Starter ([starter-project-minimal/](starter-project-minimal/))
@@ -172,8 +172,8 @@ A lightweight implementation focusing on core concepts:
 ```bash
 # Quick start
 cd starter-project-minimal
-python -m http.server
-# Open http://localhost:8000
+python -m http.server 3000
+# Open http://localhost:3000
 ```
 
 ### 📊 Comparison
