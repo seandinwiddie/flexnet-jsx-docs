@@ -6,7 +6,6 @@ import {
     getContactContent,
     getResourcesContent
 } from './functions.js';
-import { escape } from '../../core/security/functions.js';
 
 // Define HSL styles for shadcn/ui dark theme
 const styles = {
@@ -82,11 +81,11 @@ const PageTitleSection = () => {
             jsx('h1', {
                 className: 'text-4xl sm:text-5xl md:text-6xl font-bold mb-6',
                 style: styles.textPrimary
-            }, escape(content.title || 'Frequently Asked Questions')),
+            }, content.title || 'Frequently Asked Questions'),
             jsx('p', { 
                 className: 'text-xl md:text-2xl',
                 style: styles.textMuted
-            }, escape(content.subtitle || 'Find answers to common questions.'))
+            }, content.subtitle || 'Find answers to common questions.')
         ])
     ]);
 };
@@ -130,7 +129,7 @@ const SearchCategoriesSection = () => {
                             onClick: safeButtonClick(() => console.log('Filter by category:', category), 'category_filter'),
                             className: 'transition-colors duration-150', // Base for Tailwind hover if needed later
                             style: styles.categoryTag 
-                        }, escape(category))
+                        }, category)
                     )
                 )
             ])
@@ -160,7 +159,7 @@ const FAQItem = ({ question, answer }) => {
             className: 'w-full flex justify-between items-center text-left font-semibold',
             style: styles.textPrimary
         }, [
-            jsx('span', {}, escape(question || '')),
+            jsx('span', {}, question || ''),
             jsx('span', { 
                 className: 'indicator text-xl',
                 style: { color: 'hsl(240 5% 64.9%)' } // Muted foreground for +/- 
@@ -169,7 +168,7 @@ const FAQItem = ({ question, answer }) => {
         jsx('div', {
             className: 'mt-2 faq-answer', // Added faq-answer for clarity
             style: { display: 'none', ...styles.textMuted }
-        }, jsx('p', {className: 'leading-relaxed'}, escape(answer || '')))
+        }, jsx('p', {className: 'leading-relaxed'}, answer || ''))
     ]);
 };
 
@@ -191,15 +190,14 @@ const FAQCategoriesSection = () => {
                     jsx('h2', { 
                         className: 'text-3xl sm:text-4xl font-bold mb-8 text-center',
                         style: styles.textPrimary
-                    }, escape(category.name || 'Category')),
+                    }, category.name || 'Category'),
                     jsx('div', { 
                         className: 'space-y-4' 
                     },
                         (category.questions || []).map((faq, faqIndex) => 
                             FAQItem({ 
                                 question: faq.question, 
-                                answer: faq.answer,
-                                key: `${index}-${faqIndex}`
+                                answer: faq.answer 
                             })
                         )
                     )
@@ -209,27 +207,27 @@ const FAQCategoriesSection = () => {
     ]);
 };
 
-// Contact Section (CTA to contact page)
+// Contact Section
 const ContactSection = ({ onNavigate }) => {
     const content = getContactContent().getOrElse({});
     return jsx('section', { 
-        className: 'py-12 md:py-20' 
+        className: 'py-16 md:py-24' 
     }, [
-        jsx('div', {
-            className: 'container mx-auto px-4 sm:px-6 lg:px-8 max-w-2xl text-center p-8 rounded-lg shadow-lg',
+        jsx('div', { 
+            className: 'container mx-auto px-4 sm:px-6 lg:px-8 text-center p-10 md:p-16 rounded-lg shadow-xl',
             style: styles.card 
         }, [
             jsx('h2', { 
                 className: 'text-3xl sm:text-4xl font-bold mb-6',
                 style: styles.textPrimary
-            }, escape(content.heading || 'Still Have Questions?')),
+            }, content.heading || 'Still Have Questions?'),
             jsx('p', { 
-                className: 'text-lg leading-relaxed mb-8',
+                className: 'text-lg md:text-xl max-w-2xl mx-auto mb-8',
                 style: styles.textMuted
-            }, escape(content.description || 'Our team is here to help. Feel free to reach out to us.')),
+            }, content.description || ''),
             jsx('button', {
                 onClick: safeButtonClick(() => onNavigate('contact'), 'faq_contact_us'),
-                className: 'font-semibold px-8 py-3 rounded-md shadow-md',
+                className: 'font-semibold px-8 py-4 rounded-md shadow-md transition-colors duration-150 ease-in-out transform hover:scale-105 text-lg',
                 style: styles.buttonPrimary
             }, 'Contact Us')
         ])
@@ -242,30 +240,34 @@ const ResourcesSection = () => {
     return jsx('section', { 
         className: 'py-12 md:py-20' 
     }, [
-        jsx('div', {
-            className: 'container mx-auto px-4 sm:px-6 lg:px-8 max-w-2xl p-8 rounded-lg shadow-lg',
+        jsx('div', { 
+            className: 'container mx-auto px-4 sm:px-6 lg:px-8 max-w-3xl p-8 rounded-lg shadow-lg text-center',
             style: styles.card 
         }, [
             jsx('h2', { 
-                className: 'text-3xl sm:text-4xl font-bold mb-6 text-center',
+                className: 'text-3xl sm:text-4xl font-bold mb-6',
                 style: styles.textPrimary
-            }, escape(content.heading || 'Additional Resources')),
+            }, content.heading || 'Explore Further'),
             jsx('p', { 
-                className: 'text-lg leading-relaxed mb-8 text-center',
+                className: 'text-lg leading-relaxed mb-8',
                 style: styles.textMuted
-            }, escape(content.description || 'Explore these resources for more information.')),
-            jsx('div', { 
-                className: 'flex flex-wrap justify-center gap-4' 
-            },
-                (content.resources || []).map((resource, index) => 
-                    jsx('button', {
-                        key: index,
-                        onClick: safeButtonClick(() => alert(`Resource: ${resource} coming soon!`), 'resource_click'),
-                        className: 'font-semibold px-6 py-3 rounded-md shadow-md',
-                        style: styles.buttonSecondary 
-                    }, escape(resource))
-                )
-            )
+            }, content.description || ''),
+            jsx('ul', { 
+                className: 'space-y-3' 
+            }, (content.resources || []).map((resource, index) => 
+                jsx('li', { 
+                    key: index, 
+                    className: 'p-3 rounded-md',
+                    style: styles.innerCard
+                }, [
+                    jsx('a', { 
+                        href: '#', // Placeholder, link to actual resource 
+                        onClick: safeButtonClick(() => console.log('Navigate to resource:', resource), 'resource_link'),
+                        className: 'font-semibold hover:underline',
+                        style: styles.textPrimary
+                    }, resource)
+                ])
+            ))
         ])
     ]);
 };

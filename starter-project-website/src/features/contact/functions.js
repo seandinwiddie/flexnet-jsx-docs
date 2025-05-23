@@ -4,7 +4,7 @@ import Maybe from '../../core/types/maybe.js';
 export const getPageTitleContent = () => {
     return Maybe.Just({
         title: "Contact Us",
-        subtitle: "Let's Discuss Your Enterprise Web3 Journey"
+        subtitle: "Lets Discuss Your Enterprise Web3 Journey"
     });
 };
 
@@ -50,7 +50,7 @@ export const getDemoContent = () => {
 export const getProjectConsultationContent = () => {
     return Maybe.Just({
         heading: "Launch Your Project",
-        description: "Our team specializes in helping innovators navigate the path to decentralization. Whether you're exploring Web3 for the first time or scaling an existing project, we provide the guidance and infrastructure you need."
+        description: "Our team specializes in helping innovators navigate the path to decentralization. Whether youre exploring Web3 for the first time or scaling an existing project, we provide the guidance and infrastructure you need."
     });
 };
 

@@ -119,36 +119,11 @@ const getWhyCryptoVersusContent = () => Maybe.Just({
 // CTA content
 const getCTAContent = () => Maybe.Just({
     heading: 'Start Your Enterprise Digital Transformation',
-    description: 'Connect with our solutions team to discuss how CryptoVersus can accelerate your organization\'s adoption of decentralized technologies.',
+    description: 'Connect with our solutions team to discuss how CryptoVersus can accelerate your organizations adoption of decentralized technologies.',
     buttons: [
         { text: 'Schedule Consultation', action: 'contact', type: 'primary' },
         { text: 'View Services', action: 'services', type: 'secondary' },
         { text: 'Learn More', action: 'about', type: 'secondary' }
-    ]
-});
-
-// Key Priorities content
-const getKeyPrioritiesContent = () => Maybe.Just({
-    heading: 'Our Key Priorities',
-    priorities: [
-        'Enterprise-Grade Security & Compliance',
-        'Seamless Integration & Interoperability',
-        'Scalable & Future-Proof Architectures',
-        'Actionable Insights through Advanced Analytics',
-        'Empowering Developer Productivity'
-    ]
-});
-
-// Team content
-const getTeamContent = () => Maybe.Just({
-    heading: 'Meet Our Leadership',
-    members: [
-        { name: 'Alex Chen', title: 'CEO & Chief Architect' },
-        { name: 'Brenda Li', title: 'CTO & Head of Engineering' },
-        { name: 'Carlos Gomez', title: 'VP of Product & Strategy' },
-        { name: 'Diana Wells', title: 'Head of Security & Compliance' },
-        { name: 'Ethan Hunt', title: 'Lead, Decentralized Solutions' },
-        { name: 'Fiona Glenanne', title: 'Principal Blockchain Researcher' }
     ]
 });
 
@@ -180,7 +155,5 @@ export {
     getCoreServicesContent,
     getWhyCryptoVersusContent,
     getCTAContent,
-    handleCTAClick,
-    getKeyPrioritiesContent,
-    getTeamContent
+    handleCTAClick
 }; 

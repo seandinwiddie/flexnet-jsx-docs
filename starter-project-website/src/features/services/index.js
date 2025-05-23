@@ -6,7 +6,6 @@ import {
     getPricingPackagesContent,
     getConsultationCTAContent
 } from './functions.js';
-import { escape } from '../../core/security/functions.js';
 
 // Define HSL styles for shadcn/ui dark theme
 const styles = {
@@ -66,11 +65,11 @@ const PageTitleSection = () => {
             jsx('h1', {
                 className: 'text-4xl sm:text-5xl md:text-6xl font-bold mb-6',
                 style: styles.textPrimary
-            }, escape(content.title || '')),
+            }, content.title || ''),
             jsx('p', { 
                 className: 'text-xl md:text-2xl', // Removed mb-8 as it's the last element
                 style: styles.textMuted
-            }, escape(content.subtitle || ''))
+            }, content.subtitle || '')
         ])
     ]);
 };
@@ -85,17 +84,15 @@ const ServiceSection = ({ service, onNavigate }) => {
             style: styles.card
         }, [
             jsx('div', { className: 'text-center mb-6' }, [ // Service header items centered
-                // Icon removed as per earlier decision to remove emojis. Placeholder can be added if a new icon system is in place.
-                // jsx('div', { className: 'service-icon mb-4 text-4xl', style: styles.textPrimary }, service.icon || '♢'), // Example non-emoji icon
                 jsx('h2', { 
                     className: 'text-3xl sm:text-4xl font-bold',
                     style: styles.textPrimary
-                }, escape(service.title || ''))
+                }, service.title || '')
             ]),
             jsx('p', { 
                 className: 'text-lg leading-relaxed mb-6', // Adjusted for readability
                 style: styles.textMuted
-            }, escape(service.description || '')),
+            }, service.description || ''),
             jsx('ul', { 
                 className: 'space-y-3 mb-8' // Spacing for list items
             }, 
@@ -108,8 +105,8 @@ const ServiceSection = ({ service, onNavigate }) => {
                         jsx('span', { 
                             className: 'flex-shrink-0 mr-3 font-bold text-xl', // Adjusted size
                             style: { color: '#667eea' } // Brand purple for list marker
-                        }, '>'),
-                        jsx('span', { style: styles.textPrimary }, escape(feature))
+                        }, ''),
+                        jsx('span', { style: styles.textPrimary }, feature)
                     ])
                 )
             ),
@@ -145,11 +142,11 @@ const AIIntegrationSection = () => {
             jsx('h2', { 
                 className: 'text-3xl sm:text-4xl font-bold mb-6',
                 style: styles.textPrimary
-            }, escape(content.heading || '')),
+            }, content.heading || ''),
             jsx('p', { 
                 className: 'text-lg leading-relaxed mb-8',
                 style: styles.textMuted
-            }, escape(content.description || '')),
+            }, content.description || ''),
             jsx('ul', { 
                 className: 'space-y-3 text-left' // Benefits list left-aligned within the centered card
             },
@@ -162,8 +159,8 @@ const AIIntegrationSection = () => {
                          jsx('span', { 
                             className: 'flex-shrink-0 mr-3 font-bold text-xl',
                             style: { color: '#667eea' } 
-                        }, '>'),
-                        jsx('span', { style: styles.textPrimary }, escape(benefit))
+                        }, ''),
+                        jsx('span', { style: styles.textPrimary }, benefit)
                     ])
                 )
             )
@@ -185,7 +182,7 @@ const PricingPackagesSection = ({ onNavigate }) => {
             jsx('h2', { 
                 className: 'text-3xl sm:text-4xl font-bold mb-10 md:mb-12 text-center',
                 style: styles.textPrimary
-            }, escape(content.heading || '')),
+            }, content.heading || ''),
             jsx('div', { 
                 className: 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8' // Responsive grid for packages
             },
@@ -198,27 +195,26 @@ const PricingPackagesSection = ({ onNavigate }) => {
                         jsx('h3', { 
                             className: 'text-2xl font-semibold mb-4',
                             style: styles.textPrimary
-                        }, escape(pkg.name || '')),
+                        }, pkg.name || ''),
                         jsx('ul', { 
-                            className: 'space-y-2 mb-6 text-left flex-grow' // Features list
+                            className: 'space-y-2 mb-6 flex-grow' // Features list
                         },
-                            (pkg.features || []).map((feature, featureIndex) => 
+                            (pkg.features || []).map((feature, fIndex) => 
                                 jsx('li', { 
-                                    key: featureIndex,
-                                    className: 'flex items-center'
+                                    key: fIndex,
+                                    className: 'flex items-center justify-center', // Center-align items
+                                    style: styles.textMuted
                                 }, [
-                                    jsx('span', { 
-                                        className: 'text-green-400 mr-2 text-xl' // Using a checkmark color, can be replaced with HSL
-                                    }, '✓'), // Checkmark, can be replaced or styled
-                                    jsx('span', {style: styles.textMuted}, escape(feature))
+                                    jsx('span', { className: 'mr-2', style: { color: '#667eea' } }, '✓'), // Checkmark icon
+                                    feature
                                 ])
                             )
                         ),
                         jsx('button', {
                             onClick: safeButtonClick(() => onNavigate('contact')),
-                            className: 'font-semibold px-6 py-3 rounded-md shadow-md transition-colors duration-150 ease-in-out transform hover:scale-105 mt-auto', // mt-auto pushes button to bottom
-                            style: pkg.featured ? styles.buttonPrimary : styles.buttonSecondary // Different style for featured package button
-                        }, 'Get Started')
+                            className: 'font-semibold mt-auto px-6 py-3 rounded-md shadow-md transition-colors duration-150 ease-in-out transform hover:scale-105', // mt-auto pushes button to bottom
+                            style: styles.buttonPrimary
+                        }, 'Choose Plan')
                     ])
                 )
             )
@@ -231,24 +227,24 @@ const ConsultationCTASection = ({ onNavigate }) => {
     const content = getConsultationCTAContent().getOrElse({});
     
     return jsx('section', { 
-        className: 'py-16 md:py-24' // Prominent vertical padding for CTA
+        className: 'py-16 md:py-24' // Similar to homepage CTA vertical padding
     }, [
         jsx('div', { 
-            className: 'container mx-auto px-4 sm:px-6 lg:px-8 text-center p-10 md:p-16 rounded-lg shadow-xl', // Large card for CTA
+            className: 'container mx-auto px-4 sm:px-6 lg:px-8 text-center p-10 md:p-16 rounded-lg shadow-xl', // Centered card
             style: styles.card 
         }, [
             jsx('h2', { 
                 className: 'text-3xl sm:text-4xl font-bold mb-6',
                 style: styles.textPrimary
-            }, escape(content.heading || '')),
+            }, content.heading || ''),
             jsx('p', { 
                 className: 'text-lg md:text-xl max-w-2xl mx-auto mb-8',
                 style: styles.textMuted
-            }, escape(content.description || '')),
+            }, content.description || ''),
             jsx('button', {
                 onClick: safeButtonClick(() => onNavigate('contact')),
-                className: 'font-semibold px-8 py-4 rounded-md shadow-md transition-colors duration-150 ease-in-out transform hover:scale-105 text-lg', // Larger button
-                style: styles.buttonPrimary 
+                className: 'font-semibold px-8 py-4 rounded-md shadow-md transition-colors duration-150 ease-in-out transform hover:scale-105 text-lg',
+                style: styles.buttonPrimary
             }, 'Schedule Consultation')
         ])
     ]);

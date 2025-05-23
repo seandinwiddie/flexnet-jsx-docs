@@ -7,7 +7,6 @@ import {
     getLeadershipMessageContent,
     getJoinUsContent
 } from './functions.js';
-import { escape } from '../../core/security/functions.js';
 
 // Define HSL styles for shadcn/ui dark theme
 const styles = {
@@ -67,7 +66,7 @@ const PageTitleSection = () => {
             jsx('h1', {
                 className: 'text-4xl sm:text-5xl md:text-6xl font-bold',
                 style: styles.textPrimary
-            }, escape(content.title || 'Our Mission'))
+            }, content.title || 'Our Mission')
         ])
     ]);
 };
@@ -85,15 +84,15 @@ const MissionStatementSection = () => {
             jsx('h2', { 
                 className: 'text-3xl sm:text-4xl font-bold mb-6',
                 style: styles.textPrimary
-            }, escape(content.heading || 'Statement of Purpose')),
+            }, content.heading || 'Statement of Purpose'),
             jsx('p', { 
                 className: 'text-xl md:text-2xl leading-relaxed italic mb-4',
                 style: styles.textPrimary // Mission statement itself can be primary text
-            }, escape(content.statement || '')),
+            }, content.statement || ''),
             content.tagline ? jsx('p', { 
                 className: 'text-lg',
                 style: styles.textMuted
-            }, escape(content.tagline)) : null
+            }, content.tagline) : null
         ])
     ]);
 };
@@ -112,17 +111,17 @@ const VisionValuesSection = () => {
                 jsx('h2', { 
                     className: 'text-3xl sm:text-4xl font-bold mb-4',
                     style: styles.textPrimary
-                }, escape(content.visionHeading || 'Our Vision')),
+                }, content.visionHeading || 'Our Vision'),
                 jsx('p', { 
                     className: 'text-lg leading-relaxed max-w-2xl mx-auto',
                     style: styles.textMuted
-                }, escape(content.visionStatement || ''))
+                }, content.visionStatement || '')
             ]),
             jsx('div', { className: 'text-center' }, [
                 jsx('h2', { 
                     className: 'text-3xl sm:text-4xl font-bold mb-8',
                     style: styles.textPrimary
-                }, escape(content.valuesHeading || 'Our Core Values')),
+                }, content.valuesHeading || 'Our Core Values'),
                 jsx('div', { 
                     className: 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8' 
                 },
@@ -135,11 +134,11 @@ const VisionValuesSection = () => {
                             jsx('h3', { 
                                 className: 'text-xl font-semibold mb-2',
                                 style: styles.textPrimary
-                            }, escape(value.name || '')),
+                            }, value.name || ''),
                             jsx('p', { 
                                 className: 'text-sm leading-relaxed',
                                 style: styles.textMuted
-                            }, escape(value.description || ''))
+                            }, value.description || '')
                         ])
                     )
                 )
@@ -161,11 +160,11 @@ const ImpactGoalsSection = () => {
             jsx('h2', { 
                 className: 'text-3xl sm:text-4xl font-bold mb-6 text-center',
                 style: styles.textPrimary
-            }, escape(content.heading || 'Our Impact Goals')),
+            }, content.heading || 'Our Impact Goals'),
             jsx('p', { 
                 className: 'text-lg leading-relaxed mb-8 text-center',
                 style: styles.textMuted
-            }, escape(content.introduction || '')),
+            }, content.introduction || ''),
             jsx('ul', { 
                 className: 'space-y-4' 
             }, (content.goals || []).map((goal, index) => 
@@ -177,10 +176,10 @@ const ImpactGoalsSection = () => {
                     jsx('span', { 
                         className: 'flex-shrink-0 mr-3 font-bold text-xl',
                         style: { color: '#667eea' } // Brand purple for list marker
-                    }, '>'),
+                    }, ''),
                     jsx('span', { 
                         style: styles.textPrimary 
-                    }, escape(goal))
+                    }, goal)
                 ])
             ))
         ])
@@ -198,24 +197,17 @@ const LeadershipMessageSection = () => {
             style: styles.card 
         }, [
             jsx('h2', { 
-                className: 'text-3xl sm:text-4xl font-bold mb-8',
+                className: 'text-3xl sm:text-4xl font-bold mb-6',
                 style: styles.textPrimary
-            }, escape(content.heading || 'A Message From Our Leader')),
-            // Placeholder for an actual image or a styled initial circle if needed
-            // jsx('div', { className: 'w-32 h-32 rounded-full bg-zinc-700 mx-auto mb-6 flex items-center justify-center text-4xl', style: styles.textPrimary }, content.attribution ? content.attribution.charAt(0) : 'L'),
+            }, content.heading || 'A Message From Our Leadership'),
             jsx('blockquote', { 
-                className: 'relative p-4 italic border-l-4',
-                style: { borderColor: '#667eea', ...styles.innerCard, backgroundColor: 'transparent'} // Brand purple border
-            }, [
-                jsx('p', {
-                    className: 'text-lg md:text-xl leading-relaxed mb-4',
-                    style: styles.textMuted // Quote text muted for softer look
-                }, `"${escape(content.quote || '')}"`),
-                jsx('cite', { 
-                    className: 'block text-right not-italic',
-                    style: styles.textPrimary
-                }, '- ' + escape(content.attribution || ''))
-            ])
+                className: 'text-lg italic leading-relaxed mb-6 p-4 rounded-md',
+                style: { ...styles.innerCard, borderLeft: '4px solid #667eea' } // Quoted text style
+            }, content.quote || ''),
+            jsx('p', { 
+                className: 'text-md font-semibold',
+                style: styles.textPrimary
+            }, content.attribution || '')
         ])
     ]);
 };
@@ -233,28 +225,20 @@ const JoinUsSection = ({ onNavigate }) => {
             jsx('h2', { 
                 className: 'text-3xl sm:text-4xl font-bold mb-6',
                 style: styles.textPrimary
-            }, escape(content.heading || 'Join Our Mission')),
+            }, content.heading || 'Become Part of Our Mission'),
             jsx('p', { 
                 className: 'text-lg md:text-xl max-w-2xl mx-auto mb-8',
                 style: styles.textMuted
-            }, escape(content.description || 'Become a part of our journey to reshape the future.')),
+            }, content.description || ''),
             jsx('div', { 
                 className: 'flex flex-wrap justify-center gap-4' 
-            },
-                (content.buttons || []).map((button, index) => 
-                    jsx('button', {
-                        key: index,
-                        onClick: safeButtonClick(() => {
-                            if (button.action === 'contact') onNavigate('contact');
-                            else if (button.action === 'services') onNavigate('services');
-                            else if (button.action === 'about') onNavigate('about');
-                            else if (button.action) onNavigate(button.action); // Generic action
-                            else console.warn('No action defined for button');
-                        }, `join_us_${button.action}`),
-                        className: 'font-semibold px-8 py-3 rounded-md shadow-md transition-colors duration-150 ease-in-out transform hover:scale-105',
-                        style: button.type === 'secondary' ? styles.buttonSecondary : styles.buttonPrimary
-                    }, escape(button.text || 'Learn More'))
-                )
+            }, 
+                (content.buttons || []).map((button, index) => jsx('button', {
+                    key: index,
+                    onClick: safeButtonClick(() => onNavigate(button.action), `JoinUs-${button.action}`),
+                    className: 'font-semibold px-8 py-3 rounded-md shadow-md transition-colors duration-150 ease-in-out transform hover:scale-105',
+                    style: button.type === 'primary' || index === 0 ? styles.buttonPrimary : styles.buttonSecondary // Default first to primary
+                }, button.text || 'Learn More'))
             )
         ])
     ]);

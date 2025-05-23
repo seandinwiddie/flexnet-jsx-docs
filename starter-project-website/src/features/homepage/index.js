@@ -6,14 +6,11 @@ import {
     getCoreServicesContent,
     getWhyCryptoVersusContent,
     getCTAContent,
-    handleCTAClick,
-    getKeyPrioritiesContent,
-    getTeamContent
+    handleCTAClick
 } from './functions.js';
 import Navigation from '../navigation/index.js';
 import { getCurrentPage, handleNavigation, initializeRouting, getPageFromPath } from '../navigation/functions.js';
 import { createStore } from '../../systems/state/store.js';
-import { escape } from '../../core/security/functions.js';
 import { createErrorBoundary, setupGlobalErrorHandler } from '../../systems/errors/boundary.js';
 import Maybe from '../../core/types/maybe.js';
 import Result from '../../core/types/result.js';
@@ -113,15 +110,15 @@ const HeroSection = ({ onNavigate }) => {
             jsx('h1', { 
                 className: 'text-4xl sm:text-5xl md:text-6xl font-bold mb-6',
                 style: styles.textPrimary
-            }, escape(content.headline || '')),
+            }, content.headline || ''),
             jsx('p', { 
                 className: 'text-xl md:text-2xl mb-8',
                 style: styles.textMuted
-            }, escape(content.tagline || '')),
+            }, content.subheadline || ''),
             jsx('p', { 
                 className: 'text-lg md:text-xl max-w-3xl mx-auto mb-10',
                 style: styles.textMuted
-            }, escape(content.description || '')),
+            }, content.description || ''),
             jsx('div', { 
                 className: 'flex flex-wrap justify-center gap-4'
             }, [
@@ -154,11 +151,11 @@ const DigitalTransformationSection = () => {
             jsx('h2', { 
                 className: 'text-3xl sm:text-4xl font-bold mb-6',
                 style: styles.textPrimary
-            }, escape(content.heading || '')),
+            }, content.heading || ''),
             jsx('p', { 
                 className: 'text-lg leading-relaxed',
                 style: styles.textMuted
-            }, escape(content.content || ''))
+            }, content.content || '')
         ])
     ]);
 };
@@ -177,11 +174,11 @@ const Web3Section = () => {
             jsx('h2', { 
                 className: 'text-3xl sm:text-4xl font-bold mb-6 text-center',
                 style: styles.textPrimary
-            }, escape(content.heading || '')),
+            }, content.heading || ''),
             jsx('p', { 
                 className: 'text-lg leading-relaxed mb-8',
                 style: styles.textMuted
-            }, escape(content.description || '')),
+            }, content.description || ''),
             jsx('ul', { 
                 className: 'space-y-4'
             }, 
@@ -194,10 +191,10 @@ const Web3Section = () => {
                         jsx('span', { 
                             className: 'flex-shrink-0 mr-3 font-bold text-2xl',
                             style: { color: '#667eea' }
-                        }, '>'),
+                        }, ''),
                         jsx('span', { 
                             style: styles.textPrimary
-                        }, escape(benefit))
+                        }, benefit)
                     ])
                 )
             )
@@ -219,7 +216,7 @@ const CoreServicesSection = () => {
             jsx('h2', { 
                 className: 'text-3xl sm:text-4xl font-bold mb-10 md:mb-12 text-center',
                 style: styles.textPrimary
-            }, escape(content.heading || '')),
+            }, content.heading || ''),
             jsx('div', { 
                 className: 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8'
             },
@@ -233,12 +230,12 @@ const CoreServicesSection = () => {
                             jsx('h3', { 
                                 className: 'text-xl font-semibold mt-2',
                                 style: styles.textPrimary
-                            }, escape(service.title || ''))
+                            }, service.title || '')
                         ]),
                         jsx('p', { 
                             className: 'text-sm leading-relaxed',
                             style: styles.textMuted
-                        }, escape(service.description || ''))
+                        }, service.description || '')
                     ])
                 )
             )
@@ -260,7 +257,7 @@ const WhyCryptoVersusSection = () => {
             jsx('h2', { 
                 className: 'text-3xl sm:text-4xl font-bold mb-10 md:mb-12 text-center',
                 style: styles.textPrimary
-            }, escape(content.heading || '')),
+            }, content.heading || ''),
             jsx('div', { 
                 className: 'grid md:grid-cols-2 lg:grid-cols-3 gap-8'
             }, (content.benefits || []).map((benefit, index) => jsx('div', {
@@ -271,11 +268,11 @@ const WhyCryptoVersusSection = () => {
                 jsx('h3', { 
                     className: 'text-xl font-semibold mb-3',
                     style: styles.textPrimary
-                }, escape(benefit.title || '')),
+                }, benefit.title || ''),
                 jsx('p', { 
                     className: 'leading-relaxed',
                     style: styles.textMuted
-                }, escape(benefit.description || ''))
+                }, benefit.description || '')
             ])))
         ])
     ]);
@@ -295,11 +292,11 @@ const CTASection = ({ onNavigate }) => {
             jsx('h2', { 
                 className: 'text-3xl sm:text-4xl font-bold mb-6',
                 style: styles.textPrimary
-            }, escape(content.heading || '')),
+            }, content.heading || ''),
             jsx('p', { 
                 className: 'text-lg md:text-xl max-w-2xl mx-auto mb-8',
                 style: styles.textMuted
-            }, escape(content.description || '')),
+            }, content.description || ''),
             jsx('div', { 
                 className: 'flex flex-wrap justify-center gap-4'
             }, (content.buttons || []).map((button, index) => jsx('button', {
@@ -312,7 +309,7 @@ const CTASection = ({ onNavigate }) => {
                 }),
                 className: 'font-semibold px-8 py-3 rounded-md shadow-md transition-colors duration-150 ease-in-out transform hover:scale-105',
                 style: button.type === 'primary' ? styles.buttonPrimary : styles.buttonSecondary
-            }, escape(button.text || ''))))
+            }, button.text || '')))
         ])
     ]);
 };

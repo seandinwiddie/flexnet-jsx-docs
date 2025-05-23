@@ -29,7 +29,7 @@ export const getVisionValuesContent = () => {
             },
             {
                 name: "Security",
-                description: "We make no compromises when it comes to protecting our clients' data and systems."
+                description: "We make no compromises when it comes to protecting our clients data and systems."
             },
             {
                 name: "Transparency",
@@ -62,8 +62,8 @@ export const getImpactGoalsContent = () => {
 export const getLeadershipMessageContent = () => {
     return Maybe.Just({
         heading: "From Our Founder",
-        quote: "Our mission at CryptoVersus goes beyond technology - we're creating a new paradigm for how enterprises operate in the digital economy. By providing reliable, secure infrastructure for decentralized applications, we're empowering businesses to innovate while maintaining the standards their stakeholders expect. Our journey began with the vision of bringing the benefits of Web3 to the enterprise world in a way that addresses their unique needs for security, scalability, and compliance. Today, we're proud to be building the foundation that allows companies to transform their operations and create new value for their customers.",
-        attribution: "Dr. Robert Whetsel, Founder & CEO"
+        quote: "Our mission at CryptoVersus goes beyond technology - were creating a new paradigm for how enterprises operate in the digital economy. By providing reliable, secure infrastructure for decentralized applications, were empowering businesses to innovate while maintaining the standards their stakeholders expect. Our journey began with the vision of bringing the benefits of Web3 to the enterprise world in a way that addresses their unique needs for security, scalability, and compliance. Today, were proud to be building the foundation that allows companies to transform their operations and create new value for their customers.",
+        attribution: "Dr. Robert Whetsel, Founder CEO"
     });
 };
 
@@ -71,7 +71,7 @@ export const getLeadershipMessageContent = () => {
 export const getJoinUsContent = () => {
     return Maybe.Just({
         heading: "Join Our Mission",
-        description: "Become part of the enterprise decentralization movement and transform your organization's digital future. Whether you're a developer, enterprise customer, or potential partner, there's a place for you in our ecosystem as we build the next generation of digital infrastructure.",
+        description: "Become part of the enterprise decentralization movement and transform your organizations digital future. Whether youre a developer, enterprise customer, or potential partner, theres a place for you in our ecosystem as we build the next generation of digital infrastructure.",
         buttons: [
             {
                 text: "Get Started",

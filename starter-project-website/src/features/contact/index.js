@@ -7,7 +7,6 @@ import {
     getFAQPreviewContent,
     getLocationsContent
 } from './functions.js';
-import { escape } from '../../core/security/functions.js';
 
 // Define HSL styles for shadcn/ui dark theme
 const styles = {
@@ -76,11 +75,11 @@ const PageTitleSection = () => {
             jsx('h1', {
                 className: 'text-4xl sm:text-5xl md:text-6xl font-bold mb-6',
                 style: styles.textPrimary
-            }, escape(content.title || 'Contact Us')),
+            }, content.title || 'Contact Us'),
             jsx('p', { 
                 className: 'text-xl md:text-2xl',
                 style: styles.textMuted
-            }, escape(content.subtitle || 'Get in touch with our team.'))
+            }, content.subtitle || 'Get in touch with our team.')
         ])
     ]);
 };
@@ -111,28 +110,66 @@ const ContactOptionsSection = () => {
                 jsx('h2', { 
                     className: 'text-3xl font-bold mb-6',
                     style: styles.textPrimary
-                }, escape(content.formHeading || 'Send Us a Message')),
+                }, content.formHeading || 'Send Us a Message'),
                 jsx('form', { onSubmit: handleSubmit, className: 'space-y-6' }, [
-                    [
-                        { label: 'Name', id: 'name', type: 'text', required: true },
-                        { label: 'Company', id: 'company', type: 'text' },
-                        { label: 'Email', id: 'email', type: 'email', required: true },
-                        { label: 'Phone', id: 'phone', type: 'tel' },
-                    ].map(field => jsx('div', { key: field.id, className: 'form-group' }, [
+                    jsx('div', { className: 'form-group' }, [
                         jsx('label', { 
-                            htmlFor: field.id, 
+                            htmlFor: 'name', 
                             className: 'block text-sm font-medium mb-1',
                             style: styles.textMuted
-                        }, field.label),
+                        }, 'Name'),
                         jsx('input', { 
-                            type: field.type, 
-                            id: field.id, 
-                            name: field.id,
-                            required: field.required,
+                            type: 'text', 
+                            id: 'name', 
+                            name: 'name',
+                            required: true,
                             className: 'w-full',
                             style: styles.inputStyle
                         })
-                    ])),
+                    ]),
+                    jsx('div', { className: 'form-group' }, [
+                        jsx('label', { 
+                            htmlFor: 'company', 
+                            className: 'block text-sm font-medium mb-1',
+                            style: styles.textMuted
+                        }, 'Company'),
+                        jsx('input', { 
+                            type: 'text', 
+                            id: 'company', 
+                            name: 'company',
+                            className: 'w-full',
+                            style: styles.inputStyle
+                        })
+                    ]),
+                    jsx('div', { className: 'form-group' }, [
+                        jsx('label', { 
+                            htmlFor: 'email', 
+                            className: 'block text-sm font-medium mb-1',
+                            style: styles.textMuted
+                        }, 'Email'),
+                        jsx('input', { 
+                            type: 'email', 
+                            id: 'email', 
+                            name: 'email',
+                            required: true,
+                            className: 'w-full',
+                            style: styles.inputStyle
+                        })
+                    ]),
+                    jsx('div', { className: 'form-group' }, [
+                        jsx('label', { 
+                            htmlFor: 'phone', 
+                            className: 'block text-sm font-medium mb-1',
+                            style: styles.textMuted
+                        }, 'Phone'),
+                        jsx('input', { 
+                            type: 'tel', 
+                            id: 'phone', 
+                            name: 'phone',
+                            className: 'w-full',
+                            style: styles.inputStyle
+                        })
+                    ]),
                     jsx('div', { className: 'form-group' }, [
                         jsx('label', { 
                             htmlFor: 'message', 
@@ -163,27 +200,29 @@ const ContactOptionsSection = () => {
                 jsx('h2', { 
                     className: 'text-3xl font-bold mb-6',
                     style: styles.textPrimary
-                }, escape(content.directHeading || 'Direct Contact')),
-                (content.contactInfo || []).map((info, index) => 
-                    jsx('div', { 
-                        key: index,
-                        className: 'mb-4'
-                    }, [
-                        jsx('strong', { 
-                            className: 'block text-lg',
-                            style: styles.textPrimary 
-                        }, escape(info.type || '')),
-                        jsx('p', { style: styles.textMuted }, escape(info.value || ''))
-                    ])
+                }, content.directHeading || 'Direct Contact'),
+                jsx('div', { className: 'space-y-4' }, 
+                    (content.contactInfo || []).map((info, index) => 
+                        jsx('div', { 
+                            key: index,
+                            className: 'mb-4'
+                        }, [
+                            jsx('strong', { 
+                                className: 'block text-lg',
+                                style: styles.textPrimary 
+                            }, info.type || ''),
+                            jsx('p', { style: styles.textMuted }, info.value || '')
+                        ])
+                    )
                 ),
                 jsx('div', { className: 'mt-6' }, [
                     jsx('strong', { 
                         className: 'block text-lg',
                         style: styles.textPrimary 
-                    }, escape(content.locationLabel || 'Our Location')),
-                    jsx('p', { style: styles.textMuted }, escape(content.address1 || '')),
-                    content.address2 ? jsx('p', { style: styles.textMuted }, escape(content.address2)) : null,
-                    content.address3 ? jsx('p', { style: styles.textMuted }, escape(content.address3)) : null,
+                    }, content.locationLabel || 'Our Location'),
+                    jsx('p', { style: styles.textMuted }, content.address1 || ''),
+                    content.address2 ? jsx('p', { style: styles.textMuted }, content.address2) : null,
+                    content.address3 ? jsx('p', { style: styles.textMuted }, content.address3) : null
                 ])
             ])
         ])
@@ -203,11 +242,11 @@ const DemoSection = ({ onNavigate }) => {
             jsx('h2', { 
                 className: 'text-3xl sm:text-4xl font-bold mb-6',
                 style: styles.textPrimary
-            }, escape(content.heading || 'Schedule a Demo')),
+            }, content.heading || 'Schedule a Demo'),
             jsx('p', { 
                 className: 'text-lg leading-relaxed mb-6',
                 style: styles.textMuted
-            }, escape(content.description || '')),
+            }, content.description || ''),
             jsx('div', { 
                 className: 'p-4 rounded-md my-6 text-center',
                 style: styles.innerCard
@@ -236,11 +275,11 @@ const ProjectConsultationSection = () => {
             jsx('h2', { 
                 className: 'text-3xl sm:text-4xl font-bold mb-6',
                 style: styles.textPrimary
-            }, escape(content.heading || 'Project Consultation')),
+            }, content.heading || 'Project Consultation'),
             jsx('p', { 
                 className: 'text-lg leading-relaxed',
                 style: styles.textMuted
-            }, escape(content.description || 'Have a specific project in mind? Let us know how we can help.'))
+            }, content.description || 'Have a specific project in mind? Let us know how we can help.')
         ])
     ]);
 };
@@ -258,7 +297,7 @@ const FAQPreviewSection = ({ onNavigate }) => {
             jsx('h2', { 
                 className: 'text-3xl sm:text-4xl font-bold mb-6 text-center',
                 style: styles.textPrimary
-            }, escape(content.heading || 'Frequently Asked Questions')),
+            }, content.heading || 'Frequently Asked Questions'),
             jsx('ul', { 
                 className: 'space-y-4 mb-8'
             }, (content.questions || []).map((question, index) => 
@@ -267,14 +306,14 @@ const FAQPreviewSection = ({ onNavigate }) => {
                     className: 'p-4 rounded-md',
                     style: styles.innerCard
                 }, [
-                    jsx('span', {style: styles.textPrimary}, escape(question))
+                    jsx('span', {style: styles.textPrimary}, question)
                 ])
             )),
             jsx('div', {className: 'text-center'}, [
                 jsx('button', {
                     onClick: safeButtonClick(() => onNavigate('faqs')),
                     className: 'font-semibold px-8 py-3 rounded-md shadow-md',
-                    style: styles.buttonSecondary
+                    style: styles.buttonPrimary
                 }, 'View All FAQs')
             ])
         ])
@@ -294,21 +333,21 @@ const LocationsSection = () => {
             jsx('h2', { 
                 className: 'text-3xl sm:text-4xl font-bold mb-6',
                 style: styles.textPrimary
-            }, escape(content.heading || 'Our Locations')),
-            jsx('div', { 
-                className: 'p-4 rounded-md my-6 text-center',
-                style: styles.innerCard
-            }, [
-                jsx('span', {style: styles.textMuted}, '🗺️ Interactive Map Placeholder')
-            ]),
-            jsx('div', { className: 'mt-4' }, [
-                jsx('p', {style: styles.textMuted}, [
-                    jsx('strong', {style: styles.textPrimary}, 'Headquarters: '), 
-                    escape(content.headquarters || 'N/A')
+            }, content.heading || 'Our Locations'),
+            jsx('div', { className: 'grid md:grid-cols-2 gap-6 text-left' }, [
+                jsx('div', {}, [
+                    jsx('h3', { 
+                        className: 'text-xl font-semibold mb-2',
+                        style: styles.textPrimary
+                    }, 'Headquarters'),
+                    jsx('p', { style: styles.textMuted }, content.headquarters || 'Colorado')
                 ]),
-                jsx('p', {style: styles.textMuted}, [
-                    jsx('strong', {style: styles.textPrimary}, 'Regional Offices: '), 
-                    escape(content.regionalOffices || 'N/A')
+                jsx('div', {}, [
+                    jsx('h3', { 
+                        className: 'text-xl font-semibold mb-2',
+                        style: styles.textPrimary
+                    }, 'Regional Offices'),
+                    jsx('p', { style: styles.textMuted }, content.regionalOffices || 'New York, London, Singapore')
                 ])
             ])
         ])

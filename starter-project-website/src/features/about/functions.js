@@ -12,7 +12,7 @@ export const getPageTitleContent = () => {
 export const getCompanyOverviewContent = () => {
     return Maybe.Just({
         paragraph1: "Founded by Dr. Robert Whetsel, CryptoVersus (a division of ACMEWERX, a Colorado S-Corp) has been at the forefront of bringing decentralized technologies to the enterprise market. Our team combines decades of experience in enterprise IT, cloud infrastructure, and distributed systems.",
-        paragraph2: "We've built a platform that bridges the gap between cutting-edge Web3 technologies and the reliability, security, and compliance demands of modern enterprises. Our core technology design is based on our patent for \"Trusted client-centric application architecture\" and dissertation work on measuring big data variety using Kolmogorov's Complexity."
+        paragraph2: "Weve built a platform that bridges the gap between cutting-edge Web3 technologies and the reliability, security, and compliance demands of modern enterprises. Our core technology design is based on our patent for Trusted client-centric application architecture and dissertation work on measuring big data variety using Kolmogorovs Complexity."
     });
 };
 
@@ -33,11 +33,9 @@ export const getLeadershipTeamContent = () => {
         members: [
             {
                 name: "Dr. Robert Whetsel",
-                title: "Founder & CEO",
-                photo: "👨‍💼",
-                bio: "With a background in computer science and extensive experience in enterprise architecture, Dr. Whetsel's vision drives our innovation in decentralized technology."
+                title: "Founder CEO",
+                bio: "With a background in computer science and extensive experience in enterprise architecture, Dr. Whetsels vision drives our innovation in decentralized technology."
             }
-            // Additional team members to be added
         ]
     });
 };
@@ -62,7 +60,7 @@ export const getApproachContent = () => {
 export const getInnovationsContent = () => {
     return Maybe.Just({
         heading: "Our Innovations",
-        description: "We're constantly pushing the boundaries of what's possible with decentralized technology:",
+        description: "Were constantly pushing the boundaries of whats possible with decentralized technology:",
         innovations: [
             {
                 name: "Web3/WEB3 Protocols",
@@ -92,12 +90,8 @@ export const getInnovationsContent = () => {
 export const getPartnersContent = () => {
     return Maybe.Just({
         heading: "Trusted By Industry Leaders",
-        partners: [
-            // To be filled with partner logos
-            "Partner Logo",
-            "Partner Logo",
-            "Partner Logo"
-        ]
+        description: "[To be filled with partner logos]",
+        partners: []
     });
 };
 
@@ -105,6 +99,6 @@ export const getPartnersContent = () => {
 export const getCTAContent = () => {
     return Maybe.Just({
         heading: "Join Our Journey",
-        description: "Become part of the enterprise decentralization movement and transform your organization's digital infrastructure."
+        description: "Become part of the enterprise decentralization movement and transform your organizations digital infrastructure."
     });
 }; 
