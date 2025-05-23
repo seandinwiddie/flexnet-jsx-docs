@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.tailwindcss.com; style-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net; img-src 'self' data:;">
+    <!-- Cache-busting meta tags for development -->
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <title>CryptoVersus.io - Enterprise Decentralized Infrastructure</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Pico CSS -->
+    <!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css"> -->
+    
+    <style>
+        /* Custom overrides for CryptoVersus branding */
+        :root {
+            --cv-primary-500: #667eea;
+            --cv-primary-600: #5a6fd8;
+            --cv-primary-700: #4f5fc7;
+            /* --cv-background-color: #ffffff; */ /* Overridden by explicit styles below */
+        }
+        /* Explicit shadcn/ui HSL-based theme overrides */
+        body {
+            background-color: hsl(240 10% 3.9%) !important; /* --background */
+            color: hsl(0 0% 98%) !important; /* --foreground */
+        }
+        /* All other custom CSS removed as Tailwind is handling styling where not overridden */
+    </style>
+</head>
+<body class="dark font-sans antialiased">
+    <div id="loading" class="loading">Loading CryptoVersus.io...</div>
+    <div id="root"></div>
+    <div id="error" class="error-message" style="display: none;"></div>
+    
+    <script type="module">
+        // Enhanced cache-busting utilities
+        const clearBrowserCaches = async () => {
+            try {
+                // Clear service workers
+                if ('serviceWorker' in navigator) {
+                    const registrations = await navigator.serviceWorker.getRegistrations();
+                    await Promise.all(registrations.map(reg => reg.unregister()));
+                }
+                
+                // Clear caches if available
+                if ('caches' in window) {
+                    const cacheNames = await caches.keys();
+                    await Promise.all(cacheNames.map(name => caches.delete(name)));
+                }
+                
+                // Clear session storage
+                if ('sessionStorage' in window) {
+                    sessionStorage.clear();
+                }
+                
+                console.log('Browser caches cleared for development');
+            } catch (error) {
+                console.warn('Could not clear all caches:', error);
+            }
+        };
+
+        // Generate cache-busting URL
+        const getCacheBustingUrl = (baseUrl) => {
+            const timestamp = Date.now();
+            const randomSuffix = Math.random().toString(36).substring(2, 15);
+            const performanceNow = performance.now().toString().replace('.', '');
+            return `${baseUrl}?v=${timestamp}&cb=${randomSuffix}&pf=${performanceNow}&nocache=true&_=${Math.random()}`;
+        };
+
+        // Error handling for module loading
+        const showError = (message) => {
+            const loading = document.getElementById('loading');
+            const errorDiv = document.getElementById('error');
+            
+            if (loading) loading.style.display = 'none';
+            if (errorDiv) {
+                errorDiv.textContent = message;
+                errorDiv.style.display = 'block';
+            }
+        };
+
+        const hideLoading = () => {
+            const loading = document.getElementById('loading');
+            if (loading) loading.style.display = 'none';
+        };
+
+        // Initialize the website with error handling
+        document.addEventListener('DOMContentLoaded', async () => {
+            try {
+                // Clear all browser caches first
+                await clearBrowserCaches();
+                
+                // Dynamic import with enhanced cache busting
+                const moduleUrl = getCacheBustingUrl('../src/features/homepage/index.js');
+                console.log('Loading module with cache-busting URL:', moduleUrl);
+                
+                const { default: initWebsite } = await import(moduleUrl);
+                
+                hideLoading();
+                
+                // Initialize website and handle result
+                const initResult = initWebsite('root');
+                
+                if (initResult && initResult.type === 'Left') {
+                    showError(`Initialization failed: ${initResult.value?.message || 'Unknown error'}`);
+                } else {
+                    console.log('CryptoVersus.io website initialized successfully');
+                }
+                
+            } catch (error) {
+                hideLoading();
+                showError(`Failed to load website: ${error.message}`);
+                console.error('Website loading error:', error);
+                
+                // Show a button to hard refresh
+                const errorDiv = document.getElementById('error');
+                if (errorDiv) {
+                    const refreshButton = document.createElement('button');
+                    refreshButton.textContent = 'Hard Refresh Page';
+                    refreshButton.style.cssText = 'margin-top: 10px; padding: 10px 20px; cursor: pointer;';
+                    refreshButton.onclick = () => {
+                        // Force a complete page reload bypassing cache
+                        window.location.href = window.location.href + '?nocache=' + Date.now();
+                    };
+                    errorDiv.appendChild(refreshButton);
+                }
+            }
+        });
+
+        // Global error handler for unhandled errors
+        window.addEventListener('error', (event) => {
+            showError(`Unexpected error: ${event.error?.message || 'Unknown error'}`);
+        });
+
+        window.addEventListener('unhandledrejection', (event) => {
+            showError(`Promise rejection: ${event.reason?.message || 'Unknown error'}`);
+        });
+
+        // Additional development cache prevention
+        window.addEventListener('beforeunload', () => {
+            // Try to clear caches when navigating away
+            if ('caches' in window) {
+                caches.keys().then(names => {
+                    names.forEach(name => caches.delete(name));
+                });
+            }
+        });
+    </script>
+</body>
+</html> 

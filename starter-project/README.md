@@ -23,7 +23,6 @@ python -m http.server 3000
 
 Then open your browser to:
 - **http://localhost:3000** (if using Python server)
-- **http://localhost:3000** (if using npx serve)
 
 **Note:** Make sure to start the server from the `starter-project/` directory (not from the parent directory) for proper module resolution.
 
