@@ -14,17 +14,28 @@ This starter project demonstrates the core principles of the FlexNet JSX framewo
 
 ## Getting Started
 
-Simply serve the project directory with a local development server:
+Start the development server from the project root directory:
 
 ```bash
-# Using a simple HTTP server (Python)
-python -m http.server
-
-# Or with Node.js
-npx serve
+# Recommended: Python HTTP server (most reliable)
+python -m http.server 3000
 ```
 
-Then open your browser to the local server (typically http://localhost:8000 or http://localhost:3000).
+Then open your browser to:
+- **http://localhost:3000** (if using Python server)
+- **http://localhost:3000** (if using npx serve)
+
+**Note:** Make sure to start the server from the `starter-project/` directory (not from the parent directory) for proper module resolution.
+
+### Troubleshooting
+
+If you encounter module loading issues:
+1. Verify you're in the correct directory (`starter-project/`)
+2. Check that all files are present in the `src/` directory
+3. Use Python's HTTP server for best compatibility: `python -m http.server 3000`
+4. Open browser console (F12) to check for any error messages
+
+The application should display a working counter with increment/decrement buttons.
 
 ## Project Structure
 
