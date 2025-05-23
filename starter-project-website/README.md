@@ -1,6 +1,6 @@
-# CryptoVersus.io Website
+# Lorem Ipsum Website
 
-A modern enterprise website built with the FlexNet JSX framework, showcasing CryptoVersus.io's enterprise decentralized infrastructure services.
+A modern enterprise website built with the FlexNet JSX framework, featuring Lorem Ipsum placeholder content throughout all pages and sections.
 
 ## Overview
 
@@ -11,6 +11,8 @@ This website demonstrates the complete implementation of a multi-page business w
 - **Zero dependencies** - browser-native implementation
 - **Comprehensive error handling** with functional error boundaries
 - **Type-safe operations** using Maybe, Either, and Result types
+
+**Note**: All text content has been replaced with Lorem Ipsum placeholder text for demonstration purposes.
 
 ## Features
 
@@ -29,12 +31,12 @@ This website demonstrates the complete implementation of a multi-page business w
 - **Type System**: Maybe, Either, Result types for safe operations
 
 ### 📱 Pages
-- **Homepage**: Complete landing page with hero, services, benefits sections
-- **Services/Offer**: Detailed service offerings (placeholder)
-- **About Us**: Company information and team (placeholder)
-- **Contact**: Contact forms and information (placeholder)
-- **FAQs**: Frequently asked questions (placeholder)
-- **Mission Statement**: Company mission and values (placeholder)
+- **Homepage**: Complete landing page with hero, services, benefits sections (Lorem Ipsum content)
+- **Services/Offer**: Detailed service offerings (Lorem Ipsum content)
+- **About Us**: Company information and team (Lorem Ipsum content)
+- **Contact**: Contact forms and information (Lorem Ipsum content)
+- **FAQs**: Frequently asked questions (Lorem Ipsum content)
+- **Mission Statement**: Company mission and values (Lorem Ipsum content)
 
 ## Getting Started
 
@@ -46,12 +48,15 @@ This website demonstrates the complete implementation of a multi-page business w
 
 1. **Start the development server** from the project directory:
    ```bash
-   # Recommended: Python HTTP server
-   python -m http.server 3000
+   # Using the provided development server
+   python3 dev-server.py
+   
+   # Alternative: Python HTTP server
+   python -m http.server 8000
    ```
 
 2. **Open your browser** to:
-   - **http://localhost:3000/public/**
+   - **http://localhost:8000/public/**
 
 ### Project Structure
 
@@ -77,11 +82,11 @@ starter-project-website/
 │   └── features/               # Website features
 │       ├── navigation/         # Navigation component and logic
 │       ├── homepage/           # Homepage sections and content
-│       ├── services/           # Services page (placeholder)
-│       ├── about/              # About page (placeholder)
-│       ├── contact/            # Contact page (placeholder)
-│       ├── faqs/               # FAQs page (placeholder)
-│       └── mission/            # Mission page (placeholder)
+│       ├── services/           # Services page (Lorem Ipsum content)
+│       ├── about/              # About page (Lorem Ipsum content)
+│       ├── contact/            # Contact page (Lorem Ipsum content)
+│       ├── faqs/               # FAQs page (Lorem Ipsum content)
+│       └── mission/            # Mission page (Lorem Ipsum content)
 │
 ├── public/                     # Static assets
 │   └── index.html             # Main entry point
@@ -95,27 +100,27 @@ starter-project-website/
 ### Homepage Sections
 
 1. **Hero Section**
-   - Company branding and value proposition
+   - Lorem Ipsum headlines and descriptions
    - Call-to-action buttons with secure navigation
 
 2. **Digital Transformation Section**
-   - Positioning as "AWS for decentralized web"
-   - Enterprise focus messaging
+   - Lorem Ipsum business messaging
+   - Placeholder content structure
 
-3. **Web3 Explanation**
-   - Benefits of Web3 for enterprises
-   - Clear value propositions
+3. **Lorem Ipsum Explanation**
+   - Lorem Ipsum benefits list
+   - Placeholder value propositions
 
 4. **Core Services**
-   - 7 key service offerings with icons
+   - 7 service offerings with Lorem Ipsum content
    - Service cards with hover effects
 
-5. **Why CryptoVersus**
-   - 6 key differentiators
-   - Detailed benefit explanations
+5. **Lorem Ipsum Benefits**
+   - 6 benefit items with Lorem Ipsum descriptions
+   - Structured placeholder content
 
 6. **Call-to-Action**
-   - Multiple action buttons
+   - Lorem Ipsum buttons and descriptions
    - Secure navigation handling
 
 ### Security Implementation
@@ -154,6 +159,26 @@ const SafeComponent = createErrorBoundary(ErrorFallback);
 3. Add component file: `index.js` with JSX components
 4. Update navigation in `src/features/navigation/functions.js`
 
+### Content Structure
+
+All content functions return Lorem Ipsum text in the following pattern:
+
+```javascript
+// Example content function
+export const getContentFunction = () => {
+    return Maybe.Just({
+        title: "Lorem Ipsum Dolor",
+        subtitle: "Lorem ipsum dolor sit amet consectetur",
+        description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit...",
+        items: [
+            "Lorem ipsum dolor sit amet",
+            "Consectetur adipiscing elit",
+            "Sed do eiusmod tempor"
+        ]
+    });
+};
+```
+
 ### Security Best Practices
 
 1. **Always escape user content** using the `escape()` function
@@ -171,7 +196,7 @@ const SafeComponent = createErrorBoundary(ErrorFallback);
 
 ## License
 
-This project demonstrates the FlexNet JSX framework implementation for enterprise websites.
+This project demonstrates the FlexNet JSX framework implementation for enterprise websites with Lorem Ipsum placeholder content.
 
 ## Resources
 
