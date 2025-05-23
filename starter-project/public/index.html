@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:;">
+    <title>FlexNet JSX Starter Project</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .counter-wrapper {
+            margin: 20px 0;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+        .error-message {
+            color: red;
+            padding: 10px;
+            border: 1px solid red;
+            border-radius: 4px;
+            background-color: #ffeaea;
+            margin: 10px 0;
+        }
+        .loading {
+            text-align: center;
+            color: #666;
+            padding: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>FlexNet JSX Counter Example</h1>
+    
+    <div class="counter-wrapper">
+        <div id="loading" class="loading">Loading...</div>
+        <div id="root"></div>
+        <div id="error" class="error-message" style="display: none;"></div>
+    </div>
+    
+    <script type="module">
+        // Error handling for module loading
+        const showError = (message) => {
+            const loading = document.getElementById('loading');
+            const errorDiv = document.getElementById('error');
+            
+            if (loading) loading.style.display = 'none';
+            if (errorDiv) {
+                errorDiv.textContent = message;
+                errorDiv.style.display = 'block';
+            }
+        };
+
+        const hideLoading = () => {
+            const loading = document.getElementById('loading');
+            if (loading) loading.style.display = 'none';
+        };
+
+        // Initialize the counter with error handling
+        document.addEventListener('DOMContentLoaded', async () => {
+            try {
+                // Dynamic import with error handling
+                const { default: initCounter } = await import('../src/features/counter/index.js');
+                
+                hideLoading();
+                
+                // Initialize counter and handle result
+                const initResult = initCounter('root');
+                
+                if (initResult && initResult.type === 'Left') {
+                    showError(`Initialization failed: ${initResult.value?.message || 'Unknown error'}`);
+                } else {
+                    console.log('Counter initialized successfully');
+                }
+                
+            } catch (error) {
+                hideLoading();
+                showError(`Failed to load application: ${error.message}`);
+                console.error('Application loading error:', error);
+            }
+        });
+
+        // Global error handler for unhandled errors
+        window.addEventListener('error', (event) => {
+            showError(`Unexpected error: ${event.error?.message || 'Unknown error'}`);
+        });
+
+        window.addEventListener('unhandledrejection', (event) => {
+            showError(`Promise rejection: ${event.reason?.message || 'Unknown error'}`);
+        });
+    </script>
+</body>
+</html> 
