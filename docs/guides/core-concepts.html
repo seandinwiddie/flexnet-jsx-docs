@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Core Concepts - FlexNet JSX Framework</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/atom-one-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#3b82f6',
+                        secondary: '#6366f1',
+                        dark: '#1e293b',
+                        light: '#f8fafc'
+                    }
+                }
+            }
+        }
+        hljs.highlightAll();
+    </script>
+</head>
+<body class="bg-gray-50 text-gray-900 min-h-screen">
+    <div class="flex flex-col md:flex-row">
+        <!-- Sidebar -->
+        <aside class="w-full md:w-64 bg-white border-r border-gray-200 md:h-screen md:sticky top-0 overflow-y-auto">
+            <div class="p-4 border-b border-gray-200">
+                <h1 class="text-2xl font-bold text-primary">FlexNet</h1>
+                <p class="text-sm text-gray-500">v1.0.0</p>
+            </div>
+            <nav class="p-4">
+                <div class="mb-6">
+                    <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">Getting Started</h3>
+                    <ul class="space-y-2">
+                        <li><a href="introduction.html" class="block text-gray-700 hover:text-primary">Introduction</a></li>
+                        <li><a href="installation.html" class="block text-gray-700 hover:text-primary">Installation</a></li>
+                        <li><a href="quickstart.html" class="block text-gray-700 hover:text-primary">Quick Start</a></li>
+                        <li><a href="core-concepts.html" class="block text-gray-700 hover:text-primary font-medium text-primary">Core Concepts</a></li>
+                    </ul>
+                </div>
+                <div class="mb-6">
+                    <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">Core</h3>
+                    <ul class="space-y-2">
+                        <li><a href="../core/jsx-runtime.html" class="block text-gray-700 hover:text-primary">JSX Runtime</a></li>
+                        <li><a href="../core/types.html" class="block text-gray-700 hover:text-primary">Type System</a></li>
+                        <li><a href="../core/functions.html" class="block text-gray-700 hover:text-primary">Functions</a></li>
+                        <li><a href="../core/security.html" class="block text-gray-700 hover:text-primary">Security</a></li>
+                    </ul>
+                </div>
+                <div class="mb-6">
+                    <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">Systems</h3>
+                    <ul class="space-y-2">
+                        <li><a href="../systems/state.html" class="block text-gray-700 hover:text-primary">State Management</a></li>
+                        <li><a href="../systems/effects.html" class="block text-gray-700 hover:text-primary">Effects</a></li>
+                        <li><a href="../systems/render.html" class="block text-gray-700 hover:text-primary">Render</a></li>
+                        <li><a href="../systems/events.html" class="block text-gray-700 hover:text-primary">Events</a></li>
+                        <li><a href="../systems/errors.html" class="block text-gray-700 hover:text-primary">Error Handling</a></li>
+                    </ul>
+                </div>
+                <div class="mb-6">
+                    <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">Examples</h3>
+                    <ul class="space-y-2">
+                        <li><a href="../examples/counter.html" class="block text-gray-700 hover:text-primary">Counter</a></li>
+                        <li><a href="../examples/todo.html" class="block text-gray-700 hover:text-primary">Todo App</a></li>
+                        <li><a href="../examples/website.html" class="block text-gray-700 hover:text-primary">Website</a></li>
+                    </ul>
+                </div>
+                <div class="mb-6">
+                    <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">API Reference</h3>
+                    <ul class="space-y-2">
+                        <li><a href="../api/jsx.html" class="block text-gray-700 hover:text-primary">JSX API</a></li>
+                        <li><a href="../api/maybe.html" class="block text-gray-700 hover:text-primary">Maybe</a></li>
+                        <li><a href="../api/either.html" class="block text-gray-700 hover:text-primary">Either</a></li>
+                        <li><a href="../api/result.html" class="block text-gray-700 hover:text-primary">Result</a></li>
+                        <li><a href="../api/store.html" class="block text-gray-700 hover:text-primary">Store</a></li>
+                    </ul>
+                </div>
+            </nav>
+        </aside>
+
+        <!-- Main content -->
+        <main class="flex-1">
+            <div class="border-b border-gray-200 bg-white sticky top-0 z-10">
+                <div class="flex items-center justify-between px-4 py-3">
+                    <div class="relative w-full max-w-md">
+                        <input type="text" placeholder="Search documentation..." class="w-full pl-10 pr-4 py-2 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 text-gray-400 absolute left-3 top-1/2 transform -translate-y-1/2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
+                        </svg>
+                    </div>
+                    <div class="flex space-x-4 ml-4">
+                        <a href="https://github.com/flexnet/flexnet-jsx" target="_blank" class="text-gray-600 hover:text-primary">GitHub</a>
+                        <a href="../../starter-project/README.md" target="_blank" class="text-gray-600 hover:text-primary">Starter Project</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="p-8 max-w-4xl mx-auto">
+                <div class="flex items-center space-x-2 text-sm text-gray-500 mb-8">
+                    <a href="../index.html" class="hover:text-primary">Home</a>
+                    <span>/</span>
+                    <a href="introduction.html" class="hover:text-primary">Guides</a>
+                    <span>/</span>
+                    <span class="text-gray-700">Core Concepts</span>
+                </div>
+
+                <h1 class="text-4xl font-bold mb-6">Core Concepts</h1>
+                <p class="text-lg text-gray-600 mb-8">Understanding the fundamental principles behind FlexNet JSX.</p>
+
+                <div class="prose prose-blue max-w-none">
+                    <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2" id="functional-first">Functional-First Approach</h2>
+                    <p class="mb-4">FlexNet JSX is built on a foundation of functional programming principles. This means that we prioritize:</p>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                        <div class="bg-white p-5 rounded-lg shadow-sm border border-gray-100">
+                            <h3 class="text-lg font-semibold mb-2">Pure Functions</h3>
+                            <p class="text-gray-600">Functions that always return the same output for a given input and have no side effects.</p>
+                        </div>
+                        <div class="bg-white p-5 rounded-lg shadow-sm border border-gray-100">
+                            <h3 class="text-lg font-semibold mb-2">Immutability</h3>
+                            <p class="text-gray-600">Data that cannot be changed after creation, leading to more predictable code.</p>
+                        </div>
+                        <div class="bg-white p-5 rounded-lg shadow-sm border border-gray-100">
+                            <h3 class="text-lg font-semibold mb-2">Function Composition</h3>
+                            <p class="text-gray-600">Building complex behavior by combining simpler functions together.</p>
+                        </div>
+                        <div class="bg-white p-5 rounded-lg shadow-sm border border-gray-100">
+                            <h3 class="text-lg font-semibold mb-2">First-Class Functions</h3>
+                            <p class="text-gray-600">Functions that can be passed as arguments, returned from other functions, and assigned to variables.</p>
+                        </div>
+                    </div>
+
+                    <p class="mb-6">Let's see an example of these principles in action:</p>
+                    
+                    <pre class="bg-gray-800 text-white p-4 rounded-lg mb-6"><code class="language-javascript">// Pure function - always returns the same output for the same input
+const add = (a, b) => a + b;
+
+// Function composition - combining simple functions
+const compose = (f, g) => x => f(g(x));
+const double = x => x * 2;
+const increment = x => x + 1;
+const doubleAndIncrement = compose(increment, double);
+
+// Immutability - creating new objects instead of modifying
+const updateUser = (user, changes) => ({ ...user, ...changes });
+const user = { name: 'Alice', age: 30 };
+const updatedUser = updateUser(user, { age: 31 });
+// user remains unchanged, updatedUser is a new object</code></pre>
+
+                    <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2" id="jsx-runtime">JSX Runtime</h2>
+                    <p class="mb-4">The JSX runtime in FlexNet transforms JSX syntax into function calls that create and manage virtual DOM elements.</p>
+
+                    <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-100 mb-6">
+                        <h3 class="text-lg font-semibold mb-3">Key JSX Runtime Concepts</h3>
+                        <ul class="space-y-2">
+                            <li class="flex items-start">
+                                <svg class="h-5 w-5 text-primary mt-0.5 mr-2 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                                </svg>
+                                <span><strong>createElement</strong>: Function that creates virtual DOM elements</span>
+                            </li>
+                            <li class="flex items-start">
+                                <svg class="h-5 w-5 text-primary mt-0.5 mr-2 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                                </svg>
+                                <span><strong>Virtual DOM</strong>: Lightweight representation of the actual DOM</span>
+                            </li>
+                            <li class="flex items-start">
+                                <svg class="h-5 w-5 text-primary mt-0.5 mr-2 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                                </svg>
+                                <span><strong>Reconciliation</strong>: Efficient algorithm for updating the DOM</span>
+                            </li>
+                            <li class="flex items-start">
+                                <svg class="h-5 w-5 text-primary mt-0.5 mr-2 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                                </svg>
+                                <span><strong>Components</strong>: Pure functions that return virtual DOM elements</span>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <p class="mb-4">Here's how JSX transforms into function calls:</p>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                        <div>
+                            <h4 class="font-medium mb-2">JSX Syntax</h4>
+                            <pre class="bg-gray-800 text-white p-4 rounded-lg h-full"><code class="language-jsx">const element = (
+  &lt;div className="container"&gt;
+    &lt;h1&gt;Hello, world!&lt;/h1&gt;
+    &lt;p&gt;Welcome to FlexNet JSX&lt;/p&gt;
+  &lt;/div&gt;
+);</code></pre>
+                        </div>
+                        <div>
+                            <h4 class="font-medium mb-2">Transformed Output</h4>
+                            <pre class="bg-gray-800 text-white p-4 rounded-lg h-full"><code class="language-javascript">const element = createElement(
+  'div',
+  { className: 'container' },
+  createElement('h1', null, 'Hello, world!'),
+  createElement('p', null, 'Welcome to FlexNet JSX')
+);</code></pre>
+                        </div>
+                    </div>
+
+                    <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2" id="type-system">Type System</h2>
+                    <p class="mb-4">FlexNet's type system provides functional data types that make code more predictable and error-resistant. These types enforce certain patterns and handle edge cases elegantly.</p>
+
+                    <div class="bg-white rounded-lg shadow-sm border border-gray-100 mb-6 overflow-hidden">
+                        <div class="border-b border-gray-100">
+                            <div class="flex items-center p-4">
+                                <div class="w-8 h-8 bg-blue-100 rounded-md flex items-center justify-center text-primary mr-3">M</div>
+                                <div>
+                                    <h3 class="font-semibold">Maybe</h3>
+                                    <p class="text-sm text-gray-500">Handling optional values safely</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="p-4">
+                            <pre class="bg-gray-800 text-white p-3 rounded-lg mb-2"><code class="language-javascript">// Instead of null checks everywhere
+const getUserName = user => 
+  Maybe.fromNullable(user)
+    .map(u => u.name)
+    .getOrElse('Guest');</code></pre>
+                            <a href="../api/maybe.html" class="text-sm text-primary hover:underline">Learn more about Maybe &rarr;</a>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-lg shadow-sm border border-gray-100 mb-6 overflow-hidden">
+                        <div class="border-b border-gray-100">
+                            <div class="flex items-center p-4">
+                                <div class="w-8 h-8 bg-indigo-100 rounded-md flex items-center justify-center text-secondary mr-3">E</div>
+                                <div>
+                                    <h3 class="font-semibold">Either</h3>
+                                    <p class="text-sm text-gray-500">Representing success or failure</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="p-4">
+                            <pre class="bg-gray-800 text-white p-3 rounded-lg mb-2"><code class="language-javascript">// Handle errors without exceptions
+const divide = (a, b) => 
+  b === 0
+    ? Either.Left('Division by zero')
+    : Either.Right(a / b);</code></pre>
+                            <a href="../api/either.html" class="text-sm text-primary hover:underline">Learn more about Either &rarr;</a>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-lg shadow-sm border border-gray-100 mb-6 overflow-hidden">
+                        <div class="border-b border-gray-100">
+                            <div class="flex items-center p-4">
+                                <div class="w-8 h-8 bg-green-100 rounded-md flex items-center justify-center text-green-600 mr-3">R</div>
+                                <div>
+                                    <h3 class="font-semibold">Result</h3>
+                                    <p class="text-sm text-gray-500">Representing computation results</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="p-4">
+                            <pre class="bg-gray-800 text-white p-3 rounded-lg mb-2"><code class="language-javascript">// Track operation results with context
+const validateUser = user => 
+  user.name.length > 0
+    ? Result.Ok(user)
+    : Result.Err('Name cannot be empty');</code></pre>
+                            <a href="../api/result.html" class="text-sm text-primary hover:underline">Learn more about Result &rarr;</a>
+                        </div>
+                    </div>
+
+                    <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2" id="state-management">State Management</h2>
+                    <p class="mb-4">FlexNet uses a functional approach to state management that emphasizes immutability and pure functions for state transitions.</p>
+
+                    <div class="bg-gray-100 p-6 rounded-lg mb-6">
+                        <h3 class="text-lg font-semibold mb-3">State Management Principles</h3>
+                        <ul class="space-y-4">
+                            <li class="flex">
+                                <div class="mr-4 flex-shrink-0">
+                                    <span class="inline-flex items-center justify-center h-8 w-8 rounded-full bg-blue-100 text-blue-500 text-lg font-bold">1</span>
+                                </div>
+                                <div>
+                                    <h4 class="font-medium">Immutable State</h4>
+                                    <p class="text-gray-600">State is never modified directly; instead, new state objects are created.</p>
+                                </div>
+                            </li>
+                            <li class="flex">
+                                <div class="mr-4 flex-shrink-0">
+                                    <span class="inline-flex items-center justify-center h-8 w-8 rounded-full bg-blue-100 text-blue-500 text-lg font-bold">2</span>
+                                </div>
+                                <div>
+                                    <h4 class="font-medium">Pure Update Functions</h4>
+                                    <p class="text-gray-600">State changes are defined as pure functions that take the current state and return a new state.</p>
+                                </div>
+                            </li>
+                            <li class="flex">
+                                <div class="mr-4 flex-shrink-0">
+                                    <span class="inline-flex items-center justify-center h-8 w-8 rounded-full bg-blue-100 text-blue-500 text-lg font-bold">3</span>
+                                </div>
+                                <div>
+                                    <h4 class="font-medium">Subscription Model</h4>
+                                    <p class="text-gray-600">Components subscribe to state changes and re-render when state updates.</p>
+                                </div>
+                            </li>
+                            <li class="flex">
+                                <div class="mr-4 flex-shrink-0">
+                                    <span class="inline-flex items-center justify-center h-8 w-8 rounded-full bg-blue-100 text-blue-500 text-lg font-bold">4</span>
+                                </div>
+                                <div>
+                                    <h4 class="font-medium">Functional Composition</h4>
+                                    <p class="text-gray-600">Complex state transformations are built by composing simpler functions.</p>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <p class="mb-4">Here's a basic example of state management with FlexNet:</p>
+
+                    <pre class="bg-gray-800 text-white p-4 rounded-lg mb-6"><code class="language-javascript">import { createStore } from './src/systems/state/store.js';
+
+// Create a store with initial state
+const store = createStore({ count: 0, user: null });
+
+// Define pure update functions
+const incrementCount = state => ({ ...state, count: state.count + 1 });
+const setUser = user => state => ({ ...state, user });
+
+// Update state by passing update functions
+store.update(incrementCount);
+store.update(setUser({ id: 1, name: 'Alice' }));
+
+// Subscribe to state changes
+store.subscribe(state => {
+  console.log('New state:', state);
+  // Render UI with new state
+});</code></pre>
+
+                    <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2" id="effects">Effect System</h2>
+                    <p class="mb-4">The effect system in FlexNet provides a way to handle side effects (like API calls, timers, etc.) in a functional way.</p>
+
+                    <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-100 mb-6">
+                        <h3 class="text-lg font-semibold mb-3">Effect System Features</h3>
+                        <ul class="space-y-2">
+                            <li class="flex items-start">
+                                <svg class="h-5 w-5 text-primary mt-0.5 mr-2 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                                </svg>
+                                <span>Isolation of side effects from pure logic</span>
+                            </li>
+                            <li class="flex items-start">
+                                <svg class="h-5 w-5 text-primary mt-0.5 mr-2 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                                </svg>
+                                <span>Functional composition of effects</span>
+                            </li>
+                            <li class="flex items-start">
+                                <svg class="h-5 w-5 text-primary mt-0.5 mr-2 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                                </svg>
+                                <span>Automatic cleanup of resources</span>
+                            </li>
+                            <li class="flex items-start">
+                                <svg class="h-5 w-5 text-primary mt-0.5 mr-2 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                                </svg>
+                                <span>Testable effect handlers</span>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <p class="mb-4">Example of using the effect system:</p>
+
+                    <pre class="bg-gray-800 text-white p-4 rounded-lg mb-6"><code class="language-javascript">import { createEffect, runEffect } from './src/systems/effects/effect.js';
+
+// Create an effect for fetching data
+const fetchUserEffect = userId => createEffect(({ onSuccess, onError }) => {
+  const controller = new AbortController();
+  const signal = controller.signal;
+  
+  fetch(`/api/users/${userId}`, { signal })
+    .then(response => response.json())
+    .then(data => onSuccess(data))
+    .catch(err => onError(err));
+  
+  // Return cleanup function
+  return () => controller.abort();
+});
+
+// Run the effect
+const cleanup = runEffect(fetchUserEffect(123), {
+  onSuccess: user => console.log('User:', user),
+  onError: err => console.error('Error:', err)
+});
+
+// Later, if needed:
+cleanup(); // Aborts the fetch if it's still in progress</code></pre>
+
+                    <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2" id="putting-it-together">Putting It All Together</h2>
+                    <p class="mb-4">Let's see how these concepts work together in a simple counter application:</p>
+
+                    <pre class="bg-gray-800 text-white p-4 rounded-lg mb-6"><code class="language-javascript">import { compose, Maybe } from './src/core/runtime/runtime.js';
+import { createStore } from './src/systems/state/store.js';
+import { createElement, render } from './src/core/runtime/jsx.js';
+import { createEffect, runEffect } from './src/systems/effects/effect.js';
+
+// === State Management ===
+const store = createStore(Maybe.Just(0));
+
+// Pure update functions
+const increment = n => Maybe.Just(n + 1);
+const decrement = n => Maybe.Just(Math.max(0, n - 1));
+
+// === Effects ===
+const logEffect = message => createEffect(() => {
+  console.log(message);
+  return () => console.log('Effect cleaned up');
+});
+
+// === Component ===
+const Counter = ({ count, onIncrement, onDecrement }) => {
+  // Run an effect when the component renders
+  runEffect(logEffect(`Counter rendered with count: ${count}`));
+  
+  return createElement('div', { className: 'counter' },
+    createElement('h2', null, `Count: ${count}`),
+    createElement('div', { className: 'buttons' },
+      createElement('button', {
+        onClick: compose(onIncrement, increment)
+      }, 'Increment'),
+      createElement('button', {
+        onClick: compose(onDecrement, decrement)
+      }, 'Decrement')
+    )
+  );
+};
+
+// === Application Init ===
+function init() {
+  // Subscribe to state changes
+  store.subscribe(count => {
+    render(
+      createElement(Counter, {
+        count: count,
+        onIncrement: store.update,
+        onDecrement: store.update
+      }),
+      document.getElementById('root')
+    );
+  });
+}
+
+document.addEventListener('DOMContentLoaded', init);</code></pre>
+
+                    <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2" id="next-steps">Next Steps</h2>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
+                        <a href="../core/jsx-runtime.html" class="block p-4 border border-gray-200 rounded-lg hover:border-primary hover:shadow-md transition">
+                            <h3 class="font-semibold text-lg mb-2">JSX Runtime</h3>
+                            <p class="text-gray-600">Dive deeper into the JSX runtime implementation.</p>
+                        </a>
+                        <a href="../core/types.html" class="block p-4 border border-gray-200 rounded-lg hover:border-primary hover:shadow-md transition">
+                            <h3 class="font-semibold text-lg mb-2">Type System</h3>
+                            <p class="text-gray-600">Learn more about FlexNet's functional type system.</p>
+                        </a>
+                        <a href="../systems/state.html" class="block p-4 border border-gray-200 rounded-lg hover:border-primary hover:shadow-md transition">
+                            <h3 class="font-semibold text-lg mb-2">State Management</h3>
+                            <p class="text-gray-600">Explore state management in depth.</p>
+                        </a>
+                        <a href="../examples/todo.html" class="block p-4 border border-gray-200 rounded-lg hover:border-primary hover:shadow-md transition">
+                            <h3 class="font-semibold text-lg mb-2">Todo App Example</h3>
+                            <p class="text-gray-600">See these concepts in a complete application.</p>
+                        </a>
+                    </div>
+
+                    <div class="bg-blue-50 border-l-4 border-primary p-4 rounded-md">
+                        <h4 class="font-semibold flex items-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-primary" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2h-1V9z" clip-rule="evenodd" />
+                            </svg>
+                            Ready to start building?
+                        </h4>
+                        <p>Check out our <a href="quickstart.html" class="text-primary hover:underline">Quick Start Guide</a> to create your first FlexNet JSX application.</p>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <footer class="bg-white border-t border-gray-200 py-6">
+        <div class="max-w-5xl mx-auto px-6">
+            <p class="text-center text-gray-600">&copy; 2025 FlexNet JSX Framework. Created by Dr. Robert Whetsel and the FlexNet Development Team.</p>
+            <div class="flex justify-center space-x-6 mt-4">
+                <a href="https://github.com/flexnet/flexnet-jsx" class="text-gray-600 hover:text-primary">GitHub</a>
+                <a href="contribution.html" class="text-gray-600 hover:text-primary">Contribute</a>
+                <a href="../LICENSE.html" class="text-gray-600 hover:text-primary">License</a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Simple client-side search functionality
+        const searchInput = document.querySelector('input[placeholder="Search documentation..."]');
+        searchInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                const query = searchInput.value.toLowerCase();
+                // Implement search functionality
+                console.log('Searching for:', query);
+                // This would typically use a search index or API
+            }
+        });
+    </script>
+</body>
+</html> 

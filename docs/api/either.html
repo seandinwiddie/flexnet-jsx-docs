@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Either - FlexNet JSX Framework</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/atom-one-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#3b82f6',
+                        secondary: '#6366f1',
+                        dark: '#1e293b',
+                        light: '#f8fafc'
+                    }
+                }
+            }
+        }
+        hljs.highlightAll();
+    </script>
+</head>
+<body class="bg-gray-50 text-gray-900 min-h-screen">
+    <div class="flex flex-col md:flex-row">
+        <!-- Sidebar -->
+        <aside class="w-full md:w-64 bg-white border-r border-gray-200 md:h-screen md:sticky top-0 overflow-y-auto">
+            <div class="p-4 border-b border-gray-200">
+                <h1 class="text-2xl font-bold text-primary">FlexNet</h1>
+                <p class="text-sm text-gray-500">v1.0.0</p>
+            </div>
+            <nav class="p-4">
+                <div class="mb-6">
+                    <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">Getting Started</h3>
+                    <ul class="space-y-2">
+                        <li><a href="../guides/introduction.html" class="block text-gray-700 hover:text-primary">Introduction</a></li>
+                        <li><a href="../guides/installation.html" class="block text-gray-700 hover:text-primary">Installation</a></li>
+                        <li><a href="../guides/quickstart.html" class="block text-gray-700 hover:text-primary">Quick Start</a></li>
+                        <li><a href="../guides/core-concepts.html" class="block text-gray-700 hover:text-primary">Core Concepts</a></li>
+                    </ul>
+                </div>
+                <div class="mb-6">
+                    <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">Core</h3>
+                    <ul class="space-y-2">
+                        <li><a href="../core/jsx-runtime.html" class="block text-gray-700 hover:text-primary">JSX Runtime</a></li>
+                        <li><a href="../core/types.html" class="block text-gray-700 hover:text-primary">Type System</a></li>
+                        <li><a href="../core/functions.html" class="block text-gray-700 hover:text-primary">Functions</a></li>
+                        <li><a href="../core/security.html" class="block text-gray-700 hover:text-primary">Security</a></li>
+                    </ul>
+                </div>
+                <div class="mb-6">
+                    <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">Systems</h3>
+                    <ul class="space-y-2">
+                        <li><a href="../systems/state.html" class="block text-gray-700 hover:text-primary">State Management</a></li>
+                        <li><a href="../systems/effects.html" class="block text-gray-700 hover:text-primary">Effects</a></li>
+                        <li><a href="../systems/render.html" class="block text-gray-700 hover:text-primary">Render</a></li>
+                        <li><a href="../systems/events.html" class="block text-gray-700 hover:text-primary">Events</a></li>
+                        <li><a href="../systems/errors.html" class="block text-gray-700 hover:text-primary">Error Handling</a></li>
+                    </ul>
+                </div>
+                <div class="mb-6">
+                    <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">Examples</h3>
+                    <ul class="space-y-2">
+                        <li><a href="../examples/counter.html" class="block text-gray-700 hover:text-primary">Counter</a></li>
+                        <li><a href="../examples/todo.html" class="block text-gray-700 hover:text-primary">Todo App</a></li>
+                        <li><a href="../examples/website.html" class="block text-gray-700 hover:text-primary">Website</a></li>
+                    </ul>
+                </div>
+                <div class="mb-6">
+                    <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">API Reference</h3>
+                    <ul class="space-y-2">
+                        <li><a href="jsx.html" class="block text-gray-700 hover:text-primary">JSX API</a></li>
+                        <li><a href="maybe.html" class="block text-gray-700 hover:text-primary">Maybe</a></li>
+                        <li><a href="either.html" class="block text-gray-700 hover:text-primary font-medium text-primary">Either</a></li>
+                        <li><a href="result.html" class="block text-gray-700 hover:text-primary">Result</a></li>
+                        <li><a href="store.html" class="block text-gray-700 hover:text-primary">Store</a></li>
+                    </ul>
+                </div>
+            </nav>
+        </aside>
+
+        <!-- Main content -->
+        <main class="flex-1">
+            <div class="border-b border-gray-200 bg-white sticky top-0 z-10">
+                <div class="flex items-center justify-between px-4 py-3">
+                    <div class="relative w-full max-w-md">
+                        <input type="text" placeholder="Search documentation..." class="w-full pl-10 pr-4 py-2 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 text-gray-400 absolute left-3 top-1/2 transform -translate-y-1/2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
+                        </svg>
+                    </div>
+                    <div class="flex space-x-4 ml-4">
+                        <a href="https://github.com/flexnet/flexnet-jsx" target="_blank" class="text-gray-600 hover:text-primary">GitHub</a>
+                        <a href="../../starter-project/README.md" target="_blank" class="text-gray-600 hover:text-primary">Starter Project</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="p-8 max-w-4xl mx-auto">
+                <div class="flex items-center space-x-2 text-sm text-gray-500 mb-8">
+                    <a href="../index.html" class="hover:text-primary">Home</a>
+                    <span>/</span>
+                    <a href="maybe.html" class="hover:text-primary">API</a>
+                    <span>/</span>
+                    <span class="text-gray-700">Either</span>
+                </div>
+
+                <h1 class="text-4xl font-bold mb-6">Either</h1>
+                <p class="text-lg text-gray-600 mb-8">The Either type represents values with two possibilities: a value of type Left or a value of type Right.</p>
+
+                <div class="prose prose-blue max-w-none">
+                    <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2" id="overview">Overview</h2>
+                    <p class="mb-4">The <code>Either</code> type is a functional programming construct that represents a value which is either a "Left" or a "Right". Typically, the Left side represents an error or failure case, while the Right side represents a success or valid value.</p>
+                    
+                    <p class="mb-4">This approach provides several advantages over traditional error handling:</p>
+                    <ul class="list-disc pl-6 mb-6 space-y-2">
+                        <li>No exceptions or runtime errors</li>
+                        <li>Type-safe error handling</li>
+                        <li>Composition of operations that might fail</li>
+                        <li>Clear, explicit error paths</li>
+                    </ul>
+
+                    <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2" id="usage">Basic Usage</h2>
+                    <p class="mb-4">Here's a simple example of how to use the Either type:</p>
+
+                    <pre class="bg-gray-800 text-white p-4 rounded-lg mb-6"><code class="language-javascript">import { Either } from './src/core/types/either.js';
+
+// Create Either values
+const right = Either.Right(42);
+const left = Either.Left('Error message');
+
+// Check which variant we have
+console.log(right.isRight()); // true
+console.log(right.isLeft()); // false
+console.log(left.isRight()); // false
+console.log(left.isLeft()); // true
+
+// Safely extract values
+console.log(right.getOrElse(0)); // 42
+console.log(left.getOrElse(0)); // 0</code></pre>
+
+                    <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2" id="common-use-cases">Common Use Cases</h2>
+                    <p class="mb-4">The Either type is commonly used for:</p>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                        <div class="bg-white p-5 rounded-lg shadow-sm border border-gray-100">
+                            <h3 class="text-lg font-semibold mb-2">Error Handling</h3>
+                            <p class="text-gray-600">Represent operations that might fail with detailed error information.</p>
+                        </div>
+                        <div class="bg-white p-5 rounded-lg shadow-sm border border-gray-100">
+                            <h3 class="text-lg font-semibold mb-2">Branching Logic</h3>
+                            <p class="text-gray-600">Represent two distinct paths in your code.</p>
+                        </div>
+                        <div class="bg-white p-5 rounded-lg shadow-sm border border-gray-100">
+                            <h3 class="text-lg font-semibold mb-2">Validation</h3>
+                            <p class="text-gray-600">Return valid values or validation errors.</p>
+                        </div>
+                        <div class="bg-white p-5 rounded-lg shadow-sm border border-gray-100">
+                            <h3 class="text-lg font-semibold mb-2">Parsing</h3>
+                            <p class="text-gray-600">Return parsed data or parsing errors.</p>
+                        </div>
+                    </div>
+
+                    <h3 class="text-xl font-medium mt-6 mb-3">Error Handling Example</h3>
+                    <pre class="bg-gray-800 text-white p-4 rounded-lg mb-6"><code class="language-javascript">// Division function that can't divide by zero
+const safeDivide = (a, b) => 
+  b === 0
+    ? Either.Left('Division by zero')
+    : Either.Right(a / b);
+
+// Usage
+const result = safeDivide(10, 2)
+  .map(n => n * 2)        // Only runs if Right
+  .mapLeft(e => `Error: ${e}`); // Only runs if Left
+
+console.log(result.getOrElse('Calculation failed')); // 10</code></pre>
+
+                    <h3 class="text-xl font-medium mt-6 mb-3">Validation Example</h3>
+                    <pre class="bg-gray-800 text-white p-4 rounded-lg mb-6"><code class="language-javascript">// Validate a username
+const validateUsername = (username) => {
+  if (!username) {
+    return Either.Left('Username is required');
+  }
+  if (username.length < 3) {
+    return Either.Left('Username must be at least 3 characters');
+  }
+  if (!/^[a-zA-Z0-9_]+$/.test(username)) {
+    return Either.Left('Username can only contain letters, numbers, and underscores');
+  }
+  return Either.Right(username);
+};
+
+// Usage
+const result = validateUsername('john_doe123');
+
+// Handle both cases
+result.fold(
+  error => console.error(error),   // Left case
+  username => console.log(`Valid username: ${username}`) // Right case
+);</code></pre>
+
+                    <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2" id="api-reference">API Reference</h2>
+
+                    <h3 class="text-xl font-medium mt-6 mb-3">Static Methods</h3>
+                    
+                    <div class="overflow-hidden bg-white shadow-sm border border-gray-200 rounded-lg mb-6">
+                        <table class="min-w-full divide-y divide-gray-200">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Method</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Description</th>
+                                </tr>
+                            </thead>
+                            <tbody class="bg-white divide-y divide-gray-200">
+                                <tr>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                        <code>Either.Left(value)</code>
+                                    </td>
+                                    <td class="px-6 py-4 text-sm text-gray-500">
+                                        Creates a new Left instance containing the given value.
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                        <code>Either.Right(value)</code>
+                                    </td>
+                                    <td class="px-6 py-4 text-sm text-gray-500">
+                                        Creates a new Right instance containing the given value.
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                        <code>Either.fromNullable(value, error)</code>
+                                    </td>
+                                    <td class="px-6 py-4 text-sm text-gray-500">
+                                        Returns a Right with the value if it's not null or undefined, otherwise a Left with the given error.
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                        <code>Either.try(fn)</code>
+                                    </td>
+                                    <td class="px-6 py-4 text-sm text-gray-500">
+                                        Executes the function and returns a Right with the result if it succeeds, or a Left with the error if it throws.
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <h3 class="text-xl font-medium mt-6 mb-3">Instance Methods</h3>
+                    
+                    <div class="overflow-hidden bg-white shadow-sm border border-gray-200 rounded-lg mb-6">
+                        <table class="min-w-full divide-y divide-gray-200">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Method</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Description</th>
+                                </tr>
+                            </thead>
+                            <tbody class="bg-white divide-y divide-gray-200">
+                                <tr>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                        <code>isLeft()</code>
+                                    </td>
+                                    <td class="px-6 py-4 text-sm text-gray-500">
+                                        Returns true if this is a Left, false otherwise.
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                        <code>isRight()</code>
+                                    </td>
+                                    <td class="px-6 py-4 text-sm text-gray-500">
+                                        Returns true if this is a Right, false otherwise.
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                        <code>map(fn)</code>
+                                    </td>
+                                    <td class="px-6 py-4 text-sm text-gray-500">
+                                        If this is a Right, applies the function to the value and returns a new Right. If this is a Left, returns this Left unchanged.
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                        <code>mapLeft(fn)</code>
+                                    </td>
+                                    <td class="px-6 py-4 text-sm text-gray-500">
+                                        If this is a Left, applies the function to the value and returns a new Left. If this is a Right, returns this Right unchanged.
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                        <code>chain(fn)</code>
+                                    </td>
+                                    <td class="px-6 py-4 text-sm text-gray-500">
+                                        If this is a Right, applies the function to the value and returns the result. If this is a Left, returns this Left unchanged.
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                        <code>getOrElse(defaultValue)</code>
+                                    </td>
+                                    <td class="px-6 py-4 text-sm text-gray-500">
+                                        If this is a Right, returns the value. If this is a Left, returns the defaultValue.
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                        <code>fold(leftFn, rightFn)</code>
+                                    </td>
+                                    <td class="px-6 py-4 text-sm text-gray-500">
+                                        Applies leftFn if this is a Left, or rightFn if this is a Right, and returns the result.
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                        <code>swap()</code>
+                                    </td>
+                                    <td class="px-6 py-4 text-sm text-gray-500">
+                                        Converts a Left to a Right and a Right to a Left.
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2" id="advanced-usage">Advanced Usage</h2>
+
+                    <h3 class="text-xl font-medium mt-6 mb-3">Chaining Operations</h3>
+                    <p class="mb-4">Either shines when you need to chain multiple operations that might fail:</p>
+
+                    <pre class="bg-gray-800 text-white p-4 rounded-lg mb-6"><code class="language-javascript">// Validation functions
+const validateEmail = email => 
+  /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
+    ? Either.Right(email)
+    : Either.Left('Invalid email format');
+
+const validatePassword = password => 
+  password.length >= 8
+    ? Either.Right(password)
+    : Either.Left('Password must be at least 8 characters');
+
+const validateUser = user => 
+  user && user.name
+    ? Either.Right(user)
+    : Either.Left('User must have a name');
+
+// Chain validations
+const validateUserData = (userData) => {
+  return validateUser(userData)
+    .chain(user => 
+      validateEmail(user.email)
+        .map(email => ({ ...user, email }))
+    )
+    .chain(user => 
+      validatePassword(user.password)
+        .map(password => ({ ...user, password }))
+    );
+};
+
+// Usage
+const userData = {
+  name: 'John Doe',
+  email: 'john@example.com',
+  password: 'secretpass'
+};
+
+const result = validateUserData(userData);
+
+result.fold(
+  error => console.error(`Validation failed: ${error}`),
+  user => console.log('User is valid:', user)
+);</code></pre>
+
+                    <h3 class="text-xl font-medium mt-6 mb-3">Converting from Try/Catch</h3>
+                    <p class="mb-4">Convert traditional try/catch blocks to Either for more functional error handling:</p>
+
+                    <pre class="bg-gray-800 text-white p-4 rounded-lg mb-6"><code class="language-javascript">// Parse JSON with Either
+const parseJSON = str => Either.try(() => JSON.parse(str));
+
+// Usage
+const jsonStr = '{"name": "John", "age": 30}';
+const invalidJson = '{name: John}';
+
+const result1 = parseJSON(jsonStr);  // Right({name: "John", age: 30})
+const result2 = parseJSON(invalidJson);  // Left(SyntaxError)
+
+// Handle both cases with fold
+result1.fold(
+  error => console.error('Parsing failed:', error.message),
+  data => console.log('Name:', data.name, 'Age:', data.age)
+);</code></pre>
+
+                    <h3 class="text-xl font-medium mt-6 mb-3">Combining with Maybe</h3>
+                    <p class="mb-4">Either and Maybe work well together for handling both nullability and errors:</p>
+
+                    <pre class="bg-gray-800 text-white p-4 rounded-lg mb-6"><code class="language-javascript">import { Maybe } from './src/core/types/maybe.js';
+import { Either } from './src/core/types/either.js';
+
+// Get user from storage, which might be null
+const getUserFromStorage = (id) => {
+  const user = localStorage.getItem(`user_${id}`);
+  return Maybe.fromNullable(user);
+};
+
+// Parse the user JSON, which might fail
+const parseUser = (userJson) => Either.try(() => JSON.parse(userJson));
+
+// Combined operation
+const getUser = (id) => {
+  return getUserFromStorage(id)
+    .toEither('User not found')  // Convert Maybe to Either
+    .chain(parseUser);           // Chain with another Either operation
+};
+
+// Usage
+const user = getUser(123);
+
+user.fold(
+  error => console.error('Error:', error),
+  userData => console.log('User:', userData)
+);</code></pre>
+
+                    <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2" id="integration">Integration with Other FlexNet Features</h2>
+
+                    <h3 class="text-xl font-medium mt-6 mb-3">Using Either with Effects</h3>
+                    <p class="mb-4">Either works well with the effect system for handling asynchronous operations:</p>
+
+                    <pre class="bg-gray-800 text-white p-4 rounded-lg mb-6"><code class="language-javascript">import { createEffect, runEffect } from './src/systems/effects/effect.js';
+import { Either } from './src/core/types/either.js';
+
+// Fetch data effect that returns Either
+const fetchDataEffect = (url) => createEffect(({ onComplete }) => {
+  fetch(url)
+    .then(response => {
+      if (!response.ok) {
+        return Either.Left(`HTTP error: ${response.status}`);
+      }
+      return response.json()
+        .then(data => Either.Right(data))
+        .catch(err => Either.Left(`JSON parse error: ${err.message}`));
+    })
+    .then(either => onComplete(either))
+    .catch(err => onComplete(Either.Left(`Network error: ${err.message}`)));
+  
+  return () => {}; // Cleanup function
+});
+
+// Usage
+runEffect(fetchDataEffect('/api/users'), {
+  onComplete: result => {
+    result.fold(
+      error => console.error('Failed to fetch users:', error),
+      users => console.log('Users:', users)
+    );
+  }
+});</code></pre>
+
+                    <h3 class="text-xl font-medium mt-6 mb-3">Using Either with State Management</h3>
+                    <p class="mb-4">Either can be used in state management to handle loading states and errors:</p>
+
+                    <pre class="bg-gray-800 text-white p-4 rounded-lg mb-6"><code class="language-javascript">import { createStore } from './src/systems/state/store.js';
+import { Either } from './src/core/types/either.js';
+
+// Initial state: not loaded
+const initialState = {
+  data: Either.Left('Data not loaded'),
+  loading: false
+};
+
+// Create store
+const store = createStore(initialState);
+
+// Action creators
+const setLoading = loading => state => ({ ...state, loading });
+const setData = data => state => ({ ...state, data: Either.Right(data), loading: false });
+const setError = error => state => ({ ...state, data: Either.Left(error), loading: false });
+
+// Async action to load data
+const loadData = () => {
+  store.update(setLoading(true));
+  
+  fetch('/api/data')
+    .then(response => {
+      if (!response.ok) throw new Error(`HTTP error: ${response.status}`);
+      return response.json();
+    })
+    .then(data => store.update(setData(data)))
+    .catch(error => store.update(setError(error.message)));
+};
+
+// Component rendering based on state
+const renderComponent = () => {
+  const { data, loading } = store.getState();
+  
+  if (loading) {
+    return '<div>Loading...</div>';
+  }
+  
+  return data.fold(
+    error => `<div class="error">Error: ${error}</div>`,
+    data => `<div class="data">${JSON.stringify(data)}</div>`
+  );
+};</code></pre>
+
+                    <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2" id="browser-support">Browser Support</h2>
+                    <p class="mb-4">The Either implementation in FlexNet JSX works in all modern browsers:</p>
+                    
+                    <div class="overflow-hidden bg-white shadow-sm border border-gray-200 rounded-lg mb-6">
+                        <table class="min-w-full divide-y divide-gray-200">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Browser</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Support</th>
+                                </tr>
+                            </thead>
+                            <tbody class="bg-white divide-y divide-gray-200">
+                                <tr>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">Chrome</td>
+                                    <td class="px-6 py-4 text-sm text-gray-500">Latest</td>
+                                </tr>
+                                <tr>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">Firefox</td>
+                                    <td class="px-6 py-4 text-sm text-gray-500">Latest</td>
+                                </tr>
+                                <tr>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">Safari</td>
+                                    <td class="px-6 py-4 text-sm text-gray-500">Latest</td>
+                                </tr>
+                                <tr>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">Edge</td>
+                                    <td class="px-6 py-4 text-sm text-gray-500">Latest</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2" id="next-steps">Next Steps</h2>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
+                        <a href="maybe.html" class="block p-4 border border-gray-200 rounded-lg hover:border-primary hover:shadow-md transition">
+                            <h3 class="font-semibold text-lg mb-2">Maybe Type</h3>
+                            <p class="text-gray-600">Learn about the Maybe type for handling optional values.</p>
+                        </a>
+                        <a href="result.html" class="block p-4 border border-gray-200 rounded-lg hover:border-primary hover:shadow-md transition">
+                            <h3 class="font-semibold text-lg mb-2">Result Type</h3>
+                            <p class="text-gray-600">Explore the Result type for operation outcomes.</p>
+                        </a>
+                        <a href="../systems/errors.html" class="block p-4 border border-gray-200 rounded-lg hover:border-primary hover:shadow-md transition">
+                            <h3 class="font-semibold text-lg mb-2">Error Handling</h3>
+                            <p class="text-gray-600">Learn more about error handling in FlexNet JSX.</p>
+                        </a>
+                        <a href="../examples/todo.html" class="block p-4 border border-gray-200 rounded-lg hover:border-primary hover:shadow-md transition">
+                            <h3 class="font-semibold text-lg mb-2">Todo App Example</h3>
+                            <p class="text-gray-600">See Either in action in a complete application.</p>
+                        </a>
+                    </div>
+
+                    <div class="bg-blue-50 border-l-4 border-primary p-4 rounded-md">
+                        <h4 class="font-semibold flex items-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-primary" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2h-1V9z" clip-rule="evenodd" />
+                            </svg>
+                            Looking for more examples?
+                        </h4>
+                        <p>Check out our <a href="../core/types.html" class="text-primary hover:underline">Type System</a> documentation for more advanced usage patterns with Either and other functional types.</p>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <footer class="bg-white border-t border-gray-200 py-6">
+        <div class="max-w-5xl mx-auto px-6">
+            <p class="text-center text-gray-600">&copy; 2025 FlexNet JSX Framework. Created by Dr. Robert Whetsel and the FlexNet Development Team.</p>
+            <div class="flex justify-center space-x-6 mt-4">
+                <a href="https://github.com/flexnet/flexnet-jsx" class="text-gray-600 hover:text-primary">GitHub</a>
+                <a href="../guides/contribution.html" class="text-gray-600 hover:text-primary">Contribute</a>
+                <a href="../LICENSE.html" class="text-gray-600 hover:text-primary">License</a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Simple client-side search functionality
+        const searchInput = document.querySelector('input[placeholder="Search documentation..."]');
+        searchInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                const query = searchInput.value.toLowerCase();
+                // Implement search functionality
+                console.log('Searching for:', query);
+                // This would typically use a search index or API
+            }
+        });
+    </script>
+</body>
+</html> 

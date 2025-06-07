@@ -1,0 +1,669 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Website Example - FlexNet JSX Framework</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/atom-one-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#3b82f6',
+                        secondary: '#6366f1',
+                        dark: '#1e293b',
+                        light: '#f8fafc'
+                    }
+                }
+            }
+        }
+        hljs.highlightAll();
+    </script>
+</head>
+<body class="bg-gray-50 text-gray-900 min-h-screen">
+    <div class="flex flex-col md:flex-row">
+        <!-- Sidebar -->
+        <aside class="w-full md:w-64 bg-white border-r border-gray-200 md:h-screen md:sticky top-0 overflow-y-auto">
+            <div class="p-4 border-b border-gray-200">
+                <h1 class="text-2xl font-bold text-primary">FlexNet</h1>
+                <p class="text-sm text-gray-500">v1.0.0</p>
+            </div>
+            <nav class="p-4">
+                <div class="mb-6">
+                    <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">Getting Started</h3>
+                    <ul class="space-y-2">
+                        <li><a href="../guides/introduction.html" class="block text-gray-700 hover:text-primary">Introduction</a></li>
+                        <li><a href="../guides/installation.html" class="block text-gray-700 hover:text-primary">Installation</a></li>
+                        <li><a href="../guides/quickstart.html" class="block text-gray-700 hover:text-primary">Quick Start</a></li>
+                        <li><a href="../guides/core-concepts.html" class="block text-gray-700 hover:text-primary">Core Concepts</a></li>
+                    </ul>
+                </div>
+                <div class="mb-6">
+                    <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">Core</h3>
+                    <ul class="space-y-2">
+                        <li><a href="../core/jsx-runtime.html" class="block text-gray-700 hover:text-primary">JSX Runtime</a></li>
+                        <li><a href="../core/types.html" class="block text-gray-700 hover:text-primary">Type System</a></li>
+                        <li><a href="../core/functions.html" class="block text-gray-700 hover:text-primary">Functions</a></li>
+                        <li><a href="../core/security.html" class="block text-gray-700 hover:text-primary">Security</a></li>
+                    </ul>
+                </div>
+                <div class="mb-6">
+                    <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">Systems</h3>
+                    <ul class="space-y-2">
+                        <li><a href="../systems/state.html" class="block text-gray-700 hover:text-primary">State Management</a></li>
+                        <li><a href="../systems/effects.html" class="block text-gray-700 hover:text-primary">Effects</a></li>
+                        <li><a href="../systems/render.html" class="block text-gray-700 hover:text-primary">Render</a></li>
+                        <li><a href="../systems/events.html" class="block text-gray-700 hover:text-primary">Events</a></li>
+                        <li><a href="../systems/errors.html" class="block text-gray-700 hover:text-primary">Error Handling</a></li>
+                    </ul>
+                </div>
+                <div class="mb-6">
+                    <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">Examples</h3>
+                    <ul class="space-y-2">
+                        <li><a href="counter.html" class="block text-gray-700 hover:text-primary">Counter</a></li>
+                        <li><a href="todo.html" class="block text-gray-700 hover:text-primary">Todo App</a></li>
+                        <li><a href="website.html" class="block text-gray-700 hover:text-primary font-medium text-primary">Website</a></li>
+                    </ul>
+                </div>
+                <div class="mb-6">
+                    <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">API Reference</h3>
+                    <ul class="space-y-2">
+                        <li><a href="../api/jsx.html" class="block text-gray-700 hover:text-primary">JSX API</a></li>
+                        <li><a href="../api/maybe.html" class="block text-gray-700 hover:text-primary">Maybe</a></li>
+                        <li><a href="../api/either.html" class="block text-gray-700 hover:text-primary">Either</a></li>
+                        <li><a href="../api/result.html" class="block text-gray-700 hover:text-primary">Result</a></li>
+                        <li><a href="../api/store.html" class="block text-gray-700 hover:text-primary">Store</a></li>
+                    </ul>
+                </div>
+            </nav>
+        </aside>
+
+        <!-- Main content -->
+        <main class="flex-1">
+            <div class="border-b border-gray-200 bg-white sticky top-0 z-10">
+                <div class="flex items-center justify-between px-4 py-3">
+                    <div class="relative w-full max-w-md">
+                        <input type="text" placeholder="Search documentation..." class="w-full pl-10 pr-4 py-2 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 text-gray-400 absolute left-3 top-1/2 transform -translate-y-1/2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
+                        </svg>
+                    </div>
+                    <div class="flex space-x-4 ml-4">
+                        <a href="https://github.com/flexnet/flexnet-jsx" target="_blank" class="text-gray-600 hover:text-primary">GitHub</a>
+                        <a href="../../starter-project/README.md" target="_blank" class="text-gray-600 hover:text-primary">Starter Project</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="p-8 max-w-4xl mx-auto">
+                <div class="flex items-center space-x-2 text-sm text-gray-500 mb-8">
+                    <a href="../index.html" class="hover:text-primary">Home</a>
+                    <span>/</span>
+                    <a href="counter.html" class="hover:text-primary">Examples</a>
+                    <span>/</span>
+                    <span class="text-gray-700">Website</span>
+                </div>
+
+                <h1 class="text-4xl font-bold mb-6">Website Example</h1>
+                <p class="text-lg text-gray-600 mb-8">Building a complete website with FlexNet JSX</p>
+
+                <div class="prose prose-blue max-w-none">
+                    <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2" id="overview">Overview</h2>
+                    <p class="mb-4">This example demonstrates how to build a complete multi-page website using FlexNet JSX, showcasing routing, data fetching, state management, and more.</p>
+                    
+                    <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-100 mb-6">
+                        <h3 class="text-lg font-semibold mb-3">Key Features</h3>
+                        <ul class="space-y-2">
+                            <li class="flex items-start">
+                                <svg class="h-5 w-5 text-primary mt-0.5 mr-2 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                                </svg>
+                                <span><strong>Functional Routing System</strong> with route parameters and guards</span>
+                            </li>
+                            <li class="flex items-start">
+                                <svg class="h-5 w-5 text-primary mt-0.5 mr-2 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                                </svg>
+                                <span><strong>API Integration</strong> with the Effect system</span>
+                            </li>
+                            <li class="flex items-start">
+                                <svg class="h-5 w-5 text-primary mt-0.5 mr-2 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                                </svg>
+                                <span><strong>Component Composition</strong> with Header, Footer, and Layout components</span>
+                            </li>
+                            <li class="flex items-start">
+                                <svg class="h-5 w-5 text-primary mt-0.5 mr-2 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                                </svg>
+                                <span><strong>Form Handling</strong> with validation using Maybe and Either</span>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="my-8">
+                        <img src="../assets/website-example-preview.png" alt="Website Example Preview" class="rounded-lg shadow-md">
+                    </div>
+
+                    <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2" id="project-structure">Project Structure</h2>
+                    <pre class="bg-gray-800 text-white p-4 rounded-lg mb-6"><code class="language-text">website-example/
+├── index.html
+├── styles.css
+├── src/
+│   ├── index.js           # Main entry point
+│   ├── components/        # Reusable components
+│   │   ├── Header.js
+│   │   ├── Footer.js
+│   │   ├── Layout.js
+│   │   ├── Navigation.js
+│   │   └── ...
+│   ├── pages/            # Page components
+│   │   ├── HomePage.js
+│   │   ├── AboutPage.js
+│   │   ├── BlogPage.js
+│   │   ├── ContactPage.js
+│   │   └── ...
+│   ├── features/         # Feature-specific modules
+│   │   ├── blog/         
+│   │   │   ├── BlogList.js
+│   │   │   ├── BlogPost.js
+│   │   │   └── blogStore.js
+│   │   ├── contact/
+│   │   │   ├── ContactForm.js
+│   │   │   └── validators.js
+│   │   └── ...
+│   ├── router/           # Routing system
+│   │   ├── router.js
+│   │   ├── Route.js
+│   │   └── Link.js
+│   ├── api/              # API integration
+│   │   ├── client.js
+│   │   ├── blogApi.js
+│   │   └── contactApi.js
+│   └── utils/            # Utility functions
+│       ├── validators.js
+│       └── formatting.js
+└── README.md</code></pre>
+
+                    <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2" id="key-components">Key Components</h2>
+                    
+                    <h3 class="text-xl font-medium mt-6 mb-3">Router Implementation</h3>
+                    <pre class="bg-gray-800 text-white p-4 rounded-lg mb-6"><code class="language-javascript">// src/router/router.js
+import { Maybe } from '../core/types/maybe.js';
+import { createStore } from '../core/state/store.js';
+
+export const createRouter = (routes) => {
+  // Store current route state
+  const routeStore = createStore({
+    path: window.location.pathname,
+    params: {},
+    query: {}
+  });
+
+  // Parse route parameters from path
+  const parseParams = (routePath, currentPath) => {
+    const routeParts = routePath.split('/').filter(Boolean);
+    const pathParts = currentPath.split('/').filter(Boolean);
+    
+    if (routeParts.length !== pathParts.length) return Maybe.Nothing();
+    
+    const params = {};
+    
+    for (let i = 0; i < routeParts.length; i++) {
+      const routePart = routeParts[i];
+      const pathPart = pathParts[i];
+      
+      if (routePart.startsWith(':')) {
+        params[routePart.slice(1)] = pathPart;
+      } else if (routePart !== pathPart) {
+        return Maybe.Nothing();
+      }
+    }
+    
+    return Maybe.Just(params);
+  };
+
+  // Match current path to route
+  const matchRoute = (path) => {
+    for (const route of routes) {
+      const params = parseParams(route.path, path);
+      
+      if (params.isJust()) {
+        return {
+          component: route.component,
+          params: params.getOrElse({})
+        };
+      }
+    }
+    
+    return {
+      component: routes.find(r => r.path === '*')?.component,
+      params: {}
+    };
+  };
+
+  // Handle navigation
+  const navigate = (path) => {
+    window.history.pushState(null, '', path);
+    const { component, params } = matchRoute(path);
+    
+    routeStore.update(() => ({
+      path,
+      params,
+      component
+    }));
+  };
+
+  // Initialize router
+  const init = () => {
+    // Setup popstate listener
+    window.addEventListener('popstate', () => {
+      navigate(window.location.pathname);
+    });
+    
+    // Intercept link clicks
+    document.addEventListener('click', (e) => {
+      if (e.target.tagName === 'A' && e.target.getAttribute('data-internal') === 'true') {
+        e.preventDefault();
+        navigate(e.target.getAttribute('href'));
+      }
+    });
+    
+    // Initial route
+    navigate(window.location.pathname);
+  };
+
+  return {
+    init,
+    navigate,
+    subscribe: routeStore.subscribe,
+    getCurrentRoute: () => routeStore.getState()
+  };
+};</code></pre>
+
+                    <h3 class="text-xl font-medium mt-6 mb-3">API Client with Effects</h3>
+                    <pre class="bg-gray-800 text-white p-4 rounded-lg mb-6"><code class="language-javascript">// src/api/client.js
+import { createEffect } from '../core/effects/effect.js';
+import { Either } from '../core/types/either.js';
+
+export const apiClient = {
+  // Base fetch function with Either for error handling
+  fetch: (url, options = {}) => createEffect(({ onSuccess, onError, onLoading }) => {
+    onLoading(true);
+    const controller = new AbortController();
+    
+    fetch(url, { 
+      ...options, 
+      signal: controller.signal,
+      headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+      }
+    })
+      .then(response => {
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.json();
+      })
+      .then(data => {
+        onLoading(false);
+        onSuccess(Either.Right(data));
+      })
+      .catch(error => {
+        if (error.name !== 'AbortError') {
+          onLoading(false);
+          onError(Either.Left(error.message));
+        }
+      });
+    
+    // Return cleanup function
+    return () => controller.abort();
+  }),
+  
+  // GET request
+  get: (url) => apiClient.fetch(url),
+  
+  // POST request
+  post: (url, data) => apiClient.fetch(url, {
+    method: 'POST',
+    body: JSON.stringify(data)
+  }),
+  
+  // PUT request
+  put: (url, data) => apiClient.fetch(url, {
+    method: 'PUT',
+    body: JSON.stringify(data)
+  }),
+  
+  // DELETE request
+  delete: (url) => apiClient.fetch(url, {
+    method: 'DELETE'
+  })
+};</code></pre>
+
+                    <h3 class="text-xl font-medium mt-6 mb-3">Form Handling with Validation</h3>
+                    <pre class="bg-gray-800 text-white p-4 rounded-lg mb-6"><code class="language-javascript">// src/features/contact/ContactForm.js
+import { createElement } from '../../core/jsx.js';
+import { createStore } from '../../core/state/store.js';
+import { Either } from '../../core/types/either.js';
+import { apiClient } from '../../api/contactApi.js';
+import { runEffect } from '../../core/effects/effect.js';
+import { validateEmail, validateRequired } from './validators.js';
+
+export const ContactForm = () => {
+  // Form state
+  const formStore = createStore({
+    name: '',
+    email: '',
+    message: '',
+    errors: {},
+    submitting: false,
+    submitted: false
+  });
+  
+  // Update field value
+  const updateField = (field, value) => {
+    formStore.update(state => ({
+      ...state,
+      [field]: value,
+      errors: {
+        ...state.errors,
+        [field]: null // Clear error when field is updated
+      }
+    }));
+  };
+  
+  // Validate form
+  const validateForm = () => {
+    const { name, email, message } = formStore.getState();
+    const errors = {};
+    
+    // Validate name
+    validateRequired(name, 'Name is required')
+      .fold(
+        error => { errors.name = error; },
+        () => {}
+      );
+    
+    // Validate email
+    validateEmail(email)
+      .fold(
+        error => { errors.email = error; },
+        () => {}
+      );
+    
+    // Validate message
+    validateRequired(message, 'Message is required')
+      .fold(
+        error => { errors.message = error; },
+        () => {}
+      );
+    
+    // Update errors in state
+    formStore.update(state => ({
+      ...state,
+      errors
+    }));
+    
+    // Return whether form is valid
+    return Object.keys(errors).length === 0;
+  };
+  
+  // Handle form submission
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    
+    if (!validateForm()) return;
+    
+    const { name, email, message } = formStore.getState();
+    
+    // Set submitting state
+    formStore.update(state => ({
+      ...state,
+      submitting: true
+    }));
+    
+    // Submit form data
+    runEffect(apiClient.post('/api/contact', { name, email, message }), {
+      onSuccess: (result) => {
+        result.fold(
+          error => {
+            formStore.update(state => ({
+              ...state,
+              submitting: false,
+              errors: { form: error }
+            }));
+          },
+          () => {
+            formStore.update(state => ({
+              ...state,
+              submitting: false,
+              submitted: true,
+              name: '',
+              email: '',
+              message: ''
+            }));
+          }
+        );
+      },
+      onError: (error) => {
+        formStore.update(state => ({
+          ...state,
+          submitting: false,
+          errors: { form: error.getOrElse('An error occurred') }
+        }));
+      }
+    });
+  };
+  
+  // Render form
+  return () => {
+    const { name, email, message, errors, submitting, submitted } = formStore.getState();
+    
+    if (submitted) {
+      return createElement('div', { className: 'success-message' },
+        createElement('h3', null, 'Thank you for your message!'),
+        createElement('p', null, 'We will get back to you soon.'),
+        createElement('button', {
+          className: 'btn btn-primary mt-4',
+          onClick: () => formStore.update(state => ({ ...state, submitted: false }))
+        }, 'Send another message')
+      );
+    }
+    
+    return createElement('form', { onSubmit: handleSubmit, className: 'contact-form' },
+      createElement('div', { className: 'form-group' },
+        createElement('label', { htmlFor: 'name' }, 'Name'),
+        createElement('input', {
+          type: 'text',
+          id: 'name',
+          value: name,
+          onChange: (e) => updateField('name', e.target.value),
+          className: errors.name ? 'input-error' : ''
+        }),
+        errors.name && createElement('div', { className: 'error' }, errors.name)
+      ),
+      
+      createElement('div', { className: 'form-group' },
+        createElement('label', { htmlFor: 'email' }, 'Email'),
+        createElement('input', {
+          type: 'email',
+          id: 'email',
+          value: email,
+          onChange: (e) => updateField('email', e.target.value),
+          className: errors.email ? 'input-error' : ''
+        }),
+        errors.email && createElement('div', { className: 'error' }, errors.email)
+      ),
+      
+      createElement('div', { className: 'form-group' },
+        createElement('label', { htmlFor: 'message' }, 'Message'),
+        createElement('textarea', {
+          id: 'message',
+          value: message,
+          onChange: (e) => updateField('message', e.target.value),
+          rows: 5,
+          className: errors.message ? 'input-error' : ''
+        }),
+        errors.message && createElement('div', { className: 'error' }, errors.message)
+      ),
+      
+      errors.form && createElement('div', { className: 'form-error' }, errors.form),
+      
+      createElement('button', {
+        type: 'submit',
+        className: 'btn btn-primary',
+        disabled: submitting
+      }, submitting ? 'Sending...' : 'Send Message')
+    );
+  };
+};</code></pre>
+
+                    <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2" id="main-application">Main Application</h2>
+                    <pre class="bg-gray-800 text-white p-4 rounded-lg mb-6"><code class="language-javascript">// src/index.js
+import { createElement, render } from './core/jsx.js';
+import { createRouter } from './router/router.js';
+import { Layout } from './components/Layout.js';
+import { HomePage } from './pages/HomePage.js';
+import { AboutPage } from './pages/AboutPage.js';
+import { BlogPage } from './pages/BlogPage.js';
+import { BlogPostPage } from './pages/BlogPostPage.js';
+import { ContactPage } from './pages/ContactPage.js';
+import { NotFoundPage } from './pages/NotFoundPage.js';
+
+// Define routes
+const routes = [
+  { path: '/', component: HomePage },
+  { path: '/about', component: AboutPage },
+  { path: '/blog', component: BlogPage },
+  { path: '/blog/:id', component: BlogPostPage },
+  { path: '/contact', component: ContactPage },
+  { path: '*', component: NotFoundPage }
+];
+
+// Create router
+const router = createRouter(routes);
+
+// App component
+const App = () => {
+  // Subscribe to route changes
+  router.subscribe(({ component, params }) => {
+    // Render the current route component within the layout
+    render(
+      createElement(Layout, null,
+        createElement(component, { params })
+      ),
+      document.getElementById('root')
+    );
+  });
+
+  // Initialize router
+  router.init();
+};
+
+// Start the application
+document.addEventListener('DOMContentLoaded', App);</code></pre>
+
+                    <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2" id="running-example">Running the Example</h2>
+                    <p class="mb-4">To run this example:</p>
+                    
+                    <pre class="bg-gray-800 text-white p-4 rounded-lg mb-6"><code class="language-bash"># Clone the starter project
+cd starter-project-website
+python -m http.server 3000
+# Open http://localhost:3000</code></pre>
+
+                    <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded-md mb-6">
+                        <h4 class="font-semibold flex items-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-yellow-500" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2h-1V9z" clip-rule="evenodd" />
+                            </svg>
+                            Note
+                        </h4>
+                        <p>This example uses a mock API for demo purposes. In a real application, you would connect to your backend services.</p>
+                    </div>
+
+                    <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2" id="key-takeaways">Key Takeaways</h2>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                        <div class="bg-white p-5 rounded-lg shadow-sm border border-gray-100">
+                            <h3 class="text-lg font-semibold mb-2">Functional Architecture</h3>
+                            <p class="text-gray-600">The website example demonstrates a complete functional architecture with pure components and immutable state.</p>
+                        </div>
+                        <div class="bg-white p-5 rounded-lg shadow-sm border border-gray-100">
+                            <h3 class="text-lg font-semibold mb-2">Component Composition</h3>
+                            <p class="text-gray-600">Components are composed together to create complex UIs while maintaining separation of concerns.</p>
+                        </div>
+                        <div class="bg-white p-5 rounded-lg shadow-sm border border-gray-100">
+                            <h3 class="text-lg font-semibold mb-2">Type-Safe Error Handling</h3>
+                            <p class="text-gray-600">Either and Maybe types provide robust error handling throughout the application.</p>
+                        </div>
+                        <div class="bg-white p-5 rounded-lg shadow-sm border border-gray-100">
+                            <h3 class="text-lg font-semibold mb-2">Side Effect Management</h3>
+                            <p class="text-gray-600">Effects are cleanly isolated and managed, making the code easier to test and maintain.</p>
+                        </div>
+                    </div>
+
+                    <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2" id="next-steps">Next Steps</h2>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
+                        <a href="../core/jsx-runtime.html" class="block p-4 border border-gray-200 rounded-lg hover:border-primary hover:shadow-md transition">
+                            <h3 class="font-semibold text-lg mb-2">JSX Runtime</h3>
+                            <p class="text-gray-600">Learn more about the JSX runtime that powers this example.</p>
+                        </a>
+                        <a href="../systems/effects.html" class="block p-4 border border-gray-200 rounded-lg hover:border-primary hover:shadow-md transition">
+                            <h3 class="font-semibold text-lg mb-2">Effect System</h3>
+                            <p class="text-gray-600">Explore how the effect system works for API calls and side effects.</p>
+                        </a>
+                        <a href="../api/either.html" class="block p-4 border border-gray-200 rounded-lg hover:border-primary hover:shadow-md transition">
+                            <h3 class="font-semibold text-lg mb-2">Either Type</h3>
+                            <p class="text-gray-600">Learn more about the Either type used for error handling.</p>
+                        </a>
+                        <a href="../api/maybe.html" class="block p-4 border border-gray-200 rounded-lg hover:border-primary hover:shadow-md transition">
+                            <h3 class="font-semibold text-lg mb-2">Maybe Type</h3>
+                            <p class="text-gray-600">Understand how the Maybe type handles optional values.</p>
+                        </a>
+                    </div>
+
+                    <div class="bg-blue-50 border-l-4 border-primary p-4 rounded-md">
+                        <h4 class="font-semibold flex items-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-primary" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2h-1V9z" clip-rule="evenodd" />
+                            </svg>
+                            Looking for more examples?
+                        </h4>
+                        <p>Check out our <a href="todo.html" class="text-primary hover:underline">Todo App Example</a> for a simpler application that focuses on state management.</p>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <footer class="bg-white border-t border-gray-200 py-6">
+        <div class="max-w-5xl mx-auto px-6">
+            <p class="text-center text-gray-600">&copy; 2025 FlexNet JSX Framework. Created by Dr. Robert Whetsel and the FlexNet Development Team.</p>
+            <div class="flex justify-center space-x-6 mt-4">
+                <a href="https://github.com/flexnet/flexnet-jsx" class="text-gray-600 hover:text-primary">GitHub</a>
+                <a href="../guides/contribution.html" class="text-gray-600 hover:text-primary">Contribute</a>
+                <a href="../LICENSE.html" class="text-gray-600 hover:text-primary">License</a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Simple client-side search functionality
+        const searchInput = document.querySelector('input[placeholder="Search documentation..."]');
+        searchInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                const query = searchInput.value.toLowerCase();
+                // Implement search functionality
+                console.log('Searching for:', query);
+                // This would typically use a search index or API
+            }
+        });
+    </script>
+</body>
+</html> 

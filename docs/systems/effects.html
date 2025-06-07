@@ -1,0 +1,633 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Effects - FlexNet JSX Framework</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/atom-one-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#3b82f6',
+                        secondary: '#6366f1',
+                        dark: '#1e293b',
+                        light: '#f8fafc'
+                    }
+                }
+            }
+        }
+        hljs.highlightAll();
+    </script>
+</head>
+<body class="bg-gray-50 text-gray-900 min-h-screen">
+    <div class="flex flex-col md:flex-row">
+        <!-- Sidebar -->
+        <aside class="w-full md:w-64 bg-white border-r border-gray-200 md:h-screen md:sticky top-0 overflow-y-auto">
+            <div class="p-4 border-b border-gray-200">
+                <h1 class="text-2xl font-bold text-primary">FlexNet</h1>
+                <p class="text-sm text-gray-500">v1.0.0</p>
+            </div>
+            <nav class="p-4">
+                <div class="mb-6">
+                    <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">Getting Started</h3>
+                    <ul class="space-y-2">
+                        <li><a href="../guides/introduction.html" class="block text-gray-700 hover:text-primary">Introduction</a></li>
+                        <li><a href="../guides/installation.html" class="block text-gray-700 hover:text-primary">Installation</a></li>
+                        <li><a href="../guides/quickstart.html" class="block text-gray-700 hover:text-primary">Quick Start</a></li>
+                        <li><a href="../guides/core-concepts.html" class="block text-gray-700 hover:text-primary">Core Concepts</a></li>
+                    </ul>
+                </div>
+                <div class="mb-6">
+                    <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">Core</h3>
+                    <ul class="space-y-2">
+                        <li><a href="../core/jsx-runtime.html" class="block text-gray-700 hover:text-primary">JSX Runtime</a></li>
+                        <li><a href="../core/types.html" class="block text-gray-700 hover:text-primary">Type System</a></li>
+                        <li><a href="../core/functions.html" class="block text-gray-700 hover:text-primary">Functions</a></li>
+                        <li><a href="../core/security.html" class="block text-gray-700 hover:text-primary">Security</a></li>
+                    </ul>
+                </div>
+                <div class="mb-6">
+                    <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">Systems</h3>
+                    <ul class="space-y-2">
+                        <li><a href="state.html" class="block text-gray-700 hover:text-primary">State Management</a></li>
+                        <li><a href="effects.html" class="block text-gray-700 hover:text-primary font-medium text-primary">Effects</a></li>
+                        <li><a href="render.html" class="block text-gray-700 hover:text-primary">Render</a></li>
+                        <li><a href="events.html" class="block text-gray-700 hover:text-primary">Events</a></li>
+                        <li><a href="errors.html" class="block text-gray-700 hover:text-primary">Error Handling</a></li>
+                    </ul>
+                </div>
+                <div class="mb-6">
+                    <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">Examples</h3>
+                    <ul class="space-y-2">
+                        <li><a href="../examples/counter.html" class="block text-gray-700 hover:text-primary">Counter</a></li>
+                        <li><a href="../examples/todo.html" class="block text-gray-700 hover:text-primary">Todo App</a></li>
+                        <li><a href="../examples/website.html" class="block text-gray-700 hover:text-primary">Website</a></li>
+                    </ul>
+                </div>
+                <div class="mb-6">
+                    <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">API Reference</h3>
+                    <ul class="space-y-2">
+                        <li><a href="../api/jsx.html" class="block text-gray-700 hover:text-primary">JSX API</a></li>
+                        <li><a href="../api/maybe.html" class="block text-gray-700 hover:text-primary">Maybe</a></li>
+                        <li><a href="../api/either.html" class="block text-gray-700 hover:text-primary">Either</a></li>
+                        <li><a href="../api/result.html" class="block text-gray-700 hover:text-primary">Result</a></li>
+                        <li><a href="../api/store.html" class="block text-gray-700 hover:text-primary">Store</a></li>
+                    </ul>
+                </div>
+            </nav>
+        </aside>
+
+        <!-- Main content -->
+        <main class="flex-1">
+            <div class="border-b border-gray-200 bg-white sticky top-0 z-10">
+                <div class="flex items-center justify-between px-4 py-3">
+                    <div class="relative w-full max-w-md">
+                        <input type="text" placeholder="Search documentation..." class="w-full pl-10 pr-4 py-2 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 text-gray-400 absolute left-3 top-1/2 transform -translate-y-1/2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
+                        </svg>
+                    </div>
+                    <div class="flex space-x-4 ml-4">
+                        <a href="https://github.com/flexnet/flexnet-jsx" target="_blank" class="text-gray-600 hover:text-primary">GitHub</a>
+                        <a href="../../starter-project/README.md" target="_blank" class="text-gray-600 hover:text-primary">Starter Project</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="p-8 max-w-4xl mx-auto">
+                <div class="flex items-center space-x-2 text-sm text-gray-500 mb-8">
+                    <a href="../index.html" class="hover:text-primary">Home</a>
+                    <span>/</span>
+                    <a href="state.html" class="hover:text-primary">Systems</a>
+                    <span>/</span>
+                    <span class="text-gray-700">Effects</span>
+                </div>
+
+                <h1 class="text-4xl font-bold mb-6">Effect System</h1>
+                <p class="text-lg text-gray-600 mb-8">Learn how to manage side effects in a functional way with FlexNet JSX.</p>
+
+                <div class="prose prose-blue max-w-none">
+                    <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2" id="introduction">Introduction</h2>
+                    <p class="mb-4">Side effects are an inevitable part of web applications — from fetching data and setting timers to manipulating the DOM. The challenge in functional programming is handling these side effects while maintaining the benefits of pure functions.</p>
+                    
+                    <p class="mb-4">FlexNet's Effect System provides a solution by:</p>
+                    <ul class="list-disc pl-6 mb-6 space-y-2">
+                        <li>Isolating side effects from pure business logic</li>
+                        <li>Making effects composable and reusable</li>
+                        <li>Ensuring proper resource cleanup</li>
+                        <li>Providing a predictable way to test effects</li>
+                    </ul>
+
+                    <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2" id="effect-model">The Effect Model</h2>
+                    <p class="mb-4">In FlexNet, an effect is represented as a function that:</p>
+                    <ol class="list-decimal pl-6 mb-6 space-y-2">
+                        <li>Takes configuration or dependencies as input</li>
+                        <li>Returns a function that performs the actual effect</li>
+                        <li>Optionally returns a cleanup function</li>
+                    </ol>
+
+                    <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-100 mb-6">
+                        <h3 class="text-lg font-semibold mb-3">Effect Structure</h3>
+                        <pre class="bg-gray-800 text-white p-4 rounded-lg"><code class="language-javascript">// Effect creator
+const myEffect = (config) => {
+  // Returns the effect runner
+  return (handlers) => {
+    // Perform the effect
+    const resource = performSideEffect();
+    
+    // Return cleanup function
+    return () => {
+      // Clean up resources
+      cleanupResource(resource);
+    };
+  };
+};</code></pre>
+                    </div>
+
+                    <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2" id="creating-effects">Creating Effects</h2>
+                    <p class="mb-4">FlexNet provides a <code>createEffect</code> function to make it easier to define effects:</p>
+
+                    <pre class="bg-gray-800 text-white p-4 rounded-lg mb-6"><code class="language-javascript">import { createEffect } from './src/systems/effects/effect.js';
+
+// Simple timer effect
+const timerEffect = (intervalMs) => createEffect(({ onTick }) => {
+  const timerId = setInterval(() => {
+    onTick(new Date());
+  }, intervalMs);
+  
+  // Return cleanup function
+  return () => clearInterval(timerId);
+});</code></pre>
+
+                    <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2" id="running-effects">Running Effects</h2>
+                    <p class="mb-4">To run an effect, use the <code>runEffect</code> function:</p>
+
+                    <pre class="bg-gray-800 text-white p-4 rounded-lg mb-6"><code class="language-javascript">import { runEffect } from './src/systems/effects/effect.js';
+
+// Create the effect
+const effect = timerEffect(1000);
+
+// Run the effect with handlers
+const cleanup = runEffect(effect, {
+  onTick: (date) => console.log('Tick:', date)
+});
+
+// Later, when you want to clean up:
+cleanup();</code></pre>
+
+                    <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded-md mb-6">
+                        <h4 class="font-semibold flex items-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-yellow-500" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2h-1V9z" clip-rule="evenodd" />
+                            </svg>
+                            Important
+                        </h4>
+                        <p>Always store and call the cleanup function to prevent memory leaks, especially when creating effects in components that may unmount.</p>
+                    </div>
+
+                    <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2" id="common-effects">Common Effect Patterns</h2>
+                    
+                    <h3 class="text-xl font-medium mt-6 mb-3">Fetch Data Effect</h3>
+                    <p class="mb-4">A common use case is fetching data from an API:</p>
+
+                    <pre class="bg-gray-800 text-white p-4 rounded-lg mb-6"><code class="language-javascript">const fetchDataEffect = (url) => createEffect(({ onSuccess, onError, onLoading }) => {
+  let isCancelled = false;
+  const controller = new AbortController();
+  const signal = controller.signal;
+  
+  onLoading(true);
+  
+  fetch(url, { signal })
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      return response.json();
+    })
+    .then(data => {
+      if (!isCancelled) {
+        onLoading(false);
+        onSuccess(data);
+      }
+    })
+    .catch(error => {
+      if (!isCancelled) {
+        onLoading(false);
+        onError(error);
+      }
+    });
+  
+  return () => {
+    isCancelled = true;
+    controller.abort();
+  };
+});</code></pre>
+
+                    <h3 class="text-xl font-medium mt-6 mb-3">Local Storage Effect</h3>
+                    <p class="mb-4">Persisting state to local storage:</p>
+
+                    <pre class="bg-gray-800 text-white p-4 rounded-lg mb-6"><code class="language-javascript">const localStorageEffect = (key, initialValue) => createEffect(({ onChange }) => {
+  // Read from localStorage on initialization
+  try {
+    const item = window.localStorage.getItem(key);
+    const value = item ? JSON.parse(item) : initialValue;
+    onChange(value);
+  } catch (error) {
+    console.error('Error reading from localStorage:', error);
+    onChange(initialValue);
+  }
+
+  // Set up listener for storage events (for multi-tab support)
+  const handleStorage = (event) => {
+    if (event.key === key) {
+      try {
+        const newValue = JSON.parse(event.newValue);
+        onChange(newValue);
+      } catch (error) {
+        console.error('Error parsing localStorage value:', error);
+      }
+    }
+  };
+
+  window.addEventListener('storage', handleStorage);
+
+  // Return cleanup function
+  return () => {
+    window.removeEventListener('storage', handleStorage);
+  };
+});</code></pre>
+
+                    <h3 class="text-xl font-medium mt-6 mb-3">Event Listener Effect</h3>
+                    <p class="mb-4">Adding and removing DOM event listeners:</p>
+
+                    <pre class="bg-gray-800 text-white p-4 rounded-lg mb-6"><code class="language-javascript">const eventListenerEffect = (target, eventType) => createEffect(({ onEvent }) => {
+  const handler = (event) => {
+    onEvent(event);
+  };
+  
+  target.addEventListener(eventType, handler);
+  
+  return () => {
+    target.removeEventListener(eventType, handler);
+  };
+});</code></pre>
+
+                    <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2" id="composing-effects">Composing Effects</h2>
+                    <p class="mb-4">One of the key advantages of FlexNet's effect system is the ability to compose effects together:</p>
+
+                    <pre class="bg-gray-800 text-white p-4 rounded-lg mb-6"><code class="language-javascript">import { composeEffects } from './src/systems/effects/effect.js';
+
+// Simple logging effect
+const logEffect = (message) => createEffect(() => {
+  console.log(`Effect started: ${message}`);
+  return () => console.log(`Effect cleaned up: ${message}`);
+});
+
+// Combine timer and logging
+const combinedEffect = composeEffects(
+  timerEffect(1000),
+  logEffect('Timer effect')
+);
+
+// Run the combined effect
+const cleanup = runEffect(combinedEffect, {
+  onTick: (date) => console.log('Tick:', date)
+});
+
+// Cleanup will clean up both effects
+cleanup();</code></pre>
+
+                    <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2" id="effects-with-state">Effects with State</h2>
+                    <p class="mb-4">Effects often need to interact with state. Here's a pattern for combining effects with the state system:</p>
+
+                    <pre class="bg-gray-800 text-white p-4 rounded-lg mb-6"><code class="language-javascript">import { createStore } from './src/systems/state/store.js';
+import { createEffect, runEffect } from './src/systems/effects/effect.js';
+
+// Create a store
+const userStore = createStore({
+  data: null,
+  loading: false,
+  error: null
+});
+
+// Define state update functions
+const setLoading = loading => state => ({ ...state, loading, error: null });
+const setData = data => state => ({ ...state, data, loading: false, error: null });
+const setError = error => state => ({ ...state, error, loading: false });
+
+// Create a fetch effect that updates state
+const fetchUserEffect = (userId) => createEffect(() => {
+  userStore.update(setLoading(true));
+  
+  fetch(`/api/users/${userId}`)
+    .then(response => response.json())
+    .then(data => {
+      userStore.update(setData(data));
+    })
+    .catch(error => {
+      userStore.update(setError(error.message));
+    });
+  
+  // No cleanup needed in this simple example
+  return () => {};
+});</code></pre>
+
+                    <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2" id="conditional-effects">Conditional Effects</h2>
+                    <p class="mb-4">Sometimes you only want to run an effect under certain conditions:</p>
+
+                    <pre class="bg-gray-800 text-white p-4 rounded-lg mb-6"><code class="language-javascript">// Run effect only if condition is true
+const conditionalEffect = (condition, effect) => {
+  if (condition) {
+    return effect;
+  } else {
+    // Return a no-op effect
+    return createEffect(() => () => {});
+  }
+};
+
+// Example usage
+const effect = conditionalEffect(
+  userId !== null,
+  fetchUserEffect(userId)
+);</code></pre>
+
+                    <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2" id="testing-effects">Testing Effects</h2>
+                    <p class="mb-4">FlexNet's effect system makes it easier to test side effects:</p>
+
+                    <pre class="bg-gray-800 text-white p-4 rounded-lg mb-6"><code class="language-javascript">// Define a mock fetch function
+const mockFetch = (mockData) => {
+  return () => Promise.resolve({
+    ok: true,
+    json: () => Promise.resolve(mockData)
+  });
+};
+
+// Test the fetch effect
+test('fetchUserEffect should call onSuccess with user data', async () => {
+  // Setup
+  const mockUser = { id: 1, name: 'Test User' };
+  const originalFetch = global.fetch;
+  global.fetch = jest.fn().mockImplementation(mockFetch(mockUser));
+  
+  // Create handlers with jest mocks
+  const handlers = {
+    onSuccess: jest.fn(),
+    onError: jest.fn(),
+    onLoading: jest.fn()
+  };
+  
+  // Run the effect
+  const cleanup = runEffect(fetchUserEffect('/api/users/1'), handlers);
+  
+  // Wait for promises to resolve
+  await new Promise(resolve => setTimeout(resolve, 0));
+  
+  // Assertions
+  expect(handlers.onLoading).toHaveBeenCalledWith(true);
+  expect(handlers.onSuccess).toHaveBeenCalledWith(mockUser);
+  expect(handlers.onError).not.toHaveBeenCalled();
+  
+  // Cleanup
+  cleanup();
+  global.fetch = originalFetch;
+});</code></pre>
+
+                    <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2" id="best-practices">Best Practices</h2>
+                    
+                    <div class="bg-gray-100 p-6 rounded-lg mb-6">
+                        <h3 class="text-lg font-semibold mb-3">Effect Best Practices</h3>
+                        <ul class="space-y-4">
+                            <li class="flex">
+                                <div class="mr-4 flex-shrink-0">
+                                    <span class="inline-flex items-center justify-center h-8 w-8 rounded-full bg-blue-100 text-blue-500 text-lg font-bold">1</span>
+                                </div>
+                                <div>
+                                    <h4 class="font-medium">Always Return a Cleanup Function</h4>
+                                    <p class="text-gray-600">Even if no cleanup is needed, return an empty function to maintain consistency.</p>
+                                </div>
+                            </li>
+                            <li class="flex">
+                                <div class="mr-4 flex-shrink-0">
+                                    <span class="inline-flex items-center justify-center h-8 w-8 rounded-full bg-blue-100 text-blue-500 text-lg font-bold">2</span>
+                                </div>
+                                <div>
+                                    <h4 class="font-medium">Keep Effects Small and Focused</h4>
+                                    <p class="text-gray-600">Each effect should do one thing well, allowing for better composition and testing.</p>
+                                </div>
+                            </li>
+                            <li class="flex">
+                                <div class="mr-4 flex-shrink-0">
+                                    <span class="inline-flex items-center justify-center h-8 w-8 rounded-full bg-blue-100 text-blue-500 text-lg font-bold">3</span>
+                                </div>
+                                <div>
+                                    <h4 class="font-medium">Handle Cancellation</h4>
+                                    <p class="text-gray-600">For async effects, properly handle cancellation to prevent race conditions.</p>
+                                </div>
+                            </li>
+                            <li class="flex">
+                                <div class="mr-4 flex-shrink-0">
+                                    <span class="inline-flex items-center justify-center h-8 w-8 rounded-full bg-blue-100 text-blue-500 text-lg font-bold">4</span>
+                                </div>
+                                <div>
+                                    <h4 class="font-medium">Separate Effects from Business Logic</h4>
+                                    <p class="text-gray-600">Keep your core business logic pure and delegate side effects to the effect system.</p>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2" id="complete-example">Complete Example</h2>
+                    <p class="mb-4">Here's a complete example of a user data loader using the effect system:</p>
+
+                    <pre class="bg-gray-800 text-white p-4 rounded-lg mb-6"><code class="language-javascript">import { createElement, render } from './src/core/runtime/jsx.js';
+import { createStore } from './src/systems/state/store.js';
+import { createEffect, runEffect } from './src/systems/effects/effect.js';
+import { Maybe } from './src/core/types/maybe.js';
+
+// === State ===
+const userStore = createStore({
+  data: Maybe.Nothing(),
+  loading: false,
+  error: Maybe.Nothing()
+});
+
+// State update functions
+const setLoading = loading => state => ({ ...state, loading });
+const setData = data => state => ({ ...state, data: Maybe.Just(data), loading: false, error: Maybe.Nothing() });
+const setError = error => state => ({ ...state, error: Maybe.Just(error), loading: false });
+
+// === Effects ===
+const userFetchEffect = (userId) => createEffect(() => {
+  userStore.update(setLoading(true));
+  
+  const controller = new AbortController();
+  const signal = controller.signal;
+  
+  fetch(`/api/users/${userId}`, { signal })
+    .then(response => {
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      return response.json();
+    })
+    .then(data => {
+      userStore.update(setData(data));
+    })
+    .catch(error => {
+      if (error.name !== 'AbortError') {
+        userStore.update(setError(error.message));
+      }
+    });
+  
+  return () => {
+    controller.abort();
+  };
+});
+
+// === Components ===
+const UserProfile = ({ userId }) => {
+  // Run the effect when the component mounts
+  const cleanup = runEffect(userFetchEffect(userId));
+  
+  // Store cleanup for component unmount
+  addEventListener('beforeunload', cleanup);
+  
+  return createElement('div', null,
+    userStore.getState().loading && createElement('p', null, 'Loading...'),
+    userStore.getState().error.map(
+      err => createElement('p', { className: 'error' }, `Error: ${err}`)
+    ).getOrElse(null),
+    userStore.getState().data.map(
+      user => createElement('div', null,
+        createElement('h2', null, user.name),
+        createElement('p', null, user.email),
+        createElement('p', null, user.bio)
+      )
+    ).getOrElse(null)
+  );
+};
+
+// === Application Initialization ===
+function init() {
+  render(
+    createElement(UserProfile, { userId: '123' }),
+    document.getElementById('root')
+  );
+  
+  // Subscribe to state changes to re-render
+  userStore.subscribe(() => {
+    render(
+      createElement(UserProfile, { userId: '123' }),
+      document.getElementById('root')
+    );
+  });
+}
+
+document.addEventListener('DOMContentLoaded', init);</code></pre>
+
+                    <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2" id="api-reference">API Reference</h2>
+                    
+                    <h3 class="text-xl font-medium mt-6 mb-3">createEffect</h3>
+                    <p class="mb-4">Creates an effect from an effect function.</p>
+                    
+                    <div class="bg-white p-4 rounded-lg border border-gray-200 mb-6">
+                        <h4 class="font-semibold mb-2">Parameters</h4>
+                        <ul class="list-disc pl-6 mb-4 space-y-1">
+                            <li><code>effectFn</code> - A function that performs the effect and returns a cleanup function</li>
+                        </ul>
+                        
+                        <h4 class="font-semibold mb-2">Returns</h4>
+                        <p>An effect object that can be passed to <code>runEffect</code></p>
+                    </div>
+
+                    <h3 class="text-xl font-medium mt-6 mb-3">runEffect</h3>
+                    <p class="mb-4">Executes an effect with the provided handlers.</p>
+                    
+                    <div class="bg-white p-4 rounded-lg border border-gray-200 mb-6">
+                        <h4 class="font-semibold mb-2">Parameters</h4>
+                        <ul class="list-disc pl-6 mb-4 space-y-1">
+                            <li><code>effect</code> - An effect created with <code>createEffect</code></li>
+                            <li><code>handlers</code> - Object containing handler functions for effect events</li>
+                        </ul>
+                        
+                        <h4 class="font-semibold mb-2">Returns</h4>
+                        <p>A cleanup function that should be called when the effect is no longer needed</p>
+                    </div>
+
+                    <h3 class="text-xl font-medium mt-6 mb-3">composeEffects</h3>
+                    <p class="mb-4">Combines multiple effects into a single effect.</p>
+                    
+                    <div class="bg-white p-4 rounded-lg border border-gray-200 mb-6">
+                        <h4 class="font-semibold mb-2">Parameters</h4>
+                        <ul class="list-disc pl-6 mb-4 space-y-1">
+                            <li><code>...effects</code> - One or more effects to compose together</li>
+                        </ul>
+                        
+                        <h4 class="font-semibold mb-2">Returns</h4>
+                        <p>A composed effect that runs all the provided effects and returns a function that cleans up all of them</p>
+                    </div>
+
+                    <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2" id="next-steps">Next Steps</h2>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
+                        <a href="state.html" class="block p-4 border border-gray-200 rounded-lg hover:border-primary hover:shadow-md transition">
+                            <h3 class="font-semibold text-lg mb-2">State Management</h3>
+                            <p class="text-gray-600">Learn how to use FlexNet's state management system.</p>
+                        </a>
+                        <a href="render.html" class="block p-4 border border-gray-200 rounded-lg hover:border-primary hover:shadow-md transition">
+                            <h3 class="font-semibold text-lg mb-2">Render System</h3>
+                            <p class="text-gray-600">Explore the rendering system in depth.</p>
+                        </a>
+                        <a href="../examples/todo.html" class="block p-4 border border-gray-200 rounded-lg hover:border-primary hover:shadow-md transition">
+                            <h3 class="font-semibold text-lg mb-2">Todo App Example</h3>
+                            <p class="text-gray-600">See effects in action in a complete application.</p>
+                        </a>
+                        <a href="../api/maybe.html" class="block p-4 border border-gray-200 rounded-lg hover:border-primary hover:shadow-md transition">
+                            <h3 class="font-semibold text-lg mb-2">Maybe Type</h3>
+                            <p class="text-gray-600">Learn about the Maybe type, often used with effects.</p>
+                        </a>
+                    </div>
+
+                    <div class="bg-blue-50 border-l-4 border-primary p-4 rounded-md">
+                        <h4 class="font-semibold flex items-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-primary" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2h-1V9z" clip-rule="evenodd" />
+                            </svg>
+                            Looking for more examples?
+                        </h4>
+                        <p>Check out our <a href="../examples/website.html" class="text-primary hover:underline">Website Example</a> to see how effects are used in a more complex application.</p>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <footer class="bg-white border-t border-gray-200 py-6">
+        <div class="max-w-5xl mx-auto px-6">
+            <p class="text-center text-gray-600">&copy; 2025 FlexNet JSX Framework. Created by Dr. Robert Whetsel and the FlexNet Development Team.</p>
+            <div class="flex justify-center space-x-6 mt-4">
+                <a href="https://github.com/flexnet/flexnet-jsx" class="text-gray-600 hover:text-primary">GitHub</a>
+                <a href="../guides/contribution.html" class="text-gray-600 hover:text-primary">Contribute</a>
+                <a href="../LICENSE.html" class="text-gray-600 hover:text-primary">License</a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Simple client-side search functionality
+        const searchInput = document.querySelector('input[placeholder="Search documentation..."]');
+        searchInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                const query = searchInput.value.toLowerCase();
+                // Implement search functionality
+                console.log('Searching for:', query);
+                // This would typically use a search index or API
+            }
+        });
+    </script>
+</body>
+</html> 
