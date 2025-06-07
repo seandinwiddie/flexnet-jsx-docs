@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Maybe Type - FlexNet JSX Framework</title>
+    <link rel="stylesheet" href="../assets/css/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/atom-one-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
+    <script>hljs.highlightAll();</script>
+</head>
+<body>
+    <div class="docs-container">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h1 class="logo">FlexNet</h1>
+                <p class="version">v1.0.0</p>
+            </div>
+            <nav class="nav-menu">
+                <div class="nav-section">
+                    <h3>Getting Started</h3>
+                    <ul>
+                        <li><a href="../guides/introduction.html">Introduction</a></li>
+                        <li><a href="../guides/installation.html">Installation</a></li>
+                        <li><a href="../guides/quickstart.html">Quick Start</a></li>
+                        <li><a href="../guides/core-concepts.html">Core Concepts</a></li>
+                    </ul>
+                </div>
+                <div class="nav-section">
+                    <h3>Core</h3>
+                    <ul>
+                        <li><a href="../core/jsx-runtime.html">JSX Runtime</a></li>
+                        <li><a href="../core/types.html">Type System</a></li>
+                        <li><a href="../core/functions.html">Functions</a></li>
+                        <li><a href="../core/security.html">Security</a></li>
+                    </ul>
+                </div>
+                <div class="nav-section">
+                    <h3>Systems</h3>
+                    <ul>
+                        <li><a href="../systems/state.html">State Management</a></li>
+                        <li><a href="../systems/effects.html">Effects</a></li>
+                        <li><a href="../systems/render.html">Render</a></li>
+                        <li><a href="../systems/events.html">Events</a></li>
+                        <li><a href="../systems/errors.html">Error Handling</a></li>
+                    </ul>
+                </div>
+                <div class="nav-section">
+                    <h3>Examples</h3>
+                    <ul>
+                        <li><a href="../examples/counter.html">Counter</a></li>
+                        <li><a href="../examples/todo.html">Todo App</a></li>
+                        <li><a href="../examples/website.html">Website</a></li>
+                    </ul>
+                </div>
+                <div class="nav-section">
+                    <h3>API Reference</h3>
+                    <ul>
+                        <li><a href="jsx.html">JSX API</a></li>
+                        <li><a href="maybe.html" class="active">Maybe</a></li>
+                        <li><a href="either.html">Either</a></li>
+                        <li><a href="result.html">Result</a></li>
+                        <li><a href="store.html">Store</a></li>
+                    </ul>
+                </div>
+            </nav>
+        </aside>
+        <main class="content">
+            <div class="content-header">
+                <div class="search-container">
+                    <input type="text" placeholder="Search documentation...">
+                </div>
+                <div class="header-links">
+                    <a href="https://github.com/flexnet/flexnet-jsx" target="_blank">GitHub</a>
+                    <a href="../../starter-project/README.md" target="_blank">Starter Project</a>
+                </div>
+            </div>
+            <div class="content-body doc-content">
+                <h1>Maybe Type</h1>
+                
+                <p>The <code>Maybe</code> type represents optional values in a functional way. It is used to handle potentially missing values (<code>null</code> or <code>undefined</code>) without relying on null checks or conditionals.</p>
+                
+                <div class="api-section">
+                    <div class="api-heading">
+                        <h2>Maybe.Just(value)</h2>
+                        <span class="api-type">Function → Maybe</span>
+                    </div>
+                    <p>Creates a Maybe type that contains a value.</p>
+                    <h3>Arguments</h3>
+                    <table>
+                        <tr>
+                            <th>Name</th>
+                            <th>Type</th>
+                            <th>Description</th>
+                        </tr>
+                        <tr>
+                            <td>value</td>
+                            <td>Any</td>
+                            <td>The value to wrap in a Maybe.Just</td>
+                        </tr>
+                    </table>
+                    <h3>Returns</h3>
+                    <p>A Maybe.Just object with the following methods:</p>
+                    <ul>
+                        <li><code>type</code> - The string "Just"</li>
+                        <li><code>value</code> - The wrapped value</li>
+                        <li><code>map(fn)</code> - Apply a function to the wrapped value and return a new Maybe.Just</li>
+                        <li><code>chain(fn)</code> - Apply a function that returns a Maybe to the wrapped value</li>
+                        <li><code>getOrElse(defaultValue)</code> - Return the wrapped value</li>
+                    </ul>
+                    <h3>Example</h3>
+                    <pre><code class="language-javascript">import Maybe from '../core/types/maybe.js';
+
+const justFive = Maybe.Just(5);
+console.log(justFive.type);  // "Just"
+console.log(justFive.value); // 5</code></pre>
+                </div>
+                
+                <div class="api-section">
+                    <div class="api-heading">
+                        <h2>Maybe.Nothing()</h2>
+                        <span class="api-type">Function → Maybe</span>
+                    </div>
+                    <p>Creates a Maybe that represents no value.</p>
+                    <h3>Returns</h3>
+                    <p>A Maybe.Nothing object with the following methods:</p>
+                    <ul>
+                        <li><code>type</code> - The string "Nothing"</li>
+                        <li><code>map(fn)</code> - Returns Maybe.Nothing regardless of the function</li>
+                        <li><code>chain(fn)</code> - Returns Maybe.Nothing regardless of the function</li>
+                        <li><code>getOrElse(defaultValue)</code> - Returns the defaultValue</li>
+                    </ul>
+                    <h3>Example</h3>
+                    <pre><code class="language-javascript">import Maybe from '../core/types/maybe.js';
+
+const nothing = Maybe.Nothing();
+console.log(nothing.type);              // "Nothing"
+console.log(nothing.getOrElse("Default")); // "Default"</code></pre>
+                </div>
+                
+                <div class="api-section">
+                    <div class="api-heading">
+                        <h2>Maybe.fromNullable(value)</h2>
+                        <span class="api-type">Function → Maybe</span>
+                    </div>
+                    <p>Creates a Maybe from a value that might be null or undefined.</p>
+                    <h3>Arguments</h3>
+                    <table>
+                        <tr>
+                            <th>Name</th>
+                            <th>Type</th>
+                            <th>Description</th>
+                        </tr>
+                        <tr>
+                            <td>value</td>
+                            <td>Any</td>
+                            <td>The value to check and wrap in a Maybe</td>
+                        </tr>
+                    </table>
+                    <h3>Returns</h3>
+                    <p>A Maybe.Just if the value is not null or undefined, otherwise a Maybe.Nothing.</p>
+                    <h3>Example</h3>
+                    <pre><code class="language-javascript">import Maybe from '../core/types/maybe.js';
+
+const validValue = Maybe.fromNullable("Hello");
+console.log(validValue.type);  // "Just"
+
+const nullValue = Maybe.fromNullable(null);
+console.log(nullValue.type);   // "Nothing"
+
+const undefinedValue = Maybe.fromNullable(undefined);
+console.log(undefinedValue.type);  // "Nothing"</code></pre>
+                </div>
+                
+                <div class="api-section">
+                    <div class="api-heading">
+                        <h2>maybe.map(fn)</h2>
+                        <span class="api-type">Method → Maybe</span>
+                    </div>
+                    <p>Apply a function to the value inside a Maybe (if it exists) and return a new Maybe.</p>
+                    <h3>Arguments</h3>
+                    <table>
+                        <tr>
+                            <th>Name</th>
+                            <th>Type</th>
+                            <th>Description</th>
+                        </tr>
+                        <tr>
+                            <td>fn</td>
+                            <td>Function</td>
+                            <td>The function to apply to the wrapped value</td>
+                        </tr>
+                    </table>
+                    <h3>Returns</h3>
+                    <p>A new Maybe with the transformed value if the original Maybe was a Just, otherwise returns Nothing.</p>
+                    <h3>Example</h3>
+                    <pre><code class="language-javascript">import Maybe from '../core/types/maybe.js';
+
+const justFive = Maybe.Just(5);
+const justTen = justFive.map(x => x * 2);
+console.log(justTen.value); // 10
+
+const nothing = Maybe.Nothing();
+const stillNothing = nothing.map(x => x * 2);
+console.log(stillNothing.type); // "Nothing"</code></pre>
+                </div>
+                
+                <div class="api-section">
+                    <div class="api-heading">
+                        <h2>maybe.chain(fn)</h2>
+                        <span class="api-type">Method → Maybe</span>
+                    </div>
+                    <p>Apply a function that returns a Maybe to the value inside a Maybe (if it exists).</p>
+                    <p>This is also known as <code>flatMap</code> or <code>bind</code> in other functional libraries.</p>
+                    <h3>Arguments</h3>
+                    <table>
+                        <tr>
+                            <th>Name</th>
+                            <th>Type</th>
+                            <th>Description</th>
+                        </tr>
+                        <tr>
+                            <td>fn</td>
+                            <td>Function</td>
+                            <td>A function that takes a value and returns a Maybe</td>
+                        </tr>
+                    </table>
+                    <h3>Returns</h3>
+                    <p>The Maybe returned by the function if the original Maybe was a Just, otherwise returns Nothing.</p>
+                    <h3>Example</h3>
+                    <pre><code class="language-javascript">import Maybe from '../core/types/maybe.js';
+
+// Safe division function that returns Maybe
+const safeDivide = (a, b) => 
+  b === 0 ? Maybe.Nothing() : Maybe.Just(a / b);
+
+const justTen = Maybe.Just(10);
+const result = justTen.chain(x => safeDivide(x, 2));
+console.log(result.value); // 5
+
+const zeroDivision = justTen.chain(x => safeDivide(x, 0));
+console.log(zeroDivision.type); // "Nothing"
+
+// Chain operations can be... chained
+const user = { 
+  profile: { 
+    name: "Alice" 
+  } 
+};
+
+const getName = obj => 
+  Maybe.fromNullable(obj)
+    .chain(o => Maybe.fromNullable(o.profile))
+    .chain(p => Maybe.fromNullable(p.name))
+    .getOrElse("Anonymous");
+
+console.log(getName(user)); // "Alice"
+console.log(getName(null)); // "Anonymous"
+console.log(getName({profile: null})); // "Anonymous"</code></pre>
+                </div>
+                
+                <div class="api-section">
+                    <div class="api-heading">
+                        <h2>maybe.getOrElse(defaultValue)</h2>
+                        <span class="api-type">Method → Any</span>
+                    </div>
+                    <p>Extract the value from a Maybe, providing a default value for the Nothing case.</p>
+                    <h3>Arguments</h3>
+                    <table>
+                        <tr>
+                            <th>Name</th>
+                            <th>Type</th>
+                            <th>Description</th>
+                        </tr>
+                        <tr>
+                            <td>defaultValue</td>
+                            <td>Any</td>
+                            <td>The value to return if the Maybe is Nothing</td>
+                        </tr>
+                    </table>
+                    <h3>Returns</h3>
+                    <p>The wrapped value if the Maybe is a Just, otherwise the defaultValue.</p>
+                    <h3>Example</h3>
+                    <pre><code class="language-javascript">import Maybe from '../core/types/maybe.js';
+
+const justHello = Maybe.Just("Hello");
+console.log(justHello.getOrElse("Default")); // "Hello"
+
+const nothing = Maybe.Nothing();
+console.log(nothing.getOrElse("Default")); // "Default"
+
+// Real-world example: safe property access
+const getProperty = (obj, prop) => 
+  Maybe.fromNullable(obj)
+    .chain(o => Maybe.fromNullable(o[prop]))
+    .getOrElse("Property not found");
+
+const user = { name: "Alice", age: 30 };
+console.log(getProperty(user, "name")); // "Alice"
+console.log(getProperty(user, "email")); // "Property not found"
+console.log(getProperty(null, "name")); // "Property not found"</code></pre>
+                </div>
+                
+                <div class="api-section">
+                    <div class="api-heading">
+                        <h2>Maybe.map(fn)</h2>
+                        <span class="api-type">Static Function → Function</span>
+                    </div>
+                    <p>A curried version of map that can be used with function composition.</p>
+                    <h3>Arguments</h3>
+                    <table>
+                        <tr>
+                            <th>Name</th>
+                            <th>Type</th>
+                            <th>Description</th>
+                        </tr>
+                        <tr>
+                            <td>fn</td>
+                            <td>Function</td>
+                            <td>The function to apply to the wrapped value</td>
+                        </tr>
+                    </table>
+                    <h3>Returns</h3>
+                    <p>A function that takes a Maybe and returns a new Maybe with the transformed value.</p>
+                    <h3>Example</h3>
+                    <pre><code class="language-javascript">import Maybe from '../core/types/maybe.js';
+import { compose } from '../core/functions/composition.js';
+
+const double = x => x * 2;
+const addTen = x => x + 10;
+
+const maybeDouble = Maybe.map(double);
+const maybeAddTen = Maybe.map(addTen);
+
+const justFive = Maybe.Just(5);
+const result = maybeAddTen(maybeDouble(justFive));
+console.log(result.value); // 20
+
+// Using compose for more readable chaining
+const transformValue = compose(
+  Maybe.map(addTen),
+  Maybe.map(double)
+);
+
+const result2 = transformValue(Maybe.Just(5));
+console.log(result2.value); // 20</code></pre>
+                </div>
+
+                <div class="api-section">
+                    <div class="api-heading">
+                        <h2>Maybe.chain(fn)</h2>
+                        <span class="api-type">Static Function → Function</span>
+                    </div>
+                    <p>A curried version of chain that can be used with function composition.</p>
+                    <h3>Arguments</h3>
+                    <table>
+                        <tr>
+                            <th>Name</th>
+                            <th>Type</th>
+                            <th>Description</th>
+                        </tr>
+                        <tr>
+                            <td>fn</td>
+                            <td>Function</td>
+                            <td>A function that takes a value and returns a Maybe</td>
+                        </tr>
+                    </table>
+                    <h3>Returns</h3>
+                    <p>A function that takes a Maybe and returns the result of applying the function to the wrapped value.</p>
+                    <h3>Example</h3>
+                    <pre><code class="language-javascript">import Maybe from '../core/types/maybe.js';
+import { compose } from '../core/functions/composition.js';
+
+// A function that returns a Maybe
+const safeSqrt = x => 
+  x >= 0 ? Maybe.Just(Math.sqrt(x)) : Maybe.Nothing();
+
+const maybeChainSqrt = Maybe.chain(safeSqrt);
+
+const justTwentyFive = Maybe.Just(25);
+const result = maybeChainSqrt(justTwentyFive);
+console.log(result.value); // 5
+
+// Chain with function composition
+const safeDouble = x => Maybe.Just(x * 2);
+
+const processValue = compose(
+  Maybe.chain(safeSqrt),
+  Maybe.chain(safeDouble)
+);
+
+const result2 = processValue(Maybe.Just(16));
+console.log(result2.value); // 4</code></pre>
+                </div>
+                
+                <div class="api-section">
+                    <div class="api-heading">
+                        <h2>Maybe.getOrElse(defaultValue)</h2>
+                        <span class="api-type">Static Function → Function</span>
+                    </div>
+                    <p>A curried version of getOrElse that can be used with function composition.</p>
+                    <h3>Arguments</h3>
+                    <table>
+                        <tr>
+                            <th>Name</th>
+                            <th>Type</th>
+                            <th>Description</th>
+                        </tr>
+                        <tr>
+                            <td>defaultValue</td>
+                            <td>Any</td>
+                            <td>The value to return if the Maybe is Nothing</td>
+                        </tr>
+                    </table>
+                    <h3>Returns</h3>
+                    <p>A function that takes a Maybe and returns either the wrapped value or the default value.</p>
+                    <h3>Example</h3>
+                    <pre><code class="language-javascript">import Maybe from '../core/types/maybe.js';
+import { compose } from '../core/functions/composition.js';
+
+const getOrZero = Maybe.getOrElse(0);
+
+const justFive = Maybe.Just(5);
+console.log(getOrZero(justFive)); // 5
+
+const nothing = Maybe.Nothing();
+console.log(getOrZero(nothing)); // 0
+
+// Real-world example with compose
+const safeParse = str => {
+  try {
+    return Maybe.Just(JSON.parse(str));
+  } catch (e) {
+    return Maybe.Nothing();
+  }
+};
+
+const getConfig = compose(
+  Maybe.getOrElse({ default: true }),
+  Maybe.chain(obj => Maybe.fromNullable(obj.config)),
+  safeParse
+);
+
+const validJSON = '{"config": {"debug": true}}';
+console.log(getConfig(validJSON)); // {debug: true}
+
+const invalidJSON = '{not valid json}';
+console.log(getConfig(invalidJSON)); // {default: true}</code></pre>
+                </div>
+                
+                <h2>Common Use Cases</h2>
+                
+                <div class="example-block">
+                    <h3>Safe Property Access</h3>
+                    <pre><code class="language-javascript">import Maybe from '../core/types/maybe.js';
+
+// Function to safely access nested properties
+const getNestedProp = (obj, ...props) => {
+  return props.reduce(
+    (acc, prop) => acc.chain(o => Maybe.fromNullable(o[prop])),
+    Maybe.fromNullable(obj)
+  );
+};
+
+const user = {
+  profile: {
+    address: {
+      city: "San Francisco"
+    }
+  }
+};
+
+// Safe property access without "&&" chains or try/catch
+const city = getNestedProp(user, "profile", "address", "city")
+  .getOrElse("Unknown City");
+
+console.log(city); // "San Francisco"
+
+const zipCode = getNestedProp(user, "profile", "address", "zipCode")
+  .getOrElse("No Zip Code");
+
+console.log(zipCode); // "No Zip Code"</code></pre>
+                </div>
+                
+                <div class="example-block">
+                    <h3>Form Validation</h3>
+                    <pre><code class="language-javascript">import Maybe from '../core/types/maybe.js';
+
+// Form validation functions
+const validateEmail = email => {
+  const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return regex.test(email) ? Maybe.Just(email) : Maybe.Nothing();
+};
+
+const validatePassword = password => {
+  return password.length >= 8 
+    ? Maybe.Just(password) 
+    : Maybe.Nothing();
+};
+
+// Validate form data
+const validateForm = formData => {
+  const emailResult = Maybe.fromNullable(formData.email)
+    .chain(validateEmail);
+    
+  const passwordResult = Maybe.fromNullable(formData.password)
+    .chain(validatePassword);
+    
+  // Both must be valid
+  return emailResult.chain(email => 
+    passwordResult.map(password => ({ email, password }))
+  );
+};
+
+// Valid form
+const validForm = { 
+  email: "user@example.com", 
+  password: "securepass123" 
+};
+
+const validResult = validateForm(validForm);
+console.log(validResult.type); // "Just"
+
+// Invalid form
+const invalidForm = { 
+  email: "not-an-email", 
+  password: "short" 
+};
+
+const invalidResult = validateForm(invalidForm);
+console.log(invalidResult.type); // "Nothing"</code></pre>
+                </div>
+                
+                <div class="pagination">
+                    <a href="jsx.html" class="prev-link">← Previous: JSX API</a>
+                    <a href="either.html" class="next-link">Next: Either Type →</a>
+                </div>
+            </div>
+        </main>
+    </div>
+    <footer class="footer">
+        <div class="footer-content">
+            <p>&copy; 2025 FlexNet JSX Framework. Created by Dr. Robert Whetsel and the FlexNet Development Team.</p>
+            <div class="footer-links">
+                <a href="https://github.com/flexnet/flexnet-jsx">GitHub</a>
+                <a href="../guides/contribution.html">Contribute</a>
+                <a href="../LICENSE.html">License</a>
+            </div>
+        </div>
+    </footer>
+    <script src="../assets/js/docs.js"></script>
+</body>
+</html>

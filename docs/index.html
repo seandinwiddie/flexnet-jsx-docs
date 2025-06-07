@@ -1,1 +1,188 @@
-Flexnet Docs
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FlexNet JSX Framework Documentation</title>
+    <link rel="stylesheet" href="assets/css/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/atom-one-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
+    <script>hljs.highlightAll();</script>
+</head>
+<body>
+    <div class="docs-container">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h1 class="logo">FlexNet</h1>
+                <p class="version">v1.0.0</p>
+            </div>
+            <nav class="nav-menu">
+                <div class="nav-section">
+                    <h3>Getting Started</h3>
+                    <ul>
+                        <li><a href="guides/introduction.html">Introduction</a></li>
+                        <li><a href="guides/installation.html">Installation</a></li>
+                        <li><a href="guides/quickstart.html">Quick Start</a></li>
+                        <li><a href="guides/core-concepts.html">Core Concepts</a></li>
+                    </ul>
+                </div>
+                <div class="nav-section">
+                    <h3>Core</h3>
+                    <ul>
+                        <li><a href="core/jsx-runtime.html">JSX Runtime</a></li>
+                        <li><a href="core/types.html">Type System</a></li>
+                        <li><a href="core/functions.html">Functions</a></li>
+                        <li><a href="core/security.html">Security</a></li>
+                    </ul>
+                </div>
+                <div class="nav-section">
+                    <h3>Systems</h3>
+                    <ul>
+                        <li><a href="systems/state.html">State Management</a></li>
+                        <li><a href="systems/effects.html">Effects</a></li>
+                        <li><a href="systems/render.html">Render</a></li>
+                        <li><a href="systems/events.html">Events</a></li>
+                        <li><a href="systems/errors.html">Error Handling</a></li>
+                    </ul>
+                </div>
+                <div class="nav-section">
+                    <h3>Examples</h3>
+                    <ul>
+                        <li><a href="examples/counter.html">Counter</a></li>
+                        <li><a href="examples/todo.html">Todo App</a></li>
+                        <li><a href="examples/website.html">Website</a></li>
+                    </ul>
+                </div>
+                <div class="nav-section">
+                    <h3>API Reference</h3>
+                    <ul>
+                        <li><a href="api/jsx.html">JSX API</a></li>
+                        <li><a href="api/maybe.html">Maybe</a></li>
+                        <li><a href="api/either.html">Either</a></li>
+                        <li><a href="api/result.html">Result</a></li>
+                        <li><a href="api/store.html">Store</a></li>
+                    </ul>
+                </div>
+            </nav>
+        </aside>
+        <main class="content">
+            <div class="content-header">
+                <div class="search-container">
+                    <input type="text" placeholder="Search documentation...">
+                </div>
+                <div class="header-links">
+                    <a href="https://github.com/flexnet/flexnet-jsx" target="_blank">GitHub</a>
+                    <a href="../starter-project/README.md" target="_blank">Starter Project</a>
+                </div>
+            </div>
+            <div class="content-body">
+                <div class="hero">
+                    <h1>FlexNet JSX Framework</h1>
+                    <p class="subtitle">A functional JavaScript implementation for building modern web applications</p>
+                    <div class="cta-buttons">
+                        <a href="guides/quickstart.html" class="cta-primary">Get Started</a>
+                        <a href="guides/examples.html" class="cta-secondary">View Examples</a>
+                    </div>
+                </div>
+
+                <div class="features">
+                    <div class="feature-card">
+                        <h3>Pure Functional</h3>
+                        <p>Build applications with pure functions, immutable state, and functional composition.</p>
+                    </div>
+                    <div class="feature-card">
+                        <h3>Zero Dependencies</h3>
+                        <p>FlexNet has no external dependencies and uses browser native implementation.</p>
+                    </div>
+                    <div class="feature-card">
+                        <h3>Type System</h3>
+                        <p>Functional type system with Maybe, Either, and Result types for better error handling.</p>
+                    </div>
+                    <div class="feature-card">
+                        <h3>Security First</h3>
+                        <p>Built with security in mind, including XSS prevention and input validation.</p>
+                    </div>
+                </div>
+
+                <div class="getting-started">
+                    <h2>Quick Start</h2>
+                    <p>Add FlexNet JSX to your project with these simple steps:</p>
+                    <pre><code class="language-html">&lt;script type="module" src="path/to/jsx/src/index.js"&gt;&lt;/script&gt;</code></pre>
+                    <p>Or use one of our starter projects:</p>
+                    <pre><code class="language-bash"># Clone the starter project
+cd starter-project
+python -m http.server 3000
+# Open http://localhost:3000</code></pre>
+                    <a href="guides/quickstart.html" class="learn-more">Learn More →</a>
+                </div>
+
+                <div class="example-section">
+                    <h2>Basic Counter Example</h2>
+                    <pre><code class="language-javascript">import { compose, Maybe } from './src/core/runtime/runtime.js';
+import { createStore } from './src/systems/state/store.js';
+import { createElement } from './src/core/runtime/jsx.js';
+
+// Create immutable store
+const store = createStore(Maybe.Just(0));
+
+// Pure function for state update
+const increment = n => Maybe.Just(n + 1);
+
+// Counter component as pure function
+const Counter = ({ count, onIncrement }) =>
+  createElement('div', null,
+    createElement('h2', null, `Count: ${count}`),
+    createElement('button', {
+      onClick: compose(onIncrement, increment)
+    }, 'Increment')
+  );
+
+// Render with proper effect handling
+store.subscribe(count =>
+  render(
+    createElement(Counter, {
+      count: count,
+      onIncrement: store.update
+    }),
+    document.getElementById('root')
+  )
+);</code></pre>
+                    <a href="examples/counter.html" class="learn-more">See More Examples →</a>
+                </div>
+
+                <div class="starter-projects">
+                    <h2>Starter Projects</h2>
+                    <div class="project-cards">
+                        <div class="project-card">
+                            <h3>Full-Featured Starter</h3>
+                            <p>A comprehensive implementation demonstrating all framework features.</p>
+                            <a href="../starter-project/README.md" class="learn-more">View Project →</a>
+                        </div>
+                        <div class="project-card">
+                            <h3>Minimal Starter</h3>
+                            <p>A lightweight implementation focusing on core concepts.</p>
+                            <a href="../starter-project-minimal/README.md" class="learn-more">View Project →</a>
+                        </div>
+                        <div class="project-card">
+                            <h3>Website Example</h3>
+                            <p>A complete website built with FlexNet JSX.</p>
+                            <a href="../starter-project-website/README.md" class="learn-more">View Project →</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+    <footer class="footer">
+        <div class="footer-content">
+            <p>&copy; 2025 FlexNet JSX Framework. Created by Dr. Robert Whetsel and the FlexNet Development Team.</p>
+            <div class="footer-links">
+                <a href="https://github.com/flexnet/flexnet-jsx">GitHub</a>
+                <a href="guides/contribution.html">Contribute</a>
+                <a href="LICENSE.html">License</a>
+            </div>
+        </div>
+    </footer>
+    <script src="assets/js/docs.js"></script>
+</body>
+</html>

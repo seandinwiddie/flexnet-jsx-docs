@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Introduction - FlexNet JSX Framework</title>
+    <link rel="stylesheet" href="../assets/css/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/atom-one-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
+    <script>hljs.highlightAll();</script>
+</head>
+<body>
+    <div class="docs-container">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h1 class="logo">FlexNet</h1>
+                <p class="version">v1.0.0</p>
+            </div>
+            <nav class="nav-menu">
+                <div class="nav-section">
+                    <h3>Getting Started</h3>
+                    <ul>
+                        <li><a href="introduction.html" class="active">Introduction</a></li>
+                        <li><a href="installation.html">Installation</a></li>
+                        <li><a href="quickstart.html">Quick Start</a></li>
+                        <li><a href="core-concepts.html">Core Concepts</a></li>
+                    </ul>
+                </div>
+                <div class="nav-section">
+                    <h3>Core</h3>
+                    <ul>
+                        <li><a href="../core/jsx-runtime.html">JSX Runtime</a></li>
+                        <li><a href="../core/types.html">Type System</a></li>
+                        <li><a href="../core/functions.html">Functions</a></li>
+                        <li><a href="../core/security.html">Security</a></li>
+                    </ul>
+                </div>
+                <div class="nav-section">
+                    <h3>Systems</h3>
+                    <ul>
+                        <li><a href="../systems/state.html">State Management</a></li>
+                        <li><a href="../systems/effects.html">Effects</a></li>
+                        <li><a href="../systems/render.html">Render</a></li>
+                        <li><a href="../systems/events.html">Events</a></li>
+                        <li><a href="../systems/errors.html">Error Handling</a></li>
+                    </ul>
+                </div>
+                <div class="nav-section">
+                    <h3>Examples</h3>
+                    <ul>
+                        <li><a href="../examples/counter.html">Counter</a></li>
+                        <li><a href="../examples/todo.html">Todo App</a></li>
+                        <li><a href="../examples/website.html">Website</a></li>
+                    </ul>
+                </div>
+                <div class="nav-section">
+                    <h3>API Reference</h3>
+                    <ul>
+                        <li><a href="../api/jsx.html">JSX API</a></li>
+                        <li><a href="../api/maybe.html">Maybe</a></li>
+                        <li><a href="../api/either.html">Either</a></li>
+                        <li><a href="../api/result.html">Result</a></li>
+                        <li><a href="../api/store.html">Store</a></li>
+                    </ul>
+                </div>
+            </nav>
+        </aside>
+        <main class="content">
+            <div class="content-header">
+                <div class="search-container">
+                    <input type="text" placeholder="Search documentation...">
+                </div>
+                <div class="header-links">
+                    <a href="https://github.com/flexnet/flexnet-jsx" target="_blank">GitHub</a>
+                    <a href="../../starter-project/README.md" target="_blank">Starter Project</a>
+                </div>
+            </div>
+            <div class="content-body doc-content">
+                <h1>Introduction to FlexNet JSX Framework</h1>
+                
+                <p>FlexNet JSX is a functional JavaScript implementation designed for building modern web applications. It implements the JSX Framework Persistent Memory Protocol, focusing on functional programming principles without any external dependencies.</p>
+                
+                <div class="callout">
+                    <p><strong>FlexNet JSX was created by Dr. Robert Whetsel and the FlexNet Development Team from AcmeWerx and CryptoVersus.io.</strong></p>
+                </div>
+                
+                <h2>What is FlexNet JSX?</h2>
+                
+                <p>FlexNet JSX is a JavaScript framework that allows you to build web applications using JSX syntax without requiring React or any other dependencies. It provides a complete solution for creating interactive web interfaces through a functional programming approach.</p>
+                
+                <p>Unlike many popular frameworks, FlexNet JSX is built around the following principles:</p>
+                
+                <ul>
+                    <li><strong>Functions as Primary Operations</strong> - Everything in FlexNet is built using pure functions</li>
+                    <li><strong>Immutable State Management</strong> - State changes are handled through immutable updates</li>
+                    <li><strong>Functional Composition</strong> - Complex behaviors are created through function composition</li>
+                    <li><strong>Zero Dependencies</strong> - No external libraries are required</li>
+                    <li><strong>Browser Native Implementation</strong> - Works directly with browser APIs</li>
+                </ul>
+                
+                <h2>Key Features</h2>
+                
+                <h3>Pure Functional Core Architecture</h3>
+                <p>The core of FlexNet JSX is built using pure functions. This means that for the same input, you'll always get the same output, with no hidden side effects. This approach makes your code more predictable, easier to test, and less prone to bugs.</p>
+                
+                <h3>Type System</h3>
+                <p>FlexNet JSX includes a functional type system with:</p>
+                <ul>
+                    <li><strong>Maybe Type</strong> - For handling optional values cleanly</li>
+                    <li><strong>Either Type</strong> - For handling branching logic and errors</li>
+                    <li><strong>Result Type</strong> - For capturing operation outcomes</li>
+                </ul>
+                
+                <p>These types follow functional programming principles with proper monadic operations, allowing you to chain operations in a clean, readable way.</p>
+                
+                <pre><code class="language-javascript">// Example using Maybe type for optional values
+import Maybe from './src/core/types/maybe.js';
+
+// Safe handling of potentially null values
+const getUserName = user => 
+  Maybe.fromNullable(user)
+    .chain(u => Maybe.fromNullable(u.profile))
+    .chain(p => Maybe.fromNullable(p.name))
+    .getOrElse('Anonymous');</code></pre>
+                
+                <h3>State Management with Immutable Updates</h3>
+                <p>FlexNet JSX includes a simple but powerful state management system based on immutable updates and subscribers. This eliminates many common bugs associated with mutable state, while keeping your application predictable and easy to debug.</p>
+                
+                <pre><code class="language-javascript">// Creating an immutable store
+const store = createStore(Maybe.Just(0));
+
+// Update store with pure function
+store.update(count => Maybe.Just(count.value + 1));
+
+// Subscribe to state changes
+store.subscribe(count => {
+  console.log('Count updated:', count.value);
+});</code></pre>
+                
+                <h3>Effect System with Cleanup</h3>
+                <p>Side effects (like API calls or DOM manipulations) are isolated and handled properly with cleanup functions. This keeps your application core pure while still allowing necessary side effects to be performed safely.</p>
+                
+                <h3>Advanced Security Features</h3>
+                <p>FlexNet JSX includes built-in security features to protect against common web vulnerabilities:</p>
+                <ul>
+                    <li>XSS prevention through content escaping</li>
+                    <li>Input validation and sanitization</li>
+                    <li>Functional error boundaries</li>
+                </ul>
+                
+                <h2>Why Choose FlexNet JSX?</h2>
+                
+                <div class="feature-comparison">
+                    <div class="feature-card">
+                        <h3>Lightweight</h3>
+                        <p>No external dependencies means your application stays small and fast.</p>
+                    </div>
+                    <div class="feature-card">
+                        <h3>Predictable</h3>
+                        <p>Pure functions and immutable state make your application behavior predictable.</p>
+                    </div>
+                    <div class="feature-card">
+                        <h3>Secure</h3>
+                        <p>Built-in security features protect against common web vulnerabilities.</p>
+                    </div>
+                    <div class="feature-card">
+                        <h3>Testable</h3>
+                        <p>Pure functions are easy to test without complex mocking or setup.</p>
+                    </div>
+                </div>
+                
+                <h2>Getting Started</h2>
+                
+                <p>Ready to start building with FlexNet JSX? The easiest way to get started is by using one of our starter projects:</p>
+                
+                <div class="code-tabs">
+                    <pre><code class="language-bash"># Start with the full-featured starter project
+cd starter-project
+python -m http.server 3000
+# Open http://localhost:3000</code></pre>
+                </div>
+                
+                <p>Or for a more lightweight beginning:</p>
+                
+                <div class="code-tabs">
+                    <pre><code class="language-bash"># Start with the minimal starter project
+cd starter-project-minimal
+python -m http.server 3000
+# Open http://localhost:3000</code></pre>
+                </div>
+                
+                <p>Continue to the <a href="installation.html">Installation</a> guide to learn more about setting up FlexNet JSX in your project.</p>
+                
+                <div class="pagination">
+                    <span></span>
+                    <a href="installation.html" class="next-link">Next: Installation →</a>
+                </div>
+            </div>
+        </main>
+    </div>
+    <footer class="footer">
+        <div class="footer-content">
+            <p>&copy; 2025 FlexNet JSX Framework. Created by Dr. Robert Whetsel and the FlexNet Development Team.</p>
+            <div class="footer-links">
+                <a href="https://github.com/flexnet/flexnet-jsx">GitHub</a>
+                <a href="../guides/contribution.html">Contribute</a>
+                <a href="../LICENSE.html">License</a>
+            </div>
+        </div>
+    </footer>
+    <script src="../assets/js/docs.js"></script>
+</body>
+</html> 
