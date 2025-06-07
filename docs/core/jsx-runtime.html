@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JSX Runtime - FlexNet JSX Framework</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/atom-one-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#3b82f6',
+                        secondary: '#6366f1',
+                        dark: '#1e293b',
+                        light: '#f8fafc'
+                    }
+                }
+            }
+        }
+        hljs.highlightAll();
+    </script>
+</head>
+<body class="bg-gray-50 text-gray-900 min-h-screen">
+    <div class="flex flex-col md:flex-row">
+        <!-- Sidebar -->
+        <aside class="w-full md:w-64 bg-white border-r border-gray-200 md:h-screen md:sticky top-0 overflow-y-auto">
+            <div class="p-4 border-b border-gray-200">
+                <a href="../index.html" class="block">
+                    <h1 class="text-2xl font-bold text-primary">FlexNet</h1>
+                    <p class="text-sm text-gray-500">v1.0.0</p>
+                </a>
+            </div>
+            <nav class="p-4">
+                <div class="mb-6">
+                    <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">Getting Started</h3>
+                    <ul class="space-y-2">
+                        <li><a href="../guides/introduction.html" class="block text-gray-700 hover:text-primary">Introduction</a></li>
+                        <li><a href="../guides/installation.html" class="block text-gray-700 hover:text-primary">Installation</a></li>
+                        <li><a href="../guides/quickstart.html" class="block text-gray-700 hover:text-primary">Quick Start</a></li>
+                        <li><a href="../guides/core-concepts.html" class="block text-gray-700 hover:text-primary">Core Concepts</a></li>
+                    </ul>
+                </div>
+                <div class="mb-6">
+                    <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">Core</h3>
+                    <ul class="space-y-2">
+                        <li><a href="jsx-runtime.html" class="block text-primary font-medium">JSX Runtime</a></li>
+                        <li><a href="types.html" class="block text-gray-700 hover:text-primary">Type System</a></li>
+                        <li><a href="functions.html" class="block text-gray-700 hover:text-primary">Functions</a></li>
+                        <li><a href="security.html" class="block text-gray-700 hover:text-primary">Security</a></li>
+                    </ul>
+                </div>
+                <div class="mb-6">
+                    <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">Systems</h3>
+                    <ul class="space-y-2">
+                        <li><a href="../systems/state.html" class="block text-gray-700 hover:text-primary">State Management</a></li>
+                        <li><a href="../systems/effects.html" class="block text-gray-700 hover:text-primary">Effects</a></li>
+                        <li><a href="../systems/render.html" class="block text-gray-700 hover:text-primary">Render</a></li>
+                        <li><a href="../systems/events.html" class="block text-gray-700 hover:text-primary">Events</a></li>
+                        <li><a href="../systems/errors.html" class="block text-gray-700 hover:text-primary">Error Handling</a></li>
+                    </ul>
+                </div>
+                <div class="mb-6">
+                    <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">Examples</h3>
+                    <ul class="space-y-2">
+                        <li><a href="../examples/counter.html" class="block text-gray-700 hover:text-primary">Counter</a></li>
+                        <li><a href="../examples/todo.html" class="block text-gray-700 hover:text-primary">Todo App</a></li>
+                        <li><a href="../examples/website.html" class="block text-gray-700 hover:text-primary">Website</a></li>
+                    </ul>
+                </div>
+                <div class="mb-6">
+                    <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">API Reference</h3>
+                    <ul class="space-y-2">
+                        <li><a href="../api/jsx.html" class="block text-gray-700 hover:text-primary">JSX API</a></li>
+                        <li><a href="../api/maybe.html" class="block text-gray-700 hover:text-primary">Maybe</a></li>
+                        <li><a href="../api/either.html" class="block text-gray-700 hover:text-primary">Either</a></li>
+                        <li><a href="../api/result.html" class="block text-gray-700 hover:text-primary">Result</a></li>
+                        <li><a href="../api/store.html" class="block text-gray-700 hover:text-primary">Store</a></li>
+                    </ul>
+                </div>
+            </nav>
+        </aside>
+
+        <!-- Main content -->
+        <main class="flex-1 overflow-auto">
+            <div class="border-b border-gray-200 bg-white sticky top-0 z-10">
+                <div class="flex items-center justify-between px-4 py-3">
+                    <div class="relative w-full max-w-md">
+                        <input type="text" placeholder="Search documentation..." class="w-full pl-10 pr-4 py-2 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 text-gray-400 absolute left-3 top-1/2 transform -translate-y-1/2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
+                        </svg>
+                    </div>
+                    <div class="flex space-x-4 ml-4">
+                        <a href="https://github.com/flexnet/flexnet-jsx" target="_blank" class="text-gray-600 hover:text-primary">GitHub</a>
+                        <a href="../../starter-project/README.md" target="_blank" class="text-gray-600 hover:text-primary">Starter Project</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="py-6 px-8 max-w-4xl mx-auto">
+                <div class="flex items-center space-x-2 text-sm text-gray-500 mb-8">
+                    <a href="../index.html" class="hover:text-primary">Home</a>
+                    <span>/</span>
+                    <a href="#" class="hover:text-primary">Core</a>
+                    <span>/</span>
+                    <span class="text-gray-900">JSX Runtime</span>
+                </div>
+
+                <h1 class="text-3xl font-bold mb-6">JSX Runtime</h1>
+                
+                <div class="prose prose-blue max-w-none">
+                    <p class="lead text-xl text-gray-600 mb-8">
+                        The FlexNet JSX Runtime is a lightweight, functional implementation of JSX that enables declarative UI programming using JavaScript functions.
+                    </p>
+
+                    <div class="bg-blue-50 border-l-4 border-blue-500 p-4 mb-8">
+                        <div class="flex">
+                            <div class="flex-shrink-0">
+                                <svg class="h-5 w-5 text-blue-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2h-1V9a1 1 0 00-1-1z" clip-rule="evenodd" />
+                                </svg>
+                            </div>
+                            <div class="ml-3">
+                                <p class="text-sm text-blue-700">
+                                    Unlike React, FlexNet JSX is a pure functional implementation with zero dependencies and a focus on immutability and composition.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h2 class="text-2xl font-bold mt-8 mb-4">How JSX Works in FlexNet</h2>
+                    <p>
+                        In FlexNet, JSX is transpiled to function calls that create virtual DOM nodes. These nodes are then rendered to the actual DOM through a pure rendering function.
+                    </p>
+
+                    <h3 class="text-xl font-semibold mt-6 mb-3">The createElement Function</h3>
+                    <p class="mb-4">
+                        At the core of FlexNet's JSX runtime is the <code class="bg-gray-100 px-1 py-0.5 rounded">createElement</code> function, which transforms JSX syntax into function calls.
+                    </p>
+
+                    <pre class="bg-gray-800 text-white p-4 rounded-md mb-6 overflow-x-auto"><code class="language-javascript">import { createElement } from './src/core/runtime/jsx.js';
+
+// JSX like:
+// &lt;div className="container"&gt;Hello world&lt;/div&gt;
+
+// Gets converted to:
+createElement('div', { className: 'container' }, 'Hello world');</code></pre>
+
+                    <h3 class="text-xl font-semibold mt-6 mb-3">Functional Components</h3>
+                    <p class="mb-4">
+                        FlexNet components are pure functions that accept props and return elements:
+                    </p>
+
+                    <pre class="bg-gray-800 text-white p-4 rounded-md mb-6 overflow-x-auto"><code class="language-javascript">// A simple functional component
+const Greeting = ({ name }) => 
+  createElement('h1', null, `Hello, ${name}!`);
+
+// Using the component
+const element = createElement(Greeting, { name: 'World' });
+
+// JSX equivalent would be:
+// &lt;Greeting name="World" /&gt;</code></pre>
+
+                    <h2 class="text-2xl font-bold mt-8 mb-4">Core JSX Runtime API</h2>
+
+                    <div class="overflow-x-auto mb-8">
+                        <table class="min-w-full border border-gray-200 rounded-lg">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Function</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Description</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Usage</th>
+                                </tr>
+                            </thead>
+                            <tbody class="bg-white divide-y divide-gray-200">
+                                <tr>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">createElement</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Creates virtual DOM elements</td>
+                                    <td class="px-6 py-4 text-sm text-gray-500"><code>createElement(type, props, ...children)</code></td>
+                                </tr>
+                                <tr>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">render</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Renders elements to the DOM</td>
+                                    <td class="px-6 py-4 text-sm text-gray-500"><code>render(element, container)</code></td>
+                                </tr>
+                                <tr>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">Fragment</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Group elements without creating extra nodes</td>
+                                    <td class="px-6 py-4 text-sm text-gray-500"><code>createElement(Fragment, null, ...children)</code></td>
+                                </tr>
+                                <tr>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">createContext</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Creates a context for data sharing</td>
+                                    <td class="px-6 py-4 text-sm text-gray-500"><code>createContext(defaultValue)</code></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <h2 class="text-2xl font-bold mt-8 mb-4">Rendering with Pure Functions</h2>
+                    <p class="mb-4">
+                        FlexNet uses pure functions for rendering, which means:
+                    </p>
+                    <ul class="list-disc pl-6 mb-6 space-y-2">
+                        <li>Predictable rendering behavior</li>
+                        <li>No side effects during the render phase</li>
+                        <li>Immutable data patterns</li>
+                        <li>Functional composition for component building</li>
+                    </ul>
+
+                    <h3 class="text-xl font-semibold mt-6 mb-3">Rendering Example</h3>
+                    <pre class="bg-gray-800 text-white p-4 rounded-md mb-6 overflow-x-auto"><code class="language-javascript">import { createElement, render } from './src/core/runtime/jsx.js';
+import { compose, Maybe } from './src/core/runtime/runtime.js';
+
+// Pure component function
+const App = ({ message }) =>
+  createElement('div', { className: 'app' },
+    createElement('h1', null, 'FlexNet App'),
+    createElement('p', null, message || 'No message provided')
+  );
+
+// Render function - pure with no side effects
+render(
+  createElement(App, { message: 'Hello, World!' }),
+  document.getElementById('root')
+);</code></pre>
+
+                    <h2 class="text-2xl font-bold mt-8 mb-4">JSX vs createElement</h2>
+                    <p class="mb-4">
+                        JSX is syntactic sugar over the <code class="bg-gray-100 px-1 py-0.5 rounded">createElement</code> function. Here's how they compare:
+                    </p>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
+                        <div class="bg-white rounded-lg border border-gray-200 overflow-hidden">
+                            <div class="px-4 py-2 bg-gray-50 border-b border-gray-200">
+                                <h3 class="font-medium">JSX Syntax</h3>
+                            </div>
+                            <div class="p-4">
+                                <pre class="bg-gray-800 text-white p-3 rounded-md"><code class="language-jsx">const element = (
+  &lt;div className="container"&gt;
+    &lt;h1&gt;Title&lt;/h1&gt;
+    &lt;p&gt;Paragraph&lt;/p&gt;
+  &lt;/div&gt;
+);</code></pre>
+                            </div>
+                        </div>
+                        <div class="bg-white rounded-lg border border-gray-200 overflow-hidden">
+                            <div class="px-4 py-2 bg-gray-50 border-b border-gray-200">
+                                <h3 class="font-medium">createElement Calls</h3>
+                            </div>
+                            <div class="p-4">
+                                <pre class="bg-gray-800 text-white p-3 rounded-md"><code class="language-javascript">const element = createElement(
+  'div',
+  { className: 'container' },
+  createElement('h1', null, 'Title'),
+  createElement('p', null, 'Paragraph')
+);</code></pre>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h2 class="text-2xl font-bold mt-8 mb-4">Integration with FlexNet's Type System</h2>
+                    <p class="mb-6">
+                        The JSX runtime is designed to work seamlessly with FlexNet's functional type system:
+                    </p>
+
+                    <pre class="bg-gray-800 text-white p-4 rounded-md mb-6 overflow-x-auto"><code class="language-javascript">import { createElement } from './src/core/runtime/jsx.js';
+import { Maybe } from './src/core/types/maybe.js';
+
+// Using Maybe for optional props
+const UserProfile = ({ user }) => {
+  // Safely access potentially missing user data
+  const username = Maybe.fromNullable(user)
+    .map(u => u.username)
+    .getOrElse('Guest');
+    
+  return createElement('div', null,
+    createElement('h2', null, `Welcome, ${username}!`)
+  );
+};</code></pre>
+
+                    <div class="border border-gray-200 rounded-lg p-6 bg-white mt-8 mb-8">
+                        <h3 class="text-xl font-semibold mb-4">Key Differences from React</h3>
+                        <ul class="list-disc pl-6 space-y-3">
+                            <li>
+                                <strong>Pure Functional:</strong> FlexNet JSX is designed around pure functions and immutability, avoiding class components entirely.
+                            </li>
+                            <li>
+                                <strong>No Virtual DOM Diffing:</strong> FlexNet uses a more direct approach to DOM updates without the overhead of a complex diffing algorithm.
+                            </li>
+                            <li>
+                                <strong>Integrated Type System:</strong> The runtime is built to work with FlexNet's functional type system (Maybe, Either, Result).
+                            </li>
+                            <li>
+                                <strong>No Dependencies:</strong> FlexNet JSX has zero external dependencies and a much smaller footprint.
+                            </li>
+                            <li>
+                                <strong>Functional Composition:</strong> Component composition is achieved through function composition rather than component nesting.
+                            </li>
+                        </ul>
+                    </div>
+
+                    <h2 class="text-2xl font-bold mt-8 mb-4">Further Reading</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
+                        <a href="../api/jsx.html" class="block p-6 bg-white rounded-lg border border-gray-200 hover:border-primary transition">
+                            <h3 class="text-lg font-semibold mb-2">JSX API Reference</h3>
+                            <p class="text-gray-600">Detailed API documentation for the JSX runtime</p>
+                        </a>
+                        <a href="../examples/counter.html" class="block p-6 bg-white rounded-lg border border-gray-200 hover:border-primary transition">
+                            <h3 class="text-lg font-semibold mb-2">Counter Example</h3>
+                            <p class="text-gray-600">See JSX in action with a simple counter application</p>
+                        </a>
+                        <a href="../core/functions.html" class="block p-6 bg-white rounded-lg border border-gray-200 hover:border-primary transition">
+                            <h3 class="text-lg font-semibold mb-2">Function Composition</h3>
+                            <p class="text-gray-600">Learn how function composition powers FlexNet components</p>
+                        </a>
+                        <a href="../systems/render.html" class="block p-6 bg-white rounded-lg border border-gray-200 hover:border-primary transition">
+                            <h3 class="text-lg font-semibold mb-2">Render System</h3>
+                            <p class="text-gray-600">Understand how the rendering process works</p>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <footer class="bg-white border-t border-gray-200 py-6">
+        <div class="max-w-5xl mx-auto px-6">
+            <p class="text-center text-gray-600">&copy; 2025 FlexNet JSX Framework. Created by Dr. Robert Whetsel and the FlexNet Development Team.</p>
+            <div class="flex justify-center space-x-6 mt-4">
+                <a href="https://github.com/flexnet/flexnet-jsx" class="text-gray-600 hover:text-primary">GitHub</a>
+                <a href="../guides/contribution.html" class="text-gray-600 hover:text-primary">Contribute</a>
+                <a href="../LICENSE.html" class="text-gray-600 hover:text-primary">License</a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Simple client-side search functionality
+        const searchInput = document.querySelector('input[placeholder="Search documentation..."]');
+        searchInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                const query = searchInput.value.toLowerCase();
+                // Implement search functionality
+                console.log('Searching for:', query);
+                // This would typically use a search index or API
+            }
+        });
+    </script>
+</body>
+</html> 

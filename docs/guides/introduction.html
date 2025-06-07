@@ -4,210 +4,452 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Introduction - FlexNet JSX Framework</title>
-    <link rel="stylesheet" href="../assets/css/styles.css">
+    <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/atom-one-dark.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
-    <script>hljs.highlightAll();</script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#3b82f6',
+                        secondary: '#6366f1',
+                        dark: '#1e293b',
+                        light: '#f8fafc'
+                    }
+                }
+            }
+        }
+        hljs.highlightAll();
+    </script>
 </head>
-<body>
-    <div class="docs-container">
-        <aside class="sidebar">
-            <div class="sidebar-header">
-                <h1 class="logo">FlexNet</h1>
-                <p class="version">v1.0.0</p>
+<body class="bg-gray-50 text-gray-900 min-h-screen">
+    <div class="flex flex-col md:flex-row">
+        <!-- Sidebar -->
+        <aside class="w-full md:w-64 bg-white border-r border-gray-200 md:h-screen md:sticky top-0 overflow-y-auto">
+            <div class="p-4 border-b border-gray-200">
+                <a href="../index.html" class="block">
+                    <h1 class="text-2xl font-bold text-primary">FlexNet</h1>
+                    <p class="text-sm text-gray-500">v1.0.0</p>
+                </a>
             </div>
-            <nav class="nav-menu">
-                <div class="nav-section">
-                    <h3>Getting Started</h3>
-                    <ul>
-                        <li><a href="introduction.html" class="active">Introduction</a></li>
-                        <li><a href="installation.html">Installation</a></li>
-                        <li><a href="quickstart.html">Quick Start</a></li>
-                        <li><a href="core-concepts.html">Core Concepts</a></li>
+            <nav class="p-4">
+                <div class="mb-6">
+                    <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">Getting Started</h3>
+                    <ul class="space-y-2">
+                        <li><a href="introduction.html" class="block text-primary font-medium">Introduction</a></li>
+                        <li><a href="installation.html" class="block text-gray-700 hover:text-primary">Installation</a></li>
+                        <li><a href="quickstart.html" class="block text-gray-700 hover:text-primary">Quick Start</a></li>
+                        <li><a href="core-concepts.html" class="block text-gray-700 hover:text-primary">Core Concepts</a></li>
                     </ul>
                 </div>
-                <div class="nav-section">
-                    <h3>Core</h3>
-                    <ul>
-                        <li><a href="../core/jsx-runtime.html">JSX Runtime</a></li>
-                        <li><a href="../core/types.html">Type System</a></li>
-                        <li><a href="../core/functions.html">Functions</a></li>
-                        <li><a href="../core/security.html">Security</a></li>
+                <div class="mb-6">
+                    <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">Core</h3>
+                    <ul class="space-y-2">
+                        <li><a href="../core/jsx-runtime.html" class="block text-gray-700 hover:text-primary">JSX Runtime</a></li>
+                        <li><a href="../core/types.html" class="block text-gray-700 hover:text-primary">Type System</a></li>
+                        <li><a href="../core/functions.html" class="block text-gray-700 hover:text-primary">Functions</a></li>
+                        <li><a href="../core/security.html" class="block text-gray-700 hover:text-primary">Security</a></li>
                     </ul>
                 </div>
-                <div class="nav-section">
-                    <h3>Systems</h3>
-                    <ul>
-                        <li><a href="../systems/state.html">State Management</a></li>
-                        <li><a href="../systems/effects.html">Effects</a></li>
-                        <li><a href="../systems/render.html">Render</a></li>
-                        <li><a href="../systems/events.html">Events</a></li>
-                        <li><a href="../systems/errors.html">Error Handling</a></li>
+                <div class="mb-6">
+                    <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">Systems</h3>
+                    <ul class="space-y-2">
+                        <li><a href="../systems/state.html" class="block text-gray-700 hover:text-primary">State Management</a></li>
+                        <li><a href="../systems/effects.html" class="block text-gray-700 hover:text-primary">Effects</a></li>
+                        <li><a href="../systems/render.html" class="block text-gray-700 hover:text-primary">Render</a></li>
+                        <li><a href="../systems/events.html" class="block text-gray-700 hover:text-primary">Events</a></li>
+                        <li><a href="../systems/errors.html" class="block text-gray-700 hover:text-primary">Error Handling</a></li>
                     </ul>
                 </div>
-                <div class="nav-section">
-                    <h3>Examples</h3>
-                    <ul>
-                        <li><a href="../examples/counter.html">Counter</a></li>
-                        <li><a href="../examples/todo.html">Todo App</a></li>
-                        <li><a href="../examples/website.html">Website</a></li>
+                <div class="mb-6">
+                    <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">Examples</h3>
+                    <ul class="space-y-2">
+                        <li><a href="../examples/counter.html" class="block text-gray-700 hover:text-primary">Counter</a></li>
+                        <li><a href="../examples/todo.html" class="block text-gray-700 hover:text-primary">Todo App</a></li>
+                        <li><a href="../examples/website.html" class="block text-gray-700 hover:text-primary">Website</a></li>
                     </ul>
                 </div>
-                <div class="nav-section">
-                    <h3>API Reference</h3>
-                    <ul>
-                        <li><a href="../api/jsx.html">JSX API</a></li>
-                        <li><a href="../api/maybe.html">Maybe</a></li>
-                        <li><a href="../api/either.html">Either</a></li>
-                        <li><a href="../api/result.html">Result</a></li>
-                        <li><a href="../api/store.html">Store</a></li>
+                <div class="mb-6">
+                    <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">API Reference</h3>
+                    <ul class="space-y-2">
+                        <li><a href="../api/jsx.html" class="block text-gray-700 hover:text-primary">JSX API</a></li>
+                        <li><a href="../api/maybe.html" class="block text-gray-700 hover:text-primary">Maybe</a></li>
+                        <li><a href="../api/either.html" class="block text-gray-700 hover:text-primary">Either</a></li>
+                        <li><a href="../api/result.html" class="block text-gray-700 hover:text-primary">Result</a></li>
+                        <li><a href="../api/store.html" class="block text-gray-700 hover:text-primary">Store</a></li>
                     </ul>
                 </div>
             </nav>
         </aside>
-        <main class="content">
-            <div class="content-header">
-                <div class="search-container">
-                    <input type="text" placeholder="Search documentation...">
-                </div>
-                <div class="header-links">
-                    <a href="https://github.com/flexnet/flexnet-jsx" target="_blank">GitHub</a>
-                    <a href="../../starter-project/README.md" target="_blank">Starter Project</a>
+
+        <!-- Main content -->
+        <main class="flex-1 overflow-auto">
+            <div class="border-b border-gray-200 bg-white sticky top-0 z-10">
+                <div class="flex items-center justify-between px-4 py-3">
+                    <div class="relative w-full max-w-md">
+                        <input type="text" placeholder="Search documentation..." class="w-full pl-10 pr-4 py-2 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 text-gray-400 absolute left-3 top-1/2 transform -translate-y-1/2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
+                        </svg>
+                    </div>
+                    <div class="flex space-x-4 ml-4">
+                        <a href="https://github.com/flexnet/flexnet-jsx" target="_blank" class="text-gray-600 hover:text-primary">GitHub</a>
+                        <a href="../../starter-project/README.md" target="_blank" class="text-gray-600 hover:text-primary">Starter Project</a>
+                    </div>
                 </div>
             </div>
-            <div class="content-body doc-content">
-                <h1>Introduction to FlexNet JSX Framework</h1>
-                
-                <p>FlexNet JSX is a functional JavaScript implementation designed for building modern web applications. It implements the JSX Framework Persistent Memory Protocol, focusing on functional programming principles without any external dependencies.</p>
-                
-                <div class="callout">
-                    <p><strong>FlexNet JSX was created by Dr. Robert Whetsel and the FlexNet Development Team from AcmeWerx and CryptoVersus.io.</strong></p>
-                </div>
-                
-                <h2>What is FlexNet JSX?</h2>
-                
-                <p>FlexNet JSX is a JavaScript framework that allows you to build web applications using JSX syntax without requiring React or any other dependencies. It provides a complete solution for creating interactive web interfaces through a functional programming approach.</p>
-                
-                <p>Unlike many popular frameworks, FlexNet JSX is built around the following principles:</p>
-                
-                <ul>
-                    <li><strong>Functions as Primary Operations</strong> - Everything in FlexNet is built using pure functions</li>
-                    <li><strong>Immutable State Management</strong> - State changes are handled through immutable updates</li>
-                    <li><strong>Functional Composition</strong> - Complex behaviors are created through function composition</li>
-                    <li><strong>Zero Dependencies</strong> - No external libraries are required</li>
-                    <li><strong>Browser Native Implementation</strong> - Works directly with browser APIs</li>
-                </ul>
-                
-                <h2>Key Features</h2>
-                
-                <h3>Pure Functional Core Architecture</h3>
-                <p>The core of FlexNet JSX is built using pure functions. This means that for the same input, you'll always get the same output, with no hidden side effects. This approach makes your code more predictable, easier to test, and less prone to bugs.</p>
-                
-                <h3>Type System</h3>
-                <p>FlexNet JSX includes a functional type system with:</p>
-                <ul>
-                    <li><strong>Maybe Type</strong> - For handling optional values cleanly</li>
-                    <li><strong>Either Type</strong> - For handling branching logic and errors</li>
-                    <li><strong>Result Type</strong> - For capturing operation outcomes</li>
-                </ul>
-                
-                <p>These types follow functional programming principles with proper monadic operations, allowing you to chain operations in a clean, readable way.</p>
-                
-                <pre><code class="language-javascript">// Example using Maybe type for optional values
-import Maybe from './src/core/types/maybe.js';
 
-// Safe handling of potentially null values
+            <div class="py-6 px-8 max-w-4xl mx-auto">
+                <div class="flex items-center space-x-2 text-sm text-gray-500 mb-8">
+                    <a href="../index.html" class="hover:text-primary">Home</a>
+                    <span>/</span>
+                    <a href="#" class="hover:text-primary">Getting Started</a>
+                    <span>/</span>
+                    <span class="text-gray-900">Introduction</span>
+                </div>
+
+                <h1 class="text-3xl font-bold mb-6">Introduction to FlexNet JSX</h1>
+                
+                <div class="prose prose-blue max-w-none">
+                    <p class="lead text-xl text-gray-600 mb-8">
+                        FlexNet JSX is a lightweight, functional JavaScript framework for building modern web applications using pure functions, immutable data, and functional composition.
+                    </p>
+
+                    <div class="bg-green-50 border-l-4 border-green-500 p-4 mb-8">
+                        <div class="flex">
+                            <div class="flex-shrink-0">
+                                <svg class="h-5 w-5 text-green-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                                </svg>
+                            </div>
+                            <div class="ml-3">
+                                <p class="text-sm text-green-700">
+                                    FlexNet is ideal for developers who value code that is predictable, maintainable, and testable. Its functional approach eliminates an entire class of common JavaScript bugs.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h2 class="text-2xl font-bold mt-8 mb-4">What is FlexNet JSX?</h2>
+                    <p class="mb-4">
+                        FlexNet JSX is a JavaScript framework built on functional programming principles with a JSX-like syntax. Unlike React or other mainstream frameworks, FlexNet emphasizes:
+                    </p>
+                    
+                    <ul class="list-disc pl-6 mb-6 space-y-2">
+                        <li><strong>Pure Functions</strong> - Components are pure functions with no side effects</li>
+                        <li><strong>Immutable Data</strong> - State changes create new state rather than mutating existing state</li>
+                        <li><strong>Functional Composition</strong> - Building complex behavior through function composition</li>
+                        <li><strong>Zero Dependencies</strong> - No external dependencies, using only browser native capabilities</li>
+                        <li><strong>Type Safety</strong> - Functional type system with Maybe, Either, and Result types</li>
+                    </ul>
+
+                    <h2 class="text-2xl font-bold mt-8 mb-4">Why Choose FlexNet?</h2>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                        <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-100">
+                            <h3 class="text-lg font-semibold mb-3">Predictable Behavior</h3>
+                            <p class="text-gray-600">Pure functions always produce the same output for a given input, making behavior predictable and reproducible.</p>
+                        </div>
+                        <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-100">
+                            <h3 class="text-lg font-semibold mb-3">Easier Testing</h3>
+                            <p class="text-gray-600">Pure functions are inherently easier to test as they don't depend on external state or produce side effects.</p>
+                        </div>
+                        <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-100">
+                            <h3 class="text-lg font-semibold mb-3">Fewer Bugs</h3>
+                            <p class="text-gray-600">Immutable data and functional composition eliminate common sources of bugs like race conditions and state inconsistencies.</p>
+                        </div>
+                        <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-100">
+                            <h3 class="text-lg font-semibold mb-3">Lightweight & Fast</h3>
+                            <p class="text-gray-600">Zero dependencies and minimal abstraction lead to smaller bundle sizes and faster execution.</p>
+                        </div>
+                    </div>
+
+                    <h2 class="text-2xl font-bold mt-8 mb-4">Core Principles</h2>
+
+                    <h3 class="text-xl font-semibold mt-6 mb-3">1. Functions as First-Class Citizens</h3>
+                    <p class="mb-4">
+                        In FlexNet, functions are the primary building blocks. Components are pure functions that take props as input and return elements as output.
+                    </p>
+                    <pre class="bg-gray-800 text-white p-4 rounded-md mb-6 overflow-x-auto"><code class="language-javascript">// A simple functional component
+const Greeting = ({ name }) => 
+  createElement('h1', null, `Hello, ${name}!`);
+
+// Usage
+render(
+  createElement(Greeting, { name: 'World' }),
+  document.getElementById('root')
+);</code></pre>
+
+                    <h3 class="text-xl font-semibold mt-6 mb-3">2. Immutable State Management</h3>
+                    <p class="mb-4">
+                        State is never mutated directly. Instead, state updates create new state objects, preserving the old state.
+                    </p>
+                    <pre class="bg-gray-800 text-white p-4 rounded-md mb-6 overflow-x-auto"><code class="language-javascript">import { createStore } from './src/systems/state/store.js';
+import { Maybe } from './src/core/types/maybe.js';
+
+// Create an immutable store
+const store = createStore(Maybe.Just({ count: 0 }));
+
+// State updates return new state
+const increment = state => 
+  Maybe.Just({ ...state, count: state.count + 1 });
+
+// Update state
+store.update(increment);</code></pre>
+
+                    <h3 class="text-xl font-semibold mt-6 mb-3">3. Functional Composition</h3>
+                    <p class="mb-4">
+                        Complex behaviors are built through function composition rather than inheritance or imperative code.
+                    </p>
+                    <pre class="bg-gray-800 text-white p-4 rounded-md mb-6 overflow-x-auto"><code class="language-javascript">import { compose } from './src/core/runtime/runtime.js';
+
+// Simple functions
+const add5 = x => x + 5;
+const multiply2 = x => x * 2;
+const toString = x => `Result: ${x}`;
+
+// Compose them into a single function
+const process = compose(
+  toString,
+  multiply2,
+  add5
+);
+
+// Use the composed function
+console.log(process(10)); // "Result: 30"</code></pre>
+
+                    <h3 class="text-xl font-semibold mt-6 mb-3">4. Type Safety with Functional Types</h3>
+                    <p class="mb-4">
+                        FlexNet provides functional types like Maybe, Either, and Result for safer handling of optional values and error cases.
+                    </p>
+                    <pre class="bg-gray-800 text-white p-4 rounded-md mb-6 overflow-x-auto"><code class="language-javascript">import { Maybe } from './src/core/types/maybe.js';
+
+// Safe access to potentially missing values
 const getUserName = user => 
   Maybe.fromNullable(user)
-    .chain(u => Maybe.fromNullable(u.profile))
+    .map(u => u.profile)
     .chain(p => Maybe.fromNullable(p.name))
-    .getOrElse('Anonymous');</code></pre>
-                
-                <h3>State Management with Immutable Updates</h3>
-                <p>FlexNet JSX includes a simple but powerful state management system based on immutable updates and subscribers. This eliminates many common bugs associated with mutable state, while keeping your application predictable and easy to debug.</p>
-                
-                <pre><code class="language-javascript">// Creating an immutable store
-const store = createStore(Maybe.Just(0));
+    .getOrElse('Guest');
 
-// Update store with pure function
-store.update(count => Maybe.Just(count.value + 1));
+// No more null reference errors!
+const name1 = getUserName({ profile: { name: 'Alice' } }); // "Alice"
+const name2 = getUserName({ profile: null }); // "Guest"
+const name3 = getUserName(null); // "Guest"</code></pre>
+
+                    <h2 class="text-2xl font-bold mt-8 mb-4">Key Features</h2>
+
+                    <h3 class="text-xl font-semibold mt-6 mb-3">JSX-like Syntax</h3>
+                    <p class="mb-4">
+                        FlexNet provides a JSX-compatible runtime that lets you write declarative UI code:
+                    </p>
+                    <pre class="bg-gray-800 text-white p-4 rounded-md mb-6 overflow-x-auto"><code class="language-javascript">// JSX syntax (requires transpilation)
+const App = () => (
+  <div className="app">
+    <h1>FlexNet App</h1>
+    <p>Building UIs with pure functions</p>
+  </div>
+);
+
+// Equivalent createElement calls
+const App = () => 
+  createElement('div', { className: 'app' },
+    createElement('h1', null, 'FlexNet App'),
+    createElement('p', null, 'Building UIs with pure functions')
+  );</code></pre>
+
+                    <h3 class="text-xl font-semibold mt-6 mb-3">Immutable Store</h3>
+                    <p class="mb-4">
+                        FlexNet includes a simple yet powerful immutable store for state management:
+                    </p>
+                    <pre class="bg-gray-800 text-white p-4 rounded-md mb-6 overflow-x-auto"><code class="language-javascript">import { createStore } from './src/systems/state/store.js';
+import { Maybe } from './src/core/types/maybe.js';
+
+// Create a store with initial state
+const store = createStore(Maybe.Just({
+  user: null,
+  isLoading: false,
+  error: null
+}));
 
 // Subscribe to state changes
-store.subscribe(count => {
-  console.log('Count updated:', count.value);
-});</code></pre>
-                
-                <h3>Effect System with Cleanup</h3>
-                <p>Side effects (like API calls or DOM manipulations) are isolated and handled properly with cleanup functions. This keeps your application core pure while still allowing necessary side effects to be performed safely.</p>
-                
-                <h3>Advanced Security Features</h3>
-                <p>FlexNet JSX includes built-in security features to protect against common web vulnerabilities:</p>
-                <ul>
-                    <li>XSS prevention through content escaping</li>
-                    <li>Input validation and sanitization</li>
-                    <li>Functional error boundaries</li>
-                </ul>
-                
-                <h2>Why Choose FlexNet JSX?</h2>
-                
-                <div class="feature-comparison">
-                    <div class="feature-card">
-                        <h3>Lightweight</h3>
-                        <p>No external dependencies means your application stays small and fast.</p>
+store.subscribe(state => {
+  console.log('New state:', state);
+  renderApp(state);
+});
+
+// Update state with pure functions
+const setLoading = loading => state => 
+  Maybe.Just({
+    ...state,
+    isLoading: loading
+  });
+
+const setUser = user => state =>
+  Maybe.Just({
+    ...state,
+    user,
+    isLoading: false
+  });
+
+// Use the store
+store.update(setLoading(true));
+fetchUser().then(user => store.update(setUser(user)));</code></pre>
+
+                    <h3 class="text-xl font-semibold mt-6 mb-3">Functional Error Handling</h3>
+                    <p class="mb-4">
+                        FlexNet provides functional types for safer error handling:
+                    </p>
+                    <pre class="bg-gray-800 text-white p-4 rounded-md mb-6 overflow-x-auto"><code class="language-javascript">import { Result } from './src/core/types/result.js';
+
+// Function that returns a Result
+const divide = (a, b) => 
+  b === 0
+    ? Result.Error('Division by zero')
+    : Result.Ok(a / b);
+
+// Using the Result
+const result = divide(10, 2)
+  .map(value => value * 2)
+  .mapError(err => `Error: ${err}`)
+  .fold(
+    error => console.error(error),
+    value => console.log(`Result: ${value}`)
+  );</code></pre>
+
+                    <h2 class="text-2xl font-bold mt-8 mb-4">Comparison with Other Frameworks</h2>
+                    
+                    <div class="overflow-x-auto mb-8">
+                        <table class="min-w-full border border-gray-200 rounded-lg">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Feature</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">FlexNet</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">React</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Vue</th>
+                                </tr>
+                            </thead>
+                            <tbody class="bg-white divide-y divide-gray-200">
+                                <tr>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">Programming Paradigm</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Purely Functional</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Mixed (Functional & OOP)</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Mixed (Reactive & OOP)</td>
+                                </tr>
+                                <tr>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">State Management</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Immutable Store</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Hooks / Context / Redux</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Reactive State / Vuex</td>
+                                </tr>
+                                <tr>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">Bundle Size</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Very Small (< 10KB)</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Medium (~ 40KB)</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Medium (~ 30KB)</td>
+                                </tr>
+                                <tr>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">Type Safety</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Built-in Functional Types</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Via TypeScript</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Via TypeScript</td>
+                                </tr>
+                                <tr>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">Learning Curve</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Steeper (FP concepts)</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Moderate</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Gentle</td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
-                    <div class="feature-card">
-                        <h3>Predictable</h3>
-                        <p>Pure functions and immutable state make your application behavior predictable.</p>
+
+                    <h2 class="text-2xl font-bold mt-8 mb-4">Getting Started</h2>
+                    <p class="mb-4">
+                        Ready to try FlexNet? Here's how to get started:
+                    </p>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+                        <a href="installation.html" class="block p-6 bg-white rounded-lg border border-gray-200 hover:border-primary transition">
+                            <h3 class="text-lg font-semibold mb-2">1. Installation</h3>
+                            <p class="text-gray-600 mb-4">Add FlexNet to your project</p>
+                            <span class="text-primary">Installation Guide →</span>
+                        </a>
+                        <a href="quickstart.html" class="block p-6 bg-white rounded-lg border border-gray-200 hover:border-primary transition">
+                            <h3 class="text-lg font-semibold mb-2">2. Quick Start</h3>
+                            <p class="text-gray-600 mb-4">Build your first FlexNet app</p>
+                            <span class="text-primary">Quick Start Guide →</span>
+                        </a>
+                        <a href="../examples/counter.html" class="block p-6 bg-white rounded-lg border border-gray-200 hover:border-primary transition">
+                            <h3 class="text-lg font-semibold mb-2">3. Examples</h3>
+                            <p class="text-gray-600 mb-4">Learn from sample applications</p>
+                            <span class="text-primary">View Examples →</span>
+                        </a>
                     </div>
-                    <div class="feature-card">
-                        <h3>Secure</h3>
-                        <p>Built-in security features protect against common web vulnerabilities.</p>
+
+                    <div class="bg-white p-6 rounded-lg border border-gray-200 mt-8 mb-8">
+                        <h3 class="text-xl font-semibold mb-4">Who is FlexNet For?</h3>
+                        <p class="mb-4">
+                            FlexNet is ideal for developers and teams who:
+                        </p>
+                        <ul class="list-disc pl-6 mb-4 space-y-2">
+                            <li>Value code that is predictable, testable, and maintainable</li>
+                            <li>Appreciate functional programming principles</li>
+                            <li>Need a lightweight solution with minimal dependencies</li>
+                            <li>Want to avoid common JavaScript bugs and edge cases</li>
+                            <li>Build applications where reliability is critical</li>
+                        </ul>
+                        <p>
+                            While FlexNet has a steeper learning curve for developers unfamiliar with functional programming, the benefits in code quality and maintainability make it worth the investment.
+                        </p>
                     </div>
-                    <div class="feature-card">
-                        <h3>Testable</h3>
-                        <p>Pure functions are easy to test without complex mocking or setup.</p>
+
+                    <h2 class="text-2xl font-bold mt-8 mb-4">Community & Support</h2>
+                    <p class="mb-4">
+                        FlexNet is an open-source project with a growing community. Here's how to get involved:
+                    </p>
+                    <ul class="list-disc pl-6 mb-6 space-y-2">
+                        <li><a href="https://github.com/flexnet/flexnet-jsx" class="text-primary hover:underline">GitHub Repository</a> - Star the project, report issues, and contribute code</li>
+                        <li><a href="https://discord.gg/flexnet" class="text-primary hover:underline">Discord Community</a> - Join discussions and get help from other users</li>
+                        <li><a href="https://flexnet.js.org/blog" class="text-primary hover:underline">Official Blog</a> - Learn about updates, best practices, and use cases</li>
+                    </ul>
+
+                    <div class="flex justify-between mt-12 pt-6 border-t border-gray-200">
+                        <span></span>
+                        <a href="installation.html" class="inline-flex items-center px-4 py-2 bg-primary text-white rounded-md hover:bg-blue-600 transition">
+                            Next: Installation
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                            </svg>
+                        </a>
                     </div>
-                </div>
-                
-                <h2>Getting Started</h2>
-                
-                <p>Ready to start building with FlexNet JSX? The easiest way to get started is by using one of our starter projects:</p>
-                
-                <div class="code-tabs">
-                    <pre><code class="language-bash"># Start with the full-featured starter project
-cd starter-project
-python -m http.server 3000
-# Open http://localhost:3000</code></pre>
-                </div>
-                
-                <p>Or for a more lightweight beginning:</p>
-                
-                <div class="code-tabs">
-                    <pre><code class="language-bash"># Start with the minimal starter project
-cd starter-project-minimal
-python -m http.server 3000
-# Open http://localhost:3000</code></pre>
-                </div>
-                
-                <p>Continue to the <a href="installation.html">Installation</a> guide to learn more about setting up FlexNet JSX in your project.</p>
-                
-                <div class="pagination">
-                    <span></span>
-                    <a href="installation.html" class="next-link">Next: Installation →</a>
                 </div>
             </div>
         </main>
     </div>
-    <footer class="footer">
-        <div class="footer-content">
-            <p>&copy; 2025 FlexNet JSX Framework. Created by Dr. Robert Whetsel and the FlexNet Development Team.</p>
-            <div class="footer-links">
-                <a href="https://github.com/flexnet/flexnet-jsx">GitHub</a>
-                <a href="../guides/contribution.html">Contribute</a>
-                <a href="../LICENSE.html">License</a>
+
+    <footer class="bg-white border-t border-gray-200 py-6">
+        <div class="max-w-5xl mx-auto px-6">
+            <p class="text-center text-gray-600">&copy; 2025 FlexNet JSX Framework. Created by Dr. Robert Whetsel and the FlexNet Development Team.</p>
+            <div class="flex justify-center space-x-6 mt-4">
+                <a href="https://github.com/flexnet/flexnet-jsx" class="text-gray-600 hover:text-primary">GitHub</a>
+                <a href="contribution.html" class="text-gray-600 hover:text-primary">Contribute</a>
+                <a href="../LICENSE.html" class="text-gray-600 hover:text-primary">License</a>
             </div>
         </div>
     </footer>
-    <script src="../assets/js/docs.js"></script>
+
+    <script>
+        // Simple client-side search functionality
+        const searchInput = document.querySelector('input[placeholder="Search documentation..."]');
+        searchInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                const query = searchInput.value.toLowerCase();
+                // Implement search functionality
+                console.log('Searching for:', query);
+                // This would typically use a search index or API
+            }
+        });
+    </script>
 </body>
 </html> 

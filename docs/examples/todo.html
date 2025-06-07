@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Todo App Example - FlexNet JSX Framework</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/atom-one-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#3b82f6',
+                        secondary: '#6366f1',
+                        dark: '#1e293b',
+                        light: '#f8fafc'
+                    }
+                }
+            }
+        }
+        hljs.highlightAll();
+    </script>
+</head>
+<body class="bg-gray-50 text-gray-900 min-h-screen">
+    <div class="flex flex-col md:flex-row">
+        <!-- Sidebar -->
+        <aside class="w-full md:w-64 bg-white border-r border-gray-200 md:h-screen md:sticky top-0 overflow-y-auto">
+            <div class="p-4 border-b border-gray-200">
+                <a href="../index.html" class="block">
+                    <h1 class="text-2xl font-bold text-primary">FlexNet</h1>
+                    <p class="text-sm text-gray-500">v1.0.0</p>
+                </a>
+            </div>
+            <nav class="p-4">
+                <div class="mb-6">
+                    <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">Getting Started</h3>
+                    <ul class="space-y-2">
+                        <li><a href="../guides/introduction.html" class="block text-gray-700 hover:text-primary">Introduction</a></li>
+                        <li><a href="../guides/installation.html" class="block text-gray-700 hover:text-primary">Installation</a></li>
+                        <li><a href="../guides/quickstart.html" class="block text-gray-700 hover:text-primary">Quick Start</a></li>
+                        <li><a href="../guides/core-concepts.html" class="block text-gray-700 hover:text-primary">Core Concepts</a></li>
+                    </ul>
+                </div>
+                <div class="mb-6">
+                    <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">Core</h3>
+                    <ul class="space-y-2">
+                        <li><a href="../core/jsx-runtime.html" class="block text-gray-700 hover:text-primary">JSX Runtime</a></li>
+                        <li><a href="../core/types.html" class="block text-gray-700 hover:text-primary">Type System</a></li>
+                        <li><a href="../core/functions.html" class="block text-gray-700 hover:text-primary">Functions</a></li>
+                        <li><a href="../core/security.html" class="block text-gray-700 hover:text-primary">Security</a></li>
+                    </ul>
+                </div>
+                <div class="mb-6">
+                    <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">Systems</h3>
+                    <ul class="space-y-2">
+                        <li><a href="../systems/state.html" class="block text-gray-700 hover:text-primary">State Management</a></li>
+                        <li><a href="../systems/effects.html" class="block text-gray-700 hover:text-primary">Effects</a></li>
+                        <li><a href="../systems/render.html" class="block text-gray-700 hover:text-primary">Render</a></li>
+                        <li><a href="../systems/events.html" class="block text-gray-700 hover:text-primary">Events</a></li>
+                        <li><a href="../systems/errors.html" class="block text-gray-700 hover:text-primary">Error Handling</a></li>
+                    </ul>
+                </div>
+                <div class="mb-6">
+                    <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">Examples</h3>
+                    <ul class="space-y-2">
+                        <li><a href="counter.html" class="block text-gray-700 hover:text-primary">Counter</a></li>
+                        <li><a href="todo.html" class="block text-primary font-medium">Todo App</a></li>
+                        <li><a href="website.html" class="block text-gray-700 hover:text-primary">Website</a></li>
+                    </ul>
+                </div>
+                <div class="mb-6">
+                    <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">API Reference</h3>
+                    <ul class="space-y-2">
+                        <li><a href="../api/jsx.html" class="block text-gray-700 hover:text-primary">JSX API</a></li>
+                        <li><a href="../api/maybe.html" class="block text-gray-700 hover:text-primary">Maybe</a></li>
+                        <li><a href="../api/either.html" class="block text-gray-700 hover:text-primary">Either</a></li>
+                        <li><a href="../api/result.html" class="block text-gray-700 hover:text-primary">Result</a></li>
+                        <li><a href="../api/store.html" class="block text-gray-700 hover:text-primary">Store</a></li>
+                    </ul>
+                </div>
+            </nav>
+        </aside>
+
+        <!-- Main content -->
+        <main class="flex-1 overflow-auto">
+            <div class="border-b border-gray-200 bg-white sticky top-0 z-10">
+                <div class="flex items-center justify-between px-4 py-3">
+                    <div class="relative w-full max-w-md">
+                        <input type="text" placeholder="Search documentation..." class="w-full pl-10 pr-4 py-2 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 text-gray-400 absolute left-3 top-1/2 transform -translate-y-1/2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
+                        </svg>
+                    </div>
+                    <div class="flex space-x-4 ml-4">
+                        <a href="https://github.com/flexnet/flexnet-jsx" target="_blank" class="text-gray-600 hover:text-primary">GitHub</a>
+                        <a href="../../starter-project/README.md" target="_blank" class="text-gray-600 hover:text-primary">Starter Project</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="py-6 px-8 max-w-4xl mx-auto">
+                <div class="flex items-center space-x-2 text-sm text-gray-500 mb-8">
+                    <a href="../index.html" class="hover:text-primary">Home</a>
+                    <span>/</span>
+                    <a href="#" class="hover:text-primary">Examples</a>
+                    <span>/</span>
+                    <span class="text-gray-900">Todo App</span>
+                </div>
+
+                <h1 class="text-3xl font-bold mb-6">Todo App Example</h1>
+                
+                <div class="prose prose-blue max-w-none">
+                    <p class="lead text-xl text-gray-600 mb-8">
+                        This example demonstrates how to build a complete Todo application using FlexNet JSX. It showcases state management, event handling, functional composition, and immutability.
+                    </p>
+
+                    <div class="bg-blue-50 border-l-4 border-blue-500 p-4 mb-8">
+                        <div class="flex">
+                            <div class="flex-shrink-0">
+                                <svg class="h-5 w-5 text-blue-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2h-1V9a1 1 0 00-1-1z" clip-rule="evenodd" />
+                                </svg>
+                            </div>
+                            <div class="ml-3">
+                                <p class="text-sm text-blue-700">
+                                    You can find the complete source code for this example in the <a href="https://github.com/flexnet/flexnet-jsx/examples/todo" class="font-medium underline">GitHub repository</a>.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Live Demo Section -->
+                    <h2 class="text-2xl font-bold mt-8 mb-4">Live Demo</h2>
+                    <div class="border border-gray-200 rounded-lg overflow-hidden mb-8">
+                        <div class="bg-gray-50 border-b border-gray-200 px-4 py-2">
+                            <h3 class="font-medium">Todo App Preview</h3>
+                        </div>
+                        <div class="p-6 bg-white">
+                            <iframe src="../../examples/todo/index.html" class="w-full h-96 border border-gray-200 rounded"></iframe>
+                        </div>
+                        <div class="bg-gray-50 border-t border-gray-200 px-4 py-2 text-right">
+                            <a href="../../examples/todo/index.html" target="_blank" class="text-primary hover:underline">Open in new window</a>
+                        </div>
+                    </div>
+
+                    <!-- Project Structure -->
+                    <h2 class="text-2xl font-bold mt-8 mb-4">Project Structure</h2>
+                    <p class="mb-4">
+                        The Todo app is organized with a clear separation of concerns, following functional programming principles:
+                    </p>
+
+                    <div class="bg-white rounded-lg border border-gray-200 p-4 mb-8 overflow-auto">
+                        <pre class="text-sm text-gray-700"><code>todo/
+├── index.html
+├── src/
+│   ├── components/
+│   │   ├── App.js
+│   │   ├── TodoForm.js
+│   │   ├── TodoItem.js
+│   │   └── TodoList.js
+│   ├── store/
+│   │   ├── todoStore.js
+│   │   └── actions.js
+│   ├── types/
+│   │   └── TodoTypes.js
+│   ├── utils/
+│   │   └── uuid.js
+│   └── index.js
+└── styles.css</code></pre>
+                    </div>
+
+                    <!-- State Management Implementation -->
+                    <h2 class="text-2xl font-bold mt-8 mb-4">State Management</h2>
+                    <p class="mb-4">
+                        The app uses FlexNet's immutable store pattern for state management. Here's how the Todo store is implemented:
+                    </p>
+
+                    <pre class="bg-gray-800 text-white p-4 rounded-md mb-6 overflow-x-auto"><code class="language-javascript">// src/store/todoStore.js
+import { createStore } from '../../../src/systems/state/store.js';
+import { Maybe } from '../../../src/core/types/maybe.js';
+
+// Initial state with empty todos array
+const initialState = Maybe.Just({
+  todos: [],
+  filter: 'all' // 'all', 'active', 'completed'
+});
+
+// Create the immutable store
+export const todoStore = createStore(initialState);
+
+// Selectors (pure functions to derive data from state)
+export const selectors = {
+  getAllTodos: state => state.todos,
+  
+  getFilteredTodos: state => {
+    const { todos, filter } = state;
+    
+    switch(filter) {
+      case 'active':
+        return todos.filter(todo => !todo.completed);
+      case 'completed':
+        return todos.filter(todo => todo.completed);
+      default:
+        return todos;
+    }
+  },
+  
+  getActiveCount: state => 
+    state.todos.filter(todo => !todo.completed).length,
+    
+  getCurrentFilter: state => state.filter
+};</code></pre>
+
+                    <!-- Actions Implementation -->
+                    <h3 class="text-xl font-semibold mt-6 mb-3">Todo Actions</h3>
+                    <p class="mb-4">
+                        Actions are pure functions that take the current state and return a new state:
+                    </p>
+
+                    <pre class="bg-gray-800 text-white p-4 rounded-md mb-6 overflow-x-auto"><code class="language-javascript">// src/store/actions.js
+import { Maybe } from '../../../src/core/types/maybe.js';
+import { generateId } from '../utils/uuid.js';
+
+// Pure action creators that return state transformation functions
+export const actions = {
+  // Add a new todo item
+  addTodo: text => state => 
+    Maybe.Just({
+      ...state,
+      todos: [
+        ...state.todos,
+        {
+          id: generateId(),
+          text,
+          completed: false
+        }
+      ]
+    }),
+    
+  // Toggle a todo's completed status
+  toggleTodo: id => state => 
+    Maybe.Just({
+      ...state,
+      todos: state.todos.map(todo => 
+        todo.id === id
+          ? { ...todo, completed: !todo.completed }
+          : todo
+      )
+    }),
+    
+  // Remove a todo item
+  removeTodo: id => state =>
+    Maybe.Just({
+      ...state,
+      todos: state.todos.filter(todo => todo.id !== id)
+    }),
+    
+  // Update a todo's text
+  updateTodoText: (id, text) => state =>
+    Maybe.Just({
+      ...state,
+      todos: state.todos.map(todo => 
+        todo.id === id
+          ? { ...todo, text }
+          : todo
+      )
+    }),
+    
+  // Clear all completed todos
+  clearCompleted: () => state =>
+    Maybe.Just({
+      ...state,
+      todos: state.todos.filter(todo => !todo.completed)
+    }),
+    
+  // Set the current filter
+  setFilter: filter => state =>
+    Maybe.Just({
+      ...state,
+      filter
+    })
+};</code></pre>
+
+                    <!-- Components Implementation -->
+                    <h2 class="text-2xl font-bold mt-8 mb-4">Components</h2>
+                    <p class="mb-4">
+                        Let's look at the key components of our Todo app:
+                    </p>
+
+                    <h3 class="text-xl font-semibold mt-6 mb-3">TodoItem Component</h3>
+                    <pre class="bg-gray-800 text-white p-4 rounded-md mb-6 overflow-x-auto"><code class="language-javascript">// src/components/TodoItem.js
+import { createElement } from '../../../src/core/runtime/jsx.js';
+import { compose } from '../../../src/core/runtime/runtime.js';
+
+// TodoItem is a pure functional component
+const TodoItem = ({ todo, onToggle, onRemove, onUpdate }) => {
+  const handleDoubleClick = (e) => {
+    const text = prompt('Edit todo:', todo.text);
+    if (text !== null && text.trim() !== '') {
+      onUpdate(todo.id, text);
+    }
+  };
+
+  return createElement('li', { 
+    className: `todo-item ${todo.completed ? 'completed' : ''}`,
+    'data-id': todo.id
+  },
+    createElement('div', { className: 'view' },
+      createElement('input', {
+        type: 'checkbox',
+        className: 'toggle',
+        checked: todo.completed,
+        onChange: () => onToggle(todo.id)
+      }),
+      createElement('label', {
+        onDblClick: handleDoubleClick
+      }, todo.text),
+      createElement('button', {
+        className: 'destroy',
+        onClick: () => onRemove(todo.id)
+      })
+    )
+  );
+};
+
+export default TodoItem;</code></pre>
+
+                    <h3 class="text-xl font-semibold mt-6 mb-3">TodoList Component</h3>
+                    <pre class="bg-gray-800 text-white p-4 rounded-md mb-6 overflow-x-auto"><code class="language-javascript">// src/components/TodoList.js
+import { createElement } from '../../../src/core/runtime/jsx.js';
+import TodoItem from './TodoItem.js';
+
+const TodoList = ({ todos, onToggle, onRemove, onUpdate }) => {
+  return createElement('ul', { className: 'todo-list' },
+    todos.map(todo => 
+      createElement(TodoItem, {
+        key: todo.id,
+        todo,
+        onToggle,
+        onRemove,
+        onUpdate
+      })
+    )
+  );
+};
+
+export default TodoList;</code></pre>
+
+                    <h3 class="text-xl font-semibold mt-6 mb-3">TodoForm Component</h3>
+                    <pre class="bg-gray-800 text-white p-4 rounded-md mb-6 overflow-x-auto"><code class="language-javascript">// src/components/TodoForm.js
+import { createElement } from '../../../src/core/runtime/jsx.js';
+import { compose } from '../../../src/core/runtime/runtime.js';
+
+const TodoForm = ({ onAdd }) => {
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const input = e.target.elements.newTodo;
+    const text = input.value.trim();
+    
+    if (text) {
+      onAdd(text);
+      input.value = '';
+    }
+  };
+
+  return createElement('form', { 
+    className: 'todo-form',
+    onSubmit: handleSubmit 
+  },
+    createElement('input', {
+      className: 'new-todo',
+      name: 'newTodo',
+      placeholder: 'What needs to be done?',
+      autoFocus: true
+    })
+  );
+};
+
+export default TodoForm;</code></pre>
+
+                    <h3 class="text-xl font-semibold mt-6 mb-3">Main App Component</h3>
+                    <pre class="bg-gray-800 text-white p-4 rounded-md mb-6 overflow-x-auto"><code class="language-javascript">// src/components/App.js
+import { createElement } from '../../../src/core/runtime/jsx.js';
+import { compose } from '../../../src/core/runtime/runtime.js';
+import TodoForm from './TodoForm.js';
+import TodoList from './TodoList.js';
+import { actions } from '../store/actions.js';
+import { todoStore, selectors } from '../store/todoStore.js';
+
+const App = ({ state, dispatch }) => {
+  const todos = selectors.getFilteredTodos(state);
+  const activeCount = selectors.getActiveCount(state);
+  const currentFilter = selectors.getCurrentFilter(state);
+  
+  // Event handlers use composition to combine actions with dispatch
+  const handleAddTodo = compose(dispatch, actions.addTodo);
+  const handleToggleTodo = compose(dispatch, actions.toggleTodo);
+  const handleRemoveTodo = compose(dispatch, actions.removeTodo);
+  const handleUpdateTodo = (id, text) => dispatch(actions.updateTodoText(id, text));
+  const handleClearCompleted = compose(dispatch, actions.clearCompleted);
+  const handleFilterChange = compose(dispatch, actions.setFilter);
+  
+  return createElement('div', { className: 'todoapp' },
+    createElement('header', { className: 'header' },
+      createElement('h1', null, 'todos'),
+      createElement(TodoForm, { onAdd: handleAddTodo })
+    ),
+    
+    todos.length > 0 && createElement('section', { className: 'main' },
+      createElement(TodoList, {
+        todos,
+        onToggle: handleToggleTodo,
+        onRemove: handleRemoveTodo,
+        onUpdate: handleUpdateTodo
+      }),
+      
+      createElement('footer', { className: 'footer' },
+        createElement('span', { className: 'todo-count' },
+          createElement('strong', null, activeCount),
+          ` item${activeCount !== 1 ? 's' : ''} left`
+        ),
+        
+        createElement('ul', { className: 'filters' },
+          createElement('li', null,
+            createElement('a', { 
+              className: currentFilter === 'all' ? 'selected' : '',
+              onClick: () => handleFilterChange('all')
+            }, 'All')
+          ),
+          createElement('li', null,
+            createElement('a', { 
+              className: currentFilter === 'active' ? 'selected' : '',
+              onClick: () => handleFilterChange('active')
+            }, 'Active')
+          ),
+          createElement('li', null,
+            createElement('a', { 
+              className: currentFilter === 'completed' ? 'selected' : '',
+              onClick: () => handleFilterChange('completed')
+            }, 'Completed')
+          )
+        ),
+        
+        state.todos.some(t => t.completed) && 
+          createElement('button', {
+            className: 'clear-completed',
+            onClick: handleClearCompleted
+          }, 'Clear completed')
+      )
+    )
+  );
+};
+
+export default App;</code></pre>
+
+                    <!-- Main Index.js -->
+                    <h2 class="text-2xl font-bold mt-8 mb-4">Putting It All Together</h2>
+                    <p class="mb-4">
+                        The main entry point connects all the pieces together:
+                    </p>
+
+                    <pre class="bg-gray-800 text-white p-4 rounded-md mb-6 overflow-x-auto"><code class="language-javascript">// src/index.js
+import { createElement, render } from '../../src/core/runtime/jsx.js';
+import { todoStore } from './store/todoStore.js';
+import App from './components/App.js';
+
+// Get the root element
+const rootElement = document.getElementById('root');
+
+// Render function that will be called on every state change
+const renderApp = (state) => {
+  render(
+    createElement(App, {
+      state: state,
+      dispatch: todoStore.update
+    }),
+    rootElement
+  );
+};
+
+// Subscribe to store updates
+todoStore.subscribe(renderApp);
+
+// Initial render
+todoStore.getState().map(renderApp);
+
+// For debugging
+window.todoStore = todoStore;</code></pre>
+
+                    <!-- HTML Structure -->
+                    <h3 class="text-xl font-semibold mt-6 mb-3">HTML Structure</h3>
+                    <pre class="bg-gray-800 text-white p-4 rounded-md mb-6 overflow-x-auto"><code class="language-html">&lt;!-- index.html -->
+&lt;!DOCTYPE html>
+&lt;html lang="en">
+&lt;head>
+    &lt;meta charset="UTF-8">
+    &lt;meta name="viewport" content="width=device-width, initial-scale=1.0">
+    &lt;title>FlexNet Todo App&lt;/title>
+    &lt;link rel="stylesheet" href="styles.css">
+&lt;/head>
+&lt;body>
+    &lt;div id="root">&lt;/div>
+    
+    &lt;footer class="info">
+        &lt;p>Double-click to edit a todo&lt;/p>
+        &lt;p>Created with &lt;a href="https://github.com/flexnet/flexnet-jsx">FlexNet JSX&lt;/a>&lt;/p>
+    &lt;/footer>
+    
+    &lt;script type="module" src="src/index.js">&lt;/script>
+&lt;/body>
+&lt;/html></code></pre>
+
+                    <!-- Key Concepts Used -->
+                    <h2 class="text-2xl font-bold mt-8 mb-4">Key Concepts Demonstrated</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
+                        <div class="bg-white p-5 rounded-lg border border-gray-200">
+                            <h3 class="text-lg font-semibold mb-2">Immutable State</h3>
+                            <p class="text-gray-600">All state updates create new state objects rather than mutating existing ones.</p>
+                        </div>
+                        <div class="bg-white p-5 rounded-lg border border-gray-200">
+                            <h3 class="text-lg font-semibold mb-2">Functional Composition</h3>
+                            <p class="text-gray-600">Event handlers use compose() to create pipelines of functions.</p>
+                        </div>
+                        <div class="bg-white p-5 rounded-lg border border-gray-200">
+                            <h3 class="text-lg font-semibold mb-2">Pure Components</h3>
+                            <p class="text-gray-600">Components are pure functions of their props with no internal state.</p>
+                        </div>
+                        <div class="bg-white p-5 rounded-lg border border-gray-200">
+                            <h3 class="text-lg font-semibold mb-2">Unidirectional Data Flow</h3>
+                            <p class="text-gray-600">Data flows down through props, events flow up through callbacks.</p>
+                        </div>
+                        <div class="bg-white p-5 rounded-lg border border-gray-200">
+                            <h3 class="text-lg font-semibold mb-2">Type Safety</h3>
+                            <p class="text-gray-600">Using Maybe for nullable values and safe state updates.</p>
+                        </div>
+                        <div class="bg-white p-5 rounded-lg border border-gray-200">
+                            <h3 class="text-lg font-semibold mb-2">Selective Rendering</h3>
+                            <p class="text-gray-600">Conditional rendering based on state (e.g., showing clear button only when needed).</p>
+                        </div>
+                    </div>
+
+                    <!-- Further Improvements -->
+                    <h2 class="text-2xl font-bold mt-8 mb-4">Further Improvements</h2>
+                    <p class="mb-4">Here are some ways to extend this example:</p>
+                    <ul class="list-disc pl-6 mb-6 space-y-2">
+                        <li>Add local storage persistence using FlexNet's Effect system</li>
+                        <li>Implement drag-and-drop reordering of todos</li>
+                        <li>Add due dates and priority levels to todos</li>
+                        <li>Implement undo/redo functionality using command pattern</li>
+                        <li>Add categories or tags for better organization</li>
+                    </ul>
+
+                    <div class="bg-white p-6 rounded-lg border border-gray-200 mt-8 mb-8">
+                        <h3 class="text-xl font-semibold mb-4">Testing the Todo App</h3>
+                        <p class="mb-4">
+                            One of the benefits of functional programming is testability. Here's how you might test the actions:
+                        </p>
+                        <pre class="bg-gray-800 text-white p-4 rounded-md mb-4 overflow-x-auto"><code class="language-javascript">// Example test for addTodo action
+import { actions } from './store/actions.js';
+import { Maybe } from '../../src/core/types/maybe.js';
+
+// Mock state
+const mockState = {
+  todos: [],
+  filter: 'all'
+};
+
+// Test addTodo action
+const newState = actions.addTodo('Test Todo')(mockState);
+
+// Assert: should be a Maybe.Just
+console.assert(newState.type === 'Just', 'Should return a Maybe.Just');
+
+// Assert: should have one todo
+console.assert(newState.value.todos.length === 1, 'Should add one todo');
+
+// Assert: new todo should have correct text
+console.assert(newState.value.todos[0].text === 'Test Todo', 'Todo should have correct text');
+
+// Assert: new todo should not be completed
+console.assert(newState.value.todos[0].completed === false, 'Todo should not be completed');</code></pre>
+                        <p>
+                            Since actions and reducers are pure functions, they're easy to test in isolation without mocks or complex test setup.
+                        </p>
+                    </div>
+
+                    <!-- Related Links -->
+                    <h2 class="text-2xl font-bold mt-8 mb-4">Related Resources</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
+                        <a href="../systems/state.html" class="block p-6 bg-white rounded-lg border border-gray-200 hover:border-primary transition">
+                            <h3 class="text-lg font-semibold mb-2">State Management</h3>
+                            <p class="text-gray-600">Learn more about FlexNet's immutable state system</p>
+                        </a>
+                        <a href="../core/functions.html" class="block p-6 bg-white rounded-lg border border-gray-200 hover:border-primary transition">
+                            <h3 class="text-lg font-semibold mb-2">Functional Composition</h3>
+                            <p class="text-gray-600">Explore how function composition works in FlexNet</p>
+                        </a>
+                        <a href="website.html" class="block p-6 bg-white rounded-lg border border-gray-200 hover:border-primary transition">
+                            <h3 class="text-lg font-semibold mb-2">Website Example</h3>
+                            <p class="text-gray-600">See a more complex FlexNet application</p>
+                        </a>
+                        <a href="../api/result.html" class="block p-6 bg-white rounded-lg border border-gray-200 hover:border-primary transition">
+                            <h3 class="text-lg font-semibold mb-2">Result Type</h3>
+                            <p class="text-gray-600">Learn about error handling with the Result type</p>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <footer class="bg-white border-t border-gray-200 py-6">
+        <div class="max-w-5xl mx-auto px-6">
+            <p class="text-center text-gray-600">&copy; 2025 FlexNet JSX Framework. Created by Dr. Robert Whetsel and the FlexNet Development Team.</p>
+            <div class="flex justify-center space-x-6 mt-4">
+                <a href="https://github.com/flexnet/flexnet-jsx" class="text-gray-600 hover:text-primary">GitHub</a>
+                <a href="../guides/contribution.html" class="text-gray-600 hover:text-primary">Contribute</a>
+                <a href="../LICENSE.html" class="text-gray-600 hover:text-primary">License</a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Simple client-side search functionality
+        const searchInput = document.querySelector('input[placeholder="Search documentation..."]');
+        searchInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                const query = searchInput.value.toLowerCase();
+                // Implement search functionality
+                console.log('Searching for:', query);
+                // This would typically use a search index or API
+            }
+        });
+    </script>
+</body>
+</html> 

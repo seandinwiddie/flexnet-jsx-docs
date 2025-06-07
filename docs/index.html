@@ -4,121 +4,148 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FlexNet JSX Framework Documentation</title>
-    <link rel="stylesheet" href="assets/css/styles.css">
+    <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/atom-one-dark.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
-    <script>hljs.highlightAll();</script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#3b82f6',
+                        secondary: '#6366f1',
+                        dark: '#1e293b',
+                        light: '#f8fafc'
+                    }
+                }
+            }
+        }
+        hljs.highlightAll();
+    </script>
 </head>
-<body>
-    <div class="docs-container">
-        <aside class="sidebar">
-            <div class="sidebar-header">
-                <h1 class="logo">FlexNet</h1>
-                <p class="version">v1.0.0</p>
+<body class="bg-gray-50 text-gray-900 min-h-screen">
+    <div class="flex flex-col md:flex-row">
+        <!-- Sidebar -->
+        <aside class="w-full md:w-64 bg-white border-r border-gray-200 md:h-screen md:sticky top-0 overflow-y-auto">
+            <div class="p-4 border-b border-gray-200">
+                <h1 class="text-2xl font-bold text-primary">FlexNet</h1>
+                <p class="text-sm text-gray-500">v1.0.0</p>
             </div>
-            <nav class="nav-menu">
-                <div class="nav-section">
-                    <h3>Getting Started</h3>
-                    <ul>
-                        <li><a href="guides/introduction.html">Introduction</a></li>
-                        <li><a href="guides/installation.html">Installation</a></li>
-                        <li><a href="guides/quickstart.html">Quick Start</a></li>
-                        <li><a href="guides/core-concepts.html">Core Concepts</a></li>
+            <nav class="p-4">
+                <div class="mb-6">
+                    <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">Getting Started</h3>
+                    <ul class="space-y-2">
+                        <li><a href="guides/introduction.html" class="block text-gray-700 hover:text-primary">Introduction</a></li>
+                        <li><a href="guides/installation.html" class="block text-gray-700 hover:text-primary">Installation</a></li>
+                        <li><a href="guides/quickstart.html" class="block text-gray-700 hover:text-primary">Quick Start</a></li>
+                        <li><a href="guides/core-concepts.html" class="block text-gray-700 hover:text-primary">Core Concepts</a></li>
                     </ul>
                 </div>
-                <div class="nav-section">
-                    <h3>Core</h3>
-                    <ul>
-                        <li><a href="core/jsx-runtime.html">JSX Runtime</a></li>
-                        <li><a href="core/types.html">Type System</a></li>
-                        <li><a href="core/functions.html">Functions</a></li>
-                        <li><a href="core/security.html">Security</a></li>
+                <div class="mb-6">
+                    <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">Core</h3>
+                    <ul class="space-y-2">
+                        <li><a href="core/jsx-runtime.html" class="block text-gray-700 hover:text-primary">JSX Runtime</a></li>
+                        <li><a href="core/types.html" class="block text-gray-700 hover:text-primary">Type System</a></li>
+                        <li><a href="core/functions.html" class="block text-gray-700 hover:text-primary">Functions</a></li>
+                        <li><a href="core/security.html" class="block text-gray-700 hover:text-primary">Security</a></li>
                     </ul>
                 </div>
-                <div class="nav-section">
-                    <h3>Systems</h3>
-                    <ul>
-                        <li><a href="systems/state.html">State Management</a></li>
-                        <li><a href="systems/effects.html">Effects</a></li>
-                        <li><a href="systems/render.html">Render</a></li>
-                        <li><a href="systems/events.html">Events</a></li>
-                        <li><a href="systems/errors.html">Error Handling</a></li>
+                <div class="mb-6">
+                    <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">Systems</h3>
+                    <ul class="space-y-2">
+                        <li><a href="systems/state.html" class="block text-gray-700 hover:text-primary">State Management</a></li>
+                        <li><a href="systems/effects.html" class="block text-gray-700 hover:text-primary">Effects</a></li>
+                        <li><a href="systems/render.html" class="block text-gray-700 hover:text-primary">Render</a></li>
+                        <li><a href="systems/events.html" class="block text-gray-700 hover:text-primary">Events</a></li>
+                        <li><a href="systems/errors.html" class="block text-gray-700 hover:text-primary">Error Handling</a></li>
                     </ul>
                 </div>
-                <div class="nav-section">
-                    <h3>Examples</h3>
-                    <ul>
-                        <li><a href="examples/counter.html">Counter</a></li>
-                        <li><a href="examples/todo.html">Todo App</a></li>
-                        <li><a href="examples/website.html">Website</a></li>
+                <div class="mb-6">
+                    <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">Examples</h3>
+                    <ul class="space-y-2">
+                        <li><a href="examples/counter.html" class="block text-gray-700 hover:text-primary">Counter</a></li>
+                        <li><a href="examples/todo.html" class="block text-gray-700 hover:text-primary">Todo App</a></li>
+                        <li><a href="examples/website.html" class="block text-gray-700 hover:text-primary">Website</a></li>
                     </ul>
                 </div>
-                <div class="nav-section">
-                    <h3>API Reference</h3>
-                    <ul>
-                        <li><a href="api/jsx.html">JSX API</a></li>
-                        <li><a href="api/maybe.html">Maybe</a></li>
-                        <li><a href="api/either.html">Either</a></li>
-                        <li><a href="api/result.html">Result</a></li>
-                        <li><a href="api/store.html">Store</a></li>
+                <div class="mb-6">
+                    <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">API Reference</h3>
+                    <ul class="space-y-2">
+                        <li><a href="api/jsx.html" class="block text-gray-700 hover:text-primary">JSX API</a></li>
+                        <li><a href="api/maybe.html" class="block text-gray-700 hover:text-primary">Maybe</a></li>
+                        <li><a href="api/either.html" class="block text-gray-700 hover:text-primary">Either</a></li>
+                        <li><a href="api/result.html" class="block text-gray-700 hover:text-primary">Result</a></li>
+                        <li><a href="api/store.html" class="block text-gray-700 hover:text-primary">Store</a></li>
                     </ul>
                 </div>
             </nav>
         </aside>
-        <main class="content">
-            <div class="content-header">
-                <div class="search-container">
-                    <input type="text" placeholder="Search documentation...">
-                </div>
-                <div class="header-links">
-                    <a href="https://github.com/flexnet/flexnet-jsx" target="_blank">GitHub</a>
-                    <a href="../starter-project/README.md" target="_blank">Starter Project</a>
+
+        <!-- Main content -->
+        <main class="flex-1">
+            <div class="border-b border-gray-200 bg-white sticky top-0 z-10">
+                <div class="flex items-center justify-between px-4 py-3">
+                    <div class="relative w-full max-w-md">
+                        <input type="text" placeholder="Search documentation..." class="w-full pl-10 pr-4 py-2 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 text-gray-400 absolute left-3 top-1/2 transform -translate-y-1/2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
+                        </svg>
+                    </div>
+                    <div class="flex space-x-4 ml-4">
+                        <a href="https://github.com/flexnet/flexnet-jsx" target="_blank" class="text-gray-600 hover:text-primary">GitHub</a>
+                        <a href="../starter-project/README.md" target="_blank" class="text-gray-600 hover:text-primary">Starter Project</a>
+                    </div>
                 </div>
             </div>
-            <div class="content-body">
-                <div class="hero">
-                    <h1>FlexNet JSX Framework</h1>
-                    <p class="subtitle">A functional JavaScript implementation for building modern web applications</p>
-                    <div class="cta-buttons">
-                        <a href="guides/quickstart.html" class="cta-primary">Get Started</a>
-                        <a href="guides/examples.html" class="cta-secondary">View Examples</a>
+
+            <div class="p-6 max-w-5xl mx-auto">
+                <!-- Hero section -->
+                <div class="py-12 text-center">
+                    <h1 class="text-4xl font-bold mb-4">FlexNet JSX Framework</h1>
+                    <p class="text-xl text-gray-600 mb-8">A functional JavaScript implementation for building modern web applications</p>
+                    <div class="flex justify-center space-x-4">
+                        <a href="guides/quickstart.html" class="px-6 py-3 bg-primary text-white rounded-md hover:bg-blue-600 transition">Get Started</a>
+                        <a href="guides/examples.html" class="px-6 py-3 bg-white text-primary border border-primary rounded-md hover:bg-gray-50 transition">View Examples</a>
                     </div>
                 </div>
 
-                <div class="features">
-                    <div class="feature-card">
-                        <h3>Pure Functional</h3>
-                        <p>Build applications with pure functions, immutable state, and functional composition.</p>
+                <!-- Features section -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
+                    <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-100">
+                        <h3 class="text-lg font-semibold mb-2">Pure Functional</h3>
+                        <p class="text-gray-600">Build applications with pure functions, immutable state, and functional composition.</p>
                     </div>
-                    <div class="feature-card">
-                        <h3>Zero Dependencies</h3>
-                        <p>FlexNet has no external dependencies and uses browser native implementation.</p>
+                    <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-100">
+                        <h3 class="text-lg font-semibold mb-2">Zero Dependencies</h3>
+                        <p class="text-gray-600">FlexNet has no external dependencies and uses browser native implementation.</p>
                     </div>
-                    <div class="feature-card">
-                        <h3>Type System</h3>
-                        <p>Functional type system with Maybe, Either, and Result types for better error handling.</p>
+                    <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-100">
+                        <h3 class="text-lg font-semibold mb-2">Type System</h3>
+                        <p class="text-gray-600">Functional type system with Maybe, Either, and Result types for better error handling.</p>
                     </div>
-                    <div class="feature-card">
-                        <h3>Security First</h3>
-                        <p>Built with security in mind, including XSS prevention and input validation.</p>
+                    <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-100">
+                        <h3 class="text-lg font-semibold mb-2">Security First</h3>
+                        <p class="text-gray-600">Built with security in mind, including XSS prevention and input validation.</p>
                     </div>
                 </div>
 
-                <div class="getting-started">
-                    <h2>Quick Start</h2>
-                    <p>Add FlexNet JSX to your project with these simple steps:</p>
-                    <pre><code class="language-html">&lt;script type="module" src="path/to/jsx/src/index.js"&gt;&lt;/script&gt;</code></pre>
-                    <p>Or use one of our starter projects:</p>
-                    <pre><code class="language-bash"># Clone the starter project
+                <!-- Quick start section -->
+                <div class="mb-12">
+                    <h2 class="text-2xl font-bold mb-4">Quick Start</h2>
+                    <p class="mb-4">Add FlexNet JSX to your project with these simple steps:</p>
+                    <pre class="bg-gray-800 text-white p-4 rounded-md mb-4 overflow-x-auto"><code class="language-html">&lt;script type="module" src="path/to/jsx/src/index.js"&gt;&lt;/script&gt;</code></pre>
+                    <p class="mb-4">Or use one of our starter projects:</p>
+                    <pre class="bg-gray-800 text-white p-4 rounded-md mb-4 overflow-x-auto"><code class="language-bash"># Clone the starter project
 cd starter-project
 python -m http.server 3000
 # Open http://localhost:3000</code></pre>
-                    <a href="guides/quickstart.html" class="learn-more">Learn More →</a>
+                    <a href="guides/quickstart.html" class="text-primary hover:underline">Learn More →</a>
                 </div>
 
-                <div class="example-section">
-                    <h2>Basic Counter Example</h2>
-                    <pre><code class="language-javascript">import { compose, Maybe } from './src/core/runtime/runtime.js';
+                <!-- Example section -->
+                <div class="mb-12">
+                    <h2 class="text-2xl font-bold mb-4">Basic Counter Example</h2>
+                    <pre class="bg-gray-800 text-white p-4 rounded-md mb-4 overflow-x-auto"><code class="language-javascript">import { compose, Maybe } from './src/core/runtime/runtime.js';
 import { createStore } from './src/systems/state/store.js';
 import { createElement } from './src/core/runtime/jsx.js';
 
@@ -147,42 +174,56 @@ store.subscribe(count =>
     document.getElementById('root')
   )
 );</code></pre>
-                    <a href="examples/counter.html" class="learn-more">See More Examples →</a>
+                    <a href="examples/counter.html" class="text-primary hover:underline">See More Examples →</a>
                 </div>
 
-                <div class="starter-projects">
-                    <h2>Starter Projects</h2>
-                    <div class="project-cards">
-                        <div class="project-card">
-                            <h3>Full-Featured Starter</h3>
-                            <p>A comprehensive implementation demonstrating all framework features.</p>
-                            <a href="../starter-project/README.md" class="learn-more">View Project →</a>
+                <!-- Starter projects section -->
+                <div class="mb-12">
+                    <h2 class="text-2xl font-bold mb-4">Starter Projects</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-100">
+                            <h3 class="text-lg font-semibold mb-2">Full-Featured Starter</h3>
+                            <p class="text-gray-600 mb-4">A comprehensive implementation demonstrating all framework features.</p>
+                            <a href="../starter-project/README.md" class="text-primary hover:underline">View Project →</a>
                         </div>
-                        <div class="project-card">
-                            <h3>Minimal Starter</h3>
-                            <p>A lightweight implementation focusing on core concepts.</p>
-                            <a href="../starter-project-minimal/README.md" class="learn-more">View Project →</a>
+                        <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-100">
+                            <h3 class="text-lg font-semibold mb-2">Minimal Starter</h3>
+                            <p class="text-gray-600 mb-4">A lightweight implementation focusing on core concepts.</p>
+                            <a href="../starter-project-minimal/README.md" class="text-primary hover:underline">View Project →</a>
                         </div>
-                        <div class="project-card">
-                            <h3>Website Example</h3>
-                            <p>A complete website built with FlexNet JSX.</p>
-                            <a href="../starter-project-website/README.md" class="learn-more">View Project →</a>
+                        <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-100">
+                            <h3 class="text-lg font-semibold mb-2">Website Example</h3>
+                            <p class="text-gray-600 mb-4">A complete website built with FlexNet JSX.</p>
+                            <a href="../starter-project-website/README.md" class="text-primary hover:underline">View Project →</a>
                         </div>
                     </div>
                 </div>
             </div>
         </main>
     </div>
-    <footer class="footer">
-        <div class="footer-content">
-            <p>&copy; 2025 FlexNet JSX Framework. Created by Dr. Robert Whetsel and the FlexNet Development Team.</p>
-            <div class="footer-links">
-                <a href="https://github.com/flexnet/flexnet-jsx">GitHub</a>
-                <a href="guides/contribution.html">Contribute</a>
-                <a href="LICENSE.html">License</a>
+
+    <footer class="bg-white border-t border-gray-200 py-6">
+        <div class="max-w-5xl mx-auto px-6">
+            <p class="text-center text-gray-600">&copy; 2025 FlexNet JSX Framework. Created by Dr. Robert Whetsel and the FlexNet Development Team.</p>
+            <div class="flex justify-center space-x-6 mt-4">
+                <a href="https://github.com/flexnet/flexnet-jsx" class="text-gray-600 hover:text-primary">GitHub</a>
+                <a href="guides/contribution.html" class="text-gray-600 hover:text-primary">Contribute</a>
+                <a href="LICENSE.html" class="text-gray-600 hover:text-primary">License</a>
             </div>
         </div>
     </footer>
-    <script src="assets/js/docs.js"></script>
+
+    <script>
+        // Simple client-side search functionality
+        const searchInput = document.querySelector('input[placeholder="Search documentation..."]');
+        searchInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                const query = searchInput.value.toLowerCase();
+                // Implement search functionality
+                console.log('Searching for:', query);
+                // This would typically use a search index or API
+            }
+        });
+    </script>
 </body>
 </html>
