@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Installation - FlexNet JSX Framework</title>
+    <link rel="stylesheet" href="../assets/css/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/atom-one-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
+    <script>hljs.highlightAll();</script>
+</head>
+<body>
+    <div class="docs-container">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h1 class="logo">FlexNet</h1>
+                <p class="version">v1.0.0</p>
+            </div>
+            <nav class="nav-menu">
+                <div class="nav-section">
+                    <h3>Getting Started</h3>
+                    <ul>
+                        <li><a href="introduction.html">Introduction</a></li>
+                        <li><a href="installation.html" class="active">Installation</a></li>
+                        <li><a href="quickstart.html">Quick Start</a></li>
+                        <li><a href="core-concepts.html">Core Concepts</a></li>
+                    </ul>
+                </div>
+                <div class="nav-section">
+                    <h3>Core</h3>
+                    <ul>
+                        <li><a href="../core/jsx-runtime.html">JSX Runtime</a></li>
+                        <li><a href="../core/types.html">Type System</a></li>
+                        <li><a href="../core/functions.html">Functions</a></li>
+                        <li><a href="../core/security.html">Security</a></li>
+                    </ul>
+                </div>
+                <div class="nav-section">
+                    <h3>Systems</h3>
+                    <ul>
+                        <li><a href="../systems/state.html">State Management</a></li>
+                        <li><a href="../systems/effects.html">Effects</a></li>
+                        <li><a href="../systems/render.html">Render</a></li>
+                        <li><a href="../systems/events.html">Events</a></li>
+                        <li><a href="../systems/errors.html">Error Handling</a></li>
+                    </ul>
+                </div>
+                <div class="nav-section">
+                    <h3>Examples</h3>
+                    <ul>
+                        <li><a href="../examples/counter.html">Counter</a></li>
+                        <li><a href="../examples/todo.html">Todo App</a></li>
+                        <li><a href="../examples/website.html">Website</a></li>
+                    </ul>
+                </div>
+                <div class="nav-section">
+                    <h3>API Reference</h3>
+                    <ul>
+                        <li><a href="../api/jsx.html">JSX API</a></li>
+                        <li><a href="../api/maybe.html">Maybe</a></li>
+                        <li><a href="../api/either.html">Either</a></li>
+                        <li><a href="../api/result.html">Result</a></li>
+                        <li><a href="../api/store.html">Store</a></li>
+                    </ul>
+                </div>
+            </nav>
+        </aside>
+        <main class="content">
+            <div class="content-header">
+                <div class="search-container">
+                    <input type="text" placeholder="Search documentation...">
+                </div>
+                <div class="header-links">
+                    <a href="https://github.com/flexnet/flexnet-jsx" target="_blank">GitHub</a>
+                    <a href="../../starter-project/README.md" target="_blank">Starter Project</a>
+                </div>
+            </div>
+            <div class="content-body doc-content">
+                <h1>Installing FlexNet JSX Framework</h1>
+                
+                <p>FlexNet JSX is designed to be easy to install and integrate into your projects. Since it follows a zero-dependencies approach, the installation process is straightforward.</p>
+                
+                <div class="callout">
+                    <p><strong>Note:</strong> FlexNet JSX requires no external dependencies and uses browser-native implementation only.</p>
+                </div>
+                
+                <h2>Installation Methods</h2>
+                
+                <h3>Method 1: Use a Starter Project (Recommended)</h3>
+                
+                <p>The easiest way to get started with FlexNet JSX is to use one of our pre-configured starter projects. These projects provide everything you need to start developing right away.</p>
+
+                <h4>Full-Featured Starter Project</h4>
+                
+                <p>For a comprehensive implementation with all framework features:</p>
+                
+                <pre><code class="language-bash"># Clone the repository (replace with your method of obtaining the code)
+git clone https://github.com/flexnet/flexnet-jsx.git
+cd flexnet-jsx
+
+# Navigate to the full-featured starter
+cd starter-project
+
+# Start a simple development server
+python -m http.server 3000
+
+# Open your browser to http://localhost:3000</code></pre>
+
+                <p>The full-featured starter includes:</p>
+                <ul>
+                    <li>Complete type system (Maybe, Either, Result)</li>
+                    <li>Advanced security features</li>
+                    <li>Error boundaries</li>
+                    <li>Effect system with cleanup</li>
+                    <li>Event system</li>
+                    <li>Advanced rendering</li>
+                    <li>Utility functions</li>
+                </ul>
+
+                <h4>Minimal Starter Project</h4>
+                
+                <p>For a lightweight implementation focusing on core concepts:</p>
+                
+                <pre><code class="language-bash"># Navigate to the minimal starter
+cd starter-project-minimal
+
+# Start a simple development server
+python -m http.server 3000
+
+# Open your browser to http://localhost:3000</code></pre>
+
+                <p>The minimal starter includes:</p>
+                <ul>
+                    <li>Essential types (Maybe monad)</li>
+                    <li>Basic security (XSS prevention)</li>
+                    <li>Functional core</li>
+                    <li>Simple state management</li>
+                    <li>Counter example</li>
+                </ul>
+                
+                <h3>Method 2: Integrate into an Existing Project</h3>
+                
+                <p>You can add FlexNet JSX to an existing project by including it directly in your HTML or importing it into your JavaScript modules.</p>
+                
+                <h4>Include in HTML</h4>
+                
+                <pre><code class="language-html">&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+    &lt;title&gt;FlexNet JSX Project&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;div id="root"&gt;&lt;/div&gt;
+    &lt;script type="module" src="path/to/flexnet/src/core/runtime/jsx.js"&gt;&lt;/script&gt;
+    &lt;script type="module" src="path/to/your/app.js"&gt;&lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+
+                <h4>Import in JavaScript</h4>
+                
+                <pre><code class="language-javascript">// Import core FlexNet functionality
+import { jsx, render } from './path/to/flexnet/src/core/runtime/jsx.js';
+import { Maybe } from './path/to/flexnet/src/core/types/maybe.js';
+import { createStore } from './path/to/flexnet/src/systems/state/store.js';
+import { compose } from './path/to/flexnet/src/core/functions/composition.js';
+
+// Now use FlexNet in your application
+const App = () => {
+  // Your application code here
+};</code></pre>
+
+                <h3>Method 3: Manual Setup (Advanced)</h3>
+                
+                <p>For complete control over your project structure, you can manually set up a FlexNet JSX project following the recommended directory structure.</p>
+                
+                <h4>1. Create Project Structure</h4>
+                
+                <pre><code class="language-bash">mkdir -p my-flexnet-project/src/{core/{runtime,types,functions},systems/{render,state,effects,events},features,utils}
+mkdir -p my-flexnet-project/public
+mkdir -p my-flexnet-project/tests</code></pre>
+
+                <h4>2. Create Core Files</h4>
+                
+                <p>Create the necessary core files based on the FlexNet architecture:</p>
+                
+                <ul>
+                    <li><code>src/core/runtime/jsx.js</code> - JSX runtime implementation</li>
+                    <li><code>src/core/types/maybe.js</code> - Maybe type implementation</li>
+                    <li><code>src/core/types/either.js</code> - Either type implementation</li>
+                    <li><code>src/core/types/result.js</code> - Result type implementation</li>
+                    <li><code>src/core/functions/composition.js</code> - Function composition utilities</li>
+                    <li><code>src/systems/state/store.js</code> - State management implementation</li>
+                    <li><code>src/systems/render/functions.js</code> - Rendering system</li>
+                </ul>
+                
+                <h4>3. Create HTML Entry Point</h4>
+                
+                <pre><code class="language-html">&lt;!-- public/index.html --&gt;
+&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+    &lt;title&gt;FlexNet JSX Project&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;div id="root"&gt;&lt;/div&gt;
+    &lt;script type="module" src="../src/index.js"&gt;&lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+
+                <h4>4. Create Main Entry Point</h4>
+                
+                <pre><code class="language-javascript">// src/index.js
+import { jsx, render } from './core/runtime/jsx.js';
+import { createApp } from './features/app.js';
+
+const app = createApp();
+render(app, document.getElementById('root'));</code></pre>
+                
+                <h2>Directory Structure</h2>
+                
+                <p>FlexNet JSX follows a specific directory structure that promotes functional programming principles, separation of concerns, and maintainability. Here's the recommended structure:</p>
+                
+                <pre><code class="language-text">my-project/
+├── src/
+│   ├── core/                  # Core JSX functionality
+│   │   ├── runtime/          # JSX runtime
+│   │   │   ├── jsx.js
+│   │   │   └── transform.js
+│   │   ├── types/           # Type system
+│   │   │   ├── maybe.js
+│   │   │   ├── either.js
+│   │   │   └── result.js
+│   │   └── functions/       # Core functions
+│   │       ├── composition.js
+│   │       └── transforms.js
+│   │
+│   ├── systems/             # Framework systems
+│   │   ├── render/         # Rendering
+│   │   ├── state/         # State management
+│   │   ├── effects/       # Side effects
+│   │   └── events/        # Event handling
+│   │
+│   ├── features/           # Your app features
+│   │   └── counter/       # Example feature
+│   │       ├── functions.js
+│   │       └── index.js
+│   │
+│   └── utils/              # Utilities
+│       ├── array.js
+│       └── function.js
+│
+├── public/                  # Static assets
+│   └── index.html
+│
+└── tests/                  # Test files
+    └── features/
+        └── counter/
+            └── counter.test.js</code></pre>
+                
+                <h2>Verification</h2>
+                
+                <p>After installing FlexNet JSX, you can verify that it's working correctly by creating a simple counter application. The example below shows how to create a counter using FlexNet JSX:</p>
+                
+                <pre><code class="language-javascript">// src/features/counter/functions.js
+import { Maybe } from '../../core/types/maybe.js';
+
+export const increment = n => n + 1;
+export const decrement = n => n - 1;
+
+// src/features/counter/index.js
+import { jsx } from '../../core/runtime/jsx.js';
+import { createStore } from '../../systems/state/store.js';
+import { increment, decrement } from './functions.js';
+import { Maybe } from '../../core/types/maybe.js';
+
+// Create a store with initial count of 0
+const store = createStore(Maybe.Just(0));
+
+// Counter component
+const Counter = () => {
+  const count = store.getState();
+  
+  return jsx('div', null, [
+    jsx('h2', null, `Count: ${count.value}`),
+    jsx('button', { 
+      onClick: () => store.update(c => Maybe.Just(decrement(c.value)))
+    }, '-'),
+    jsx('span', { style: 'margin: 0 10px;' }, count.value.toString()),
+    jsx('button', { 
+      onClick: () => store.update(c => Maybe.Just(increment(c.value)))
+    }, '+')
+  ]);
+};
+
+// Render component and subscribe to state changes
+const init = (rootId) => {
+  const rootElement = document.getElementById(rootId);
+  if (!rootElement) return;
+  
+  const render = () => {
+    // Clear container
+    while (rootElement.firstChild) {
+      rootElement.removeChild(rootElement.firstChild);
+    }
+    
+    // Render counter
+    rootElement.appendChild(Counter());
+  };
+  
+  // Initial render
+  render();
+  
+  // Subscribe to state changes
+  store.subscribe(() => {
+    render();
+  });
+};
+
+export default init;</code></pre>
+
+                <h2>Browser Support</h2>
+                
+                <p>FlexNet JSX is designed to work with modern browsers that support ES6 features. It is tested and supported on:</p>
+                
+                <ul>
+                    <li>Chrome (latest)</li>
+                    <li>Firefox (latest)</li>
+                    <li>Safari (latest)</li>
+                    <li>Edge (latest)</li>
+                </ul>
+                
+                <h2>Next Steps</h2>
+                
+                <p>Now that you've installed FlexNet JSX, you can:</p>
+                
+                <ul>
+                    <li>Explore the <a href="quickstart.html">Quick Start guide</a> to build your first FlexNet JSX application</li>
+                    <li>Learn about <a href="core-concepts.html">Core Concepts</a> to understand the fundamental principles</li>
+                    <li>Check out the <a href="../examples/counter.html">Counter Example</a> to see FlexNet JSX in action</li>
+                </ul>
+                
+                <div class="pagination">
+                    <a href="introduction.html" class="prev-link">← Previous: Introduction</a>
+                    <a href="quickstart.html" class="next-link">Next: Quick Start →</a>
+                </div>
+            </div>
+        </main>
+    </div>
+    <footer class="footer">
+        <div class="footer-content">
+            <p>&copy; 2025 FlexNet JSX Framework. Created by Dr. Robert Whetsel and the FlexNet Development Team.</p>
+            <div class="footer-links">
+                <a href="https://github.com/flexnet/flexnet-jsx">GitHub</a>
+                <a href="contribution.html">Contribute</a>
+                <a href="../LICENSE.html">License</a>
+            </div>
+        </div>
+    </footer>
+    <script src="../assets/js/docs.js"></script>
+</body>
+</html>
