@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Store API - FlexNet JSX Framework</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/atom-one-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#3b82f6',
+                        secondary: '#6366f1',
+                        dark: '#1e293b',
+                        light: '#f8fafc'
+                    }
+                }
+            }
+        }
+        hljs.highlightAll();
+    </script>
+</head>
+<body class="bg-gray-50 text-gray-900 min-h-screen">
+    <div class="flex flex-col md:flex-row">
+        <!-- Sidebar -->
+        <aside class="w-full md:w-64 bg-white border-r border-gray-200 md:h-screen md:sticky top-0 overflow-y-auto">
+            <div class="p-4 border-b border-gray-200">
+                <h1 class="text-2xl font-bold text-primary">FlexNet</h1>
+                <p class="text-sm text-gray-500">v1.0.0</p>
+            </div>
+            <nav class="p-4">
+                <div class="mb-6">
+                    <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">Getting Started</h3>
+                    <ul class="space-y-2">
+                        <li><a href="../guides/introduction.html" class="block text-gray-700 hover:text-primary">Introduction</a></li>
+                        <li><a href="../guides/installation.html" class="block text-gray-700 hover:text-primary">Installation</a></li>
+                        <li><a href="../guides/quickstart.html" class="block text-gray-700 hover:text-primary">Quick Start</a></li>
+                        <li><a href="../guides/core-concepts.html" class="block text-gray-700 hover:text-primary">Core Concepts</a></li>
+                    </ul>
+                </div>
+                <div class="mb-6">
+                    <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">Core</h3>
+                    <ul class="space-y-2">
+                        <li><a href="../core/jsx-runtime.html" class="block text-gray-700 hover:text-primary">JSX Runtime</a></li>
+                        <li><a href="../core/types.html" class="block text-gray-700 hover:text-primary">Type System</a></li>
+                        <li><a href="../core/functions.html" class="block text-gray-700 hover:text-primary">Functions</a></li>
+                        <li><a href="../core/security.html" class="block text-gray-700 hover:text-primary">Security</a></li>
+                    </ul>
+                </div>
+                <div class="mb-6">
+                    <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">Systems</h3>
+                    <ul class="space-y-2">
+                        <li><a href="../systems/state.html" class="block text-gray-700 hover:text-primary">State Management</a></li>
+                        <li><a href="../systems/effects.html" class="block text-gray-700 hover:text-primary">Effects</a></li>
+                        <li><a href="../systems/render.html" class="block text-gray-700 hover:text-primary">Render</a></li>
+                        <li><a href="../systems/events.html" class="block text-gray-700 hover:text-primary">Events</a></li>
+                        <li><a href="../systems/errors.html" class="block text-gray-700 hover:text-primary">Error Handling</a></li>
+                    </ul>
+                </div>
+                <div class="mb-6">
+                    <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">Examples</h3>
+                    <ul class="space-y-2">
+                        <li><a href="../examples/counter.html" class="block text-gray-700 hover:text-primary">Counter</a></li>
+                        <li><a href="../examples/todo.html" class="block text-gray-700 hover:text-primary">Todo App</a></li>
+                        <li><a href="../examples/website.html" class="block text-gray-700 hover:text-primary">Website</a></li>
+                    </ul>
+                </div>
+                <div class="mb-6">
+                    <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">API Reference</h3>
+                    <ul class="space-y-2">
+                        <li><a href="jsx.html" class="block text-gray-700 hover:text-primary">JSX API</a></li>
+                        <li><a href="maybe.html" class="block text-gray-700 hover:text-primary">Maybe</a></li>
+                        <li><a href="either.html" class="block text-gray-700 hover:text-primary">Either</a></li>
+                        <li><a href="result.html" class="block text-gray-700 hover:text-primary">Result</a></li>
+                        <li><a href="store.html" class="block text-gray-700 hover:text-primary font-medium text-primary">Store</a></li>
+                    </ul>
+                </div>
+            </nav>
+        </aside>
+
+        <!-- Main content -->
+        <main class="flex-1">
+            <div class="border-b border-gray-200 bg-white sticky top-0 z-10">
+                <div class="flex items-center justify-between px-4 py-3">
+                    <div class="relative w-full max-w-md">
+                        <input type="text" placeholder="Search documentation..." class="w-full pl-10 pr-4 py-2 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 text-gray-400 absolute left-3 top-1/2 transform -translate-y-1/2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
+                        </svg>
+                    </div>
+                    <div class="flex space-x-4 ml-4">
+                        <a href="https://github.com/flexnet/flexnet-jsx" target="_blank" class="text-gray-600 hover:text-primary">GitHub</a>
+                        <a href="../../starter-project/README.md" target="_blank" class="text-gray-600 hover:text-primary">Starter Project</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="p-8 max-w-4xl mx-auto">
+                <div class="flex items-center space-x-2 text-sm text-gray-500 mb-8">
+                    <a href="../index.html" class="hover:text-primary">Home</a>
+                    <span>/</span>
+                    <a href="maybe.html" class="hover:text-primary">API</a>
+                    <span>/</span>
+                    <span class="text-gray-700">Store</span>
+                </div>
+
+                <h1 class="text-4xl font-bold mb-6">Store API</h1>
+                <p class="text-lg text-gray-600 mb-8">The Store API provides a functional, immutable state management solution for FlexNet JSX applications.</p>
+
+                <div class="prose prose-blue max-w-none">
+                    <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2">Overview</h2>
+                    <p class="mb-4">The <code>Store</code> is a container for application state that follows functional programming principles. It provides a way to manage state with the following features:</p>
+                    <ul class="list-disc pl-6 mb-6 space-y-2">
+                        <li>Immutable state updates</li>
+                        <li>Pure functional updates</li>
+                        <li>Observable state changes</li>
+                        <li>Time-travel debugging capabilities</li>
+                        <li>Integration with FlexNet's type system</li>
+                    </ul>
+
+                    <div class="bg-blue-50 border-l-4 border-primary p-4 rounded-md mb-6">
+                        <h4 class="font-semibold">Key Concepts</h4>
+                        <ul class="list-disc pl-6 mt-2">
+                            <li><strong>State</strong>: The current data stored in the Store</li>
+                            <li><strong>Update</strong>: A pure function that transforms the current state to a new state</li>
+                            <li><strong>Subscribers</strong>: Functions that are called whenever the state changes</li>
+                            <li><strong>History</strong>: A record of previous states for debugging and time-travel</li>
+                        </ul>
+                    </div>
+
+                    <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2">Creating a Store</h2>
+                    <p class="mb-4">You can create a Store using the <code>createStore</code> function:</p>
+
+                    <pre class="bg-gray-800 text-white p-4 rounded-lg mb-6"><code class="language-javascript">import { createStore } from './src/systems/state/store.js';
+
+// Create a store with initial state
+const counterStore = createStore(0);
+
+// Create a store with an object as initial state
+const userStore = createStore({
+  name: 'John',
+  age: 30,
+  isLoggedIn: true
+});
+
+// Create a store with a Maybe value
+import { Maybe } from './src/core/types/maybe.js';
+const optionalUserStore = createStore(Maybe.Just({
+  name: 'John',
+  age: 30
+}));</code></pre>
+
+                    <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2">Reading State</h2>
+                    <p class="mb-4">You can access the current state of a Store using <code>getState()</code>:</p>
+
+                    <pre class="bg-gray-800 text-white p-4 rounded-lg mb-6"><code class="language-javascript">// Get the current state
+const count = counterStore.getState();
+console.log(count); // 0
+
+// Get the current state from an object store
+const user = userStore.getState();
+console.log(user.name); // 'John'
+
+// Get state from a Maybe store
+optionalUserStore.getState().match({
+  Just: user => console.log(user.name), // 'John'
+  Nothing: () => console.log('No user available')
+});</code></pre>
+
+                    <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2">Updating State</h2>
+                    <p class="mb-4">You can update the state of a Store using <code>update()</code>, which takes a pure function that transforms the current state to a new state:</p>
+
+                    <pre class="bg-gray-800 text-white p-4 rounded-lg mb-6"><code class="language-javascript">// Update with a function that takes the current state
+counterStore.update(count => count + 1);
+
+// Update an object store
+userStore.update(user => ({
+  ...user,
+  age: user.age + 1
+}));
+
+// Update a Maybe store
+optionalUserStore.update(maybeUser => 
+  maybeUser.map(user => ({
+    ...user,
+    age: user.age + 1
+  }))
+);</code></pre>
+
+                    <h3 class="text-xl font-medium mt-6 mb-3">Update with Direct Value</h3>
+                    <p class="mb-4">You can also update a Store with a direct value:</p>
+
+                    <pre class="bg-gray-800 text-white p-4 rounded-lg mb-6"><code class="language-javascript">// Set a new value directly
+counterStore.update(42);
+
+// Set a new object directly
+userStore.update({
+  name: 'Jane',
+  age: 28,
+  isLoggedIn: true
+});
+
+// Set a new Maybe value
+optionalUserStore.update(Maybe.Nothing());</code></pre>
+
+                    <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2">Subscribing to Changes</h2>
+                    <p class="mb-4">You can subscribe to state changes using <code>subscribe()</code>, which takes a callback function that will be called whenever the state changes:</p>
+
+                    <pre class="bg-gray-800 text-white p-4 rounded-lg mb-6"><code class="language-javascript">// Subscribe to state changes
+const unsubscribe = counterStore.subscribe(newCount => {
+  console.log('Count changed:', newCount);
+  // Update UI or perform other actions
+});
+
+// Later, when you no longer need the subscription
+unsubscribe();
+
+// Multiple subscribers
+userStore.subscribe(user => {
+  console.log('User changed:', user);
+});
+
+userStore.subscribe(user => {
+  renderUserProfile(user);
+});</code></pre>
+
+                    <h3 class="text-xl font-medium mt-6 mb-3">Using with Components</h3>
+                    <p class="mb-4">A common pattern is to subscribe to store changes and re-render components:</p>
+
+                    <pre class="bg-gray-800 text-white p-4 rounded-lg mb-6"><code class="language-javascript">import { createElement, render } from './src/core/runtime/jsx.js';
+import { createStore } from './src/systems/state/store.js';
+
+// Create a store
+const counterStore = createStore(0);
+
+// Counter component
+const Counter = ({ count, onIncrement, onDecrement }) => 
+  createElement('div', null,
+    createElement('h2', null, `Count: ${count}`),
+    createElement('button', { onClick: onIncrement }, '+'),
+    createElement('button', { onClick: onDecrement }, '-')
+  );
+
+// Subscribe to state changes and re-render
+counterStore.subscribe(count => {
+  render(
+    createElement(Counter, {
+      count,
+      onIncrement: () => counterStore.update(c => c + 1),
+      onDecrement: () => counterStore.update(c => c - 1)
+    }),
+    document.getElementById('root')
+  );
+});</code></pre>
+
+                    <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2">Combining Multiple Stores</h2>
+                    <p class="mb-4">You can create derived stores or combine multiple stores for more complex state management:</p>
+
+                    <pre class="bg-gray-800 text-white p-4 rounded-lg mb-6"><code class="language-javascript">import { createStore } from './src/systems/state/store.js';
+
+// Create individual stores
+const usersStore = createStore([]);
+const filterStore = createStore('');
+
+// Create a derived store
+const filteredUsersStore = createDerivedStore(
+  [usersStore, filterStore],
+  ([users, filter]) => {
+    if (!filter) return users;
+    return users.filter(user => 
+      user.name.toLowerCase().includes(filter.toLowerCase())
+    );
+  }
+);
+
+// Usage
+filteredUsersStore.subscribe(filteredUsers => {
+  renderUserList(filteredUsers);
+});
+
+// Update source stores
+usersStore.update(users => [...users, { id: 1, name: 'John' }]);
+filterStore.update('jo'); // Will cause filteredUsersStore to update</code></pre>
+
+                    <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2">Time Travel Debugging</h2>
+                    <p class="mb-4">The Store includes built-in support for time-travel debugging:</p>
+
+                    <pre class="bg-gray-800 text-white p-4 rounded-lg mb-6"><code class="language-javascript">// Enable history tracking (in development mode)
+counterStore.enableHistory();
+
+// Make some updates
+counterStore.update(count => count + 1);
+counterStore.update(count => count + 1);
+counterStore.update(count => count + 1);
+
+// Get the history
+const history = counterStore.getHistory();
+console.log(history);
+// [0, 1, 2, 3]
+
+// Time travel to a previous state
+counterStore.timeTravel(1); // Go back to state at index 1</code></pre>
+
+                    <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2">Store API Reference</h2>
+
+                    <h3 class="text-xl font-medium mt-6 mb-3">createStore</h3>
+                    <div class="bg-white border border-gray-200 rounded-lg mb-6">
+                        <div class="border-b border-gray-200 px-4 py-3 bg-gray-50">
+                            <h4 class="font-semibold">Signature</h4>
+                        </div>
+                        <div class="p-4">
+                            <pre class="bg-gray-800 text-white p-4 rounded-lg"><code class="language-typescript">function createStore<T>(initialState: T): Store<T>;</code></pre>
+                        </div>
+                    </div>
+
+                    <div class="bg-white border border-gray-200 rounded-lg mb-6">
+                        <div class="border-b border-gray-200 px-4 py-3 bg-gray-50">
+                            <h4 class="font-semibold">Parameters</h4>
+                        </div>
+                        <div class="p-4">
+                            <table class="min-w-full">
+                                <thead>
+                                    <tr>
+                                        <th class="text-left font-semibold">Name</th>
+                                        <th class="text-left font-semibold">Type</th>
+                                        <th class="text-left font-semibold">Description</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td class="py-2 pr-4"><code>initialState</code></td>
+                                        <td class="py-2 pr-4"><code>T</code></td>
+                                        <td class="py-2">The initial state of the store.</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="bg-white border border-gray-200 rounded-lg mb-6">
+                        <div class="border-b border-gray-200 px-4 py-3 bg-gray-50">
+                            <h4 class="font-semibold">Returns</h4>
+                        </div>
+                        <div class="p-4">
+                            <p>A new <code>Store</code> instance with the specified initial state.</p>
+                        </div>
+                    </div>
+
+                    <h3 class="text-xl font-medium mt-6 mb-3">Store Methods</h3>
+                    
+                    <div class="bg-white border border-gray-200 rounded-lg mb-6">
+                        <div class="border-b border-gray-200 px-4 py-3 bg-gray-50">
+                            <h4 class="font-semibold">getState()</h4>
+                        </div>
+                        <div class="p-4">
+                            <p class="mb-2">Returns the current state of the store.</p>
+                            <pre class="bg-gray-800 text-white p-3 rounded-lg"><code class="language-typescript">function getState(): T;</code></pre>
+                        </div>
+                    </div>
+
+                    <div class="bg-white border border-gray-200 rounded-lg mb-6">
+                        <div class="border-b border-gray-200 px-4 py-3 bg-gray-50">
+                            <h4 class="font-semibold">update(updaterOrValue)</h4>
+                        </div>
+                        <div class="p-4">
+                            <p class="mb-2">Updates the state of the store using an updater function or a direct value.</p>
+                            <pre class="bg-gray-800 text-white p-3 rounded-lg"><code class="language-typescript">function update(updaterOrValue: ((state: T) => T) | T): void;</code></pre>
+                        </div>
+                    </div>
+
+                    <div class="bg-white border border-gray-200 rounded-lg mb-6">
+                        <div class="border-b border-gray-200 px-4 py-3 bg-gray-50">
+                            <h4 class="font-semibold">subscribe(subscriber)</h4>
+                        </div>
+                        <div class="p-4">
+                            <p class="mb-2">Subscribes to state changes, calling the subscriber function whenever the state changes.</p>
+                            <pre class="bg-gray-800 text-white p-3 rounded-lg"><code class="language-typescript">function subscribe(subscriber: (state: T) => void): () => void;</code></pre>
+                            <p class="mt-2">Returns an unsubscribe function that can be called to remove the subscription.</p>
+                        </div>
+                    </div>
+
+                    <div class="bg-white border border-gray-200 rounded-lg mb-6">
+                        <div class="border-b border-gray-200 px-4 py-3 bg-gray-50">
+                            <h4 class="font-semibold">enableHistory()</h4>
+                        </div>
+                        <div class="p-4">
+                            <p class="mb-2">Enables history tracking for time-travel debugging.</p>
+                            <pre class="bg-gray-800 text-white p-3 rounded-lg"><code class="language-typescript">function enableHistory(): void;</code></pre>
+                        </div>
+                    </div>
+
+                    <div class="bg-white border border-gray-200 rounded-lg mb-6">
+                        <div class="border-b border-gray-200 px-4 py-3 bg-gray-50">
+                            <h4 class="font-semibold">disableHistory()</h4>
+                        </div>
+                        <div class="p-4">
+                            <p class="mb-2">Disables history tracking.</p>
+                            <pre class="bg-gray-800 text-white p-3 rounded-lg"><code class="language-typescript">function disableHistory(): void;</code></pre>
+                        </div>
+                    </div>
+
+                    <div class="bg-white border border-gray-200 rounded-lg mb-6">
+                        <div class="border-b border-gray-200 px-4 py-3 bg-gray-50">
+                            <h4 class="font-semibold">getHistory()</h4>
+                        </div>
+                        <div class="p-4">
+                            <p class="mb-2">Returns the history of states if history tracking is enabled.</p>
+                            <pre class="bg-gray-800 text-white p-3 rounded-lg"><code class="language-typescript">function getHistory(): T[];</code></pre>
+                        </div>
+                    </div>
+
+                    <div class="bg-white border border-gray-200 rounded-lg mb-6">
+                        <div class="border-b border-gray-200 px-4 py-3 bg-gray-50">
+                            <h4 class="font-semibold">timeTravel(index)</h4>
+                        </div>
+                        <div class="p-4">
+                            <p class="mb-2">Restores the state to a previous point in history.</p>
+                            <pre class="bg-gray-800 text-white p-3 rounded-lg"><code class="language-typescript">function timeTravel(index: number): void;</code></pre>
+                        </div>
+                    </div>
+
+                    <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2">Advanced Usage</h2>
+
+                    <h3 class="text-xl font-medium mt-6 mb-3">Using Selectors</h3>
+                    <p class="mb-4">Selectors help extract specific parts of the state:</p>
+
+                    <pre class="bg-gray-800 text-white p-4 rounded-lg mb-6"><code class="language-javascript">import { createStore, createSelector } from './src/systems/state/store.js';
+
+// Create a store with complex state
+const appStore = createStore({
+  users: [
+    { id: 1, name: 'John', role: 'admin' },
+    { id: 2, name: 'Jane', role: 'user' }
+  ],
+  settings: {
+    theme: 'light',
+    notifications: true
+  },
+  ui: {
+    sidebar: 'open',
+    activeTab: 'dashboard'
+  }
+});
+
+// Create selectors
+const selectUsers = state => state.users;
+const selectAdmins = createSelector(
+  selectUsers,
+  users => users.filter(user => user.role === 'admin')
+);
+const selectTheme = state => state.settings.theme;
+
+// Use selectors
+appStore.subscribe(state => {
+  const admins = selectAdmins(state);
+  console.log('Admins:', admins);
+  
+  const theme = selectTheme(state);
+  document.body.className = theme;
+});</code></pre>
+
+                    <h3 class="text-xl font-medium mt-6 mb-3">Middleware</h3>
+                    <p class="mb-4">You can enhance stores with middleware for cross-cutting concerns:</p>
+
+                    <pre class="bg-gray-800 text-white p-4 rounded-lg mb-6"><code class="language-javascript">import { createStore, applyMiddleware } from './src/systems/state/store.js';
+
+// Logger middleware
+const logger = store => next => action => {
+  console.log('State before:', store.getState());
+  const result = next(action);
+  console.log('State after:', store.getState());
+  return result;
+};
+
+// Validation middleware
+const validator = schema => store => next => action => {
+  const newState = typeof action === 'function' 
+    ? action(store.getState()) 
+    : action;
+    
+  const validationResult = validateState(newState, schema);
+  
+  if (validationResult.isValid) {
+    return next(action);
+  } else {
+    console.error('Invalid state:', validationResult.errors);
+    return store.getState(); // Don't update if invalid
+  }
+};
+
+// Create store with middleware
+const userSchema = {
+  name: { type: 'string', required: true },
+  age: { type: 'number', min: 0, max: 120 }
+};
+
+const userStore = createStore(
+  { name: 'John', age: 30 },
+  applyMiddleware(
+    logger,
+    validator(userSchema)
+  )
+);</code></pre>
+
+                    <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded-md mt-8">
+                        <h4 class="font-semibold flex items-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-yellow-500" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2h-1V9z" clip-rule="evenodd" />
+                            </svg>
+                            Best Practices
+                        </h4>
+                        <ul class="list-disc pl-6 mt-2">
+                            <li>Keep store state as simple and flat as possible</li>
+                            <li>Use multiple small stores instead of one large store</li>
+                            <li>Use pure functions for state updates</li>
+                            <li>Prefer composition of stores over complex nested state</li>
+                            <li>Use selectors to derive computed state</li>
+                            <li>Only enable history tracking in development mode</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="mt-12 border-t border-gray-200 pt-8">
+                    <h2 class="text-2xl font-semibold mb-4">Related Documentation</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <a href="../systems/state.html" class="block p-4 border border-gray-200 rounded-lg hover:border-primary hover:shadow-md transition">
+                            <h3 class="font-semibold text-lg mb-2">State Management</h3>
+                            <p class="text-gray-600">Learn about FlexNet's overall state management philosophy.</p>
+                        </a>
+                        <a href="../core/types.html" class="block p-4 border border-gray-200 rounded-lg hover:border-primary hover:shadow-md transition">
+                            <h3 class="font-semibold text-lg mb-2">Type System</h3>
+                            <p class="text-gray-600">Understand how the type system integrates with state management.</p>
+                        </a>
+                        <a href="../examples/todo.html" class="block p-4 border border-gray-200 rounded-lg hover:border-primary hover:shadow-md transition">
+                            <h3 class="font-semibold text-lg mb-2">Todo App Example</h3>
+                            <p class="text-gray-600">See a complete example of using the Store API in a real application.</p>
+                        </a>
+                        <a href="../systems/effects.html" class="block p-4 border border-gray-200 rounded-lg hover:border-primary hover:shadow-md transition">
+                            <h3 class="font-semibold text-lg mb-2">Effects System</h3>
+                            <p class="text-gray-600">Learn how to handle side effects in relation to state changes.</p>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <footer class="bg-white border-t border-gray-200 py-6">
+        <div class="max-w-5xl mx-auto px-6">
+            <p class="text-center text-gray-600">&copy; 2025 FlexNet JSX Framework. Created by Dr. Robert Whetsel and the FlexNet Development Team.</p>
+            <div class="flex justify-center space-x-6 mt-4">
+                <a href="https://github.com/flexnet/flexnet-jsx" class="text-gray-600 hover:text-primary">GitHub</a>
+                <a href="../guides/contribution.html" class="text-gray-600 hover:text-primary">Contribute</a>
+                <a href="../LICENSE.html" class="text-gray-600 hover:text-primary">License</a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Simple client-side search functionality
+        const searchInput = document.querySelector('input[placeholder="Search documentation..."]');
+        searchInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                const query = searchInput.value.toLowerCase();
+                // Implement search functionality
+                console.log('Searching for:', query);
+                // This would typically use a search index or API
+            }
+        });
+    </script>
+</body>
+</html> 

@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Functional Programming - FlexNet JSX Framework</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/atom-one-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#3b82f6',
+                        secondary: '#6366f1',
+                        dark: '#1e293b',
+                        light: '#f8fafc'
+                    }
+                }
+            }
+        }
+        hljs.highlightAll();
+    </script>
+</head>
+<body class="bg-gray-50 text-gray-900 min-h-screen">
+    <div class="flex flex-col md:flex-row">
+        <!-- Sidebar -->
+        <aside class="w-full md:w-64 bg-white border-r border-gray-200 md:h-screen md:sticky top-0 overflow-y-auto">
+            <div class="p-4 border-b border-gray-200">
+                <h1 class="text-2xl font-bold text-primary">FlexNet</h1>
+                <p class="text-sm text-gray-500">v1.0.0</p>
+            </div>
+            <nav class="p-4">
+                <div class="mb-6">
+                    <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">Getting Started</h3>
+                    <ul class="space-y-2">
+                        <li><a href="../guides/introduction.html" class="block text-gray-700 hover:text-primary">Introduction</a></li>
+                        <li><a href="../guides/installation.html" class="block text-gray-700 hover:text-primary">Installation</a></li>
+                        <li><a href="../guides/quickstart.html" class="block text-gray-700 hover:text-primary">Quick Start</a></li>
+                        <li><a href="../guides/core-concepts.html" class="block text-gray-700 hover:text-primary">Core Concepts</a></li>
+                    </ul>
+                </div>
+                <div class="mb-6">
+                    <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">Core</h3>
+                    <ul class="space-y-2">
+                        <li><a href="jsx-runtime.html" class="block text-gray-700 hover:text-primary">JSX Runtime</a></li>
+                        <li><a href="types.html" class="block text-gray-700 hover:text-primary">Type System</a></li>
+                        <li><a href="functions.html" class="block text-gray-700 hover:text-primary font-medium text-primary">Functions</a></li>
+                        <li><a href="security.html" class="block text-gray-700 hover:text-primary">Security</a></li>
+                    </ul>
+                </div>
+                <div class="mb-6">
+                    <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">Systems</h3>
+                    <ul class="space-y-2">
+                        <li><a href="../systems/state.html" class="block text-gray-700 hover:text-primary">State Management</a></li>
+                        <li><a href="../systems/effects.html" class="block text-gray-700 hover:text-primary">Effects</a></li>
+                        <li><a href="../systems/render.html" class="block text-gray-700 hover:text-primary">Render</a></li>
+                        <li><a href="../systems/events.html" class="block text-gray-700 hover:text-primary">Events</a></li>
+                        <li><a href="../systems/errors.html" class="block text-gray-700 hover:text-primary">Error Handling</a></li>
+                    </ul>
+                </div>
+                <div class="mb-6">
+                    <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">Examples</h3>
+                    <ul class="space-y-2">
+                        <li><a href="../examples/counter.html" class="block text-gray-700 hover:text-primary">Counter</a></li>
+                        <li><a href="../examples/todo.html" class="block text-gray-700 hover:text-primary">Todo App</a></li>
+                        <li><a href="../examples/website.html" class="block text-gray-700 hover:text-primary">Website</a></li>
+                    </ul>
+                </div>
+                <div class="mb-6">
+                    <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">API Reference</h3>
+                    <ul class="space-y-2">
+                        <li><a href="../api/jsx.html" class="block text-gray-700 hover:text-primary">JSX API</a></li>
+                        <li><a href="../api/maybe.html" class="block text-gray-700 hover:text-primary">Maybe</a></li>
+                        <li><a href="../api/either.html" class="block text-gray-700 hover:text-primary">Either</a></li>
+                        <li><a href="../api/result.html" class="block text-gray-700 hover:text-primary">Result</a></li>
+                        <li><a href="../api/store.html" class="block text-gray-700 hover:text-primary">Store</a></li>
+                    </ul>
+                </div>
+            </nav>
+        </aside>
+
+        <!-- Main content -->
+        <main class="flex-1">
+            <div class="border-b border-gray-200 bg-white sticky top-0 z-10">
+                <div class="flex items-center justify-between px-4 py-3">
+                    <div class="relative w-full max-w-md">
+                        <input type="text" placeholder="Search documentation..." class="w-full pl-10 pr-4 py-2 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 text-gray-400 absolute left-3 top-1/2 transform -translate-y-1/2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
+                        </svg>
+                    </div>
+                    <div class="flex space-x-4 ml-4">
+                        <a href="https://github.com/flexnet/flexnet-jsx" target="_blank" class="text-gray-600 hover:text-primary">GitHub</a>
+                        <a href="../../starter-project/README.md" target="_blank" class="text-gray-600 hover:text-primary">Starter Project</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="p-8 max-w-4xl mx-auto">
+                <div class="flex items-center space-x-2 text-sm text-gray-500 mb-8">
+                    <a href="../index.html" class="hover:text-primary">Home</a>
+                    <span>/</span>
+                    <a href="jsx-runtime.html" class="hover:text-primary">Core</a>
+                    <span>/</span>
+                    <span class="text-gray-700">Functions</span>
+                </div>
+
+                <h1 class="text-4xl font-bold mb-6">Functional Programming</h1>
+                <p class="text-lg text-gray-600 mb-8">FlexNet JSX is built on functional programming principles, providing a set of utilities to work with functions in a composable, pure way.</p>
+
+                <div class="prose prose-blue max-w-none">
+                    <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2">Core Function Utilities</h2>
+                    <p class="mb-4">FlexNet provides a set of utilities for working with functions in a functional programming style:</p>
+
+                    <h3 class="text-xl font-medium mt-6 mb-3">compose</h3>
+                    <p class="mb-4">The <code>compose</code> function allows you to combine multiple functions together, applying them from right to left.</p>
+                    <pre class="bg-gray-800 text-white p-4 rounded-lg mb-6"><code class="language-javascript">import { compose } from './src/core/runtime/runtime.js';
+
+// Example functions
+const double = x => x * 2;
+const increment = x => x + 1;
+const square = x => x * x;
+
+// Compose functions: (x => square(double(increment(x))))
+const doubleIncrementAndSquare = compose(square, double, increment);
+
+// Usage
+doubleIncrementAndSquare(3); // Result: 64
+// Calculation: square(double(increment(3))) = square(double(4)) = square(8) = 64</code></pre>
+
+                    <h3 class="text-xl font-medium mt-6 mb-3">pipe</h3>
+                    <p class="mb-4">The <code>pipe</code> function is similar to <code>compose</code>, but applies the functions from left to right.</p>
+                    <pre class="bg-gray-800 text-white p-4 rounded-lg mb-6"><code class="language-javascript">import { pipe } from './src/core/runtime/runtime.js';
+
+// Example functions
+const double = x => x * 2;
+const increment = x => x + 1;
+const square = x => x * x;
+
+// Pipe functions: (x => square(increment(double(x))))
+const doubleIncrementAndSquare = pipe(double, increment, square);
+
+// Usage
+doubleIncrementAndSquare(3); // Result: 49
+// Calculation: square(increment(double(3))) = square(increment(6)) = square(7) = 49</code></pre>
+
+                    <h3 class="text-xl font-medium mt-6 mb-3">curry</h3>
+                    <p class="mb-4">The <code>curry</code> function transforms a function that takes multiple arguments into a sequence of functions that each take a single argument.</p>
+                    <pre class="bg-gray-800 text-white p-4 rounded-lg mb-6"><code class="language-javascript">import { curry } from './src/core/runtime/runtime.js';
+
+// Original function with multiple arguments
+const add = (a, b, c) => a + b + c;
+
+// Curried version
+const curriedAdd = curry(add);
+
+// Usage
+curriedAdd(1)(2)(3); // Result: 6
+
+// Partial application
+const add1 = curriedAdd(1);
+const add1And2 = add1(2);
+add1And2(3); // Result: 6</code></pre>
+
+                    <h3 class="text-xl font-medium mt-6 mb-3">memoize</h3>
+                    <p class="mb-4">The <code>memoize</code> function creates a cached version of a function, which remembers the results for previous inputs to avoid recalculation.</p>
+                    <pre class="bg-gray-800 text-white p-4 rounded-lg mb-6"><code class="language-javascript">import { memoize } from './src/core/runtime/runtime.js';
+
+// Expensive computation
+const fibonacci = n => {
+  if (n <= 1) return n;
+  return fibonacci(n - 1) + fibonacci(n - 2);
+};
+
+// Memoized version
+const memoizedFibonacci = memoize(n => {
+  if (n <= 1) return n;
+  return memoizedFibonacci(n - 1) + memoizedFibonacci(n - 2);
+});
+
+// Usage - much faster for repeated or recursive calls
+memoizedFibonacci(40); // Quick result due to memoization</code></pre>
+
+                    <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2">Pure Functions</h2>
+                    <p class="mb-4">FlexNet JSX encourages the use of pure functions, which have the following characteristics:</p>
+                    <ul class="list-disc pl-6 mb-6 space-y-2">
+                        <li>They always return the same output for the same input</li>
+                        <li>They don't cause side effects (like modifying global state or making API calls)</li>
+                        <li>They don't depend on external state that might change</li>
+                    </ul>
+
+                    <div class="bg-blue-50 border-l-4 border-primary p-4 rounded-md mb-6">
+                        <h4 class="font-semibold">Benefits of Pure Functions</h4>
+                        <ul class="list-disc pl-6 mt-2">
+                            <li>Easier to test</li>
+                            <li>More predictable</li>
+                            <li>Easier to debug</li>
+                            <li>Can be safely memoized</li>
+                            <li>Can be parallelized</li>
+                        </ul>
+                    </div>
+
+                    <h3 class="text-xl font-medium mt-6 mb-3">Example: Pure vs. Impure Functions</h3>
+                    <pre class="bg-gray-800 text-white p-4 rounded-lg mb-6"><code class="language-javascript">// Impure function (depends on external state)
+let counter = 0;
+function impureIncrement() {
+  counter++;
+  return counter;
+}
+
+// Pure function (same input always gives same output)
+function pureIncrement(count) {
+  return count + 1;
+}</code></pre>
+
+                    <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2">Higher-Order Functions</h2>
+                    <p class="mb-4">Higher-order functions are functions that take other functions as arguments or return functions as results. FlexNet JSX makes extensive use of higher-order functions for composition, event handling, and more.</p>
+
+                    <h3 class="text-xl font-medium mt-6 mb-3">Function as Data</h3>
+                    <p class="mb-4">In FlexNet JSX, functions are treated as first-class citizens, meaning they can be:</p>
+                    <ul class="list-disc pl-6 mb-6 space-y-2">
+                        <li>Assigned to variables</li>
+                        <li>Passed as arguments to other functions</li>
+                        <li>Returned from functions</li>
+                        <li>Stored in data structures</li>
+                    </ul>
+
+                    <h3 class="text-xl font-medium mt-6 mb-3">Example: Event Handler with Composition</h3>
+                    <pre class="bg-gray-800 text-white p-4 rounded-lg mb-6"><code class="language-javascript">import { compose } from './src/core/runtime/runtime.js';
+import { createStore } from './src/systems/state/store.js';
+import { createElement } from './src/core/runtime/jsx.js';
+
+// Create a store with initial state
+const store = createStore({ count: 0 });
+
+// Pure functions for state transformations
+const increment = state => ({ count: state.count + 1 });
+const double = state => ({ count: state.count * 2 });
+const reset = () => ({ count: 0 });
+
+// Component with composed event handlers
+const Counter = ({ state, update }) =>
+  createElement('div', null,
+    createElement('p', null, `Count: ${state.count}`),
+    createElement('button', {
+      onClick: () => update(increment)
+    }, 'Increment'),
+    createElement('button', {
+      onClick: () => update(compose(double, increment))
+    }, 'Increment & Double'),
+    createElement('button', {
+      onClick: () => update(reset)
+    }, 'Reset')
+  );</code></pre>
+
+                    <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2">Functional Updates with Immutability</h2>
+                    <p class="mb-4">FlexNet JSX follows the principle of immutability when updating state. Instead of modifying existing objects, we create new ones with the desired changes.</p>
+
+                    <h3 class="text-xl font-medium mt-6 mb-3">Immutable Update Patterns</h3>
+                    <pre class="bg-gray-800 text-white p-4 rounded-lg mb-6"><code class="language-javascript">// Original object
+const user = {
+  name: 'John',
+  age: 30,
+  address: {
+    city: 'New York',
+    zip: '10001'
+  }
+};
+
+// Bad: Mutating the original object
+function badUpdateAge(user, newAge) {
+  user.age = newAge; // Mutation!
+  return user;
+}
+
+// Good: Creating a new object with the updated property
+function goodUpdateAge(user, newAge) {
+  return {
+    ...user,
+    age: newAge
+  };
+}
+
+// Good: Updating a nested property
+function updateCity(user, newCity) {
+  return {
+    ...user,
+    address: {
+      ...user.address,
+      city: newCity
+    }
+  };
+}</code></pre>
+
+                    <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2">Function Utilities in FlexNet</h2>
+                    <p class="mb-4">FlexNet provides additional utilities for working with functions:</p>
+
+                    <h3 class="text-xl font-medium mt-6 mb-3">debounce</h3>
+                    <p class="mb-4">The <code>debounce</code> function limits how often a function can be called, delaying execution until after a specified time has passed since the last call.</p>
+                    <pre class="bg-gray-800 text-white p-4 rounded-lg mb-6"><code class="language-javascript">import { debounce } from './src/core/runtime/runtime.js';
+
+// Original function
+const handleSearch = (query) => {
+  // Perform search operation
+  console.log(`Searching for: ${query}`);
+};
+
+// Debounced version - only executes after 300ms of inactivity
+const debouncedSearch = debounce(handleSearch, 300);
+
+// Usage
+searchInput.addEventListener('input', (e) => {
+  debouncedSearch(e.target.value);
+});</code></pre>
+
+                    <h3 class="text-xl font-medium mt-6 mb-3">throttle</h3>
+                    <p class="mb-4">The <code>throttle</code> function ensures a function is called at most once in a specified time period.</p>
+                    <pre class="bg-gray-800 text-white p-4 rounded-lg mb-6"><code class="language-javascript">import { throttle } from './src/core/runtime/runtime.js';
+
+// Original function
+const handleScroll = () => {
+  // Perform scroll-related operation
+  console.log('Scroll event handled');
+};
+
+// Throttled version - executes at most once every 200ms
+const throttledScroll = throttle(handleScroll, 200);
+
+// Usage
+window.addEventListener('scroll', throttledScroll);</code></pre>
+
+                    <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded-md mt-8">
+                        <h4 class="font-semibold flex items-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-yellow-500" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2h-1V9z" clip-rule="evenodd" />
+                            </svg>
+                            Best Practice
+                        </h4>
+                        <p>When working with FlexNet JSX, prefer using pure functions and functional composition over imperative approaches. This leads to more maintainable, testable, and predictable code.</p>
+                    </div>
+                </div>
+
+                <div class="mt-12 border-t border-gray-200 pt-8">
+                    <h2 class="text-2xl font-semibold mb-4">Next Steps</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <a href="types.html" class="block p-4 border border-gray-200 rounded-lg hover:border-primary hover:shadow-md transition">
+                            <h3 class="font-semibold text-lg mb-2">Type System</h3>
+                            <p class="text-gray-600">Learn about FlexNet's functional type system with Maybe, Either, and Result.</p>
+                        </a>
+                        <a href="security.html" class="block p-4 border border-gray-200 rounded-lg hover:border-primary hover:shadow-md transition">
+                            <h3 class="font-semibold text-lg mb-2">Security</h3>
+                            <p class="text-gray-600">Explore FlexNet's security features and best practices.</p>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <footer class="bg-white border-t border-gray-200 py-6">
+        <div class="max-w-5xl mx-auto px-6">
+            <p class="text-center text-gray-600">&copy; 2025 FlexNet JSX Framework. Created by Dr. Robert Whetsel and the FlexNet Development Team.</p>
+            <div class="flex justify-center space-x-6 mt-4">
+                <a href="https://github.com/flexnet/flexnet-jsx" class="text-gray-600 hover:text-primary">GitHub</a>
+                <a href="../guides/contribution.html" class="text-gray-600 hover:text-primary">Contribute</a>
+                <a href="../LICENSE.html" class="text-gray-600 hover:text-primary">License</a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Simple client-side search functionality
+        const searchInput = document.querySelector('input[placeholder="Search documentation..."]');
+        searchInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                const query = searchInput.value.toLowerCase();
+                // Implement search functionality
+                console.log('Searching for:', query);
+                // This would typically use a search index or API
+            }
+        });
+    </script>
+</body>
+</html> 
