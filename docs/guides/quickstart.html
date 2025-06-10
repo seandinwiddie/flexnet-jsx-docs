@@ -28,8 +28,10 @@
         <!-- Sidebar -->
         <aside class="w-full md:w-64 bg-white border-r border-gray-200 md:h-screen md:sticky top-0 overflow-y-auto">
             <div class="p-4 border-b border-gray-200">
-                <h1 class="text-2xl font-bold text-primary">FlexNet</h1>
-                <p class="text-sm text-gray-500">v1.0.0</p>
+                <a href="../index.html" class="block">
+                    <h1 class="text-2xl font-bold text-primary">FlexNet</h1>
+                    <p class="text-sm text-gray-500">v1.0.0</p>
+                </a>
             </div>
             <nav class="p-4">
                 <div class="mb-6">
@@ -37,7 +39,7 @@
                     <ul class="space-y-2">
                         <li><a href="introduction.html" class="block text-gray-700 hover:text-primary">Introduction</a></li>
                         <li><a href="installation.html" class="block text-gray-700 hover:text-primary">Installation</a></li>
-                        <li><a href="quickstart.html" class="block text-gray-700 hover:text-primary font-medium text-primary">Quick Start</a></li>
+                        <li><a href="quickstart.html" class="block text-primary font-medium">Quick Start</a></li>
                         <li><a href="core-concepts.html" class="block text-gray-700 hover:text-primary">Core Concepts</a></li>
                     </ul>
                 </div>
@@ -82,7 +84,7 @@
         </aside>
 
         <!-- Main content -->
-        <main class="flex-1">
+        <main class="flex-1 overflow-auto">
             <div class="border-b border-gray-200 bg-white sticky top-0 z-10">
                 <div class="flex items-center justify-between px-4 py-3">
                     <div class="relative w-full max-w-md">
@@ -91,6 +93,7 @@
                             <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
                         </svg>
                         <div id="search-results" class="absolute mt-2 w-full bg-white rounded-md shadow-lg z-20 hidden"></div>
+                    </div>
                     <div class="flex space-x-4 ml-4">
                         <a href="https://github.com/flexnet/flexnet-jsx" target="_blank" class="text-gray-600 hover:text-primary">GitHub</a>
                         <a href="../../starter-project/README.md" target="_blank" class="text-gray-600 hover:text-primary">Starter Project</a>
@@ -98,20 +101,23 @@
                 </div>
             </div>
 
-            <div class="p-8 max-w-4xl mx-auto">
+            <div class="py-6 px-8 max-w-4xl mx-auto">
                 <div class="flex items-center space-x-2 text-sm text-gray-500 mb-8">
                     <a href="../index.html" class="hover:text-primary">Home</a>
                     <span>/</span>
-                    <a href="introduction.html" class="hover:text-primary">Guides</a>
+                    <a href="#" class="hover:text-primary">Getting Started</a>
                     <span>/</span>
-                    <span class="text-gray-700">Quick Start</span>
+                    <span class="text-gray-900">Quick Start</span>
                 </div>
 
-                <h1 class="text-4xl font-bold mb-6">Quick Start</h1>
-                <p class="text-lg text-gray-600 mb-8">Get up and running with FlexNet JSX in minutes with this quick start guide.</p>
-
+                <h1 class="text-3xl font-bold mb-6">Quick Start</h1>
+                
                 <div class="prose prose-blue max-w-none">
-                    <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2">Prerequisites</h2>
+                    <p class="lead text-xl text-gray-600 mb-8">
+                        Get up and running with FlexNet JSX in minutes with this quick start guide.
+                    </p>
+
+                    <h2 class="text-2xl font-bold mt-8 mb-4">Prerequisites</h2>
                     <p class="mb-4">Before you begin, ensure you have the following installed:</p>
                     <ul class="list-disc pl-6 mb-6 space-y-2">
                         <li>A modern web browser (Chrome, Firefox, Safari, or Edge)</li>
@@ -120,11 +126,11 @@
                         <li>A local development server (optional but recommended)</li>
                     </ul>
 
-                    <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2">Installation Options</h2>
+                    <h2 class="text-2xl font-bold mt-8 mb-4">Installation Options</h2>
                     
-                    <h3 class="text-xl font-medium mt-6 mb-3">Option 1: Direct Script Import</h3>
+                    <h3 class="text-xl font-semibold mt-6 mb-3">Option 1: Direct Script Import</h3>
                     <p class="mb-4">The simplest way to get started is by directly importing the FlexNet JSX framework via a script tag:</p>
-                    <pre class="bg-gray-800 text-white p-4 rounded-lg mb-6"><code class="language-html">&lt;!DOCTYPE html&gt;
+                    <pre class="bg-gray-800 text-white p-4 rounded-md mb-6 overflow-x-auto"><code class="language-html">&lt;!DOCTYPE html&gt;
 &lt;html lang="en"&gt;
 &lt;head&gt;
     &lt;meta charset="UTF-8"&gt;
@@ -140,194 +146,70 @@
 &lt;/body&gt;
 &lt;/html&gt;</code></pre>
 
-                    <h3 class="text-xl font-medium mt-6 mb-3">Option 2: Use a Starter Project</h3>
-                    <p class="mb-4">For a more comprehensive setup, we recommend using one of our starter projects:</p>
+                    <h3 class="text-xl font-semibold mt-6 mb-3">Option 2: Use a Starter Project</h3>
+                    <p class="mb-4">For a more comprehensive setup, we recommend using one of our starter projects. These projects provide everything you need to start developing right away.</p>
                     
-                    <div class="bg-blue-50 border-l-4 border-primary p-4 rounded-md mb-6">
-                        <h4 class="font-semibold">Full-Featured Starter</h4>
-                        <p class="mb-2">A comprehensive implementation with all framework features.</p>
-                        <pre class="bg-gray-800 text-white p-3 rounded-lg mt-2"><code class="language-bash"># Clone the repo (or download manually)
-cd starter-project
-python -m http.server 3000
-# Open http://localhost:3000</code></pre>
-                    </div>
-                    
-                    <div class="bg-blue-50 border-l-4 border-primary p-4 rounded-md mb-6">
-                        <h4 class="font-semibold">Minimal Starter</h4>
-                        <p class="mb-2">A lightweight implementation for learning the core concepts.</p>
-                        <pre class="bg-gray-800 text-white p-3 rounded-lg mt-2"><code class="language-bash"># Clone the repo (or download manually)
-cd starter-project-minimal
-python -m http.server 3000
-# Open http://localhost:3000</code></pre>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                        <div class="bg-blue-50 border-l-4 border-primary p-4 rounded-md">
+                            <h4 class="font-semibold text-lg mb-2">Full-Featured Starter</h4>
+                            <p class="text-gray-700 mb-4">A comprehensive implementation with all framework features.</p>
+                            <a href="https://github.com/flexnet/flexnet-jsx/tree/main/starter-project" target="_blank" class="text-primary font-medium hover:underline">View on GitHub &rarr;</a>
+                        </div>
+                        <div class="bg-blue-50 border-l-4 border-primary p-4 rounded-md">
+                            <h4 class="font-semibold text-lg mb-2">Minimal Starter</h4>
+                            <p class="text-gray-700 mb-4">A lightweight implementation for learning the core concepts.</p>
+                            <a href="https://github.com/flexnet/flexnet-jsx/tree/main/starter-project-minimal" target="_blank" class="text-primary font-medium hover:underline">View on GitHub &rarr;</a>
+                        </div>
                     </div>
 
-                    <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2">Your First FlexNet JSX Component</h2>
-                    <p class="mb-4">Let's create a simple counter component to demonstrate the core concepts of FlexNet JSX:</p>
+                    <h2 class="text-2xl font-bold mt-8 mb-4">Your First FlexNet JSX Component</h2>
+                    <p class="mb-4">Let's create a simple "Hello, World!" component to see how easy it is to get started:</p>
                     
-                    <pre class="bg-gray-800 text-white p-4 rounded-lg mb-6"><code class="language-javascript">// Import core modules
-import { compose, Maybe } from './src/core/runtime/runtime.js';
-import { createStore } from './src/systems/state/store.js';
+                    <pre class="bg-gray-800 text-white p-4 rounded-md mb-6 overflow-x-auto"><code class="language-javascript">// Import the necessary functions from the framework
 import { createElement, render } from './src/core/runtime/jsx.js';
 
-// Create an immutable store with initial state
-const store = createStore(Maybe.Just(0));
+// Define a simple component as a pure function
+const App = ({ name }) => (
+  createElement('h1', { className: 'greeting' }, `Hello, ${name}!`)
+);
 
-// Pure function for state update
-const increment = n => Maybe.Just(n + 1);
-const decrement = n => Maybe.Just(Math.max(0, n - 1));
+// Render the component to the DOM
+render(
+  createElement(App, { name: 'World' }),
+  document.getElementById('root')
+);</code></pre>
 
-// Counter component as a pure function
-const Counter = ({ count, onIncrement, onDecrement }) => 
-  createElement('div', { className: 'counter' },
-    createElement('h2', null, `Count: ${count}`),
-    createElement('div', { className: 'buttons' },
-      createElement('button', {
-        onClick: compose(onIncrement, increment)
-      }, 'Increment'),
-      createElement('button', {
-        onClick: compose(onDecrement, decrement)
-      }, 'Decrement')
-    )
-  );
-
-// Initialize the application
-function init() {
-  // Subscribe to state changes and render on each update
-  store.subscribe(count => {
-    render(
-      createElement(Counter, {
-        count: count,
-        onIncrement: store.update,
-        onDecrement: store.update
-      }),
-      document.getElementById('root')
-    );
-  });
-}
-
-// Run the application when DOM is ready
-document.addEventListener('DOMContentLoaded', init);</code></pre>
-
-                    <h3 class="text-xl font-medium mt-6 mb-3">Step-by-Step Explanation</h3>
-                    <ol class="list-decimal pl-6 mb-6 space-y-3">
+                    <h3 class="text-xl font-semibold mt-6 mb-3">Step-by-Step Explanation</h3>
+                    <ol class="list-decimal pl-6 mb-6 space-y-4">
                         <li>
-                            <strong>Imports</strong>: We import the necessary functions from the FlexNet JSX framework.
-                            <ul class="list-disc pl-6 mt-2">
-                                <li><code>compose</code>: For function composition</li>
-                                <li><code>Maybe</code>: For handling optional values</li>
-                                <li><code>createStore</code>: For state management</li>
-                                <li><code>createElement, render</code>: For creating and rendering components</li>
-                            </ul>
+                            <strong>Import Functions</strong>
+                            <p class="font-normal text-gray-600 mt-1">We import `createElement` and `render` from the core JSX runtime. These are the two fundamental functions you'll use in every FlexNet JSX application.</p>
                         </li>
                         <li>
-                            <strong>Store Creation</strong>: We create an immutable store with an initial value of 0 wrapped in a <code>Maybe.Just</code>.
+                            <strong>Define a Component</strong>
+                            <p class="font-normal text-gray-600 mt-1">We define an `App` component. In FlexNet, components are just pure functions that accept `props` as an argument and return a description of the UI (a virtual DOM element).</p>
                         </li>
                         <li>
-                            <strong>State Update Functions</strong>: We define pure functions for incrementing and decrementing the counter.
-                        </li>
-                        <li>
-                            <strong>Component Definition</strong>: We define a Counter component as a pure function that takes props and returns a virtual DOM structure.
-                        </li>
-                        <li>
-                            <strong>Rendering</strong>: We subscribe to state changes and render the component with the current state.
+                            <strong>Render the Component</strong>
+                            <p class="font-normal text-gray-600 mt-1">We use the `render` function to mount our `App` component into a DOM element with the ID `root`. `render` takes the virtual DOM element and the target container as arguments.</p>
                         </li>
                     </ol>
 
-                    <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2">Adding Styles</h2>
-                    <p class="mb-4">Let's add some basic CSS to style our counter:</p>
-                    
-                    <pre class="bg-gray-800 text-white p-4 rounded-lg mb-6"><code class="language-html">&lt;style&gt;
-  .counter {
-    font-family: system-ui, -apple-system, sans-serif;
-    max-width: 300px;
-    margin: 2rem auto;
-    padding: 1.5rem;
-    border-radius: 0.5rem;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    background-color: white;
-    text-align: center;
-  }
-  
-  .buttons {
-    display: flex;
-    gap: 0.5rem;
-    justify-content: center;
-    margin-top: 1rem;
-  }
-  
-  button {
-    background-color: #3b82f6;
-    color: white;
-    border: none;
-    padding: 0.5rem 1rem;
-    border-radius: 0.25rem;
-    cursor: pointer;
-    font-weight: 500;
-  }
-  
-  button:hover {
-    background-color: #2563eb;
-  }
-&lt;/style&gt;</code></pre>
-
-                    <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2">Next Steps</h2>
-                    <p class="mb-4">Now that you've created your first FlexNet JSX component, you can explore more advanced features:</p>
-                    
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
-                        <a href="../systems/state.html" class="block p-4 border border-gray-200 rounded-lg hover:border-primary hover:shadow-md transition">
-                            <h3 class="font-semibold text-lg mb-2">State Management</h3>
-                            <p class="text-gray-600">Learn about FlexNet's immutable state management system.</p>
-                        </a>
-                        <a href="../core/types.html" class="block p-4 border border-gray-200 rounded-lg hover:border-primary hover:shadow-md transition">
-                            <h3 class="font-semibold text-lg mb-2">Type System</h3>
-                            <p class="text-gray-600">Explore the functional type system with Maybe, Either, and Result.</p>
-                        </a>
-                        <a href="../systems/effects.html" class="block p-4 border border-gray-200 rounded-lg hover:border-primary hover:shadow-md transition">
-                            <h3 class="font-semibold text-lg mb-2">Effects</h3>
-                            <p class="text-gray-600">Handle side effects in a pure functional way.</p>
-                        </a>
-                        <a href="../examples/todo.html" class="block p-4 border border-gray-200 rounded-lg hover:border-primary hover:shadow-md transition">
-                            <h3 class="font-semibold text-lg mb-2">Todo App Example</h3>
-                            <p class="text-gray-600">See a more complex example with FlexNet JSX.</p>
-                        </a>
-                    </div>
-
-                    <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded-md">
-                        <h4 class="font-semibold flex items-center">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-yellow-500" viewBox="0 0 20 20" fill="currentColor">
-                                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2h-1V9z" clip-rule="evenodd" />
-                            </svg>
-                            Tip
-                        </h4>
-                        <p>For the best development experience, we recommend going through our <a href="core-concepts.html" class="text-primary hover:underline">Core Concepts</a> guide to understand the fundamental principles behind FlexNet JSX.</p>
-                    </div>
+                    <h2 class="text-2xl font-bold mt-8 mb-4">Next Steps</h2>
+                    <p class="mb-4">
+                        Congratulations on creating your first FlexNet JSX component! You've learned how to set up a project, define a component, and render it to the screen.
+                    </p>
+                    <p>
+                        From here, you can explore the <a href="core-concepts.html" class="text-primary hover:underline">Core Concepts</a> to gain a deeper understanding of the framework's principles.
+                    </p>
                 </div>
             </div>
         </main>
     </div>
-
-    <footer class="bg-white border-t border-gray-200 py-6">
-        <div class="max-w-5xl mx-auto px-6">
-            <p class="text-center text-gray-600">&copy; 2025 FlexNet JSX Framework. Created by Dr. Robert Whetsel and the FlexNet Development Team.</p>
-            <div class="flex justify-center space-x-6 mt-4">
-                <a href="https://github.com/flexnet/flexnet-jsx" class="text-gray-600 hover:text-primary">GitHub</a>
-                <a href="contribution.html" class="text-gray-600 hover:text-primary">Contribute</a>
-                <a href="../LICENSE.html" class="text-gray-600 hover:text-primary">License</a>
-            </div>
+    <footer class="bg-white border-t border-gray-200 mt-auto py-6">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-gray-500">
+            <p>&copy; 2024 FlexNet JSX. All rights reserved.</p>
         </div>
     </footer>
-
-    <script>
-        // Simple client-side search functionality
-        const searchInput = document.querySelector('input[placeholder="Search documentation..."]');
-        searchInput.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter') {
-                const query = searchInput.value.toLowerCase();
-                // Implement search functionality
-                console.log('Searching for:', query);
-                // This would typically use a search index or API
-            }
-        });
-    </script>
 </body>
 </html> 

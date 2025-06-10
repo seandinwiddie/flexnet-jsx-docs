@@ -28,15 +28,17 @@
         <!-- Sidebar -->
         <aside class="w-full md:w-64 bg-white border-r border-gray-200 md:h-screen md:sticky top-0 overflow-y-auto">
             <div class="p-4 border-b border-gray-200">
-                <h1 class="text-2xl font-bold text-primary">FlexNet</h1>
-                <p class="text-sm text-gray-500">v1.0.0</p>
+                <a href="../index.html" class="block">
+                    <h1 class="text-2xl font-bold text-primary">FlexNet</h1>
+                    <p class="text-sm text-gray-500">v1.0.0</p>
+                </a>
             </div>
             <nav class="p-4">
                 <div class="mb-6">
                     <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">Getting Started</h3>
                     <ul class="space-y-2">
                         <li><a href="introduction.html" class="block text-gray-700 hover:text-primary">Introduction</a></li>
-                        <li><a href="installation.html" class="block text-primary font-semibold">Installation</a></li>
+                        <li><a href="installation.html" class="block text-primary font-medium">Installation</a></li>
                         <li><a href="quickstart.html" class="block text-gray-700 hover:text-primary">Quick Start</a></li>
                         <li><a href="core-concepts.html" class="block text-gray-700 hover:text-primary">Core Concepts</a></li>
                     </ul>
@@ -80,7 +82,7 @@
                 </div>
             </nav>
         </aside>
-        <main class="flex-1">
+        <main class="flex-1 overflow-auto">
             <div class="border-b border-gray-200 bg-white sticky top-0 z-10">
                 <div class="flex items-center justify-between px-4 py-3">
                     <div class="relative w-full max-w-md">
@@ -96,26 +98,39 @@
                     </div>
                 </div>
             </div>
-            <div class="p-6 max-w-5xl mx-auto">
-                <h1 class="text-3xl font-bold mb-4">Installing FlexNet JSX Framework</h1>
-                
-                <p class="text-lg text-gray-600 mb-6">FlexNet JSX is designed to be easy to install and integrate into your projects. Since it follows a zero-dependencies approach, the installation process is straightforward.</p>
-                
-                <div class="bg-blue-50 border-l-4 border-blue-400 p-4 my-6">
-                    <p class="text-blue-800"><strong>Note:</strong> FlexNet JSX requires no external dependencies and uses browser-native implementation only.</p>
+            <div class="py-6 px-8 max-w-4xl mx-auto">
+                <div class="flex items-center space-x-2 text-sm text-gray-500 mb-8">
+                    <a href="../index.html" class="hover:text-primary">Home</a>
+                    <span>/</span>
+                    <a href="#" class="hover:text-primary">Getting Started</a>
+                    <span>/</span>
+                    <span class="text-gray-900">Installation</span>
                 </div>
-                
-                <h2 class="text-2xl font-bold mt-8 mb-4">Installation Methods</h2>
-                
-                <h3 class="text-xl font-semibold mt-6 mb-3">Method 1: Use a Starter Project (Recommended)</h3>
-                
-                <p class="mb-4">The easiest way to get started with FlexNet JSX is to use one of our pre-configured starter projects. These projects provide everything you need to start developing right away.</p>
 
-                <h4 class="text-lg font-semibold mt-4 mb-2">Full-Featured Starter Project</h4>
+                <h1 class="text-3xl font-bold mb-6">Installing FlexNet JSX</h1>
                 
-                <p class="mb-4">For a comprehensive implementation with all framework features:</p>
+                <div class="prose prose-blue max-w-none">
+                    <p class="lead text-xl text-gray-600 mb-8">
+                        FlexNet JSX is designed to be easy to install and integrate into your projects. Since it follows a zero-dependencies approach, the installation process is straightforward.
+                    </p>
+
+                    <div class="bg-blue-50 border-l-4 border-blue-500 p-4 mb-8">
+                        <p class="text-blue-800">
+                            <strong>Note:</strong> FlexNet JSX requires no external dependencies and uses browser-native implementations only.
+                        </p>
+                    </div>
                 
-                <pre class="bg-gray-800 text-white p-4 rounded-md mb-4 overflow-x-auto"><code class="language-bash"># Clone the repository (replace with your method of obtaining the code)
+                    <h2 class="text-2xl font-bold mt-8 mb-4">Installation Methods</h2>
+                    
+                    <h3 class="text-xl font-semibold mt-6 mb-3">Method 1: Use a Starter Project (Recommended)</h3>
+                    
+                    <p class="mb-4">The easiest way to get started with FlexNet JSX is to use one of our pre-configured starter projects. These projects provide everything you need to start developing right away.</p>
+
+                    <h4 class="text-lg font-semibold mt-4 mb-2">Full-Featured Starter Project</h4>
+                    
+                    <p class="mb-4">For a comprehensive implementation with all framework features:</p>
+                    
+                    <pre class="bg-gray-800 text-white p-4 rounded-md mb-6 overflow-x-auto"><code class="language-bash"># Clone the repository (replace with your method of obtaining the code)
 git clone https://github.com/flexnet/flexnet-jsx.git
 cd flexnet-jsx
 
@@ -127,22 +142,20 @@ python -m http.server 3000
 
 # Open your browser to http://localhost:3000</code></pre>
 
-                <p class="mb-4">The full-featured starter includes:</p>
-                <ul class="list-disc list-inside mb-4 space-y-1">
-                    <li>Complete type system (Maybe, Either, Result)</li>
-                    <li>Advanced security features</li>
-                    <li>Error boundaries</li>
-                    <li>Effect system with cleanup</li>
-                    <li>Event system</li>
-                    <li>Advanced rendering</li>
-                    <li>Utility functions</li>
-                </ul>
+                    <p class="mb-4">The full-featured starter includes:</p>
+                    <ul class="list-disc pl-6 mb-6 space-y-2">
+                        <li>Complete type system (Maybe, Either, Result)</li>
+                        <li>Advanced security features</li>
+                        <li>Error boundaries and effect system with cleanup</li>
+                        <li>Event and rendering systems</li>
+                        <li>Utility functions and function composition</li>
+                    </ul>
 
-                <h4 class="text-lg font-semibold mt-4 mb-2">Minimal Starter Project</h4>
-                
-                <p class="mb-4">For a lightweight implementation focusing on core concepts:</p>
-                
-                <pre class="bg-gray-800 text-white p-4 rounded-md mb-4 overflow-x-auto"><code class="language-bash"># Navigate to the minimal starter
+                    <h4 class="text-lg font-semibold mt-4 mb-2">Minimal Starter Project</h4>
+                    
+                    <p class="mb-4">For a lightweight implementation focusing on core concepts:</p>
+                    
+                    <pre class="bg-gray-800 text-white p-4 rounded-md mb-6 overflow-x-auto"><code class="language-bash"># Navigate to the minimal starter
 cd starter-project-minimal
 
 # Start a simple development server
@@ -150,37 +163,36 @@ python -m http.server 3000
 
 # Open your browser to http://localhost:3000</code></pre>
 
-                <p class="mb-4">The minimal starter includes:</p>
-                <ul class="list-disc list-inside mb-4 space-y-1">
-                    <li>Essential types (Maybe monad)</li>
-                    <li>Basic security (XSS prevention)</li>
-                    <li>Functional core</li>
-                    <li>Simple state management</li>
-                    <li>Counter example</li>
-                </ul>
-                
-                <h3 class="text-xl font-semibold mt-6 mb-3">Method 2: Integrate into an Existing Project</h3>
-                
-                <p class="mb-4">You can add FlexNet JSX to an existing project by including it directly in your HTML or importing it into your JavaScript modules.</p>
-                
-                <h4 class="text-lg font-semibold mt-4 mb-2">Include in HTML</h4>
-                
-                <pre class="bg-gray-800 text-white p-4 rounded-md mb-4 overflow-x-auto"><code class="language-html">&lt;!DOCTYPE html&gt;
+                    <p class="mb-4">The minimal starter includes:</p>
+                    <ul class="list-disc pl-6 mb-6 space-y-2">
+                        <li>Essential types (Maybe)</li>
+                        <li>Basic security (XSS prevention)</li>
+                        <li>Functional core and simple state management</li>
+                        <li>A counter example to get you started</li>
+                    </ul>
+                    
+                    <h3 class="text-xl font-semibold mt-6 mb-3">Method 2: Integrate into an Existing Project</h3>
+                    
+                    <p class="mb-4">You can add FlexNet JSX to an existing project by including it directly in your HTML or importing it into your JavaScript modules.</p>
+                    
+                    <h4 class="text-lg font-semibold mt-4 mb-2">Include in HTML</h4>
+                    
+                    <pre class="bg-gray-800 text-white p-4 rounded-md mb-6 overflow-x-auto"><code class="language-html">&lt;!DOCTYPE html&gt;
 &lt;html&gt;
 &lt;head&gt;
     &lt;title&gt;FlexNet JSX Project&lt;/title&gt;
 &lt;/head&gt;
 &lt;body&gt;
     &lt;div id="root"&gt;&lt;/div&gt;
-    &lt;script type="module" src="path/to/flexnet/src/core/runtime/jsx.js"&gt;&lt;/script&gt;
+    &lt;script type="module" src="path/to/flexnet/src/index.js"&gt;&lt;/script&gt;
     &lt;script type="module" src="path/to/your/app.js"&gt;&lt;/script&gt;
 &lt;/body&gt;
 &lt;/html&gt;</code></pre>
 
-                <h4 class="text-lg font-semibold mt-4 mb-2">Import in JavaScript</h4>
-                
-                <pre class="bg-gray-800 text-white p-4 rounded-md mb-4 overflow-x-auto"><code class="language-javascript">// Import core FlexNet functionality
-import { jsx, render } from './path/to/flexnet/src/core/runtime/jsx.js';
+                    <h4 class="text-lg font-semibold mt-4 mb-2">Import in JavaScript</h4>
+                    
+                    <pre class="bg-gray-800 text-white p-4 rounded-md mb-6 overflow-x-auto"><code class="language-javascript">// Import core FlexNet functionality
+import { createElement, render } from './path/to/flexnet/src/core/runtime/jsx.js';
 import { Maybe } from './path/to/flexnet/src/core/types/maybe.js';
 import { createStore } from './path/to/flexnet/src/systems/state/store.js';
 import { compose } from './path/to/flexnet/src/core/functions/composition.js';
@@ -190,156 +202,40 @@ const App = () => {
   // Your application code here
 };</code></pre>
 
-                <h3 class="text-xl font-semibold mt-6 mb-3">Method 3: Manual Setup (Advanced)</h3>
-                
-                <p class="mb-4">For complete control over your project structure, you can manually set up a FlexNet JSX project following the recommended directory structure.</p>
-                
-                <h4 class="text-lg font-semibold mt-4 mb-2">1. Create Project Structure</h4>
-                
-                <pre class="bg-gray-800 text-white p-4 rounded-md mb-4 overflow-x-auto"><code class="language-bash">mkdir -p my-flexnet-project/src/{core/{runtime,types,functions},systems/{render,state,effects,events},features,utils}
-mkdir -p my-flexnet-project/public
-mkdir -p my-flexnet-project/tests</code></pre>
-
-                <h4 class="text-lg font-semibold mt-4 mb-2">2. Create Core Files</h4>
-                
-                <p class="mb-4">Create the necessary core files based on the FlexNet architecture:</p>
-                
-                <ul class="list-disc list-inside mb-4 space-y-1">
-                    <li><code>src/core/runtime/jsx.js</code> - JSX runtime implementation</li>
-                    <li><code>src/core/types/maybe.js</code> - Maybe type implementation</li>
-                    <li><code>src/core/types/either.js</code> - Either type implementation</li>
-                    <li><code>src/core/types/result.js</code> - Result type implementation</li>
-                    <li><code>src/core/functions/composition.js</code> - Function composition utilities</li>
-                    <li><code>src/systems/state/store.js</code> - State management implementation</li>
-                    <li><code>src/systems/render/functions.js</code> - Rendering system</li>
-                </ul>
-                
-                <h4 class="text-lg font-semibold mt-4 mb-2">3. Create HTML Entry Point</h4>
-                
-                <pre class="bg-gray-800 text-white p-4 rounded-md mb-4 overflow-x-auto"><code class="language-html">&lt;!-- public/index.html --&gt;
-&lt;!DOCTYPE html&gt;
-&lt;html&gt;
-&lt;head&gt;
-    &lt;title&gt;FlexNet JSX Project&lt;/title&gt;
-&lt;/head&gt;
-&lt;body&gt;
-    &lt;div id="root"&gt;&lt;/div&gt;
-    &lt;script type="module" src="../src/index.js"&gt;&lt;/script&gt;
-&lt;/body&gt;
-&lt;/html&gt;</code></pre>
-
-                <h4 class="text-lg font-semibold mt-4 mb-2">4. Create Main Entry Point</h4>
-                
-                <pre class="bg-gray-800 text-white p-4 rounded-md mb-4 overflow-x-auto"><code class="language-javascript">// src/index.js
-import { jsx, render } from './core/runtime/jsx.js';
-import { createApp } from './features/app.js';
-
-const app = createApp();
-render(app, document.getElementById('root'));</code></pre>
-                
-                <h2 class="text-2xl font-bold mt-8 mb-4">Directory Structure</h2>
-                
-                <p class="mb-4">FlexNet JSX follows a specific directory structure that promotes functional programming principles, separation of concerns, and maintainability. Here's the recommended structure:</p>
-                
-                <pre class="bg-gray-800 text-white p-4 rounded-md mb-4 overflow-x-auto"><code class="language-text">my-project/
+                    <h3 class="text-xl font-semibold mt-6 mb-3">Method 3: Manual Setup (Advanced)</h3>
+                    
+                    <p class="mb-4">For complete control over your project structure, you can manually set up a FlexNet JSX project. We recommend following our standard directory structure for maintainability.</p>
+                    
+                    <details class="bg-gray-100 p-4 rounded-md mb-6">
+                        <summary class="font-semibold cursor-pointer">View Recommended Directory Structure</summary>
+                        <pre class="bg-gray-800 text-white p-4 rounded-md mt-4 overflow-x-auto"><code class="language-text">my-project/
 ├── src/
-│   ├── core/                  # Core JSX functionality
-│   │   ├── runtime/          # JSX runtime
-│   │   │   ├── jsx.js
-│   │   │   └── transform.js
-│   │   ├── types/           # Type system
-│   │   │   ├── maybe.js
-│   │   │   ├── either.js
-│   │   │   └── result.js
-│   │   └── functions/       # Core functions
-│   │       ├── composition.js
-│   │       └── transforms.js
-│   │
-│   ├── systems/             # Framework systems
-│   │   ├── render/         # Rendering
-│   │   ├── state/         # State management
-│   │   ├── effects/       # Side effects
-│   │   └── events/        # Event handling
-│   │
-│   ├── features/           # Your app features
-│   │   └── counter/       # Example feature
-│   │       ├── functions.js
-│   │       └── index.js
-│   │
-│   └── utils/              # Utilities
-│       ├── array.js
-│       └── function.js
-│
-├── public/                  # Static assets
+│   ├── core/
+│   │   ├── runtime/
+│   │   ├── types/
+│   │   └── functions/
+│   ├── systems/
+│   │   ├── render/
+│   │   ├── state/
+│   │   ├── effects/
+│   │   └── events/
+│   ├── features/
+│   │   └── counter/
+│   └── utils/
+├── public/
 │   └── index.html
-│
-└── tests/                  # Test files
+└── tests/
     └── features/
-        └── counter/
-            └── counter.test.js</code></pre>
+        └── counter.test.js</code></pre>
+                    </details>
+                </div>
             </div>
         </main>
     </div>
-    <footer class="footer">
-        <div class="footer-content">
-            <p>&copy; 2025 FlexNet JSX Framework. Created by Dr. Robert Whetsel and the FlexNet Development Team.</p>
-            <div class="footer-links">
-                <a href="https://github.com/flexnet/flexnet-jsx">GitHub</a>
-                <a href="contribution.html">Contribute</a>
-                <a href="../LICENSE.html">License</a>
-            </div>
+    <footer class="bg-white border-t border-gray-200 mt-auto py-6">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-gray-500">
+            <p>&copy; 2024 FlexNet JSX. All rights reserved.</p>
         </div>
     </footer>
-    <script>
-        // Simple client-side search functionality
-        const searchInput = document.querySelector('input[placeholder="Search documentation..."]');
-        const searchResultsContainer = document.getElementById('search-results');
-        let searchIndex = [];
-
-        fetch('../search-index.json')
-            .then(response => response.json())
-            .then(data => {
-                searchIndex = data;
-            });
-
-        searchInput.addEventListener('input', (e) => {
-            const query = searchInput.value.toLowerCase();
-            if (query.length < 2) {
-                searchResultsContainer.innerHTML = '';
-                searchResultsContainer.classList.add('hidden');
-                return;
-            }
-
-            const results = searchIndex.filter(item => {
-                return item.title.toLowerCase().includes(query) || item.content.toLowerCase().includes(query);
-            });
-
-            displayResults(results);
-        });
-
-        function displayResults(results) {
-            if (results.length === 0) {
-                searchResultsContainer.innerHTML = '<div class="p-3 text-gray-500">No results found.</div>';
-                searchResultsContainer.classList.remove('hidden');
-                return;
-            }
-
-            const html = results.map(result => {
-                return `<a href="${result.path}" class="block p-3 hover:bg-gray-100">
-                    <div class="font-semibold">${result.title}</div>
-                    <div class="text-sm text-gray-600">${result.content.substring(0, 100)}...</div>
-                </a>`;
-            }).join('');
-
-            searchResultsContainer.innerHTML = html;
-            searchResultsContainer.classList.remove('hidden');
-        }
-
-        document.addEventListener('click', (e) => {
-            if (!searchInput.contains(e.target)) {
-                searchResultsContainer.classList.add('hidden');
-            }
-        });
-    </script>
 </body>
 </html>
