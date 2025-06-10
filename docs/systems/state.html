@@ -4,113 +4,130 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>State Management - FlexNet JSX Framework</title>
-    <link rel="stylesheet" href="../assets/css/styles.css">
+    <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/atom-one-dark.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
-    <script>hljs.highlightAll();</script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#3b82f6',
+                        secondary: '#6366f1',
+                        dark: '#1e293b',
+                        light: '#f8fafc'
+                    }
+                }
+            }
+        }
+        hljs.highlightAll();
+    </script>
 </head>
-<body>
-    <div class="docs-container">
-        <aside class="sidebar">
-            <div class="sidebar-header">
-                <h1 class="logo">FlexNet</h1>
-                <p class="version">v1.0.0</p>
+<body class="bg-gray-50 text-gray-900 min-h-screen">
+    <div class="flex flex-col md:flex-row">
+        <!-- Sidebar -->
+        <aside class="w-full md:w-64 bg-white border-r border-gray-200 md:h-screen md:sticky top-0 overflow-y-auto">
+            <div class="p-4 border-b border-gray-200">
+                <h1 class="text-2xl font-bold text-primary">FlexNet</h1>
+                <p class="text-sm text-gray-500">v1.0.0</p>
             </div>
-            <nav class="nav-menu">
-                <div class="nav-section">
-                    <h3>Getting Started</h3>
-                    <ul>
-                        <li><a href="../guides/introduction.html">Introduction</a></li>
-                        <li><a href="../guides/installation.html">Installation</a></li>
-                        <li><a href="../guides/quickstart.html">Quick Start</a></li>
-                        <li><a href="../guides/core-concepts.html">Core Concepts</a></li>
+            <nav class="p-4">
+                <div class="mb-6">
+                    <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">Getting Started</h3>
+                    <ul class="space-y-2">
+                        <li><a href="../guides/introduction.html" class="block text-gray-700 hover:text-primary">Introduction</a></li>
+                        <li><a href="../guides/installation.html" class="block text-gray-700 hover:text-primary">Installation</a></li>
+                        <li><a href="../guides/quickstart.html" class="block text-gray-700 hover:text-primary">Quick Start</a></li>
+                        <li><a href="../guides/core-concepts.html" class="block text-gray-700 hover:text-primary">Core Concepts</a></li>
                     </ul>
                 </div>
-                <div class="nav-section">
-                    <h3>Core</h3>
-                    <ul>
-                        <li><a href="../core/jsx-runtime.html">JSX Runtime</a></li>
-                        <li><a href="../core/types.html">Type System</a></li>
-                        <li><a href="../core/functions.html">Functions</a></li>
-                        <li><a href="../core/security.html">Security</a></li>
+                <div class="mb-6">
+                    <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">Core</h3>
+                    <ul class="space-y-2">
+                        <li><a href="../core/jsx-runtime.html" class="block text-gray-700 hover:text-primary">JSX Runtime</a></li>
+                        <li><a href="../core/types.html" class="block text-gray-700 hover:text-primary">Type System</a></li>
+                        <li><a href="../core/functions.html" class="block text-gray-700 hover:text-primary">Functions</a></li>
+                        <li><a href="../core/security.html" class="block text-gray-700 hover:text-primary">Security</a></li>
                     </ul>
                 </div>
-                <div class="nav-section">
-                    <h3>Systems</h3>
-                    <ul>
-                        <li><a href="state.html" class="active">State Management</a></li>
-                        <li><a href="effects.html">Effects</a></li>
-                        <li><a href="render.html">Render</a></li>
-                        <li><a href="events.html">Events</a></li>
-                        <li><a href="errors.html">Error Handling</a></li>
+                <div class="mb-6">
+                    <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">Systems</h3>
+                    <ul class="space-y-2">
+                        <li><a href="state.html" class="block text-gray-700 hover:text-primary font-medium text-primary">State Management</a></li>
+                        <li><a href="effects.html" class="block text-gray-700 hover:text-primary">Effects</a></li>
+                        <li><a href="render.html" class="block text-gray-700 hover:text-primary">Render</a></li>
+                        <li><a href="events.html" class="block text-gray-700 hover:text-primary">Events</a></li>
+                        <li><a href="errors.html" class="block text-gray-700 hover:text-primary">Error Handling</a></li>
                     </ul>
                 </div>
-                <div class="nav-section">
-                    <h3>Examples</h3>
-                    <ul>
-                        <li><a href="../examples/counter.html">Counter</a></li>
-                        <li><a href="../examples/todo.html">Todo App</a></li>
-                        <li><a href="../examples/website.html">Website</a></li>
+                <div class="mb-6">
+                    <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">Examples</h3>
+                    <ul class="space-y-2">
+                        <li><a href="../examples/counter.html" class="block text-gray-700 hover:text-primary">Counter</a></li>
+                        <li><a href="../examples/todo.html" class="block text-gray-700 hover:text-primary">Todo App</a></li>
+                        <li><a href="../examples/website.html" class="block text-gray-700 hover:text-primary">Website</a></li>
                     </ul>
                 </div>
-                <div class="nav-section">
-                    <h3>API Reference</h3>
-                    <ul>
-                        <li><a href="../api/jsx.html">JSX API</a></li>
-                        <li><a href="../api/maybe.html">Maybe</a></li>
-                        <li><a href="../api/either.html">Either</a></li>
-                        <li><a href="../api/result.html">Result</a></li>
-                        <li><a href="../api/store.html">Store</a></li>
+                <div class="mb-6">
+                    <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">API Reference</h3>
+                    <ul class="space-y-2">
+                        <li><a href="../api/jsx.html" class="block text-gray-700 hover:text-primary">JSX API</a></li>
+                        <li><a href="../api/maybe.html" class="block text-gray-700 hover:text-primary">Maybe</a></li>
+                        <li><a href="../api/either.html" class="block text-gray-700 hover:text-primary">Either</a></li>
+                        <li><a href="../api/result.html" class="block text-gray-700 hover:text-primary">Result</a></li>
+                        <li><a href="../api/store.html" class="block text-gray-700 hover:text-primary">Store</a></li>
                     </ul>
                 </div>
             </nav>
         </aside>
-        <main class="content">
-            <div class="content-header">
-                <div class="search-container">
-                    <input type="text" placeholder="Search documentation...">
+
+        <!-- Main content -->
+        <main class="flex-1">
+            <div class="border-b border-gray-200 bg-white sticky top-0 z-10">
+                <div class="flex items-center justify-between px-4 py-3">
+                    <div class="relative w-full max-w-md">
+                        <input type="text" placeholder="Search documentation..." class="w-full pl-10 pr-4 py-2 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 text-gray-400 absolute left-3 top-1/2 transform -translate-y-1/2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
+                        </svg>
+                        <div id="search-results" class="absolute mt-2 w-full bg-white rounded-md shadow-lg z-20 hidden"></div>
+                    <div class="flex space-x-4 ml-4">
+                        <a href="https://github.com/flexnet/flexnet-jsx" target="_blank" class="text-gray-600 hover:text-primary">GitHub</a>
+                        <a href="../../starter-project/README.md" target="_blank" class="text-gray-600 hover:text-primary">Starter Project</a>
                 </div>
-                <div class="header-links">
-                    <a href="https://github.com/flexnet/flexnet-jsx" target="_blank">GitHub</a>
-                    <a href="../../starter-project/README.md" target="_blank">Starter Project</a>
                 </div>
             </div>
-            <div class="content-body doc-content">
-                <h1>State Management</h1>
-                
-                <p>FlexNet JSX implements a functional, immutable approach to state management that provides predictability, testability, and maintainability. This document explains the core principles, implementation, and best practices for state management in FlexNet.</p>
-                
-                <div class="callout">
-                    <p><strong>Important:</strong> FlexNet's state management follows strict functional programming principles with immutable state transitions and a unidirectional data flow.</p>
+
+            <div class="p-8 max-w-4xl mx-auto">
+                <div class="flex items-center space-x-2 text-sm text-gray-500 mb-8">
+                    <a href="../index.html" class="hover:text-primary">Home</a>
+                    <span>/</span>
+                    <a href="state.html" class="hover:text-primary">Systems</a>
+                    <span>/</span>
+                    <span class="text-gray-700">State Management</span>
                 </div>
                 
-                <h2>Core Principles</h2>
-                
-                <div class="feature-comparison">
-                    <div class="feature-card">
-                        <h3>Immutability</h3>
-                        <p>State is never modified directly; each state change creates a new state object.</p>
-                    </div>
-                    <div class="feature-card">
-                        <h3>Unidirectional Flow</h3>
-                        <p>Data flows in one direction, making the application state predictable.</p>
-                    </div>
-                    <div class="feature-card">
-                        <h3>Pure Functions</h3>
-                        <p>State transformations are performed by pure functions with no side effects.</p>
-                    </div>
-                    <div class="feature-card">
-                        <h3>Centralized Store</h3>
-                        <p>A single source of truth for application state with controlled access.</p>
-                    </div>
+                <h1 class="text-4xl font-bold mb-6">State Management</h1>
+                <p class="text-lg text-gray-600 mb-8">FlexNet JSX implements a functional, immutable approach to state management that provides predictability, testability, and maintainability. This document explains the core principles, implementation, and best practices for state management in FlexNet.</p>
+
+                <div class="prose prose-blue max-w-none">
+                    <div class="bg-blue-50 border-l-4 border-primary p-4 rounded-md mb-6">
+                        <h4 class="font-semibold">Important</h4>
+                        <p>FlexNet's state management follows strict functional programming principles with immutable state transitions and a unidirectional data flow.</p>
                 </div>
                 
-                <h2>The Store</h2>
-                
-                <p>At the heart of FlexNet's state management is the store, a functional implementation that maintains application state and notifies subscribers of changes.</p>
-                
-                <div class="api-section">
-                    <h3>Basic Store Implementation</h3>
+                    <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2">Core Principles</h2>
+                    <ul class="list-disc pl-6 mb-6 space-y-2">
+                        <li><strong>Immutability:</strong> State is never modified directly; each state change creates a new state object.</li>
+                        <li><strong>Unidirectional Flow:</strong> Data flows in one direction, making the application state predictable.</li>
+                        <li><strong>Pure Functions:</strong> State transformations are performed by pure functions with no side effects.</li>
+                        <li><strong>Centralized Store:</strong> A single source of truth for application state with controlled access.</li>
+                    </ul>
+                    
+                    <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2">The Store</h2>
+                    <p class="mb-4">At the heart of FlexNet's state management is the store, a functional implementation that maintains application state and notifies subscribers of changes.</p>
+
+                    <h3 class="text-xl font-medium mt-6 mb-3">Basic Store Implementation</h3>
                     <pre><code class="language-javascript">// src/systems/state/store.js
 const createStore = (initialState) => {
     const subscribers = new Set();
@@ -130,18 +147,15 @@ const createStore = (initialState) => {
         }
     };
 };</code></pre>
-                </div>
                 
-                <h3>Key Concepts</h3>
-                
-                <ul>
+                    <h3 class="text-xl font-medium mt-6 mb-3">Key Concepts</h3>
+                    <ul class="list-disc pl-6 mb-6 space-y-2">
                     <li><strong>getState</strong> - Returns the current state</li>
                     <li><strong>update</strong> - Updates the state using a pure function updater</li>
                     <li><strong>subscribe</strong> - Registers a callback to be notified of state changes</li>
                 </ul>
                 
-                <h3>Usage Example</h3>
-                
+                    <h3 class="text-xl font-medium mt-6 mb-3">Usage Example</h3>
                 <pre><code class="language-javascript">import { createStore } from './systems/state/store.js';
 import Maybe from './core/types/maybe.js';
 
@@ -159,12 +173,10 @@ const unsubscribe = store.subscribe(state => {
 // Later, unsubscribe when done
 unsubscribe();</code></pre>
                 
-                <h2>Immutable State Updates</h2>
+                    <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2">Immutable State Updates</h2>
+                    <p class="mb-4">All state updates in FlexNet are performed using pure functions that produce a new state object instead of modifying the existing one.</p>
                 
-                <p>All state updates in FlexNet are performed using pure functions that produce a new state object instead of modifying the existing one.</p>
-                
-                <h3>Simple Updates</h3>
-                
+                    <h3 class="text-xl font-medium mt-6 mb-3">Simple Updates</h3>
                 <pre><code class="language-javascript">// Creating a counter store
 const counterStore = createStore(Maybe.Just(0));
 
@@ -178,8 +190,7 @@ const decrement = count => Maybe.Just(count.value - 1);
 counterStore.update(increment);
 counterStore.update(decrement);</code></pre>
                 
-                <h3>Complex State Updates</h3>
-                
+                    <h3 class="text-xl font-medium mt-6 mb-3">Complex State Updates</h3>
                 <pre><code class="language-javascript">// Creating a todo list store
 const todosStore = createStore(Maybe.Just([]));
 
@@ -215,12 +226,10 @@ todosStore.update(addTodo('Learn FlexNet'));
 todosStore.update(addTodo('Build an app'));
 todosStore.update(toggleTodo(1234567890));</code></pre>
                 
-                <h2>Integration with FlexNet Types</h2>
+                    <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2">Integration with FlexNet Types</h2>
+                    <p class="mb-4">FlexNet's state management integrates seamlessly with the type system to provide type-safe state operations.</p>
                 
-                <p>FlexNet's state management integrates seamlessly with the type system to provide type-safe state operations.</p>
-                
-                <h3>Using Maybe for Optional State</h3>
-                
+                    <h3 class="text-xl font-medium mt-6 mb-3">Using Maybe for Optional State</h3>
                 <pre><code class="language-javascript">// User profile store with Maybe for handling loading/not found states
 const userProfileStore = createStore(Maybe.Nothing());
 
@@ -245,449 +254,44 @@ const getUserDisplayName = () => {
     .getOrElse('Anonymous');
 };</code></pre>
                 
-                <h3>Using Either for Error Handling</h3>
-                
+                    <h3 class="text-xl font-medium mt-6 mb-3">Using Either for Error Handling</h3>
                 <pre><code class="language-javascript">import { createStore } from './systems/state/store.js';
-import Either from './core/types/either.js';
+import { Either } from './core/types/either.js';
 
-// Authentication store with Either for success/failure states
-const authStore = createStore(Either.Left('Not authenticated'));
+// Store for handling form data with validation
+const formStore = createStore(
+  Either.Right({ email: '', password: '' })
+);
 
-// Login function
-const login = (username, password) => {
-  // Simulate authentication API
-  authenticateUser(username, password)
-    .then(userData => {
-      authStore.update(() => Either.Right(userData));
-    })
-    .catch(error => {
-      authStore.update(() => Either.Left(error.message));
-    });
+// Validate email and update state
+const updateEmail = (email) => {
+  if (!email) {
+    formStore.update(() => Either.Left('Email is required'));
+  } else if (!/\S+@\S+\.\S+/.test(email)) {
+    formStore.update(() => Either.Left('Email is invalid'));
+  } else {
+    formStore.update(state => 
+      state.map(s => ({ ...s, email }))
+    );
+  }
 };
 
-// Check if user is authenticated
-const isAuthenticated = () => {
-  const authState = authStore.getState();
-  return authState.fold(
-    () => false,
-    () => true
+// Handle form submission
+const submitForm = () => {
+  formStore.getState().fold(
+    error => {
+      // Show error message
+      console.error('Form has errors:', error);
+    },
+    data => {
+      // Submit data
+      console.log('Submitting data:', data);
+    }
   );
-};
-
-// Get user data safely
-const getUserData = () => {
-  const authState = authStore.getState();
-  return authState.fold(
-    error => ({ error, authenticated: false }),
-    userData => ({ userData, authenticated: true })
-  );
 };</code></pre>
-                
-                <h2>Connecting to UI Components</h2>
-                
-                <p>FlexNet's state management can be easily connected to UI components for reactive updates.</p>
-                
-                <h3>Basic Counter Component</h3>
-                
-                <pre><code class="language-javascript">import { jsx } from '../core/runtime/jsx.js';
-import { createStore } from '../systems/state/store.js';
-import Maybe from '../core/types/maybe.js';
-
-// Create store
-const counterStore = createStore(Maybe.Just(0));
-
-// Counter component
-const Counter = () => {
-  const count = counterStore.getState().value;
-  
-  return jsx('div', null, [
-    jsx('h2', null, `Count: ${count}`),
-    jsx('button', { 
-      onClick: () => counterStore.update(
-        countState => Maybe.Just(countState.value - 1)
-      )
-    }, '-'),
-    jsx('span', { style: 'margin: 0 10px;' }, count.toString()),
-    jsx('button', { 
-      onClick: () => counterStore.update(
-        countState => Maybe.Just(countState.value + 1)
-      )
-    }, '+')
-  ]);
-};
-
-// Render component and subscribe to state changes
-const initCounter = (rootId) => {
-  const rootElement = document.getElementById(rootId);
-  if (!rootElement) return;
-  
-  const renderCounter = () => {
-    // Clear container
-    while (rootElement.firstChild) {
-      rootElement.removeChild(rootElement.firstChild);
-    }
-    
-    // Render counter
-    const counterElement = Counter();
-    rootElement.appendChild(counterElement);
-  };
-  
-  // Initial render
-  renderCounter();
-  
-  // Subscribe to state changes
-  counterStore.subscribe(() => {
-    renderCounter();
-  });
-};</code></pre>
-                
-                <h3>Todo List Application</h3>
-                
-                <pre><code class="language-javascript">import { jsx } from '../core/runtime/jsx.js';
-import { createStore } from '../systems/state/store.js';
-import Maybe from '../core/types/maybe.js';
-
-// Create store with initial empty todo list
-const todosStore = createStore(Maybe.Just([]));
-
-// Todo actions
-const addTodo = text => todosStore.update(
-  todosState => Maybe.Just([
-    ...todosState.value, 
-    { id: Date.now(), text, completed: false }
-  ])
-);
-
-const toggleTodo = id => todosStore.update(
-  todosState => Maybe.Just(
-    todosState.value.map(todo => 
-      todo.id === id 
-        ? { ...todo, completed: !todo.completed } 
-        : todo
-    )
-  )
-);
-
-const removeTodo = id => todosStore.update(
-  todosState => Maybe.Just(
-    todosState.value.filter(todo => todo.id !== id)
-  )
-);
-
-// Todo List component
-const TodoList = () => {
-  const todos = todosStore.getState().value;
-  
-  return jsx('div', null, [
-    jsx('h2', null, 'Todo List'),
-    jsx('ul', { style: 'list-style: none; padding: 0;' }, 
-      todos.map(todo => 
-        jsx('li', { 
-          key: todo.id,
-          style: `display: flex; margin-bottom: 8px; ${todo.completed ? 'text-decoration: line-through;' : ''}`
-        }, [
-          jsx('input', {
-            type: 'checkbox',
-            checked: todo.completed,
-            onClick: () => toggleTodo(todo.id)
-          }),
-          jsx('span', { style: 'flex-grow: 1; margin: 0 10px;' }, todo.text),
-          jsx('button', { 
-            onClick: () => removeTodo(todo.id),
-            style: 'border: none; background: transparent; cursor: pointer; color: red;'
-          }, 'X')
-        ])
-      )
-    ),
-    jsx('div', null, [
-      jsx('input', {
-        id: 'new-todo',
-        type: 'text',
-        placeholder: 'Add new todo'
-      }),
-      jsx('button', {
-        onClick: () => {
-          const input = document.getElementById('new-todo');
-          if (input && input.value.trim()) {
-            addTodo(input.value.trim());
-            input.value = '';
-          }
-        },
-        style: 'margin-left: 8px;'
-      }, 'Add')
-    ])
-  ]);
-};
-
-// Initialize the Todo List application
-const initTodoList = (rootId) => {
-  const rootElement = document.getElementById(rootId);
-  if (!rootElement) return;
-  
-  const renderTodoList = () => {
-    // Clear container
-    while (rootElement.firstChild) {
-      rootElement.removeChild(rootElement.firstChild);
-    }
-    
-    // Render todo list
-    const todoListElement = TodoList();
-    rootElement.appendChild(todoListElement);
-  };
-  
-  // Initial render
-  renderTodoList();
-  
-  // Subscribe to state changes
-  todosStore.subscribe(() => {
-    renderTodoList();
-  });
-};</code></pre>
-                
-                <h2>Advanced State Management Patterns</h2>
-                
-                <h3>Feature-Based Organization</h3>
-                
-                <p>For larger applications, FlexNet recommends organizing state management by features:</p>
-                
-                <pre><code class="language-javascript">// /src/features/auth/state.js
-import { createStore } from '../../systems/state/store.js';
-import Either from '../../core/types/either.js';
-
-// Auth state store
-export const authStore = createStore(Either.Left('Not authenticated'));
-
-// Auth actions
-export const login = (username, password) => { /* ... */ };
-export const logout = () => { /* ... */ };
-export const checkAuthStatus = () => { /* ... */ };
-
-// /src/features/todos/state.js
-import { createStore } from '../../systems/state/store.js';
-import Maybe from '../../core/types/maybe.js';
-
-// Todos state store
-export const todosStore = createStore(Maybe.Just([]));
-
-// Todo actions
-export const addTodo = (text) => { /* ... */ };
-export const toggleTodo = (id) => { /* ... */ };
-export const removeTodo = (id) => { /* ... */ };
-export const clearCompleted = () => { /* ... */ };</code></pre>
-                
-                <h3>Composed Stores</h3>
-                
-                <p>For complex applications, you can compose multiple stores to manage different parts of the application state:</p>
-                
-                <pre><code class="language-javascript">// /src/app/store.js
-import { authStore } from '../features/auth/state.js';
-import { todosStore } from '../features/todos/state.js';
-import { uiStore } from '../features/ui/state.js';
-import { createStore } from '../systems/state/store.js';
-import Maybe from '../core/types/maybe.js';
-
-// Create a combined app state object
-const createAppState = () => {
-  return Maybe.Just({
-    auth: authStore.getState(),
-    todos: todosStore.getState(),
-    ui: uiStore.getState()
-  });
-};
-
-// Create a store for the entire application state
-export const appStore = createStore(createAppState());
-
-// Subscribe to individual stores and update the app store
-const updateAppStore = () => {
-  appStore.update(() => createAppState());
-};
-
-// Subscribe to individual stores
-authStore.subscribe(updateAppStore);
-todosStore.subscribe(updateAppStore);
-uiStore.subscribe(updateAppStore);</code></pre>
-                
-                <h3>Async State Management</h3>
-                
-                <p>For handling asynchronous operations, you can combine FlexNet's state management with the Effect system:</p>
-                
-                <pre><code class="language-javascript">import { createStore } from '../systems/state/store.js';
-import Result from '../core/types/result.js';
-import { Effect } from '../systems/effects/functions.js';
-
-// Create a store for API state
-const apiStore = createStore(Result.Ok({ loading: false, data: null }));
-
-// Create an API effect
-const fetchData = (url) => Effect.of(() => {
-  // Update store to loading state
-  apiStore.update(() => Result.Ok({ loading: true, data: null }));
-  
-  // Perform fetch
-  return fetch(url)
-    .then(response => {
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      return response.json();
-    })
-    .then(data => {
-      // Update store with successful data
-      apiStore.update(() => Result.Ok({ loading: false, data }));
-      return data;
-    })
-    .catch(error => {
-      // Update store with error
-      apiStore.update(() => Result.Error(error));
-      throw error;
-    });
-});
-
-// Use the effect
-const loadUserData = (userId) => {
-  return Effect.run(fetchData(`/api/users/${userId}`));
-};</code></pre>
-                
-                <h2>State Management Evolution</h2>
-                
-                <p>FlexNet's state management system has evolved based on lessons learned from other patterns. This evolution provides context for understanding the current implementation.</p>
-                
-                <h3>From MVC to Flux to Redux</h3>
-                
-                <div class="api-section">
-                    <p>Traditional MVC architectures had bidirectional data flow, making state changes hard to predict as applications grew. Flux introduced a unidirectional data flow, improving predictability but requiring significant boilerplate. Redux standardized Flux with a single immutable state tree and powerful debugging capabilities.</p>
-                    
-                    <p>FlexNet builds on these lessons with a functional approach that maintains Redux's predictability while removing unnecessary complexity.</p>
-                </div>
-                
-                <h3>FlexNet State Management Advantages</h3>
-                
-                <ul>
-                    <li><strong>Simplicity</strong> - Minimal API with just getState, update, and subscribe</li>
-                    <li><strong>Functional Purity</strong> - Pure functions for state updates</li>
-                    <li><strong>Immutability</strong> - State is never mutated directly</li>
-                    <li><strong>Integration with Type System</strong> - Native support for Maybe, Either, and Result types</li>
-                    <li><strong>Zero Dependencies</strong> - No external libraries required</li>
-                    <li><strong>Testability</strong> - Pure functions are easy to test</li>
-                </ul>
-                
-                <h2>Best Practices</h2>
-                
-                <h3>Feature-Based Organization</h3>
-                
-                <p>Organize your state management code by features, with each feature having its own folder containing all related state management logic:</p>
-                
-                <pre><code class="language-text">src/
-├── features/
-│   ├── auth/
-│   │   ├── state.js         # Auth state and actions
-│   │   ├── components.js    # Auth UI components
-│   │   └── index.js         # Feature exports
-│   ├── todos/
-│   │   ├── state.js         # Todos state and actions
-│   │   ├── components.js    # Todo UI components
-│   │   └── index.js         # Feature exports
-│   └── ui/
-│       ├── state.js         # UI state and actions
-│       ├── components.js    # UI components
-│       └── index.js         # Feature exports
-└── app/
-    └── store.js             # Optional composed store</code></pre>
-                
-                <h3>State Update Patterns</h3>
-                
-                <ul>
-                    <li>Keep state updates pure and simple</li>
-                    <li>Use functional composition for complex updates</li>
-                    <li>Validate state updates when appropriate</li>
-                    <li>Use types (Maybe, Either, Result) to model state accurately</li>
-                </ul>
-                
-                <pre><code class="language-javascript">// Simple update
-store.update(state => Maybe.Just(state.value + 1));
-
-// Composed update
-import { compose } from '../core/functions/composition.js';
-
-const validate = state => 
-  state.value >= 0 ? Maybe.Just(state.value) : Maybe.Nothing();
-  
-const increment = value => value + 1;
-
-const transform = value => `Count: ${value}`;
-
-store.update(state => 
-  Maybe.fromNullable(state)
-    .chain(validate)
-    .map(increment)
-    .map(transform)
-);</code></pre>
-                
-                <h3>State Persistence</h3>
-                
-                <p>For persisting state across sessions, you can implement storage adapters:</p>
-                
-                <pre><code class="language-javascript">// Local storage adapter
-const createPersistentStore = (key, initialState) => {
-  // Try to load state from localStorage
-  const loadState = () => {
-    try {
-      const serializedState = localStorage.getItem(key);
-      if (serializedState === null) {
-        return initialState;
-      }
-      return JSON.parse(serializedState);
-    } catch (err) {
-      console.error('Error loading state:', err);
-      return initialState;
-    }
-  };
-
-  // Create store with loaded or initial state
-  const store = createStore(loadState());
-
-  // Subscribe to state changes and save to localStorage
-  store.subscribe(state => {
-    try {
-      const serializedState = JSON.stringify(state);
-      localStorage.setItem(key, serializedState);
-    } catch (err) {
-      console.error('Error saving state:', err);
-    }
-  });
-
-  return store;
-};</code></pre>
-                
-                <h2>Next Steps</h2>
-                
-                <p>Now that you understand FlexNet's state management system, you can:</p>
-                
-                <ul>
-                    <li>Explore the <a href="effects.html">Effects</a> documentation to see how to handle side effects</li>
-                    <li>Learn about <a href="render.html">Render</a> to connect state to UI</li>
-                    <li>Check out the <a href="../examples/counter.html">Counter Example</a> and <a href="../examples/todo.html">Todo App Example</a> to see state management in action</li>
-                    <li>Reference the <a href="../api/store.html">Store API</a> for detailed API documentation</li>
-                </ul>
-                
-                <div class="pagination">
-                    <a href="../core/security.html" class="prev-link">← Previous: Security</a>
-                    <a href="effects.html" class="next-link">Next: Effects →</a>
                 </div>
             </div>
         </main>
     </div>
-    <footer class="footer">
-        <div class="footer-content">
-            <p>&copy; 2025 FlexNet JSX Framework. Created by Dr. Robert Whetsel and the FlexNet Development Team.</p>
-            <div class="footer-links">
-                <a href="https://github.com/flexnet/flexnet-jsx">GitHub</a>
-                <a href="../guides/contribution.html">Contribute</a>
-                <a href="../LICENSE.html">License</a>
-            </div>
-        </div>
-    </footer>
-    <script src="../assets/js/docs.js"></script>
 </body>
 </html>

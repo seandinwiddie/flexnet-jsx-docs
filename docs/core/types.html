@@ -4,113 +4,131 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Type System - FlexNet JSX Framework</title>
-    <link rel="stylesheet" href="../assets/css/styles.css">
+    <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/atom-one-dark.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
-    <script>hljs.highlightAll();</script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#3b82f6',
+                        secondary: '#6366f1',
+                        dark: '#1e293b',
+                        light: '#f8fafc'
+                    }
+                }
+            }
+        }
+        hljs.highlightAll();
+    </script>
 </head>
-<body>
-    <div class="docs-container">
-        <aside class="sidebar">
-            <div class="sidebar-header">
-                <h1 class="logo">FlexNet</h1>
-                <p class="version">v1.0.0</p>
+<body class="bg-gray-50 text-gray-900 min-h-screen">
+    <div class="flex flex-col md:flex-row">
+        <!-- Sidebar -->
+        <aside class="w-full md:w-64 bg-white border-r border-gray-200 md:h-screen md:sticky top-0 overflow-y-auto">
+            <div class="p-4 border-b border-gray-200">
+                <h1 class="text-2xl font-bold text-primary">FlexNet</h1>
+                <p class="text-sm text-gray-500">v1.0.0</p>
             </div>
-            <nav class="nav-menu">
-                <div class="nav-section">
-                    <h3>Getting Started</h3>
-                    <ul>
-                        <li><a href="../guides/introduction.html">Introduction</a></li>
-                        <li><a href="../guides/installation.html">Installation</a></li>
-                        <li><a href="../guides/quickstart.html">Quick Start</a></li>
-                        <li><a href="../guides/core-concepts.html">Core Concepts</a></li>
+            <nav class="p-4">
+                <div class="mb-6">
+                    <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">Getting Started</h3>
+                    <ul class="space-y-2">
+                        <li><a href="../guides/introduction.html" class="block text-gray-700 hover:text-primary">Introduction</a></li>
+                        <li><a href="../guides/installation.html" class="block text-gray-700 hover:text-primary">Installation</a></li>
+                        <li><a href="../guides/quickstart.html" class="block text-gray-700 hover:text-primary">Quick Start</a></li>
+                        <li><a href="../guides/core-concepts.html" class="block text-gray-700 hover:text-primary">Core Concepts</a></li>
                     </ul>
                 </div>
-                <div class="nav-section">
-                    <h3>Core</h3>
-                    <ul>
-                        <li><a href="jsx-runtime.html">JSX Runtime</a></li>
-                        <li><a href="types.html" class="active">Type System</a></li>
-                        <li><a href="functions.html">Functions</a></li>
-                        <li><a href="security.html">Security</a></li>
+                <div class="mb-6">
+                    <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">Core</h3>
+                    <ul class="space-y-2">
+                        <li><a href="jsx-runtime.html" class="block text-gray-700 hover:text-primary">JSX Runtime</a></li>
+                        <li><a href="types.html" class="block text-gray-700 hover:text-primary font-medium text-primary">Type System</a></li>
+                        <li><a href="functions.html" class="block text-gray-700 hover:text-primary">Functions</a></li>
+                        <li><a href="security.html" class="block text-gray-700 hover:text-primary">Security</a></li>
                     </ul>
                 </div>
-                <div class="nav-section">
-                    <h3>Systems</h3>
-                    <ul>
-                        <li><a href="../systems/state.html">State Management</a></li>
-                        <li><a href="../systems/effects.html">Effects</a></li>
-                        <li><a href="../systems/render.html">Render</a></li>
-                        <li><a href="../systems/events.html">Events</a></li>
-                        <li><a href="../systems/errors.html">Error Handling</a></li>
+                <div class="mb-6">
+                    <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">Systems</h3>
+                    <ul class="space-y-2">
+                        <li><a href="../systems/state.html" class="block text-gray-700 hover:text-primary">State Management</a></li>
+                        <li><a href="../systems/effects.html" class="block text-gray-700 hover:text-primary">Effects</a></li>
+                        <li><a href="../systems/render.html" class="block text-gray-700 hover:text-primary">Render</a></li>
+                        <li><a href="../systems/events.html" class="block text-gray-700 hover:text-primary">Events</a></li>
+                        <li><a href="../systems/errors.html" class="block text-gray-700 hover:text-primary">Error Handling</a></li>
                     </ul>
                 </div>
-                <div class="nav-section">
-                    <h3>Examples</h3>
-                    <ul>
-                        <li><a href="../examples/counter.html">Counter</a></li>
-                        <li><a href="../examples/todo.html">Todo App</a></li>
-                        <li><a href="../examples/website.html">Website</a></li>
+                <div class="mb-6">
+                    <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">Examples</h3>
+                    <ul class="space-y-2">
+                        <li><a href="../examples/counter.html" class="block text-gray-700 hover:text-primary">Counter</a></li>
+                        <li><a href="../examples/todo.html" class="block text-gray-700 hover:text-primary">Todo App</a></li>
+                        <li><a href="../examples/website.html" class="block text-gray-700 hover:text-primary">Website</a></li>
                     </ul>
                 </div>
-                <div class="nav-section">
-                    <h3>API Reference</h3>
-                    <ul>
-                        <li><a href="../api/jsx.html">JSX API</a></li>
-                        <li><a href="../api/maybe.html">Maybe</a></li>
-                        <li><a href="../api/either.html">Either</a></li>
-                        <li><a href="../api/result.html">Result</a></li>
-                        <li><a href="../api/store.html">Store</a></li>
+                <div class="mb-6">
+                    <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">API Reference</h3>
+                    <ul class="space-y-2">
+                        <li><a href="../api/jsx.html" class="block text-gray-700 hover:text-primary">JSX API</a></li>
+                        <li><a href="../api/maybe.html" class="block text-gray-700 hover:text-primary">Maybe</a></li>
+                        <li><a href="../api/either.html" class="block text-gray-700 hover:text-primary">Either</a></li>
+                        <li><a href="../api/result.html" class="block text-gray-700 hover:text-primary">Result</a></li>
+                        <li><a href="../api/store.html" class="block text-gray-700 hover:text-primary">Store</a></li>
                     </ul>
                 </div>
             </nav>
         </aside>
-        <main class="content">
-            <div class="content-header">
-                <div class="search-container">
-                    <input type="text" placeholder="Search documentation...">
+
+        <!-- Main content -->
+        <main class="flex-1">
+            <div class="border-b border-gray-200 bg-white sticky top-0 z-10">
+                <div class="flex items-center justify-between px-4 py-3">
+                    <div class="relative w-full max-w-md">
+                        <input type="text" placeholder="Search documentation..." class="w-full pl-10 pr-4 py-2 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 text-gray-400 absolute left-3 top-1/2 transform -translate-y-1/2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
+                        </svg>
+                        <div id="search-results" class="absolute mt-2 w-full bg-white rounded-md shadow-lg z-20 hidden"></div>
+                    <div class="flex space-x-4 ml-4">
+                        <a href="https://github.com/flexnet/flexnet-jsx" target="_blank" class="text-gray-600 hover:text-primary">GitHub</a>
+                        <a href="../../starter-project/README.md" target="_blank" class="text-gray-600 hover:text-primary">Starter Project</a>
                 </div>
-                <div class="header-links">
-                    <a href="https://github.com/flexnet/flexnet-jsx" target="_blank">GitHub</a>
-                    <a href="../../starter-project/README.md" target="_blank">Starter Project</a>
                 </div>
             </div>
-            <div class="content-body doc-content">
-                <h1>Type System</h1>
-                
-                <p>FlexNet JSX implements a functional type system inspired by algebraic data types from functional programming languages. These types help handle common programming challenges like optional values, error handling, and operation outcomes in a pure functional way.</p>
-                
-                <div class="callout">
-                    <p><strong>Note:</strong> FlexNet's type system is designed to be used with JavaScript's native capabilities, without requiring a compile-time type checker like TypeScript or Flow. However, it's fully compatible with these tools if you choose to use them.</p>
+
+            <div class="p-8 max-w-4xl mx-auto">
+                <div class="flex items-center space-x-2 text-sm text-gray-500 mb-8">
+                    <a href="../index.html" class="hover:text-primary">Home</a>
+                    <span>/</span>
+                    <a href="types.html" class="hover:text-primary">Core</a>
+                    <span>/</span>
+                    <span class="text-gray-700">Type System</span>
                 </div>
                 
-                <h2>Core Types Overview</h2>
-                
-                <p>FlexNet JSX includes three fundamental types that form the backbone of the type system:</p>
-                
-                <div class="feature-comparison">
-                    <div class="feature-card">
-                        <h3>Maybe</h3>
-                        <p>For handling optional values and eliminating null checks.</p>
-                    </div>
-                    <div class="feature-card">
-                        <h3>Either</h3>
-                        <p>For handling branching logic and error cases with explicit paths.</p>
-                    </div>
-                    <div class="feature-card">
-                        <h3>Result</h3>
-                        <p>For capturing operation outcomes and handling exceptions functionally.</p>
-                    </div>
+                <h1 class="text-4xl font-bold mb-6">Type System</h1>
+                <p class="text-lg text-gray-600 mb-8">FlexNet JSX implements a functional type system inspired by algebraic data types from functional programming languages. These types help handle common programming challenges like optional values, error handling, and operation outcomes in a pure functional way.</p>
+
+                <div class="prose prose-blue max-w-none">
+                    <div class="bg-blue-50 border-l-4 border-primary p-4 rounded-md mb-6">
+                        <h4 class="font-semibold">Note</h4>
+                        <p>FlexNet's type system is designed to be used with JavaScript's native capabilities, without requiring a compile-time type checker like TypeScript or Flow. However, it's fully compatible with these tools if you choose to use them.</p>
                 </div>
                 
+                    <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2">Core Types Overview</h2>
+                    <p class="mb-4">FlexNet JSX includes three fundamental types that form the backbone of the type system:</p>
+                    <ul class="list-disc pl-6 mb-6 space-y-2">
+                        <li><strong>Maybe:</strong> For handling optional values and eliminating null checks.</li>
+                        <li><strong>Either:</strong> For handling branching logic and error cases with explicit paths.</li>
+                        <li><strong>Result:</strong> For capturing operation outcomes and handling exceptions functionally.</li>
+                    </ul>
                 <p>These types follow the principles of functional programming, particularly the concept of monads, which allows for composition and chaining of operations.</p>
                 
-                <h2>Maybe Type</h2>
+                    <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2">Maybe Type</h2>
+                    <p class="mb-4">The <code>Maybe</code> type represents optional values in a functional way. It eliminates the need for null checks and makes code safer and more predictable.</p>
                 
-                <p>The <code>Maybe</code> type represents optional values in a functional way. It eliminates the need for null checks and makes code safer and more predictable.</p>
-                
-                <div class="api-section">
-                    <h3>Structure</h3>
+                    <h3 class="text-xl font-medium mt-6 mb-3">Structure</h3>
                     <pre><code class="language-javascript">// src/core/types/maybe.js
 const Maybe = {
     Just: value => ({
@@ -134,11 +152,9 @@ const Maybe = {
     getOrElse: defaultValue => maybe =>
         maybe.type === 'Just' ? maybe.value : defaultValue
 };</code></pre>
-                </div>
                 
-                <h3>Key Concepts</h3>
-                
-                <ul>
+                    <h3 class="text-xl font-medium mt-6 mb-3">Key Concepts</h3>
+                    <ul class="list-disc pl-6 mb-6 space-y-2">
                     <li><strong>Just</strong> - Contains a value</li>
                     <li><strong>Nothing</strong> - Represents no value</li>
                     <li><strong>map</strong> - Transform the value if it exists</li>
@@ -146,8 +162,7 @@ const Maybe = {
                     <li><strong>getOrElse</strong> - Extract the value or provide a default</li>
                 </ul>
                 
-                <h3>Usage Example</h3>
-                
+                    <h3 class="text-xl font-medium mt-6 mb-3">Usage Example</h3>
                 <pre><code class="language-javascript">import Maybe from '../core/types/maybe.js';
 
 // Safe access to potentially null/undefined values
@@ -165,15 +180,12 @@ const user3 = null;
 console.log(getUserName(user1)); // 'Alice'
 console.log(getUserName(user2)); // 'Anonymous'
 console.log(getUserName(user3)); // 'Anonymous'</code></pre>
-                
-                <p>For complete details on the Maybe type, see the <a href="../api/maybe.html">Maybe API Reference</a>.</p>
-                
-                <h2>Either Type</h2>
-                
-                <p>The <code>Either</code> type represents values that can be one of two possibilities, typically used for error handling or branching logic.</p>
-                
-                <div class="api-section">
-                    <h3>Structure</h3>
+                    <p>For complete details on the Maybe type, see the <a href="../api/maybe.html" class="text-primary hover:underline">Maybe API Reference</a>.</p>
+
+                    <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2">Either Type</h2>
+                    <p class="mb-4">The <code>Either</code> type represents values that can be one of two possibilities, typically used for error handling or branching logic.</p>
+
+                    <h3 class="text-xl font-medium mt-6 mb-3">Structure</h3>
                     <pre><code class="language-javascript">// src/core/types/either.js
 const Either = {
     Left: value => ({
@@ -199,11 +211,9 @@ const Either = {
     fold: (leftFn, rightFn) => either =>
         either.type === 'Right' ? rightFn(either.value) : leftFn(either.value)
 };</code></pre>
-                </div>
                 
-                <h3>Key Concepts</h3>
-                
-                <ul>
+                    <h3 class="text-xl font-medium mt-6 mb-3">Key Concepts</h3>
+                    <ul class="list-disc pl-6 mb-6 space-y-2">
                     <li><strong>Left</strong> - Typically represents an error or failure case</li>
                     <li><strong>Right</strong> - Typically represents a success or normal case</li>
                     <li><strong>map</strong> - Transform the Right value, leave Left untouched</li>
@@ -211,8 +221,7 @@ const Either = {
                     <li><strong>fold</strong> - Process both possibilities with separate functions</li>
                 </ul>
                 
-                <h3>Usage Example</h3>
-                
+                    <h3 class="text-xl font-medium mt-6 mb-3">Usage Example</h3>
                 <pre><code class="language-javascript">import Either from '../core/types/either.js';
 
 // Parse a JSON string safely
@@ -245,379 +254,10 @@ console.log(processConfig(validConfig));
 
 console.log(processConfig(invalidConfig)); 
 // { error: 'Invalid JSON: ...', valid: false }</code></pre>
-                
-                <p>For complete details on the Either type, see the <a href="../api/either.html">Either API Reference</a>.</p>
-                
-                <h2>Result Type</h2>
-                
-                <p>The <code>Result</code> type is specifically designed for handling operations that might throw exceptions, allowing for functional error handling without try/catch blocks.</p>
-                
-                <div class="api-section">
-                    <h3>Structure</h3>
-                    <pre><code class="language-javascript">// src/core/types/result.js
-const Result = {
-    Ok: value => ({
-        type: 'Ok',
-        value,
-        map: fn => Result.fromTry(() => fn(value)),
-        chain: fn => Result.fromTry(() => fn(value)),
-        fold: (errorFn, okFn) => okFn(value)
-    }),
-    Error: error => ({
-        type: 'Error',
-        error,
-        map: fn => Result.Error(error),
-        chain: fn => Result.Error(error),
-        fold: (errorFn, okFn) => errorFn(error)
-    }),
-    fromTry: fn => {
-        try {
-            return Result.Ok(fn());
-        } catch (e) {
-            return Result.Error(e);
-        }
-    },
-    map: fn => result =>
-        result.type === 'Ok' ? Result.fromTry(() => fn(result.value)) : result,
-    chain: fn => result =>
-        result.type === 'Ok' ? Result.fromTry(() => fn(result.value)) : result,
-    fold: (errorFn, okFn) => result =>
-        result.type === 'Ok' ? okFn(result.value) : errorFn(result.error)
-};</code></pre>
-                </div>
-                
-                <h3>Key Concepts</h3>
-                
-                <ul>
-                    <li><strong>Ok</strong> - Represents a successful operation with a value</li>
-                    <li><strong>Error</strong> - Represents a failed operation with an error</li>
-                    <li><strong>fromTry</strong> - Converts a function that might throw to a Result</li>
-                    <li><strong>map</strong> - Transform the Ok value, catching any exceptions</li>
-                    <li><strong>chain</strong> - Apply a function that returns a Result to an Ok value</li>
-                    <li><strong>fold</strong> - Process both possibilities with separate functions</li>
-                </ul>
-                
-                <h3>Usage Example</h3>
-                
-                <pre><code class="language-javascript">import Result from '../core/types/result.js';
-
-// Fetch data safely
-const fetchData = url => 
-  Result.fromTry(() => {
-    // In a real app, this would be fetch()
-    if (url.includes('users')) {
-      return ['Alice', 'Bob', 'Charlie'];
-    } else if (url.includes('products')) {
-      return ['Laptop', 'Phone', 'Tablet'];
-    } else {
-      throw new Error(`Unknown endpoint: ${url}`);
-    }
-  });
-
-// Process the data
-const processUsers = () => 
-  fetchData('/api/users')
-    .map(users => users.map(u => u.toUpperCase()))
-    .fold(
-      error => `Error: ${error.message}`,
-      users => `Users: ${users.join(', ')}`
-    );
-
-const processProducts = () => 
-  fetchData('/api/products')
-    .map(products => products.map(p => p.toLowerCase()))
-    .fold(
-      error => `Error: ${error.message}`,
-      products => `Products: ${products.join(', ')}`
-    );
-
-const processUnknown = () =>
-  fetchData('/api/unknown')
-    .fold(
-      error => `Error: ${error.message}`,
-      data => `Data: ${data}`
-    );
-
-console.log(processUsers());     // 'Users: ALICE, BOB, CHARLIE'
-console.log(processProducts());  // 'Products: laptop, phone, tablet'
-console.log(processUnknown());   // 'Error: Unknown endpoint: /api/unknown'</code></pre>
-                
-                <p>For complete details on the Result type, see the <a href="../api/result.html">Result API Reference</a>.</p>
-                
-                <h2>Type Composition</h2>
-                
-                <p>One of the most powerful aspects of FlexNet's type system is the ability to compose and combine types to create complex, type-safe operations.</p>
-                
-                <h3>Combining Maybe and Either</h3>
-                
-                <pre><code class="language-javascript">import Maybe from '../core/types/maybe.js';
-import Either from '../core/types/either.js';
-
-// A function that handles optional values and potential errors
-const processUserData = userData => 
-  // First, ensure we have user data
-  Maybe.fromNullable(userData)
-    // Extract the user ID, returning an error if not found
-    .chain(data => 
-      Maybe.fromNullable(data.id)
-        .map(id => ({ id, data }))
-        .chain(result => 
-          result.id > 0 
-            ? Maybe.Just(result) 
-            : Maybe.Nothing()
-        )
-    )
-    // Convert Maybe to Either for better error reporting
-    .map(result => Either.Right(result))
-    .getOrElse(Either.Left('Invalid user data'))
-    // Continue processing with Either
-    .map(({ id, data }) => ({
-      id,
-      name: data.name || 'Anonymous',
-      verified: !!data.verified
-    }));
-
-// Usage
-const validUser = { id: 123, name: 'Alice', verified: true };
-const noIdUser = { name: 'Bob' };
-const invalidIdUser = { id: -1, name: 'Charlie' };
-const nullUser = null;
-
-console.log(processUserData(validUser));    // Either.Right({id: 123, name: 'Alice', verified: true})
-console.log(processUserData(noIdUser));     // Either.Left('Invalid user data')
-console.log(processUserData(invalidIdUser)); // Either.Left('Invalid user data')
-console.log(processUserData(nullUser));     // Either.Left('Invalid user data')</code></pre>
-                
-                <h3>Combining Result and Either</h3>
-                
-                <pre><code class="language-javascript">import Result from '../core/types/result.js';
-import Either from '../core/types/either.js';
-
-// A function that handles exceptions and validation
-const processPayment = paymentData => 
-  // First, try to parse the payment data
-  Result.fromTry(() => JSON.parse(paymentData))
-    // Validate the payment data
-    .chain(data => {
-      if (!data.amount) {
-        return Result.Error(new Error('Amount is required'));
-      }
-      if (!data.method) {
-        return Result.Error(new Error('Payment method is required'));
-      }
-      return Result.Ok(data);
-    })
-    // Convert Result to Either for further processing
-    .fold(
-      error => Either.Left(`Payment processing failed: ${error.message}`),
-      data => Either.Right({
-        amount: data.amount,
-        method: data.method,
-        timestamp: new Date().toISOString()
-      })
-    )
-    // Add processing fee
-    .map(payment => ({
-      ...payment,
-      totalAmount: payment.amount * 1.03 // 3% processing fee
-    }));
-
-// Usage
-const validPayment = '{"amount": 100, "method": "credit_card"}';
-const invalidJson = '{amount: 100, method: "credit_card"}';
-const missingAmount = '{"method": "credit_card"}';
-
-console.log(processPayment(validPayment));
-// Either.Right({amount: 100, method: 'credit_card', timestamp: '...', totalAmount: 103})
-
-console.log(processPayment(invalidJson));
-// Either.Left('Payment processing failed: Unexpected token a in JSON at position 1')
-
-console.log(processPayment(missingAmount));
-// Either.Left('Payment processing failed: Amount is required')</code></pre>
-                
-                <h2>Best Practices</h2>
-                
-                <h3>When to Use Each Type</h3>
-                
-                <table>
-                    <tr>
-                        <th>Type</th>
-                        <th>Best Used For</th>
-                    </tr>
-                    <tr>
-                        <td><strong>Maybe</strong></td>
-                        <td>
-                            <ul>
-                                <li>Representing optional values</li>
-                                <li>Avoiding null/undefined checks</li>
-                                <li>Safe property access</li>
-                                <li>Optional function arguments</li>
-                            </ul>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td><strong>Either</strong></td>
-                        <td>
-                            <ul>
-                                <li>Error handling with detailed messages</li>
-                                <li>Branching logic with two distinct paths</li>
-                                <li>Validation with error reporting</li>
-                                <li>Authentication and permission checks</li>
-                            </ul>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td><strong>Result</strong></td>
-                        <td>
-                            <ul>
-                                <li>Operations that might throw exceptions</li>
-                                <li>Functions with try/catch logic</li>
-                                <li>API calls and external service integration</li>
-                                <li>File operations and I/O</li>
-                            </ul>
-                        </td>
-                    </tr>
-                </table>
-                
-                <h3>Type Conversion</h3>
-                
-                <p>It's often useful to convert between types. Here are common patterns:</p>
-                
-                <pre><code class="language-javascript">// Maybe to Either
-const maybeToEither = (maybe, errorMsg = 'Value is missing') =>
-  maybe.type === 'Just'
-    ? Either.Right(maybe.value)
-    : Either.Left(errorMsg);
-
-// Either to Maybe (loses error information)
-const eitherToMaybe = either =>
-  either.type === 'Right'
-    ? Maybe.Just(either.value)
-    : Maybe.Nothing();
-
-// Result to Either
-const resultToEither = result =>
-  result.type === 'Ok'
-    ? Either.Right(result.value)
-    : Either.Left(result.error);
-
-// Either to Result
-const eitherToResult = either =>
-  either.type === 'Right'
-    ? Result.Ok(either.value)
-    : Result.Error(new Error(either.value));
-
-// Result to Maybe (loses error information)
-const resultToMaybe = result =>
-  result.type === 'Ok'
-    ? Maybe.Just(result.value)
-    : Maybe.Nothing();</code></pre>
-                
-                <h3>Common Patterns</h3>
-                
-                <h4>Null Object Pattern</h4>
-                
-                <pre><code class="language-javascript">// Instead of null checks everywhere
-const getUserDisplay = user => {
-  if (!user) return 'Guest';
-  if (!user.name) return `User #${user.id || 'Unknown'}`;
-  return user.name;
-};
-
-// Use Maybe for a cleaner approach
-const getUserDisplay = user => 
-  Maybe.fromNullable(user)
-    .chain(u => Maybe.fromNullable(u.name).map(name => ({ name, id: u.id })))
-    .map(({ name }) => name)
-    .getOrElse('Guest');</code></pre>
-                
-                <h4>Railway-Oriented Programming</h4>
-                
-                <pre><code class="language-javascript">// A pipeline of validations with Either
-const validateEmail = email =>
-  /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
-    ? Either.Right(email)
-    : Either.Left('Invalid email format');
-
-const validatePassword = password =>
-  password.length >= 8
-    ? Either.Right(password)
-    : Either.Left('Password must be at least 8 characters');
-
-const validateUser = (email, password) =>
-  validateEmail(email)
-    .chain(validEmail =>
-      validatePassword(password)
-        .map(validPassword => ({
-          email: validEmail,
-          password: validPassword
-        }))
-    );
-
-// Usage
-console.log(validateUser('user@example.com', 'password123'));
-// Either.Right({email: 'user@example.com', password: 'password123'})
-
-console.log(validateUser('invalid-email', 'password123'));
-// Either.Left('Invalid email format')
-
-console.log(validateUser('user@example.com', 'short'));
-// Either.Left('Password must be at least 8 characters')</code></pre>
-                
-                <h2>Type System in the Browser</h2>
-                
-                <p>FlexNet's type system is designed to work directly in the browser without any build tools or transpilation. This makes it easy to get started and ensures maximum compatibility.</p>
-                
-                <pre><code class="language-html">&lt;!-- Include the type system directly in HTML --&gt;
-&lt;script type="module"&gt;
-  import { Maybe } from './path/to/flexnet/src/core/types/maybe.js';
-  import { Either } from './path/to/flexnet/src/core/types/either.js';
-  import { Result } from './path/to/flexnet/src/core/types/result.js';
-  
-  // Now use the types in your browser code
-  const userInput = document.getElementById('user-input').value;
-  
-  const processInput = input =>
-    Maybe.fromNullable(input)
-      .map(str => str.trim())
-      .chain(str => str.length > 0
-        ? Maybe.Just(str)
-        : Maybe.Nothing()
-      )
-      .map(str => `Processed: ${str}`)
-      .getOrElse('No input provided');
-  
-  console.log(processInput(userInput));
-&lt;/script&gt;</code></pre>
-                
-                <h2>Next Steps</h2>
-                
-                <p>Now that you understand FlexNet's type system, you can:</p>
-                
-                <ul>
-                    <li>Explore the <a href="functions.html">Functions</a> documentation to see how to compose functions with these types</li>
-                    <li>Learn about <a href="../systems/state.html">State Management</a> to see how types are used for immutable state</li>
-                    <li>Check out the <a href="../api/maybe.html">Maybe API Reference</a>, <a href="../api/either.html">Either API Reference</a>, and <a href="../api/result.html">Result API Reference</a> for detailed API documentation</li>
-                </ul>
-                
-                <div class="pagination">
-                    <a href="jsx-runtime.html" class="prev-link">← Previous: JSX Runtime</a>
-                    <a href="functions.html" class="next-link">Next: Functions →</a>
+                    <p>For complete details on the Either type, see the <a href="../api/either.html" class="text-primary hover:underline">Either API Reference</a>.</p>
                 </div>
             </div>
         </main>
     </div>
-    <footer class="footer">
-        <div class="footer-content">
-            <p>&copy; 2025 FlexNet JSX Framework. Created by Dr. Robert Whetsel and the FlexNet Development Team.</p>
-            <div class="footer-links">
-                <a href="https://github.com/flexnet/flexnet-jsx">GitHub</a>
-                <a href="../guides/contribution.html">Contribute</a>
-                <a href="../LICENSE.html">License</a>
-            </div>
-        </div>
-    </footer>
-    <script src="../assets/js/docs.js"></script>
 </body>
 </html>

@@ -74,7 +74,7 @@
                     <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">API Reference</h3>
                     <ul class="space-y-2">
                         <li><a href="jsx.html" class="block text-gray-700 hover:text-primary">JSX API</a></li>
-                        <li><a href="maybe.html" class="block text-primary font-medium">Maybe</a></li>
+                        <li><a href="maybe.html" class="block text-gray-700 hover:text-primary font-medium text-primary">Maybe</a></li>
                         <li><a href="either.html" class="block text-gray-700 hover:text-primary">Either</a></li>
                         <li><a href="result.html" class="block text-gray-700 hover:text-primary">Result</a></li>
                         <li><a href="store.html" class="block text-gray-700 hover:text-primary">Store</a></li>
@@ -84,7 +84,7 @@
         </aside>
 
         <!-- Main content -->
-        <main class="flex-1 overflow-auto">
+        <main class="flex-1">
             <div class="border-b border-gray-200 bg-white sticky top-0 z-10">
                 <div class="flex items-center justify-between px-4 py-3">
                     <div class="relative w-full max-w-md">
@@ -92,7 +92,7 @@
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 text-gray-400 absolute left-3 top-1/2 transform -translate-y-1/2">
                             <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
                         </svg>
-                    </div>
+                        <div id="search-results" class="absolute mt-2 w-full bg-white rounded-md shadow-lg z-20 hidden"></div>
                     <div class="flex space-x-4 ml-4">
                         <a href="https://github.com/flexnet/flexnet-jsx" target="_blank" class="text-gray-600 hover:text-primary">GitHub</a>
                         <a href="../../starter-project/README.md" target="_blank" class="text-gray-600 hover:text-primary">Starter Project</a>
@@ -100,38 +100,30 @@
                 </div>
             </div>
 
-            <div class="py-6 px-8 max-w-4xl mx-auto">
+            <div class="p-8 max-w-4xl mx-auto">
                 <div class="flex items-center space-x-2 text-sm text-gray-500 mb-8">
                     <a href="../index.html" class="hover:text-primary">Home</a>
                     <span>/</span>
-                    <a href="#" class="hover:text-primary">API Reference</a>
+                    <a href="maybe.html" class="hover:text-primary">API</a>
                     <span>/</span>
-                    <span class="text-gray-900">Maybe</span>
+                    <span class="text-gray-700">Maybe</span>
                 </div>
 
-                <h1 class="text-3xl font-bold mb-6">Maybe API</h1>
+                <h1 class="text-4xl font-bold mb-6">Maybe API</h1>
                 
-                <div class="prose prose-blue max-w-none">
-                    <p class="lead text-xl text-gray-600 mb-8">
-                        The Maybe type is a functional programming construct to handle the possibility of missing values in a composable, safe way.
-                    </p>
+                <p class="text-lg text-gray-600 mb-8">
+                    The Maybe type is a functional programming construct to handle the possibility of missing values in a composable, safe way.
+                </p>
 
-                    <div class="bg-yellow-50 border-l-4 border-yellow-500 p-4 mb-8">
-                        <div class="flex">
-                            <div class="flex-shrink-0">
-                                <svg class="h-5 w-5 text-yellow-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-                                    <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
-                                </svg>
-                            </div>
-                            <div class="ml-3">
-                                <p class="text-sm text-yellow-700">
-                                    Using Maybe instead of null/undefined checks helps eliminate null reference errors and makes your code more robust and predictable.
-                                </p>
-                            </div>
-                        </div>
+                <div class="prose prose-blue max-w-none">
+                    <div class="bg-blue-50 border-l-4 border-primary p-4 rounded-md mb-6">
+                        <h4 class="font-semibold">Key Concepts</h4>
+                        <ul class="list-disc pl-6 mt-2">
+                            <li>Using Maybe instead of null/undefined checks helps eliminate null reference errors and makes your code more robust and predictable.</li>
+                        </ul>
                     </div>
 
-                    <h2 class="text-2xl font-bold mt-8 mb-4">Basic Concept</h2>
+                    <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2">Basic Concept</h2>
                     <p>
                         The Maybe type represents a value that may or may not exist. It has two variants:
                     </p>
@@ -144,43 +136,26 @@
                         This approach replaces the need for null checks throughout your code and provides a consistent way to handle potentially missing values.
                     </p>
 
-                    <h2 class="text-2xl font-bold mt-8 mb-4">Creating Maybe Values</h2>
+                    <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2">Creating Maybe Values</h2>
+                    
+                    <h3 class="text-xl font-medium mt-6 mb-3">Constructors</h3>
+                    <pre class="bg-gray-800 text-white p-4 rounded-lg mb-6"><code class="language-javascript">import { Maybe } from './src/core/types/maybe.js';
 
-                    <div class="overflow-x-auto mb-8">
-                        <table class="min-w-full border border-gray-200 rounded-lg">
-                            <thead class="bg-gray-50">
-                                <tr>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Constructor</th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Description</th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Example</th>
-                                </tr>
-                            </thead>
-                            <tbody class="bg-white divide-y divide-gray-200">
-                                <tr>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">Maybe.Just(value)</td>
-                                    <td class="px-6 py-4 text-sm text-gray-500">Creates a Maybe containing a value</td>
-                                    <td class="px-6 py-4 text-sm text-gray-500"><code>Maybe.Just(42)</code></td>
-                                </tr>
-                                <tr>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">Maybe.Nothing()</td>
-                                    <td class="px-6 py-4 text-sm text-gray-500">Creates an empty Maybe</td>
-                                    <td class="px-6 py-4 text-sm text-gray-500"><code>Maybe.Nothing()</code></td>
-                                </tr>
-                                <tr>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">Maybe.fromNullable(value)</td>
-                                    <td class="px-6 py-4 text-sm text-gray-500">Creates Just if value is not null/undefined, otherwise Nothing</td>
-                                    <td class="px-6 py-4 text-sm text-gray-500"><code>Maybe.fromNullable(user.address)</code></td>
-                                </tr>
-                                <tr>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">Maybe.of(value)</td>
-                                    <td class="px-6 py-4 text-sm text-gray-500">Alias for Just, creates a Maybe containing value</td>
-                                    <td class="px-6 py-4 text-sm text-gray-500"><code>Maybe.of('hello')</code></td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
+// Creates a Maybe containing a value
+Maybe.Just(42)
 
-                    <h3 class="text-xl font-semibold mt-6 mb-3">Creating Maybe Values Example</h3>
+// Creates an empty Maybe
+Maybe.Nothing()
+
+// Creates Just if value is not null/undefined, otherwise Nothing
+Maybe.fromNullable(user.address)
+
+// Alias for Just, creates a Maybe containing value
+Maybe.of('hello')
+</code></pre>
+
+
+                    <h3 class="text-xl font-medium mt-6 mb-3">Creating Maybe Values Example</h3>
                     <pre class="bg-gray-800 text-white p-4 rounded-md mb-6 overflow-x-auto"><code class="language-javascript">import { Maybe } from './src/core/types/maybe.js';
 
 // Creating Maybe values
@@ -191,56 +166,31 @@ const nothingValue = Maybe.Nothing();
 const username = Maybe.fromNullable(user.username);
 const settings = Maybe.fromNullable(localStorage.getItem('settings'));</code></pre>
 
-                    <h2 class="text-2xl font-bold mt-8 mb-4">Working with Maybe Values</h2>
+                    <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2">Working with Maybe Values</h2>
 
-                    <div class="overflow-x-auto mb-8">
-                        <table class="min-w-full border border-gray-200 rounded-lg">
-                            <thead class="bg-gray-50">
-                                <tr>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Method</th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Description</th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Example</th>
-                                </tr>
-                            </thead>
-                            <tbody class="bg-white divide-y divide-gray-200">
-                                <tr>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">map(fn)</td>
-                                    <td class="px-6 py-4 text-sm text-gray-500">Transforms the value inside a Just, does nothing for Nothing</td>
-                                    <td class="px-6 py-4 text-sm text-gray-500"><code>maybe.map(x => x * 2)</code></td>
-                                </tr>
-                                <tr>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">flatMap(fn)</td>
-                                    <td class="px-6 py-4 text-sm text-gray-500">Maps and flattens the result (function must return a Maybe)</td>
-                                    <td class="px-6 py-4 text-sm text-gray-500"><code>maybe.flatMap(x => Maybe.Just(x + 1))</code></td>
-                                </tr>
-                                <tr>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">getOrElse(defaultValue)</td>
-                                    <td class="px-6 py-4 text-sm text-gray-500">Returns the value or a default if Nothing</td>
-                                    <td class="px-6 py-4 text-sm text-gray-500"><code>maybe.getOrElse('default')</code></td>
-                                </tr>
-                                <tr>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">filter(predicate)</td>
-                                    <td class="px-6 py-4 text-sm text-gray-500">Converts Just to Nothing if predicate fails</td>
-                                    <td class="px-6 py-4 text-sm text-gray-500"><code>maybe.filter(x => x > 0)</code></td>
-                                </tr>
-                                <tr>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">fold(onNothing, onJust)</td>
-                                    <td class="px-6 py-4 text-sm text-gray-500">Applies functions based on whether value is Just or Nothing</td>
-                                    <td class="px-6 py-4 text-sm text-gray-500"><code>maybe.fold(() => 0, x => x * 2)</code></td>
-                                </tr>
-                                <tr>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">isJust()</td>
-                                    <td class="px-6 py-4 text-sm text-gray-500">Returns true if value is Just</td>
-                                    <td class="px-6 py-4 text-sm text-gray-500"><code>maybe.isJust()</code></td>
-                                </tr>
-                                <tr>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">isNothing()</td>
-                                    <td class="px-6 py-4 text-sm text-gray-500">Returns true if value is Nothing</td>
-                                    <td class="px-6 py-4 text-sm text-gray-500"><code>maybe.isNothing()</code></td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
+                    <h3 class="text-xl font-medium mt-6 mb-3">Methods</h3>
+                    <pre class="bg-gray-800 text-white p-4 rounded-lg mb-6"><code class="language-javascript">
+// Transforms the value inside a Just, does nothing for Nothing
+maybe.map(x => x * 2)
+
+// Maps and flattens the result (function must return a Maybe)
+maybe.flatMap(x => Maybe.Just(x + 1))
+
+// Returns the value or a default if Nothing
+maybe.getOrElse('default')
+
+// Converts Just to Nothing if predicate fails
+maybe.filter(x => x > 0)
+
+// Applies functions based on whether value is Just or Nothing
+maybe.fold(() => 0, x => x * 2)
+
+// Returns true if value is Just
+maybe.isJust()
+
+// Returns true if value is Nothing
+maybe.isNothing()
+</code></pre>
 
                     <h3 class="text-xl font-semibold mt-6 mb-3">Transformation Methods Example</h3>
                     <pre class="bg-gray-800 text-white p-4 rounded-md mb-6 overflow-x-auto"><code class="language-javascript">import { Maybe } from './src/core/types/maybe.js';

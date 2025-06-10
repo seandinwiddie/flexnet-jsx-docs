@@ -46,7 +46,7 @@
                 <div class="mb-6">
                     <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">Core</h3>
                     <ul class="space-y-2">
-                        <li><a href="jsx-runtime.html" class="block text-primary font-medium">JSX Runtime</a></li>
+                        <li><a href="jsx-runtime.html" class="block text-gray-700 hover:text-primary font-medium text-primary">JSX Runtime</a></li>
                         <li><a href="types.html" class="block text-gray-700 hover:text-primary">Type System</a></li>
                         <li><a href="functions.html" class="block text-gray-700 hover:text-primary">Functions</a></li>
                         <li><a href="security.html" class="block text-gray-700 hover:text-primary">Security</a></li>
@@ -84,7 +84,7 @@
         </aside>
 
         <!-- Main content -->
-        <main class="flex-1 overflow-auto">
+        <main class="flex-1">
             <div class="border-b border-gray-200 bg-white sticky top-0 z-10">
                 <div class="flex items-center justify-between px-4 py-3">
                     <div class="relative w-full max-w-md">
@@ -92,7 +92,7 @@
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 text-gray-400 absolute left-3 top-1/2 transform -translate-y-1/2">
                             <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
                         </svg>
-                    </div>
+                        <div id="search-results" class="absolute mt-2 w-full bg-white rounded-md shadow-lg z-20 hidden"></div>
                     <div class="flex space-x-4 ml-4">
                         <a href="https://github.com/flexnet/flexnet-jsx" target="_blank" class="text-gray-600 hover:text-primary">GitHub</a>
                         <a href="../../starter-project/README.md" target="_blank" class="text-gray-600 hover:text-primary">Starter Project</a>
@@ -100,38 +100,28 @@
                 </div>
             </div>
 
-            <div class="py-6 px-8 max-w-4xl mx-auto">
+            <div class="p-8 max-w-4xl mx-auto">
                 <div class="flex items-center space-x-2 text-sm text-gray-500 mb-8">
                     <a href="../index.html" class="hover:text-primary">Home</a>
                     <span>/</span>
-                    <a href="#" class="hover:text-primary">Core</a>
+                    <a href="jsx-runtime.html" class="hover:text-primary">Core</a>
                     <span>/</span>
-                    <span class="text-gray-900">JSX Runtime</span>
+                    <span class="text-gray-700">JSX Runtime</span>
                 </div>
 
-                <h1 class="text-3xl font-bold mb-6">JSX Runtime</h1>
+                <h1 class="text-4xl font-bold mb-6">JSX Runtime</h1>
                 
-                <div class="prose prose-blue max-w-none">
-                    <p class="lead text-xl text-gray-600 mb-8">
-                        The FlexNet JSX Runtime is a lightweight, functional implementation of JSX that enables declarative UI programming using JavaScript functions.
-                    </p>
+                <p class="text-lg text-gray-600 mb-8">
+                    The FlexNet JSX Runtime is a lightweight, functional implementation of JSX that enables declarative UI programming using JavaScript functions.
+                </p>
 
-                    <div class="bg-blue-50 border-l-4 border-blue-500 p-4 mb-8">
-                        <div class="flex">
-                            <div class="flex-shrink-0">
-                                <svg class="h-5 w-5 text-blue-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-                                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2h-1V9a1 1 0 00-1-1z" clip-rule="evenodd" />
-                                </svg>
-                            </div>
-                            <div class="ml-3">
-                                <p class="text-sm text-blue-700">
-                                    Unlike React, FlexNet JSX is a pure functional implementation with zero dependencies and a focus on immutability and composition.
-                                </p>
-                            </div>
-                        </div>
+                <div class="prose prose-blue max-w-none">
+                    <div class="bg-blue-50 border-l-4 border-primary p-4 rounded-md mb-6">
+                        <h4 class="font-semibold">Note</h4>
+                        <p>Unlike React, FlexNet JSX is a pure functional implementation with zero dependencies and a focus on immutability and composition.</p>
                     </div>
 
-                    <h2 class="text-2xl font-bold mt-8 mb-4">How JSX Works in FlexNet</h2>
+                    <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2">How JSX Works in FlexNet</h2>
                     <p>
                         In FlexNet, JSX is transpiled to function calls that create virtual DOM nodes. These nodes are then rendered to the actual DOM through a pure rendering function.
                     </p>

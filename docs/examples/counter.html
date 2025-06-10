@@ -4,97 +4,126 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Counter Example - FlexNet JSX Framework</title>
-    <link rel="stylesheet" href="../assets/css/styles.css">
+    <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/atom-one-dark.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
-    <script>hljs.highlightAll();</script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#3b82f6',
+                        secondary: '#6366f1',
+                        dark: '#1e293b',
+                        light: '#f8fafc'
+                    }
+                }
+            }
+        }
+        hljs.highlightAll();
+    </script>
 </head>
-<body>
-    <div class="docs-container">
-        <aside class="sidebar">
-            <div class="sidebar-header">
-                <h1 class="logo">FlexNet</h1>
-                <p class="version">v1.0.0</p>
+<body class="bg-gray-50 text-gray-900 min-h-screen">
+    <div class="flex flex-col md:flex-row">
+        <!-- Sidebar -->
+        <aside class="w-full md:w-64 bg-white border-r border-gray-200 md:h-screen md:sticky top-0 overflow-y-auto">
+            <div class="p-4 border-b border-gray-200">
+                <h1 class="text-2xl font-bold text-primary">FlexNet</h1>
+                <p class="text-sm text-gray-500">v1.0.0</p>
             </div>
-            <nav class="nav-menu">
-                <div class="nav-section">
-                    <h3>Getting Started</h3>
-                    <ul>
-                        <li><a href="../guides/introduction.html">Introduction</a></li>
-                        <li><a href="../guides/installation.html">Installation</a></li>
-                        <li><a href="../guides/quickstart.html">Quick Start</a></li>
-                        <li><a href="../guides/core-concepts.html">Core Concepts</a></li>
+            <nav class="p-4">
+                <div class="mb-6">
+                    <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">Getting Started</h3>
+                    <ul class="space-y-2">
+                        <li><a href="../guides/introduction.html" class="block text-gray-700 hover:text-primary">Introduction</a></li>
+                        <li><a href="../guides/installation.html" class="block text-gray-700 hover:text-primary">Installation</a></li>
+                        <li><a href="../guides/quickstart.html" class="block text-gray-700 hover:text-primary">Quick Start</a></li>
+                        <li><a href="../guides/core-concepts.html" class="block text-gray-700 hover:text-primary">Core Concepts</a></li>
                     </ul>
                 </div>
-                <div class="nav-section">
-                    <h3>Core</h3>
-                    <ul>
-                        <li><a href="../core/jsx-runtime.html">JSX Runtime</a></li>
-                        <li><a href="../core/types.html">Type System</a></li>
-                        <li><a href="../core/functions.html">Functions</a></li>
-                        <li><a href="../core/security.html">Security</a></li>
+                <div class="mb-6">
+                    <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">Core</h3>
+                    <ul class="space-y-2">
+                        <li><a href="../core/jsx-runtime.html" class="block text-gray-700 hover:text-primary">JSX Runtime</a></li>
+                        <li><a href="../core/types.html" class="block text-gray-700 hover:text-primary">Type System</a></li>
+                        <li><a href="../core/functions.html" class="block text-gray-700 hover:text-primary">Functions</a></li>
+                        <li><a href="../core/security.html" class="block text-gray-700 hover:text-primary">Security</a></li>
                     </ul>
                 </div>
-                <div class="nav-section">
-                    <h3>Systems</h3>
-                    <ul>
-                        <li><a href="../systems/state.html">State Management</a></li>
-                        <li><a href="../systems/effects.html">Effects</a></li>
-                        <li><a href="../systems/render.html">Render</a></li>
-                        <li><a href="../systems/events.html">Events</a></li>
-                        <li><a href="../systems/errors.html">Error Handling</a></li>
+                <div class="mb-6">
+                    <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">Systems</h3>
+                    <ul class="space-y-2">
+                        <li><a href="../systems/state.html" class="block text-gray-700 hover:text-primary">State Management</a></li>
+                        <li><a href="../systems/effects.html" class="block text-gray-700 hover:text-primary">Effects</a></li>
+                        <li><a href="../systems/render.html" class="block text-gray-700 hover:text-primary">Render</a></li>
+                        <li><a href="../systems/events.html" class="block text-gray-700 hover:text-primary">Events</a></li>
+                        <li><a href="../systems/errors.html" class="block text-gray-700 hover:text-primary">Error Handling</a></li>
                     </ul>
                 </div>
-                <div class="nav-section">
-                    <h3>Examples</h3>
-                    <ul>
-                        <li><a href="counter.html" class="active">Counter</a></li>
-                        <li><a href="todo.html">Todo App</a></li>
-                        <li><a href="website.html">Website</a></li>
+                <div class="mb-6">
+                    <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">Examples</h3>
+                    <ul class="space-y-2">
+                        <li><a href="counter.html" class="block text-gray-700 hover:text-primary font-medium text-primary">Counter</a></li>
+                        <li><a href="todo.html" class="block text-gray-700 hover:text-primary">Todo App</a></li>
+                        <li><a href="website.html" class="block text-gray-700 hover:text-primary">Website</a></li>
                     </ul>
                 </div>
-                <div class="nav-section">
-                    <h3>API Reference</h3>
-                    <ul>
-                        <li><a href="../api/jsx.html">JSX API</a></li>
-                        <li><a href="../api/maybe.html">Maybe</a></li>
-                        <li><a href="../api/either.html">Either</a></li>
-                        <li><a href="../api/result.html">Result</a></li>
-                        <li><a href="../api/store.html">Store</a></li>
+                <div class="mb-6">
+                    <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">API Reference</h3>
+                    <ul class="space-y-2">
+                        <li><a href="../api/jsx.html" class="block text-gray-700 hover:text-primary">JSX API</a></li>
+                        <li><a href="../api/maybe.html" class="block text-gray-700 hover:text-primary">Maybe</a></li>
+                        <li><a href="../api/either.html" class="block text-gray-700 hover:text-primary">Either</a></li>
+                        <li><a href="../api/result.html" class="block text-gray-700 hover:text-primary">Result</a></li>
+                        <li><a href="../api/store.html" class="block text-gray-700 hover:text-primary">Store</a></li>
                     </ul>
                 </div>
             </nav>
         </aside>
-        <main class="content">
-            <div class="content-header">
-                <div class="search-container">
-                    <input type="text" placeholder="Search documentation...">
+
+        <!-- Main content -->
+        <main class="flex-1">
+            <div class="border-b border-gray-200 bg-white sticky top-0 z-10">
+                <div class="flex items-center justify-between px-4 py-3">
+                    <div class="relative w-full max-w-md">
+                        <input type="text" placeholder="Search documentation..." class="w-full pl-10 pr-4 py-2 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 text-gray-400 absolute left-3 top-1/2 transform -translate-y-1/2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
+                        </svg>
+                        <div id="search-results" class="absolute mt-2 w-full bg-white rounded-md shadow-lg z-20 hidden"></div>
+                    <div class="flex space-x-4 ml-4">
+                        <a href="https://github.com/flexnet/flexnet-jsx" target="_blank" class="text-gray-600 hover:text-primary">GitHub</a>
+                        <a href="../../starter-project/README.md" target="_blank" class="text-gray-600 hover:text-primary">Starter Project</a>
                 </div>
-                <div class="header-links">
-                    <a href="https://github.com/flexnet/flexnet-jsx" target="_blank">GitHub</a>
-                    <a href="../../starter-project/README.md" target="_blank">Starter Project</a>
                 </div>
             </div>
-            <div class="content-body doc-content">
-                <h1>Counter Example</h1>
-                
-                <p>The counter example is a classic way to demonstrate basic state management and UI updates. This example will walk you through building a simple counter application using FlexNet JSX's functional approach.</p>
-                
-                <div class="callout">
-                    <p><strong>Note:</strong> This example showcases FlexNet's core principles of functional programming, immutable state, and pure functions.</p>
+
+            <div class="p-8 max-w-4xl mx-auto">
+                <div class="flex items-center space-x-2 text-sm text-gray-500 mb-8">
+                    <a href="../index.html" class="hover:text-primary">Home</a>
+                    <span>/</span>
+                    <a href="counter.html" class="hover:text-primary">Examples</a>
+                    <span>/</span>
+                    <span class="text-gray-700">Counter</span>
                 </div>
                 
-                <h2>What We'll Build</h2>
-                
-                <p>We'll create a counter with increment and decrement buttons:</p>
-                
-                <div class="demo-container">
-                    <div class="demo-box">
-                        <h3>Counter: <span id="counter-value">0</span></h3>
-                        <div class="button-row">
-                            <button class="demo-button" onclick="updateDemoCounter(-1)">-</button>
-                            <button class="demo-button" onclick="updateDemoCounter(1)">+</button>
-                        </div>
+                <h1 class="text-4xl font-bold mb-6">Counter Example</h1>
+                <p class="text-lg text-gray-600 mb-8">The counter example is a classic way to demonstrate basic state management and UI updates. This example will walk you through building a simple counter application using FlexNet JSX's functional approach.</p>
+
+                <div class="prose prose-blue max-w-none">
+                    <div class="bg-blue-50 border-l-4 border-primary p-4 rounded-md mb-6">
+                        <h4 class="font-semibold">Note</h4>
+                        <p>This example showcases FlexNet's core principles of functional programming, immutable state, and pure functions.</p>
+                    </div>
+
+                    <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2">What We'll Build</h2>
+                    <p class="mb-4">We'll create a counter with increment and decrement buttons:</p>
+
+                    <div class="bg-white p-6 rounded-lg shadow-md border border-gray-200 mb-6 text-center">
+                        <h3 class="text-2xl font-bold mb-4">Counter: <span id="counter-value" class="text-primary">0</span></h3>
+                        <div class="flex justify-center space-x-4">
+                            <button class="px-4 py-2 bg-red-500 text-white font-semibold rounded-lg shadow-md hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-400 focus:ring-opacity-75" onclick="updateDemoCounter(-1)">-</button>
+                            <button class="px-4 py-2 bg-green-500 text-white font-semibold rounded-lg shadow-md hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-opacity-75" onclick="updateDemoCounter(1)">+</button>
                     </div>
                 </div>
                 
@@ -106,10 +135,8 @@
                     }
                 </script>
                 
-                <h2>Project Structure</h2>
-                
-                <p>Our counter example will have the following file structure:</p>
-                
+                    <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2">Project Structure</h2>
+                    <p class="mb-4">Our counter example will have the following file structure:</p>
                 <pre><code class="language-text">counter-example/
 ├── src/
 │   ├── core/
@@ -126,12 +153,9 @@
 │           └── index.js
 └── index.html</code></pre>
                 
-                <h2>Implementation</h2>
-                
-                <h3>Step 1: Create the Core Types</h3>
-                
-                <p>First, let's implement the Maybe type for safe state handling:</p>
-                
+                    <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2">Implementation</h2>
+                    <h3 class="text-xl font-medium mt-6 mb-3">Step 1: Create the Core Types</h3>
+                    <p class="mb-4">First, let's implement the Maybe type for safe state handling:</p>
                 <pre><code class="language-javascript">// src/core/types/maybe.js
 const Maybe = {
     Just: value => ({
@@ -158,16 +182,14 @@ const Maybe = {
 
 export default Maybe;</code></pre>
                 
-                <h3>Step 2: Create Function Composition Utilities</h3>
-                
+                    <h3 class="text-xl font-medium mt-6 mb-3">Step 2: Create Function Composition Utilities</h3>
                 <pre><code class="language-javascript">// src/core/functions/composition.js
 export const compose = (...fns) => x => fns.reduceRight((y, f) => f(y), x);
 export const pipe = (...fns) => x => fns.reduce((y, f) => f(y), x);
 export const curry = fn => (...args) =>
     args.length >= fn.length ? fn(...args) : curry(fn.bind(null, ...args));</code></pre>
                 
-                <h3>Step 3: Implement the Store</h3>
-                
+                    <h3 class="text-xl font-medium mt-6 mb-3">Step 3: Implement the Store</h3>
                 <pre><code class="language-javascript">// src/systems/state/store.js
 const createStore = (initialState) => {
     const subscribers = new Set();
@@ -190,8 +212,7 @@ const createStore = (initialState) => {
 
 export default createStore;</code></pre>
                 
-                <h3>Step 4: Create Counter Functions</h3>
-                
+                    <h3 class="text-xl font-medium mt-6 mb-3">Step 4: Create Counter Functions</h3>
                 <pre><code class="language-javascript">// src/features/counter/functions.js
 import Maybe from '../../core/types/maybe.js';
 
@@ -213,8 +234,7 @@ export const validateAndUpdate = (count, operation) => {
     return result;
 };</code></pre>
                 
-                <h3>Step 5: Implement the Counter Component</h3>
-                
+                    <h3 class="text-xl font-medium mt-6 mb-3">Step 5: Implement the Counter Component</h3>
                 <pre><code class="language-javascript">// src/features/counter/index.js
 import createStore from '../../systems/state/store.js';
 import Maybe from '../../core/types/maybe.js';
@@ -255,395 +275,36 @@ const createCounter = () => {
         counterStore.update(count => validateAndUpdate(count, increment));
     });
     
-    // Assemble the component
     buttonContainer.appendChild(decrementButton);
     buttonContainer.appendChild(incrementButton);
+    
     container.appendChild(heading);
     container.appendChild(buttonContainer);
     
     return container;
 };
 
-// Initialize the counter
-const initCounter = (rootId) => {
-    const rootElement = document.getElementById(rootId);
-    if (!rootElement) return;
-    
-    // Create the counter
-    const counterElement = createCounter();
-    rootElement.appendChild(counterElement);
-    
-    // Subscribe to state changes
-    counterStore.subscribe(state => {
-        document.getElementById('count-display').textContent = state.value;
-    });
-};
-
-export default initCounter;</code></pre>
-                
-                <h3>Step 6: Create HTML Entry Point</h3>
-                
-                <pre><code class="language-html">&lt;!-- index.html --&gt;
-&lt;!DOCTYPE html&gt;
-&lt;html lang="en"&gt;
-&lt;head&gt;
-    &lt;meta charset="UTF-8"&gt;
-    &lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;
-    &lt;title&gt;FlexNet JSX Counter Example&lt;/title&gt;
-    &lt;style&gt;
-        body {
-            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-            background-color: #f9fafb;
-        }
-        .counter-container {
-            text-align: center;
-            padding: 2rem;
-            background-color: white;
-            border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
-        .button-container {
-            margin-top: 1rem;
-        }
-        button {
-            padding: 0.5rem 1rem;
-            margin: 0 0.5rem;
-            font-size: 1.25rem;
-            border: none;
-            background-color: #4f46e5;
-            color: white;
-            border-radius: 4px;
-            cursor: pointer;
-            transition: background-color 0.2s;
-        }
-        button:hover {
-            background-color: #4338ca;
-        }
-        h2 {
-            font-weight: 500;
-            color: #1f2937;
-        }
-        #count-display {
-            font-weight: 700;
-            color: #4f46e5;
-        }
-    &lt;/style&gt;
-&lt;/head&gt;
-&lt;body&gt;
-    &lt;div id="root"&gt;&lt;/div&gt;
-    
-    &lt;script type="module"&gt;
-        import initCounter from './src/features/counter/index.js';
-        
-        // Initialize the counter when the DOM is loaded
-        document.addEventListener('DOMContentLoaded', () => {
-            initCounter('root');
-        });
-    &lt;/script&gt;
-&lt;/body&gt;
-&lt;/html&gt;</code></pre>
-                
-                <h2>Key Concepts Demonstrated</h2>
-                
-                <div class="feature-comparison">
-                    <div class="feature-card">
-                        <h3>Functional Programming</h3>
-                        <p>Pure functions like <code>increment</code> and <code>decrement</code> with no side effects</p>
-                    </div>
-                    <div class="feature-card">
-                        <h3>Immutable State</h3>
-                        <p>State changes create new state objects instead of mutating existing ones</p>
-                    </div>
-                    <div class="feature-card">
-                        <h3>Type Safety</h3>
-                        <p>Using the <code>Maybe</code> type to handle state safely</p>
-                    </div>
-                    <div class="feature-card">
-                        <h3>Unidirectional Data Flow</h3>
-                        <p>State updates flow in a single direction through the store</p>
-                    </div>
-                </div>
-                
-                <h2>Using JSX</h2>
-                
-                <p>The example above uses direct DOM manipulation for simplicity. Here's how the same counter would look using FlexNet's JSX implementation:</p>
-                
-                <pre><code class="language-javascript">// src/features/counter/index-jsx.js
-import { jsx } from '../../core/runtime/jsx.js';
-import { render } from '../../systems/render/functions.js';
-import createStore from '../../systems/state/store.js';
-import Maybe from '../../core/types/maybe.js';
-import { increment, decrement, validateAndUpdate } from './functions.js';
-
-// Create a store with initial count of 0
-const counterStore = createStore(Maybe.Just(0));
-
-// Counter component using JSX
-const Counter = () => {
-    const count = counterStore.getState().value;
-    
-    return jsx('div', { className: 'counter-container' }, [
-        jsx('h2', null, [
-            'Counter: ',
-            jsx('span', { id: 'count-display' }, count)
-        ]),
-        jsx('div', { className: 'button-container' }, [
-            jsx('button', { 
-                onClick: () => counterStore.update(count => validateAndUpdate(count, decrement))
-            }, '-'),
-            jsx('button', { 
-                onClick: () => counterStore.update(count => validateAndUpdate(count, increment))
-            }, '+')
-        ])
-    ]);
-};
-
-// Initialize the counter
-const initCounter = (rootId) => {
-    const rootElement = document.getElementById(rootId);
-    if (!rootElement) return;
-    
-    // Render function to update UI
-    const renderCounter = () => {
-        render(Counter(), rootElement);
-    };
-    
-    // Initial render
-    renderCounter();
-    
-    // Subscribe to state changes
-    counterStore.subscribe(() => {
-        renderCounter();
-    });
-};
-
-export default initCounter;</code></pre>
-                
-                <h2>Advanced Counter</h2>
-                
-                <p>Let's enhance our counter with additional features:</p>
-                
-                <pre><code class="language-javascript">// src/features/counter/advanced-counter.js
-import { jsx } from '../../core/runtime/jsx.js';
-import { render } from '../../systems/render/functions.js';
-import createStore from '../../systems/state/store.js';
-import Maybe from '../../core/types/maybe.js';
-import { compose } from '../../core/functions/composition.js';
-
-// Create a more advanced store with initial state
-const counterStore = createStore(Maybe.Just({
-    count: 0,
-    history: [],
-    min: 0,
-    max: 10,
-    step: 1
-}));
-
-// Pure functions for state updates
-const changeCount = (amount) => (state) => {
-    const newCount = state.value.count + amount;
-    
-    // Apply constraints
-    const constrainedCount = Math.max(
-        state.value.min, 
-        Math.min(state.value.max, newCount)
-    );
-    
-    // Only record history if the count actually changed
-    const history = constrainedCount !== state.value.count
-        ? [...state.value.history, state.value.count].slice(-5)
-        : state.value.history;
-    
-    return Maybe.Just({
-        ...state.value,
-        count: constrainedCount,
-        history
-    });
-};
-
-const increment = changeCount(1);
-const decrement = changeCount(-1);
-
-const reset = (state) => Maybe.Just({
-    ...state.value,
-    count: 0,
-    history: [...state.value.history, state.value.count].slice(-5)
-});
-
-const setStep = (step) => (state) => Maybe.Just({
-    ...state.value,
-    step: parseInt(step, 10) || 1
-});
-
-const undoLastChange = (state) => {
-    if (state.value.history.length === 0) {
-        return state;
-    }
-    
-    const lastCount = state.value.history[state.value.history.length - 1];
-    const newHistory = state.value.history.slice(0, -1);
-    
-    return Maybe.Just({
-        ...state.value,
-        count: lastCount,
-        history: newHistory
-    });
-};
-
-// Advanced Counter component
-const AdvancedCounter = () => {
-    const state = counterStore.getState().value;
-    
-    return jsx('div', { className: 'counter-container advanced' }, [
-        jsx('h2', null, [
-            'Advanced Counter: ',
-            jsx('span', { id: 'count-display', className: 'large-count' }, state.count)
-        ]),
-        
-        jsx('div', { className: 'controls' }, [
-            jsx('div', { className: 'button-row' }, [
-                jsx('button', { 
-                    onClick: () => counterStore.update(compose(decrement, changeCount(-state.step)))
-                }, '-'),
-                jsx('button', { 
-                    onClick: () => counterStore.update(compose(increment, changeCount(state.step)))
-                }, '+')
-            ]),
-            
-            jsx('div', { className: 'settings' }, [
-                jsx('label', null, [
-                    'Step size: ',
-                    jsx('input', {
-                        type: 'number',
-                        min: '1',
-                        max: '10',
-                        value: state.step,
-                        onChange: (e) => counterStore.update(setStep(e.target.value))
-                    })
-                ])
-            ]),
-            
-            jsx('div', { className: 'actions' }, [
-                jsx('button', {
-                    className: 'secondary',
-                    onClick: () => counterStore.update(reset),
-                    disabled: state.count === 0
-                }, 'Reset'),
-                jsx('button', {
-                    className: 'secondary',
-                    onClick: () => counterStore.update(undoLastChange),
-                    disabled: state.history.length === 0
-                }, 'Undo')
-            ]),
-            
-            state.history.length > 0 && jsx('div', { className: 'history' }, [
-                jsx('h4', null, 'History:'),
-                jsx('ul', null, 
-                    state.history.map(item => jsx('li', null, item))
-                )
-            ])
-        ])
-    ]);
-};
-
-// Initialize the advanced counter
-const initAdvancedCounter = (rootId) => {
-    const rootElement = document.getElementById(rootId);
-    if (!rootElement) return;
-    
-    const renderCounter = () => {
-        render(AdvancedCounter(), rootElement);
-    };
-    
-    renderCounter();
-    counterStore.subscribe(renderCounter);
-};
-
-export default initAdvancedCounter;</code></pre>
-                
-                <h2>Testing the Counter</h2>
-                
-                <p>Here's how to test our counter functions using a simple testing framework:</p>
-                
-                <pre><code class="language-javascript">// tests/features/counter/counter.test.js
-import Maybe from '../../../src/core/types/maybe.js';
-import { increment, decrement, validateAndUpdate } from '../../../src/features/counter/functions.js';
-
-// Simple test framework
-const test = (name, fn) => {
-    try {
-        fn();
-        console.log(`✅ ${name} passed`);
-    } catch (error) {
-        console.error(`❌ ${name} failed:`, error);
+// Update UI on state change
+const updateUI = () => {
+    const countDisplay = document.getElementById('count-display');
+    if (countDisplay) {
+        countDisplay.textContent = counterStore.getState().value;
     }
 };
 
-const assertEqual = (actual, expected, message) => {
-    if (JSON.stringify(actual) !== JSON.stringify(expected)) {
-        throw new Error(`${message}: Expected ${expected}, got ${actual}`);
+// Subscribe to store changes
+counterStore.subscribe(updateUI);
+
+// Mount the component to the DOM
+document.addEventListener('DOMContentLoaded', () => {
+    const root = document.getElementById('root');
+    if (root) {
+        root.appendChild(createCounter());
     }
-};
-
-// Test increment function
-test('increment increases count by 1', () => {
-    const initialState = Maybe.Just(5);
-    const result = increment(initialState);
-    assertEqual(result.value, 6, 'increment should add 1');
-});
-
-// Test decrement function
-test('decrement decreases count by 1', () => {
-    const initialState = Maybe.Just(5);
-    const result = decrement(initialState);
-    assertEqual(result.value, 4, 'decrement should subtract 1');
-});
-
-// Test validation
-test('validateAndUpdate prevents negative values', () => {
-    const initialState = Maybe.Just(0);
-    const result = validateAndUpdate(initialState, decrement);
-    assertEqual(result.value, 0, 'should not go below 0');
 });</code></pre>
-                
-                <h2>Next Steps</h2>
-                
-                <p>Now that you've seen how to build a counter with FlexNet JSX, here are some ways to extend it:</p>
-                
-                <ul>
-                    <li>Add persistence with localStorage to save the counter state</li>
-                    <li>Implement undo/redo functionality using a history array</li>
-                    <li>Add validation to set min/max boundaries for the counter</li>
-                    <li>Create a counter with custom increment/decrement steps</li>
-                    <li>Implement keyboard shortcuts for incrementing and decrementing</li>
-                </ul>
-                
-                <h2>Complete Code</h2>
-                
-                <p>You can find the complete code for this example in the <a href="../../starter-project/examples/counter" target="_blank">starter project examples directory</a>.</p>
-                
-                <div class="pagination">
-                    <a href="../systems/errors.html" class="prev-link">← Previous: Error Handling</a>
-                    <a href="todo.html" class="next-link">Next: Todo App →</a>
                 </div>
             </div>
         </main>
     </div>
-    <footer class="footer">
-        <div class="footer-content">
-            <p>&copy; 2025 FlexNet JSX Framework. Created by Dr. Robert Whetsel and the FlexNet Development Team.</p>
-            <div class="footer-links">
-                <a href="https://github.com/flexnet/flexnet-jsx">GitHub</a>
-                <a href="../guides/contribution.html">Contribute</a>
-                <a href="../LICENSE.html">License</a>
-            </div>
-        </div>
-    </footer>
-    <script src="../assets/js/docs.js"></script>
 </body>
 </html>
