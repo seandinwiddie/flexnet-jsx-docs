@@ -108,7 +108,7 @@
                 </div>
 
                 <h1 class="text-4xl font-bold mb-6">Error Handling</h1>
-                <p class="text-lg text-gray-600 mb-8">FlexNet JSX provides a comprehensive, functional approach to error handling throughout your application.</p>
+                <p class="text-lg text-gray-600 mb-8">FlexNet JSX treats errors as manageable data, not as disruptive, unhandled exceptions. This is achieved by using a functional approach where operations that can fail return special container types that explicitly model success and failure paths.</p>
 
                 <div class="prose prose-blue max-w-none">
                     <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2">Functional Error Handling Philosophy</h2>
@@ -138,14 +138,14 @@
                         </div>
                         <div class="bg-white p-4 border border-gray-200 rounded-lg">
                             <h4 class="font-semibold text-lg mb-2">Either</h4>
-                            <p class="text-gray-600">For representing computations that can either succeed or fail with an error value.</p>
+                            <p class="text-gray-600">For representing synchronous computations that can either succeed (Right) or fail with an error value (Left).</p>
                             <div class="mt-2 text-sm text-primary">
                                 <a href="../api/either.html" class="hover:underline">View Documentation →</a>
                             </div>
                         </div>
                         <div class="bg-white p-4 border border-gray-200 rounded-lg">
                             <h4 class="font-semibold text-lg mb-2">Result</h4>
-                            <p class="text-gray-600">For representing asynchronous operations that can succeed or fail with an error.</p>
+                            <p class="text-gray-600">For representing operations (often asynchronous) that can succeed (Ok) or fail (Error).</p>
                             <div class="mt-2 text-sm text-primary">
                                 <a href="../api/result.html" class="hover:underline">View Documentation →</a>
                             </div>
@@ -188,306 +188,176 @@
                         </div>
                     </div>
 
-                    <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2">Handling Errors with Maybe</h2>
-                    <p class="mb-4">The <code>Maybe</code> type represents optional values that might be absent. It's not for errors per se, but for handling the absence of a value gracefully.</p>
+                    <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2">Handling Optional Values with `Maybe`</h2>
+                    <p class="mb-4">The <code>Maybe</code> type is used for optional values. Instead of returning `null` or `undefined`, a function returns `Maybe.Nothing()` to indicate a legitimate absence of a value, preventing null reference errors.</p>
 
-                    <pre class="bg-gray-800 text-white p-4 rounded-lg mb-6"><code class="language-javascript">import { Maybe } from './src/core/types/maybe.js';
+                    <pre class="bg-gray-800 text-white p-4 rounded-lg mb-6"><code class="language-javascript">import { Maybe } from '/src/core/types/maybe.js';
+import { createElement } from '/src/core/runtime/jsx.js';
 
-// Creating Maybe values
-const maybeUser = Maybe.fromNullable(getUserFromStorage());
+// Example: get a user from storage, which might not exist.
+const findUser = (id) => id === 1 ? { id: 1, name: 'Admin' } : null;
+const maybeUser = Maybe.fromNullable(findUser(1));
 
-// Handling Maybe values with pattern matching
-const greeting = maybeUser.match({
-  Just: user => `Hello, ${user.name}!`,
-  Nothing: () => 'Hello, Guest!'
-});
+// Use `map` to safely access properties and `getOrElse` for a default.
+const greeting = maybeUser
+  .map(user => `Hello, ${user.name}!`)
+  .getOrElse('Hello, Guest!');
 
-// Transforming Maybe values
-const maybeUsername = maybeUser
-  .map(user => user.username)
-  .getOrElse('anonymous');
+// console.log(greeting); // => "Hello, Admin!"
 
 // Rendering UI with Maybe
 const UserProfile = ({ userMaybe }) =>
   createElement('div', { className: 'profile' },
-    userMaybe.match({
-      Just: user => [
+    userMaybe.map(user => [
         createElement('h2', null, user.name),
         createElement('p', null, user.email)
-      ],
-      Nothing: () => 
+    ]).getOrElse(
         createElement('p', null, 'Please log in to view your profile')
-    })
-  );</code></pre>
+    )
+  ).getOrElse(null); // Assuming createElement is safe
+</code></pre>
 
-                    <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2">Handling Errors with Either</h2>
-                    <p class="mb-4">The <code>Either</code> type represents computations that can either succeed with a right value or fail with a left value (typically an error).</p>
+                    <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2">Handling Synchronous Errors with `Either`</h2>
+                    <p class="mb-4">The <code>Either</code> type represents a computation that can result in one of two outcomes: a `Right` for success or a `Left` for failure. It is ideal for operations like validation, where you need to capture a specific error message.</p>
 
-                    <pre class="bg-gray-800 text-white p-4 rounded-lg mb-6"><code class="language-javascript">import { Either } from './src/core/types/either.js';
+                    <pre class="bg-gray-800 text-white p-4 rounded-lg mb-6"><code class="language-javascript">import { Either } from '/src/core/types/either.js';
+import { pipe } from '/src/core/functions/composition.js';
 
-// Form validation using Either
-const validateEmail = email => {
-  if (!email) {
-    return Either.Left('Email is required');
-  }
-  
-  if (!/\S+@\S+\.\S+/.test(email)) {
-    return Either.Left('Email is invalid');
-  }
-  
-  return Either.Right(email);
-};
+const validateEmail = email =>
+  !email ? Either.Left('Email is required')
+  : !/\S+@\S+\.\S+/.test(email) ? Either.Left('Email is invalid')
+  : Either.Right(email);
 
-const validatePassword = password => {
-  if (!password) {
-    return Either.Left('Password is required');
-  }
-  
-  if (password.length < 8) {
-    return Either.Left('Password must be at least 8 characters');
-  }
-  
-  return Either.Right(password);
-};
+const validatePassword = password =>
+  !password ? Either.Left('Password is required')
+  : password.length < 8 ? Either.Left('Password must be at least 8 characters')
+  : Either.Right(password);
 
-// Composing validations
-const validateLogin = (email, password) => {
-  return validateEmail(email).chain(validEmail => 
+// `fold` is used to handle both possible outcomes.
+const displayValidationResult = (either) => either.fold(
+    error => `Validation failed: ${error}`,
+    value => `Validation succeeded for: ${value}`
+);
+
+const emailResult = validateEmail('test@example.com');
+const passwordResult = validatePassword('123');
+
+// console.log(displayValidationResult(emailResult));   // => "Validation succeeded for: test@example.com"
+// console.log(displayValidationResult(passwordResult)); // => "Validation failed: Password must be at least 8 characters"
+</code></pre>
+
+                    <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2">Composing Validation Chains</h2>
+                    <p class="mb-4">The true power of `Either` is revealed when you chain multiple validation steps together. The chain will short-circuit on the first `Left`, or continue if `Right`.</p>
+
+                    <pre class="bg-gray-800 text-white p-4 rounded-lg mb-6"><code class="language-javascript">import { Either } from '/src/core/types/either.js';
+import { pipe } from '/src/core/functions/composition.js';
+
+// Assume validateEmail and validatePassword from the previous example.
+
+const validateLogin = (email, password) =>
+  validateEmail(email).chain(validEmail =>
     validatePassword(password).map(validPassword => ({
       email: validEmail,
       password: validPassword
     }))
   );
-};
 
-// Using the validation
-const loginResult = validateLogin(formData.email, formData.password);
+// Using the composed validation
+const loginResult = validateLogin('test@example.com', 'password123');
 
-// Handling the result with pattern matching
-loginResult.match({
-  Right: credentials => loginUser(credentials),
-  Left: error => showError(error)
-});</code></pre>
+loginResult.fold(
+  error => console.error(`Login failed: ${error}`),
+  credentials => console.log('Login successful:', credentials)
+);
+</code></pre>
 
-                    <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2">Handling Errors with Result</h2>
-                    <p class="mb-4">The <code>Result</code> type is specifically designed for asynchronous operations that can either succeed or fail with an error.</p>
+                    <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2">Handling Asynchronous Errors with `Result`</h2>
+                    <p class="mb-4">The <code>Result</code> type is designed for asynchronous operations that can either succeed (`Ok`) or fail (`Error`), such as API calls. It cleanly wraps Promises or `try/catch` logic.</p>
 
-                    <pre class="bg-gray-800 text-white p-4 rounded-lg mb-6"><code class="language-javascript">import { Result } from './src/core/types/result.js';
+                    <pre class="bg-gray-800 text-white p-4 rounded-lg mb-6"><code class="language-javascript">import { Result } from '/src/core/types/result.js';
+import { pipe } from '/src/core/functions/composition.js';
 
-// Fetching data with Result
-const fetchUser = userId => {
-  return fetch(`/api/users/${userId}`)
-    .then(response => {
-      if (!response.ok) {
-        return Result.Error(`Failed to fetch user: ${response.status}`);
-      }
-      return response.json().then(data => Result.Ok(data));
-    })
-    .catch(error => Result.Error(`Network error: ${error.message}`));
-};
+// A fold helper for Result, as it's not in the core API but is a common pattern.
+const foldResult = (onOk, onError) => result =>
+    result.type === 'Ok' ? onOk(result.value) : onError(result.error);
 
-// Using the Result
-fetchUser(123)
-  .then(result => result.match({
-    Ok: user => {
-      // Handle success
-      displayUserProfile(user);
-    },
-    Error: error => {
-      // Handle error
-      showErrorMessage(error);
+// 1. Wrapping a fetch call
+const fetchUser = async (userId) => {
+    try {
+        const response = await fetch(`/api/users/${userId}`);
+        if (!response.ok) return Result.Error(`Request failed: ${response.status}`);
+        const data = await response.json();
+        return Result.Ok(data);
+    } catch (e) {
+        return Result.Error(e);
     }
-  }));
-
-// Convert try/catch to Result
-const parseJSON = jsonString => {
-  return Result.try(() => JSON.parse(jsonString));
 };
 
-// Using try/catch with Result
-const parsedData = parseJSON('{"name": "John"}').match({
-  Ok: data => data,
-  Error: error => ({ name: 'Unknown' })
-});</code></pre>
+// 2. Wrapping a try/catch block
+const parseJSON = (jsonString) => Result.fromTry(() => JSON.parse(jsonString));
 
-                    <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2">Error Boundaries in UI</h2>
-                    <p class="mb-4">FlexNet JSX provides a way to create error boundaries that catch and handle errors in the UI rendering process:</p>
 
-                    <pre class="bg-gray-800 text-white p-4 rounded-lg mb-6"><code class="language-javascript">import { createElement } from './src/core/runtime/jsx.js';
-import { Result } from './src/core/types/result.js';
+// --- Usage ---
+const userResult = await fetchUser(123);
 
-// Error boundary component
-const ErrorBoundary = ({ children, fallback }) => {
-  try {
-    // Attempt to render children
-    return children;
-  } catch (error) {
-    // If rendering fails, render the fallback
-    return typeof fallback === 'function'
-      ? fallback(error)
-      : fallback;
-  }
-};
+foldResult(
+  user => console.log('Fetched User:', user),
+  error => console.error('Fetch Error:', error)
+)(userResult);
 
-// Using Result for safer boundaries
-const SafeComponent = ({ component, props, fallback }) => {
-  const renderResult = Result.try(() => component(props));
-  
-  return renderResult.match({
-    Ok: rendered => rendered,
-    Error: error => fallback(error)
-  });
-};
 
-// Usage
-const App = () =>
-  createElement(ErrorBoundary, {
-    fallback: error => 
-      createElement('div', { className: 'error-container' },
-        createElement('h2', null, 'Something went wrong'),
-        createElement('p', null, error.message),
-        createElement('button', { 
-          onClick: () => window.location.reload() 
-        }, 'Refresh the page')
-      )
-  },
-    createElement(UserDashboard, { userId: currentUserId })
-  );</code></pre>
+const jsonResult = parseJSON('{"name": "John"}');
 
-                    <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2">Combining Error Handling Types</h2>
-                    <p class="mb-4">FlexNet JSX allows you to combine different error handling types for more complex scenarios:</p>
+const name = foldResult(
+    data => data.name,
+    error => 'Unknown'
+)(jsonResult);
 
-                    <pre class="bg-gray-800 text-white p-4 rounded-lg mb-6"><code class="language-javascript">import { Maybe } from './src/core/types/maybe.js';
-import { Either } from './src/core/types/either.js';
-import { Result } from './src/core/types/result.js';
+// console.log(name); // => "John"
+</code></pre>
 
-// Get user from session (Maybe)
-const maybeUser = Maybe.fromNullable(session.user);
+                    <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2">Functional Error Boundaries</h2>
+                    <p class="mb-4">In FlexNet JSX, an "error boundary" is not a special component, but a pattern of functional composition. A component that might fail returns an `Either` type. The parent component then uses `fold` to decide whether to render the successful result or a fallback UI.</p>
 
-// Validate user permissions (Either)
-const checkPermissions = user => {
-  if (!user.permissions.includes('admin')) {
-    return Either.Left('User does not have admin permissions');
-  }
-  return Either.Right(user);
-};
+                    <pre class="bg-gray-800 text-white p-4 rounded-lg mb-6"><code class="language-javascript">import { createElement } from '/src/core/runtime/jsx.js';
+import { Either } from '/src/core/types/either.js';
 
-// Fetch data from API (Result)
-const fetchAdminData = user => {
-  return fetch(`/api/admin/data?token=${user.token}`)
-    .then(response => {
-      if (!response.ok) {
-        return Result.Error(`API error: ${response.status}`);
-      }
-      return response.json().then(data => Result.Ok(data));
-    })
-    .catch(error => Result.Error(`Network error: ${error.message}`));
-};
-
-// Combining all three types
-const getAdminData = () => {
-  // Convert Maybe to Either
-  const userEither = maybeUser.toEither('User not logged in');
-  
-  // Chain with permission check
-  const permissionResult = userEither.chain(checkPermissions);
-  
-  // Convert Either to Promise for async operation
-  return permissionResult.match({
-    Right: user => fetchAdminData(user),
-    Left: error => Promise.resolve(Result.Error(error))
-  });
-};
-
-// Usage
-getAdminData().then(result => {
-  result.match({
-    Ok: data => renderAdminDashboard(data),
-    Error: error => showErrorMessage(error)
-  });
-});</code></pre>
-
-                    <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2">Logging and Monitoring Errors</h2>
-                    <p class="mb-4">FlexNet JSX provides utilities for logging and monitoring errors in a functional way:</p>
-
-                    <pre class="bg-gray-800 text-white p-4 rounded-lg mb-6"><code class="language-javascript">import { Result } from './src/core/types/result.js';
-import { logger } from './src/core/runtime/logger.js';
-
-// Enhanced Result with logging
-const fetchWithLogging = url => {
-  logger.info(`Fetching data from ${url}`);
-  
-  return fetch(url)
-    .then(response => {
-      if (!response.ok) {
-        const error = `API error: ${response.status}`;
-        logger.error(error, { url, status: response.status });
-        return Result.Error(error);
-      }
-      return response.json()
-        .then(data => {
-          logger.info(`Successfully fetched data from ${url}`);
-          return Result.Ok(data);
-        });
-    })
-    .catch(error => {
-      logger.error(`Network error: ${error.message}`, { url, error });
-      return Result.Error(`Network error: ${error.message}`);
-    });
-};
-
-// Utility for tapping into Either for side effects like logging
-const tapEither = (either, leftFn, rightFn) => {
-  either.match({
-    Left: value => {
-      leftFn(value);
-      return either;
-    },
-    Right: value => {
-      rightFn(value);
-      return either;
+// This component can fail if user data is invalid.
+// It returns an Either<Error, VNode>
+const UserDashboard = ({ user }) => {
+    if (!user || !user.name) {
+        return Either.Left(new Error('Invalid user data provided to UserDashboard.'));
     }
-  });
-  return either;
+
+    return Either.Right(
+        createElement('div', null,
+            createElement('h1', null, `Welcome, ${user.name}`)
+        )
+    );
 };
 
-// Usage with logging
-const validationResult = validateUserData(userData);
-tapEither(
-  validationResult,
-  error => logger.warn(`Validation failed: ${error}`),
-  data => logger.info('Validation succeeded')
-);</code></pre>
+// The parent component acts as the error boundary.
+const App = ({ user }) => {
+    const dashboardOrError = UserDashboard({ user });
 
-                    <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2">Global Error Handling</h2>
-                    <p class="mb-4">For handling uncaught errors at the application level, FlexNet provides a global error handling system:</p>
+    return dashboardOrError.fold(
+        // The 'Left' case (failure): render a fallback UI.
+        error => createElement('div', { className: 'error-container' },
+            createElement('h2', null, 'Something went wrong'),
+            createElement('p', null, error.message)
+        ),
+        // The 'Right' case (success): render the component as is.
+        dashboardVNode => dashboardVNode
+    );
+};
 
-                    <pre class="bg-gray-800 text-white p-4 rounded-lg mb-6"><code class="language-javascript">import { setGlobalErrorHandler } from './src/systems/errors/global.js';
-import { logger } from './src/core/runtime/logger.js';
-
-// Set up global error handling
-setGlobalErrorHandler({
-  onError: (error, info) => {
-    // Log the error
-    logger.error('Unhandled error', { error, info });
-    
-    // Display error UI
-    renderErrorOverlay({
-      message: 'An unexpected error occurred',
-      details: process.env.NODE_ENV === 'development' ? error.stack : null,
-      onReload: () => window.location.reload()
-    });
-    
-    // Report to error tracking service
-    if (errorTrackingService) {
-      errorTrackingService.captureException(error, { extra: info });
-    }
-  },
-  onUnhandledRejection: (reason, promise) => {
-    logger.error('Unhandled promise rejection', { reason, promise });
-    // Similar handling as onError
-  }
-});</code></pre>
+// --- Rendering ---
+// const validUser = { name: 'Alice' };
+// render(App({ user: validUser }), document.getElementById('root'));
+//
+// const invalidUser = {};
+// render(App({ user: invalidUser }), document.getElementById('root'));
+</code></pre>
 
                     <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded-md mt-8">
                         <h4 class="font-semibold flex items-center">
@@ -497,12 +367,11 @@ setGlobalErrorHandler({
                             Best Practices
                         </h4>
                         <ul class="list-disc pl-6 mt-2">
-                            <li>Use the appropriate type (Maybe, Either, Result) for each error scenario</li>
-                            <li>Always handle all possible cases in pattern matching</li>
-                            <li>Log errors with useful context information</li>
-                            <li>Provide meaningful error messages to users</li>
-                            <li>Use error boundaries to prevent error propagation in the UI</li>
-                            <li>Avoid using try/catch directly; prefer Result.try for wrapping exceptions</li>
+                            <li>Use the appropriate type for each scenario: `Maybe` for optionality, `Either` for synchronous failure, and `Result` for asynchronous failure.</li>
+                            <li>Embrace the pipeline: Use `map` and `chain` to compose operations that can fail, letting errors propagate cleanly.</li>
+                            <li>Handle all paths: Use `fold` (for `Either`) or `getOrElse` (for `Maybe`) to explicitly handle both success and failure cases.</li>
+                            <li>Avoid `try/catch`: Wrap potentially exception-throwing code with `Result.fromTry` to convert exceptions into data.</li>
+                            <li>Components as functions: A component that can fail should return an `Either<Error, VNode>` to be handled by its parent.</li>
                         </ul>
                     </div>
                 </div>

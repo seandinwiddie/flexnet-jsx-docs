@@ -108,288 +108,208 @@
                 </div>
 
                 <h1 class="text-4xl font-bold mb-6">Effect System</h1>
-                <p class="text-lg text-gray-600 mb-8">Learn how to manage side effects in a functional way with FlexNet JSX.</p>
+                <p class="text-lg text-gray-600 mb-8">Learn how to manage side effects in a pure, functional, and composable way with the FlexNet JSX Effect System.</p>
 
                 <div class="prose prose-blue max-w-none">
                     <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2" id="introduction">Introduction</h2>
-                    <p class="mb-4">Side effects are an inevitable part of web applications — from fetching data and setting timers to manipulating the DOM. The challenge in functional programming is handling these side effects while maintaining the benefits of pure functions.</p>
+                    <p class="mb-4">Side effects are an inevitable part of web applications—from fetching data and setting timers to manipulating the DOM. The challenge in functional programming is to handle these side effects without sacrificing the purity and predictability of your functions.</p>
                     
-                    <p class="mb-4">FlexNet's Effect System provides a solution by:</p>
+                    <p class="mb-4">FlexNet's Effect System provides a solution by wrapping side effects in a pure, immutable data structure called an <code>Effect</code>. This approach allows you to:</p>
                     <ul class="list-disc pl-6 mb-6 space-y-2">
-                        <li>Isolating side effects from pure business logic</li>
-                        <li>Making effects composable and reusable</li>
-                        <li>Ensuring proper resource cleanup</li>
-                        <li>Providing a predictable way to test effects</li>
+                        <li>Isolate side effects from pure business logic.</li>
+                        <li>Treat effects as values that can be passed around, composed, and manipulated.</li>
+                        <li>Defer the execution of impure code to a controlled boundary.</li>
+                        <li>Write more testable and predictable code.</li>
                     </ul>
 
-                    <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2" id="effect-model">The Effect Model</h2>
-                    <p class="mb-4">In FlexNet, an effect is represented as a function that:</p>
-                    <ol class="list-decimal pl-6 mb-6 space-y-2">
-                        <li>Takes configuration or dependencies as input</li>
-                        <li>Returns a function that performs the actual effect</li>
-                        <li>Optionally returns a cleanup function</li>
-                    </ol>
+                    <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2" id="effect-model">The Monadic Effect Model</h2>
+                    <p class="mb-4">In FlexNet, an <code>Effect</code> is a simple object that contains a function called <code>run</code>. This <code>run</code> function, when executed, performs the actual side effect. Until <code>run</code> is called, the <code>Effect</code> is just a description of a computation, making it a pure value.</p>
 
                     <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-100 mb-6">
                         <h3 class="text-lg font-semibold mb-3">Effect Structure</h3>
-                        <pre class="bg-gray-800 text-white p-4 rounded-lg"><code class="language-javascript">// Effect creator
-const myEffect = (config) => {
-  // Returns the effect runner
-  return (handlers) => {
-    // Perform the effect
-    const resource = performSideEffect();
-    
-    // Return cleanup function
-    return () => {
-      // Clean up resources
-      cleanupResource(resource);
-    };
-  };
+                        <pre class="bg-gray-800 text-white p-4 rounded-lg"><code class="language-javascript">// The structure of an Effect value
+const myEffect = {
+  type: 'Effect',
+  run: () => { /* ... side effect logic ... */ }
 };</code></pre>
                     </div>
 
-                    <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2" id="creating-effects">Creating Effects</h2>
-                    <p class="mb-4">FlexNet provides a <code>createEffect</code> function to make it easier to define effects:</p>
+                    <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2" id="creating-and-running-effects">Creating and Running Effects</h2>
+                    <p class="mb-4">You create an effect using <code>Effect.of</code> and execute it using <code>Effect.run</code>.</p>
 
-                    <pre class="bg-gray-800 text-white p-4 rounded-lg mb-6"><code class="language-javascript">import { createEffect } from './src/systems/effects/effect.js';
+                    <pre class="bg-gray-800 text-white p-4 rounded-lg mb-6"><code class="language-javascript">import { Effect } from './src/systems/effects/functions.js';
 
-// Simple timer effect
-const timerEffect = (intervalMs) => createEffect(({ onTick }) => {
-  const timerId = setInterval(() => {
-    onTick(new Date());
-  }, intervalMs);
-  
-  // Return cleanup function
-  return () => clearInterval(timerId);
-});</code></pre>
+// Create an effect that gets an item from localStorage
+const getItem = (key) => Effect.of(() => localStorage.getItem(key));
 
-                    <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2" id="running-effects">Running Effects</h2>
-                    <p class="mb-4">To run an effect, use the <code>runEffect</code> function:</p>
+// At this point, no side effect has occurred. `getItem('myKey')` is just a value.
 
-                    <pre class="bg-gray-800 text-white p-4 rounded-lg mb-6"><code class="language-javascript">import { runEffect } from './src/systems/effects/effect.js';
-
-// Create the effect
-const effect = timerEffect(1000);
-
-// Run the effect with handlers
-const cleanup = runEffect(effect, {
-  onTick: (date) => console.log('Tick:', date)
-});
-
-// Later, when you want to clean up:
-cleanup();</code></pre>
+// Now, run the effect to actually read from localStorage
+const result = Effect.run(getItem('myKey'));
+console.log(result); // logs the value from localStorage</code></pre>
 
                     <div class="bg-blue-50 border-l-4 border-primary p-4 rounded-md mb-6">
-                        <h4 class="font-semibold">Important</h4>
-                        <p>Always store and call the cleanup function to prevent memory leaks, especially when creating effects in components that may unmount.</p>
+                        <h4 class="font-semibold">Key Idea</h4>
+                        <p>The separation between creating an effect and running it is the core principle. Your business logic should create and compose effects, while a single, top-level "end of the world" part of your application runs them.</p>
                     </div>
 
-                    <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2" id="common-effects">Common Effect Patterns</h2>
+                    <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2" id="composing-effects">Composing Effects with `map` and `chain`</h2>
+                    <p class="mb-4">The true power of the Effect system comes from its monadic nature, allowing you to compose effects using <code>map</code> and <code>chain</code>.</p>
                     
-                    <h3 class="text-xl font-medium mt-6 mb-3">Fetch Data Effect</h3>
-                    <p class="mb-4">A common use case is fetching data from an API:</p>
+                    <h3 class="text-xl font-medium mt-6 mb-3">Transforming Effect Results with `map`</h3>
+                    <p class="mb-4"><code>Effect.map</code> lets you apply a pure function to the result of an effect without running the effect.</p>
+                    <pre class="bg-gray-800 text-white p-4 rounded-lg mb-6"><code class="language-javascript">import { Effect } from './src/systems/effects/functions.js';
+import { pipe } from './src/core/functions/composition.js';
 
-                    <pre class="bg-gray-800 text-white p-4 rounded-lg mb-6"><code class="language-javascript">const fetchDataEffect = (url) => createEffect(({ onSuccess, onError, onLoading }) => {
-  let isCancelled = false;
-  const controller = new AbortController();
-  const signal = controller.signal;
-  
-  onLoading(true);
-  
-  fetch(url, { signal })
-    .then(response => {
-      if (!response.ok) {
-        throw new Error('Network response was not ok');
-      }
-      return response.json();
-    })
-    .then(data => {
-      if (!isCancelled) {
-        onLoading(false);
-        onSuccess(data);
-      }
-    })
-    .catch(error => {
-      if (!isCancelled) {
-        onLoading(false);
-        onError(error);
-      }
-    });
-  
-  return () => {
-    isCancelled = true;
-    controller.abort();
-  };
-});</code></pre>
+const getItem = (key) => Effect.of(() => localStorage.getItem(key));
+const parseJson = (str) => JSON.parse(str);
 
-                    <h3 class="text-xl font-medium mt-6 mb-3">Local Storage Effect</h3>
-                    <p class="mb-4">Persisting state to local storage:</p>
+// Create an effect that gets an item and then parses it as JSON
+const getObject = (key) => pipe(
+    Effect.map(parseJson)
+)(getItem(key));
 
-                    <pre class="bg-gray-800 text-white p-4 rounded-lg mb-6"><code class="language-javascript">const localStorageEffect = (key, initialValue) => createEffect(({ onChange }) => {
-  // Read from localStorage on initialization
-  try {
-    const item = window.localStorage.getItem(key);
-    const value = item ? JSON.parse(item) : initialValue;
-    onChange(value);
-  } catch (error) {
-    console.error('Error reading from localStorage:', error);
-    onChange(initialValue);
-  }
+// The result of `run` will be the parsed object
+const user = Effect.run(getObject('currentUser'));
+                    </code></pre>
 
-  // Set up listener for storage events (for multi-tab support)
-  const handleStorage = (event) => {
-    if (event.key === key) {
-      try {
-        const newValue = JSON.parse(event.newValue);
-        onChange(newValue);
-      } catch (error) {
-        console.error('Error parsing localStorage value:', error);
-      }
-    }
-  };
+                    <h3 class="text-xl font-medium mt-6 mb-3">Sequencing Effects with `chain`</h3>
+                    <p class="mb-4"><code>Effect.chain</code> lets you sequence effects, where the next effect depends on the result of the previous one.</p>
+                     <pre class="bg-gray-800 text-white p-4 rounded-lg mb-6"><code class="language-javascript">import { Effect } from './src/systems/effects/functions.js';
+import { pipe } from './src/core/functions/composition.js';
 
-  window.addEventListener('storage', handleStorage);
+const getUserId = Effect.of(() => '123');
+const fetchUserById = (id) => Effect.of(() => fetch(`https://api.example.com/users/${id}`));
 
-  // Return cleanup function
-  return () => {
-    window.removeEventListener('storage', handleStorage);
-  };
-});</code></pre>
+// Chain the effects: get the ID, then use it to fetch the user
+const fetchCurrentUser = pipe(
+    Effect.chain(fetchUserById)
+)(getUserId);
 
-                    <h3 class="text-xl font-medium mt-6 mb-3">Event Listener Effect</h3>
-                    <p class="mb-4">Adding and removing DOM event listeners:</p>
+// `run` will return a Promise for the user data
+Effect.run(fetchCurrentUser).then(response => response.json()).then(console.log);
+                    </code></pre>
 
-                    <pre class="bg-gray-800 text-white p-4 rounded-lg mb-6"><code class="language-javascript">const eventListenerEffect = (target, eventType) => createEffect(({ onEvent }) => {
-  const handler = (event) => {
-    onEvent(event);
-  };
-  
-  target.addEventListener(eventType, handler);
-  
-  return () => {
-    target.removeEventListener(eventType, handler);
-  };
-});</code></pre>
 
-                    <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2" id="composing-effects">Composing Effects</h2>
-                    <p class="mb-4">One of the key advantages of FlexNet's effect system is the ability to compose effects together:</p>
+                    <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2" id="asynchronous-effects">Handling Asynchronous Effects</h2>
+                    <p class="mb-4">The Effect system handles asynchronous operations naturally. If an effect's <code>run</code> function returns a <code>Promise</code>, then <code>Effect.run</code> will return that <code>Promise</code>.</p>
+                    
+                    <p class="mb-4">For robust error handling, it's best practice for async effects to return a <code>Promise</code> that resolves to a <code>Result</code> or <code>Either</code> type.</p>
 
-                    <pre class="bg-gray-800 text-white p-4 rounded-lg mb-6"><code class="language-javascript">import { composeEffects } from './src/systems/effects/effect.js';
+                    <pre class="bg-gray-800 text-white p-4 rounded-lg mb-6"><code class="language-javascript">import { Effect } from './src/systems/effects/functions.js';
+import { Result } from './src/core/types/result.js';
 
-// Simple logging effect
-const logEffect = (message) => createEffect(() => {
-  console.log(`Effect started: ${message}`);
-  return () => console.log(`Effect cleaned up: ${message}`);
-});
-
-// Combine timer and logging
-const combinedEffect = composeEffects(
-  timerEffect(1000),
-  logEffect('Timer effect')
+const safeFetch = (url, options) => Effect.of(() => 
+    fetch(url, options)
+        .then(res => {
+            if (!res.ok) throw new Error(`HTTP Error: ${res.status}`);
+            return res.json();
+        })
+        .then(data => Result.Ok(data))
+        .catch(err => Result.Error(err))
 );
 
-// Run the combined effect
-const cleanup = runEffect(combinedEffect, {
-  onTick: (date) => console.log('Tick:', date)
-});
+// Use the effect
+const fetchEffect = safeFetch('/api/users/1');
 
-// Cleanup will clean up both effects
-cleanup();</code></pre>
-
-                    <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2" id="effects-with-state">Effects with State</h2>
-                    <p class="mb-4">Effects often need to interact with state. Here's a pattern for combining effects with the state system:</p>
-
-                    <pre class="bg-gray-800 text-white p-4 rounded-lg mb-6"><code class="language-javascript">import { createStore } from './src/systems/state/store.js';
-import { createEffect, runEffect } from './src/systems/effects/effect.js';
-
-// Create a store
-const userStore = createStore({
-  data: null,
-  loading: false,
-  error: null
-});
-
-// Define state update functions
-const setLoading = loading => state => ({ ...state, loading, error: null });
-const setData = data => state => ({ ...state, data, loading: false, error: null });
-const setError = error => state => ({ ...state, error, loading: false });
-
-// Create a fetch effect that updates state
-const fetchUserEffect = (userId) => createEffect(() => {
-  userStore.update(setLoading(true));
-  
-  fetch(`/api/users/${userId}`)
-    .then(response => response.json())
-    .then(data => {
-      userStore.update(setData(data));
-    })
-    .catch(error => {
-      userStore.update(setError(error.message));
-    });
-  
-  // No cleanup needed in this simple example
-  return () => {};
+// Running the effect returns a Promise<Result>
+Effect.run(fetchEffect)
+    .then(result => {
+        if (result.type === 'Ok') {
+            console.log('Success:', result.value);
+        } else {
+            console.error('Failure:', result.error);
+        }
 });</code></pre>
 
-                    <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2" id="conditional-effects">Conditional Effects</h2>
-                    <p class="mb-4">Sometimes you only want to run an effect under certain conditions:</p>
+                    <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2" id="resource-management">Resource Management and Cleanup</h2>
+                    <p class="mb-4">While the base <code>Effect</code> type doesn't have a built-in cleanup mechanism, you can model it by having your effect's <code>run</code> function return the result along with a <code>cleanup</code> function.</p>
 
-                    <pre class="bg-gray-800 text-white p-4 rounded-lg mb-6"><code class="language-javascript">// Run effect only if condition is true
-const conditionalEffect = (condition, effect) => {
-  if (condition) {
-    return effect;
-  } else {
-    // Return a no-op effect
-    return createEffect(() => () => {});
-  }
+                    <pre class="bg-gray-800 text-white p-4 rounded-lg mb-6"><code class="language-javascript">import { Effect } from './src/systems/effects/functions.js';
+
+const timerEffect = (onTick, interval) => Effect.of(() => {
+    const timerId = setInterval(onTick, interval);
+    
+    // The cleanup function
+    const cleanup = () => {
+        console.log('Clearing timer...');
+        clearInterval(timerId);
+  };
+
+    // The effect's "result" is the cleanup function itself
+    return { cleanup };
+});
+
+// Run the effect
+const { cleanup } = Effect.run(timerEffect(() => console.log('tick'), 1000));
+
+// Later, when the effect is no longer needed...
+// setTimeout(cleanup, 5000);
+                    </code></pre>
+
+                     <p class="mb-4">This pattern is especially useful for managing cancellable fetches:</p>
+
+                     <pre class="bg-gray-800 text-white p-4 rounded-lg mb-6"><code class="language-javascript">const cancellableFetch = (url) => Effect.of(() => {
+    const controller = new AbortController();
+    
+    const promise = fetch(url, { signal: controller.signal })
+        .then(res => res.json());
+        
+    const cleanup = () => controller.abort();
+    
+    return { promise, cleanup };
+});
+
+const { promise, cleanup } = Effect.run(cancellableFetch('/api/data'));
+
+promise.then(console.log).catch(err => {
+    if (err.name === 'AbortError') {
+        console.log('Fetch aborted!');
+    }
+});
+
+// If you need to cancel the request:
+// cleanup();
+                    </code></pre>
+
+                    <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2" id="effects-with-state">Effects and State Management</h2>
+                    <p class="mb-4">Effects should remain separate from state updates. The correct pattern is to run an effect, get its result, and then dispatch an action to the state store based on that result.</p>
+
+                    <pre class="bg-gray-800 text-white p-4 rounded-lg mb-6"><code class="language-javascript">import { createStore } from './src/systems/state/functions.js';
+import { Effect } from './src/systems/effects/functions.js';
+import { Result } from './src/core/types/result.js';
+
+// Assume a store and actions are defined
+const store = createStore(reducer, { data: null, loading: true, error: null });
+const actions = {
+    fetchSuccess: (data) => ({ type: 'FETCH_SUCCESS', payload: data }),
+    fetchError: (error) => ({ type: 'FETCH_ERROR', payload: error })
 };
 
-// Example usage
-const effect = conditionalEffect(
-  userId !== null,
-  fetchUserEffect(userId)
-);</code></pre>
-
-                    <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2" id="testing-effects">Testing Effects</h2>
-                    <p class="mb-4">FlexNet's effect system makes it easier to test side effects:</p>
-
-                    <pre class="bg-gray-800 text-white p-4 rounded-lg mb-6"><code class="language-javascript">// Define a mock fetch function
-const mockFetch = (mockData) => {
-  return () => Promise.resolve({
-    ok: true,
-    json: () => Promise.resolve(mockData)
+// 1. Define your effect
+const fetchUserEffect = (userId) => Effect.of(() =>
+  fetch(`/api/users/${userId}`)
+        .then(res => res.json())
+        .then(data => Result.Ok(data))
+        .catch(err => Result.Error(err))
+);
+  
+// 2. Run the effect and dispatch actions based on the result
+const loadUser = (userId) => {
+    const effect = fetchUserEffect(userId);
+    
+    Effect.run(effect).then(result => {
+        if (result.type === 'Ok') {
+            store.dispatch(actions.fetchSuccess(result.value));
+  } else {
+            store.dispatch(actions.fetchError(result.error));
+        }
   });
 };
 
-// Test the fetch effect
-test('fetchUserEffect should call onSuccess with user data', async () => {
-  // Setup
-  const mockUser = { id: 1, name: 'Test User' };
-  const originalFetch = global.fetch;
-  global.fetch = jest.fn().mockImplementation(mockFetch(mockUser));
-  
-  // Create handlers with jest mocks
-  const handlers = {
-    onSuccess: jest.fn(),
-    onError: jest.fn(),
-    onLoading: jest.fn()
-  };
-  
-  // Run the effect
-  const cleanup = runEffect(fetchUserEffect('/api/users/1'), handlers);
-  
-  // Wait for promises to resolve
-  await new Promise(resolve => setTimeout(resolve, 0));
-  
-  // Assertions
-  expect(handlers.onLoading).toHaveBeenCalledWith(true);
-  expect(handlers.onSuccess).toHaveBeenCalledWith(mockUser);
-  expect(handlers.onError).not.toHaveBeenCalled();
-  
-  // Cleanup
-  cleanup();
-  global.fetch = originalFetch;
-});</code></pre>
+// 3. Trigger the process
+loadUser('123');
+                    </code></pre>
 
                     <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2" id="best-practices">Best Practices</h2>
                     
@@ -401,8 +321,8 @@ test('fetchUserEffect should call onSuccess with user data', async () => {
                                     <span class="inline-flex items-center justify-center h-8 w-8 rounded-full bg-blue-100 text-blue-500 text-lg font-bold">1</span>
                                 </div>
                                 <div>
-                                    <h4 class="font-medium">Always Return a Cleanup Function</h4>
-                                    <p class="text-gray-600">Even if no cleanup is needed, return an empty function to maintain consistency.</p>
+                                    <h4 class="font-medium">Keep Your Logic Pure</h4>
+                                    <p class="text-gray-600">Your functions should create and compose effects. Defer running them to the edges of your application.</p>
                                 </div>
                             </li>
                             <li class="flex">
@@ -410,8 +330,8 @@ test('fetchUserEffect should call onSuccess with user data', async () => {
                                     <span class="inline-flex items-center justify-center h-8 w-8 rounded-full bg-blue-100 text-blue-500 text-lg font-bold">2</span>
                                 </div>
                                 <div>
-                                    <h4 class="font-medium">Keep Effects Small and Focused</h4>
-                                    <p class="text-gray-600">Each effect should do one thing well, allowing for better composition and testing.</p>
+                                    <h4 class="font-medium">Embrace Composition</h4>
+                                    <p class="text-gray-600">Use <code>map</code> and <code>chain</code> to build complex logic from small, reusable effects.</p>
                                 </div>
                             </li>
                             <li class="flex">
@@ -419,8 +339,8 @@ test('fetchUserEffect should call onSuccess with user data', async () => {
                                     <span class="inline-flex items-center justify-center h-8 w-8 rounded-full bg-blue-100 text-blue-500 text-lg font-bold">3</span>
                                 </div>
                                 <div>
-                                    <h4 class="font-medium">Handle Cancellation</h4>
-                                    <p class="text-gray-600">For async effects, properly handle cancellation to prevent race conditions.</p>
+                                    <h4 class="font-medium">Explicitly Model Cleanup</h4>
+                                    <p class="text-gray-600">For effects that create subscriptions or resources, have them return a <code>cleanup</code> function as part of their result.</p>
                                 </div>
                             </li>
                             <li class="flex">
@@ -428,142 +348,38 @@ test('fetchUserEffect should call onSuccess with user data', async () => {
                                     <span class="inline-flex items-center justify-center h-8 w-8 rounded-full bg-blue-100 text-blue-500 text-lg font-bold">4</span>
                                 </div>
                                 <div>
-                                    <h4 class="font-medium">Separate Effects from Business Logic</h4>
-                                    <p class="text-gray-600">Keep your core business logic pure and delegate side effects to the effect system.</p>
+                                    <h4 class="font-medium">Use `Result` for Fallible Effects</h4>
+                                    <p class="text-gray-600">For effects that can fail (like network requests), wrap their results in a <code>Result</code> or <code>Either</code> type to handle errors functionally.</p>
                                 </div>
                             </li>
                         </ul>
                     </div>
 
-                    <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2" id="complete-example">Complete Example</h2>
-                    <p class="mb-4">Here's a complete example of a user data loader using the effect system:</p>
-
-                    <pre class="bg-gray-800 text-white p-4 rounded-lg mb-6"><code class="language-javascript">import { createElement, render } from './src/core/runtime/jsx.js';
-import { createStore } from './src/systems/state/store.js';
-import { createEffect, runEffect } from './src/systems/effects/effect.js';
-import { Maybe } from './src/core/types/maybe.js';
-
-// === State ===
-const userStore = createStore({
-  data: Maybe.Nothing(),
-  loading: false,
-  error: Maybe.Nothing()
-});
-
-// State update functions
-const setLoading = loading => state => ({ ...state, loading });
-const setData = data => state => ({ ...state, data: Maybe.Just(data), loading: false, error: Maybe.Nothing() });
-const setError = error => state => ({ ...state, error: Maybe.Just(error), loading: false });
-
-// === Effects ===
-const userFetchEffect = (userId) => createEffect(() => {
-  userStore.update(setLoading(true));
-  
-  const controller = new AbortController();
-  const signal = controller.signal;
-  
-  fetch(`/api/users/${userId}`, { signal })
-    .then(response => {
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      return response.json();
-    })
-    .then(data => {
-      userStore.update(setData(data));
-    })
-    .catch(error => {
-      if (error.name !== 'AbortError') {
-        userStore.update(setError(error.message));
-      }
-    });
-  
-  return () => {
-    controller.abort();
-  };
-});
-
-// === Components ===
-const UserProfile = ({ userId }) => {
-  // Run the effect when the component mounts
-  const cleanup = runEffect(userFetchEffect(userId));
-  
-  // Store cleanup for component unmount
-  addEventListener('beforeunload', cleanup);
-  
-  return createElement('div', null,
-    userStore.getState().loading && createElement('p', null, 'Loading...'),
-    userStore.getState().error.map(
-      err => createElement('p', { className: 'error' }, `Error: ${err}`)
-    ).getOrElse(null),
-    userStore.getState().data.map(
-      user => createElement('div', null,
-        createElement('h2', null, user.name),
-        createElement('p', null, user.email),
-        createElement('p', null, user.bio)
-      )
-    ).getOrElse(null)
-  );
-};
-
-// === Application Initialization ===
-function init() {
-  render(
-    createElement(UserProfile, { userId: '123' }),
-    document.getElementById('root')
-  );
-  
-  // Subscribe to state changes to re-render
-  userStore.subscribe(() => {
-    render(
-      createElement(UserProfile, { userId: '123' }),
-      document.getElementById('root')
-    );
-  });
-}
-
-document.addEventListener('DOMContentLoaded', init);</code></pre>
-
                     <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2" id="api-reference">API Reference</h2>
+                    <p class="mb-4">The core <code>Effect</code> API is defined in <code>/src/systems/effects/functions.js</code>.</p>
                     
-                    <h3 class="text-xl font-medium mt-6 mb-3">createEffect</h3>
-                    <p class="mb-4">Creates an effect from an effect function.</p>
-                    
+                    <h3 class="text-xl font-medium mt-6 mb-3">Effect.of</h3>
                     <div class="bg-white p-4 rounded-lg border border-gray-200 mb-6">
-                        <h4 class="font-semibold mb-2">Parameters</h4>
-                        <ul class="list-disc pl-6 mb-4 space-y-1">
-                            <li><code>effectFn</code> - A function that performs the effect and returns a cleanup function</li>
-                        </ul>
+                        <pre class="bg-gray-800 text-white p-4 rounded-lg mb-2"><code class="language-javascript">Effect.of(value: () => a): Effect<a></code></pre>
+                        <p>Wraps a thunk (a zero-argument function) into an Effect. The computation is not performed until <code>run</code> is called.</p>
+                    </div>
                         
-                        <h4 class="font-semibold mb-2">Returns</h4>
-                        <p>An effect object that can be passed to <code>runEffect</code></p>
+                    <h3 class="text-xl font-medium mt-6 mb-3">Effect.run</h3>
+                     <div class="bg-white p-4 rounded-lg border border-gray-200 mb-6">
+                        <pre class="bg-gray-800 text-white p-4 rounded-lg mb-2"><code class="language-javascript">Effect.run(effect: Effect<a>): a</code></pre>
+                        <p>Executes the given effect and returns the result of its computation.</p>
                     </div>
 
-                    <h3 class="text-xl font-medium mt-6 mb-3">runEffect</h3>
-                    <p class="mb-4">Executes an effect with the provided handlers.</p>
-                    
+                    <h3 class="text-xl font-medium mt-6 mb-3">Effect.map</h3>
                     <div class="bg-white p-4 rounded-lg border border-gray-200 mb-6">
-                        <h4 class="font-semibold mb-2">Parameters</h4>
-                        <ul class="list-disc pl-6 mb-4 space-y-1">
-                            <li><code>effect</code> - An effect created with <code>createEffect</code></li>
-                            <li><code>handlers</code> - Object containing handler functions for effect events</li>
-                        </ul>
-                        
-                        <h4 class="font-semibold mb-2">Returns</h4>
-                        <p>A cleanup function that should be called when the effect is no longer needed</p>
+                        <pre class="bg-gray-800 text-white p-4 rounded-lg mb-2"><code class="language-javascript">Effect.map(fn: (a) => b): (effect: Effect<a>) => Effect<b></code></pre>
+                        <p>Returns a new effect that will apply the pure function <code>fn</code> to the result of the original effect.</p>
                     </div>
 
-                    <h3 class="text-xl font-medium mt-6 mb-3">composeEffects</h3>
-                    <p class="mb-4">Combines multiple effects into a single effect.</p>
-                    
+                    <h3 class="text-xl font-medium mt-6 mb-3">Effect.chain</h3>
                     <div class="bg-white p-4 rounded-lg border border-gray-200 mb-6">
-                        <h4 class="font-semibold mb-2">Parameters</h4>
-                        <ul class="list-disc pl-6 mb-4 space-y-1">
-                            <li><code>...effects</code> - One or more effects to compose together</li>
-                        </ul>
-                        
-                        <h4 class="font-semibold mb-2">Returns</h4>
-                        <p>A composed effect that runs all the provided effects and returns a function that cleans up all of them</p>
+                        <pre class="bg-gray-800 text-white p-4 rounded-lg mb-2"><code class="language-javascript">Effect.chain(fn: (a) => Effect<b>): (effect: Effect<a>) => Effect<b></code></pre>
+                        <p>Returns a new effect by applying a function <code>fn</code> (that returns a new effect) to the result of the original effect. Used for sequencing.</p>
                     </div>
 
                     <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2" id="next-steps">Next Steps</h2>
@@ -581,20 +397,10 @@ document.addEventListener('DOMContentLoaded', init);</code></pre>
                             <h3 class="font-semibold text-lg mb-2">Todo App Example</h3>
                             <p class="text-gray-600">See effects in action in a complete application.</p>
                         </a>
-                        <a href="../api/maybe.html" class="block p-4 border border-gray-200 rounded-lg hover:border-primary hover:shadow-md transition">
-                            <h3 class="font-semibold text-lg mb-2">Maybe Type</h3>
-                            <p class="text-gray-600">Learn about the Maybe type, often used with effects.</p>
+                        <a href="../api/result.html" class="block p-4 border border-gray-200 rounded-lg hover:border-primary hover:shadow-md transition">
+                            <h3 class="font-semibold text-lg mb-2">Result Type</h3>
+                            <p class="text-gray-600">Learn about the Result type, which is essential for handling effects that can fail.</p>
                         </a>
-                    </div>
-
-                    <div class="bg-blue-50 border-l-4 border-primary p-4 rounded-md">
-                        <h4 class="font-semibold flex items-center">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-primary" viewBox="0 0 20 20" fill="currentColor">
-                                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2h-1V9z" clip-rule="evenodd" />
-                            </svg>
-                            Looking for more examples?
-                        </h4>
-                        <p>Check out our <a href="../examples/website.html" class="text-primary hover:underline">Website Example</a> to see how effects are used in a more complex application.</p>
                     </div>
                 </div>
             </div>

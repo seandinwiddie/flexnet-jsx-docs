@@ -108,187 +108,194 @@
                 </div>
                 
                 <h1 class="text-4xl font-bold mb-6">State Management</h1>
-                <p class="text-lg text-gray-600 mb-8">FlexNet JSX implements a functional, immutable approach to state management that provides predictability, testability, and maintainability. This document explains the core principles, implementation, and best practices for state management in FlexNet.</p>
+                <p class="text-lg text-gray-600 mb-8">FlexNet JSX implements a functional, immutable, and predictable approach to state management using a centralized store and pure reducer functions.</p>
 
                 <div class="prose prose-blue max-w-none">
-                    <div class="bg-blue-50 border-l-4 border-primary p-4 rounded-md mb-6">
-                        <h4 class="font-semibold">Important</h4>
-                        <p>FlexNet's state management follows strict functional programming principles with immutable state transitions and a unidirectional data flow.</p>
-                </div>
-                
                     <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2">Core Principles</h2>
                     <ul class="list-disc pl-6 mb-6 space-y-2">
-                        <li><strong>Immutability:</strong> State is never modified directly; each state change creates a new state object.</li>
-                        <li><strong>Unidirectional Flow:</strong> Data flows in one direction, making the application state predictable.</li>
-                        <li><strong>Pure Functions:</strong> State transformations are performed by pure functions with no side effects.</li>
-                        <li><strong>Centralized Store:</strong> A single source of truth for application state with controlled access.</li>
+                        <li><strong>Single Source of Truth:</strong> The entire state of your application is stored in a single object tree within a single store.</li>
+                        <li><strong>State is Read-Only:</strong> The only way to change the state is to dispatch an action, an object describing what happened.</li>
+                        <li><strong>Changes are Made with Pure Functions:</strong> To specify how the state tree is transformed by actions, you write pure reducers.</li>
+                        <li><strong>Unidirectional Data Flow:</strong> State changes flow in one direction: an action is dispatched, the reducer calculates the new state, and subscribers are notified.</li>
                     </ul>
                     
-                    <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2">The Store</h2>
-                    <p class="mb-4">At the heart of FlexNet's state management is the store, a functional implementation that maintains application state and notifies subscribers of changes.</p>
+                    <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2">The Store, Reducers, and Actions</h2>
+                    <p class="mb-4">The three core components of FlexNet state management are the store, reducers, and actions.</p>
 
-                    <h3 class="text-xl font-medium mt-6 mb-3">Basic Store Implementation</h3>
-                    <pre><code class="language-javascript">// src/systems/state/store.js
-const createStore = (initialState) => {
+                    <h3 class="text-xl font-medium mt-6 mb-3">The Store</h3>
+                    <p class="mb-4">The store holds the application state, allows access to the state via <code>getState()</code>, allows state to be updated via <code>dispatch(action)</code>, and registers listeners via <code>subscribe(listener)</code>.</p>
+                    <pre><code class="language-javascript">// src/systems/state/functions.js
+import { pipe } from '../../core/functions/composition.js';
+
+const createStore = (reducer, initialState) => {
     const subscribers = new Set();
     let state = initialState;
 
     return {
         getState: () => state,
-        update: (updater) => {
-            state = updater(state);
-            subscribers.forEach(subscriber => subscriber(state));
-            return state;
-        },
-        subscribe: (subscriber) => {
-            subscribers.add(subscriber);
-            // Return unsubscribe function
-            return () => subscribers.delete(subscriber);
+        dispatch: action =>
+            pipe(
+                reducer(state),
+                newState => { state = newState; },
+                () => subscribers.forEach(fn => fn())
+            )(action),
+        subscribe: fn => {
+            subscribers.add(fn);
+            return () => subscribers.delete(fn);
         }
     };
 };</code></pre>
-                
-                    <h3 class="text-xl font-medium mt-6 mb-3">Key Concepts</h3>
-                    <ul class="list-disc pl-6 mb-6 space-y-2">
-                    <li><strong>getState</strong> - Returns the current state</li>
-                    <li><strong>update</strong> - Updates the state using a pure function updater</li>
-                    <li><strong>subscribe</strong> - Registers a callback to be notified of state changes</li>
-                </ul>
-                
-                    <h3 class="text-xl font-medium mt-6 mb-3">Usage Example</h3>
-                <pre><code class="language-javascript">import { createStore } from './systems/state/store.js';
-import Maybe from './core/types/maybe.js';
 
-// Create a store with initial state
-const store = createStore(Maybe.Just(0));
+                    <h3 class="text-xl font-medium mt-6 mb-3">Actions</h3>
+                     <p class="mb-4">Actions are plain JavaScript objects that represent an intention to change the state. They must have a <code>type</code> property.</p>
+                    <pre><code class="language-javascript">// An action to increment a counter
+const incrementAction = { type: 'INCREMENT' };
 
-// Update the state
-store.update(count => Maybe.Just(count.value + 1));
-
-// Subscribe to state changes
-const unsubscribe = store.subscribe(state => {
-    console.log('State updated:', state.value);
-});
-
-// Later, unsubscribe when done
-unsubscribe();</code></pre>
-                
-                    <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2">Immutable State Updates</h2>
-                    <p class="mb-4">All state updates in FlexNet are performed using pure functions that produce a new state object instead of modifying the existing one.</p>
-                
-                    <h3 class="text-xl font-medium mt-6 mb-3">Simple Updates</h3>
-                <pre><code class="language-javascript">// Creating a counter store
-const counterStore = createStore(Maybe.Just(0));
-
-// Increment function (pure)
-const increment = count => Maybe.Just(count.value + 1);
-
-// Decrement function (pure)
-const decrement = count => Maybe.Just(count.value - 1);
-
-// Applying updates
-counterStore.update(increment);
-counterStore.update(decrement);</code></pre>
-                
-                    <h3 class="text-xl font-medium mt-6 mb-3">Complex State Updates</h3>
-                <pre><code class="language-javascript">// Creating a todo list store
-const todosStore = createStore(Maybe.Just([]));
-
-// Add todo (pure function)
-const addTodo = (text) => (todos) => 
-  Maybe.Just([
-    ...todos.value,
-    {
-      id: Date.now(),
-      text,
-      completed: false
-    }
-  ]);
-
-// Toggle todo completion (pure function)
-const toggleTodo = (id) => (todos) =>
-  Maybe.Just(
-    todos.value.map(todo =>
-      todo.id === id
-        ? { ...todo, completed: !todo.completed }
-        : todo
-    )
-  );
-
-// Remove todo (pure function)
-const removeTodo = (id) => (todos) =>
-  Maybe.Just(
-    todos.value.filter(todo => todo.id !== id)
-  );
-
-// Applying updates
-todosStore.update(addTodo('Learn FlexNet'));
-todosStore.update(addTodo('Build an app'));
-todosStore.update(toggleTodo(1234567890));</code></pre>
-                
-                    <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2">Integration with FlexNet Types</h2>
-                    <p class="mb-4">FlexNet's state management integrates seamlessly with the type system to provide type-safe state operations.</p>
-                
-                    <h3 class="text-xl font-medium mt-6 mb-3">Using Maybe for Optional State</h3>
-                <pre><code class="language-javascript">// User profile store with Maybe for handling loading/not found states
-const userProfileStore = createStore(Maybe.Nothing());
-
-// Load user profile
-const loadUserProfile = (userId) => {
-  // Simulate API call
-  fetchUserProfile(userId)
-    .then(profile => {
-      userProfileStore.update(() => Maybe.Just(profile));
-    })
-    .catch(error => {
-      console.error('Failed to load profile:', error);
-      // Keep state as Nothing
-    });
-};
-
-// Get user display name safely
-const getUserDisplayName = () => {
-  const profileState = userProfileStore.getState();
-  return profileState
-    .chain(profile => Maybe.fromNullable(profile.name))
-    .getOrElse('Anonymous');
+// An action to add a todo, with a payload
+const addTodoAction = { 
+  type: 'ADD_TODO',
+  payload: 'Learn functional programming'
 };</code></pre>
-                
-                    <h3 class="text-xl font-medium mt-6 mb-3">Using Either for Error Handling</h3>
-                <pre><code class="language-javascript">import { createStore } from './systems/state/store.js';
-import { Either } from './core/types/either.js';
 
-// Store for handling form data with validation
-const formStore = createStore(
-  Either.Right({ email: '', password: '' })
-);
+                    <h3 class="text-xl font-medium mt-6 mb-3">Reducers</h3>
+                    <p class="mb-4">A reducer is a pure, curried function that specifies how the application's state changes in response to an action. It has the signature: <code>state => action => newState</code>.</p>
+                     <pre><code class="language-javascript">// A reducer for a simple counter
+const counterReducer = state => action => {
+  switch (action.type) {
+    case 'INCREMENT':
+      return state + 1;
+    case 'DECREMENT':
+      return state - 1;
+    default:
+      return state; // MUST handle the default case
+  }
+};</code></pre>
 
-// Validate email and update state
-const updateEmail = (email) => {
-  if (!email) {
-    formStore.update(() => Either.Left('Email is required'));
-  } else if (!/\S+@\S+\.\S+/.test(email)) {
-    formStore.update(() => Either.Left('Email is invalid'));
-  } else {
-    formStore.update(state => 
-      state.map(s => ({ ...s, email }))
-    );
+                    <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2">Usage Example: A Simple Counter</h2>
+                    <p class="mb-4">Let's tie these concepts together with a basic counter example.</p>
+                    <pre><code class="language-javascript">import { createStore } from './src/systems/state/functions.js';
+
+// 1. The reducer
+const counterReducer = state => action => {
+  switch (action.type) {
+    case 'INCREMENT': return state + 1;
+    case 'DECREMENT': return state - 1;
+    default: return state;
   }
 };
 
-// Handle form submission
-const submitForm = () => {
-  formStore.getState().fold(
-    error => {
-      // Show error message
-      console.error('Form has errors:', error);
-    },
-    data => {
-      // Submit data
-      console.log('Submitting data:', data);
+// 2. Create the store
+const store = createStore(counterReducer, 0);
+
+// 3. Subscribe to changes to update the UI
+const unsubscribe = store.subscribe(() => {
+  console.log('State changed:', store.getState());
+});
+
+// 4. Dispatch actions to update the state
+store.dispatch({ type: 'INCREMENT' }); // Logs: State changed: 1
+store.dispatch({ type: 'INCREMENT' }); // Logs: State changed: 2
+store.dispatch({ type: 'DECREMENT' }); // Logs: State changed: 1
+
+// 5. Unsubscribe when the listener is no longer needed
+unsubscribe();
+                    </code></pre>
+                
+                    <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2">Complex State Updates: Todo List</h2>
+                    <p class="mb-4">The reducer pattern scales well for more complex state structures like a todo list.</p>
+                    <pre><code class="language-javascript">// Action creator functions
+const addTodo = (text) => ({ type: 'ADD_TODO', payload: { id: Date.now(), text, completed: false } });
+const toggleTodo = (id) => ({ type: 'TOGGLE_TODO', payload: { id } });
+
+// The todos reducer
+const todosReducer = state => action => {
+  switch (action.type) {
+    case 'ADD_TODO':
+      return [...state, action.payload];
+    case 'TOGGLE_TODO':
+      return state.map(todo =>
+        todo.id === action.payload.id
+          ? { ...todo, completed: !todo.completed }
+          : todo
+      );
+    default:
+      return state;
+  }
+};
+
+const todosStore = createStore(todosReducer, []);
+
+todosStore.dispatch(addTodo('Learn FlexNet'));
+todosStore.dispatch(addTodo('Build an app'));
+todosStore.dispatch(toggleTodo(todosStore.getState()[0].id));
+
+console.log(todosStore.getState());
+                    </code></pre>
+                
+                    <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2">Integration with FlexNet Types</h2>
+                    <p class="mb-4">FlexNet's state management integrates seamlessly with its functional types, allowing you to create robust, type-safe state containers.</p>
+                
+                    <h3 class="text-xl font-medium mt-6 mb-3">Using Maybe for Optional State</h3>
+                    <p class="mb-4">A reducer can manage a state that is a <code>Maybe</code> type, which is perfect for handling optional data like a logged-in user.</p>
+                    <pre><code class="language-javascript">import { Maybe } from './src/core/types/maybe.js';
+
+// The state is Maybe<User>
+const userProfileReducer = state => action => {
+    switch (action.type) {
+        case 'FETCH_USER_SUCCESS':
+            return Maybe.Just(action.payload);
+        case 'FETCH_USER_FAILURE':
+        case 'LOGOUT':
+            return Maybe.Nothing();
+        default:
+            return state;
     }
-  );
-};</code></pre>
+};
+
+const userStore = createStore(userProfileReducer, Maybe.Nothing());
+
+// Dispatch actions
+userStore.dispatch({ type: 'FETCH_USER_SUCCESS', payload: { name: 'Alice' } });
+
+// Get user display name safely
+const displayName = userStore.getState()
+    .map(profile => profile.name)
+    .getOrElse('Anonymous'); // "Alice"
+                    </code></pre>
+                
+                    <h3 class="text-xl font-medium mt-6 mb-3">Using Either for Error Handling</h3>
+                    <p class="mb-4">You can use an <code>Either</code> as your state to model data that can be in one of two states, such as valid data or an error.</p>
+                    <pre><code class="language-javascript">import { Either } from './src/core/types/either.js';
+
+// The state is Either<Error, FormData>
+const formReducer = state => action => {
+  if (action.type === 'UPDATE_FIELD') {
+    const { field, value } = action.payload;
+    const currentData = state.getOrElse({ email: '', password: '' });
+    const newData = { ...currentData, [field]: value };
+    
+    // Perform validation, returning a Left for an error, or a Right for valid data
+    if (!newData.email) {
+      return Either.Left('Email is required');
+    }
+    if (!/\S+@\S+\.\S+/.test(newData.email)) {
+      return Either.Left('Email is invalid');
+    }
+    return Either.Right(newData);
+  }
+  return state;
+};
+
+const formStore = createStore(formReducer, Either.Right({ email: '', password: '' }));
+
+formStore.dispatch({ type: 'UPDATE_FIELD', payload: { field: 'email', value: 'invalid-email' } });
+
+// Handle form state
+formStore.getState().fold(
+  error => console.error('Form has errors:', error), // This will run
+  data => console.log('Submitting data:', data)
+);
+                    </code></pre>
                 </div>
             </div>
         </main>

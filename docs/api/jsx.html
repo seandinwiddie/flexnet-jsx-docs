@@ -108,14 +108,14 @@
                 </div>
 
                 <h1 class="text-4xl font-bold mb-6">JSX API</h1>
-                <p class="text-lg text-gray-600 mb-8">The core API for creating and rendering JSX elements in FlexNet JSX.</p>
+                <p class="text-lg text-gray-600 mb-8">The core API for creating and rendering JSX elements in FlexNet JSX. The framework treats JSX as a system of pure functions and types, emphasizing functional composition, immutability, and robust error handling through its core `Maybe`, `Either`, and `Result` types.</p>
 
                 <div class="prose prose-blue max-w-none">
                     <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2">Core Functions</h2>
-                    <p class="mb-4">The JSX API provides the following core functions for working with JSX elements:</p>
+                    <p class="mb-4">The JSX API provides pure functions for creating and rendering virtual DOM nodes. These functions integrate deeply with the framework's type system to ensure safety and predictability.</p>
 
                     <h3 class="text-xl font-medium mt-6 mb-3">createElement</h3>
-                    <p class="mb-4">Creates a virtual DOM element that can be rendered to the DOM.</p>
+                    <p class="mb-4">Creates a virtual DOM element, known as a `VNode`. This function is pure and includes validation for its inputs, returning an `Either` type to safely handle potential errors, such as invalid properties or children.</p>
                     
                     <div class="bg-white border border-gray-200 rounded-lg mb-6">
                         <div class="border-b border-gray-200 px-4 py-3 bg-gray-50">
@@ -126,7 +126,7 @@
   type: string | Function,
   props: object | null,
   ...children: any[]
-): VNode;</code></pre>
+): Either&lt;Error, VNode&gt;;</code></pre>
                         </div>
                     </div>
 
@@ -169,25 +169,33 @@
                             <h4 class="font-semibold">Example</h4>
                         </div>
                         <div class="p-4">
-                            <pre class="bg-gray-800 text-white p-4 rounded-lg"><code class="language-javascript">import { createElement } from './src/core/runtime/jsx.js';
+                            <pre class="bg-gray-800 text-white p-4 rounded-lg"><code class="language-javascript">import { createElement } from '/src/core/runtime/jsx.js';
+import { compose } from '/src/core/functions/composition.js';
 
-// Creating a simple element
-const button = createElement('button', 
-  { onClick: () => console.log('Clicked!'), className: 'btn' },
+// An action function to be called on click.
+// In a real app, this would likely dispatch to a state store.
+const handleClick = () => console.log('Button clicked!');
+
+// Creating a button. Note how the onClick handler is composed.
+const buttonElement = createElement(
+  'button', 
+  { 
+    onClick: compose(handleClick),
+    className: 'btn' 
+  },
   'Click Me'
 );
 
-// Creating a nested element structure
-const card = createElement('div', { className: 'card' },
-  createElement('h2', null, 'Card Title'),
-  createElement('p', null, 'Card content goes here'),
-  button
+// The result is an `Either` type. We can fold it to handle success or failure.
+buttonElement.fold(
+  error => console.error('Failed to create element:', error),
+  vnode => console.log('Successfully created VNode:', vnode)
 );</code></pre>
                         </div>
                     </div>
 
                     <h3 class="text-xl font-medium mt-6 mb-3">render</h3>
-                    <p class="mb-4">Renders a virtual DOM element into a DOM container.</p>
+                    <p class="mb-4">Renders a virtual DOM element into a container. As defined in the API reference, `render` is a composition of pure functions that create a virtual DOM, reconcile differences, and patch the actual DOM, isolating side effects.</p>
                     
                     <div class="bg-white border border-gray-200 rounded-lg mb-6">
                         <div class="border-b border-gray-200 px-4 py-3 bg-gray-50">
@@ -196,8 +204,7 @@ const card = createElement('div', { className: 'card' },
                         <div class="p-4">
                             <pre class="bg-gray-800 text-white p-4 rounded-lg"><code class="language-typescript">function render(
   element: VNode,
-  container: HTMLElement,
-  callback?: () => void
+  container: HTMLElement
 ): void;</code></pre>
                         </div>
                     </div>
@@ -226,11 +233,6 @@ const card = createElement('div', { className: 'card' },
                                         <td class="py-2 pr-4"><code>HTMLElement</code></td>
                                         <td class="py-2">The DOM container to render into.</td>
                                     </tr>
-                                    <tr>
-                                        <td class="py-2 pr-4"><code>callback</code></td>
-                                        <td class="py-2 pr-4"><code>() => void</code></td>
-                                        <td class="py-2">Optional callback to execute after rendering is complete.</td>
-                                    </tr>
                                 </tbody>
                             </table>
                         </div>
@@ -241,18 +243,16 @@ const card = createElement('div', { className: 'card' },
                             <h4 class="font-semibold">Example</h4>
                         </div>
                         <div class="p-4">
-                            <pre class="bg-gray-800 text-white p-4 rounded-lg"><code class="language-javascript">import { createElement, render } from './src/core/runtime/jsx.js';
+                            <pre class="bg-gray-800 text-white p-4 rounded-lg"><code class="language-javascript">import { createElement, render } from '/src/core/runtime/jsx.js';
 
-// Create an element
-const app = createElement('div', { className: 'app' },
-  createElement('h1', null, 'Hello, World!'),
-  createElement('p', null, 'Welcome to FlexNet JSX')
+// Create an element, assuming it's valid (or handle the Either).
+const appElement = createElement('div', { className: 'app' },
+  createElement('h1', null, 'Hello, FlexNet!'),
+  createElement('p', null, 'A purely functional approach to UI')
 );
 
-// Render it to the DOM
-render(app, document.getElementById('root'), () => {
-  console.log('Rendering complete!');
-});</code></pre>
+// Render the VNode to the DOM if creation was successful.
+appElement.map(vnode => render(vnode, document.getElementById('root')));</code></pre>
                         </div>
                     </div>
 
@@ -266,7 +266,7 @@ render(app, document.getElementById('root'), () => {
                         <div class="p-4">
                             <pre class="bg-gray-800 text-white p-4 rounded-lg"><code class="language-typescript">function createFragment(
   children: any[]
-): VNode;</code></pre>
+): Either&lt;Error, VNode&gt;;</code></pre>
                         </div>
                     </div>
 
@@ -299,15 +299,18 @@ render(app, document.getElementById('root'), () => {
                             <h4 class="font-semibold">Example</h4>
                         </div>
                         <div class="p-4">
-                            <pre class="bg-gray-800 text-white p-4 rounded-lg"><code class="language-javascript">import { createElement, createFragment } from './src/core/runtime/jsx.js';
+                            <pre class="bg-gray-800 text-white p-4 rounded-lg"><code class="language-javascript">import { createElement, createFragment } from '/src/core/runtime/jsx.js';
+import { Either } from '/src/core/types/either.js';
 
-// A component that returns multiple elements without a wrapper
+// A component that returns multiple elements without a wrapper.
+// This demonstrates returning an `Either` from a component function.
 const UserInfo = ({ user }) => 
-  createFragment([
-    createElement('h2', null, user.name),
-    createElement('p', null, `Email: ${user.email}`),
-    createElement('p', null, `Role: ${user.role}`)
-  ]);</code></pre>
+  !user 
+    ? Either.Left(new Error('User data is missing.'))
+    : Either.Right(createFragment([
+        createElement('h2', null, user.name),
+        createElement('p', null, `Email: ${user.email}`)
+      ]));</code></pre>
                         </div>
                     </div>
 
@@ -322,7 +325,7 @@ const UserInfo = ({ user }) =>
                         </div>
                         <div class="p-4">
                             <pre class="bg-gray-800 text-white p-4 rounded-lg"><code class="language-typescript">interface VNode {
-  type: string | Function | Symbol; // Element type or component
+  type: string | Function | Symbol; // Element type, component, or Fragment symbol
   props: {
     children: any[];  // Child elements
     [key: string]: any; // Other properties
@@ -332,8 +335,67 @@ const UserInfo = ({ user }) =>
                         </div>
                     </div>
 
+                    <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2">The Functional Approach to JSX</h2>
+                    <p class="mb-4">In FlexNet JSX, creating UI is not just about writing elements, but about composing pure functions and managing state with immutable patterns. The following example demonstrates the idiomatic approach, integrating state management and functional composition directly into a simple counter component.</p>
+
+                    <div class="bg-white border border-gray-200 rounded-lg mb-6">
+                        <div class="border-b border-gray-200 px-4 py-3 bg-gray-50">
+                            <h4 class="font-semibold">Idiomatic Counter Example</h4>
+                        </div>
+                        <div class="p-4">
+                            <pre class="bg-gray-800 text-white p-4 rounded-lg"><code class="language-javascript">// Import necessary functions and types
+import { createElement, render } from '/src/core/runtime/jsx.js';
+import { createStore } from '/src/systems/state/functions.js';
+import { compose } from '/src/core/functions/composition.js';
+import { Maybe } from '/src/core/types/maybe.js';
+
+// 1. Define pure functions for state transitions
+const increment = n => n + 1;
+const decrement = n => n - 1;
+
+// 2. Create an immutable store with an initial state wrapped in a Maybe
+const store = createStore(Maybe.Just(0));
+
+// 3. Define a pure functional component
+const Counter = ({ countMaybe, onIncrement, onDecrement }) => {
+  // Use `getOrElse` to safely extract the value from the Maybe
+  const count = countMaybe.getOrElse(0);
+  
+  // `createElement` returns an `Either`, we assume success for brevity
+  return createElement('div', null,
+    createElement('h2', null, `Count: ${count}`),
+    createElement('button', { onClick: onDecrement }, '-'),
+    createElement('button', { onClick: onIncrement }, '+')
+  ).getOrElse(null); // Fallback to null on creation error
+};
+
+// 4. Compose update logic
+// `store.dispatch` expects the new state, so we map the Maybe value
+// through our pure function (increment/decrement) before dispatching.
+const handleIncrement = () => store.dispatch(store.getState().map(increment));
+const handleDecrement = () => store.dispatch(store.getState().map(decrement));
+
+// 5. Subscribe to the store to re-render on state changes
+store.subscribe(() => {
+  const vnode = Counter({
+    countMaybe: store.getState(),
+    onIncrement: handleIncrement,
+    onDecrement: handleDecrement,
+  });
+  
+  if (vnode) {
+    render(vnode, document.getElementById('root'));
+  }
+});
+
+// 6. Initial render
+store.subscribe()(); // Immediately invoke to render initial state
+</code></pre>
+                        </div>
+                    </div>
+
                     <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2">Using JSX Syntax</h2>
-                    <p class="mb-4">FlexNet JSX supports the JSX syntax when used with a JSX compiler or transpiler. The JSX syntax is transformed into <code>createElement</code> calls at build time.</p>
+                    <p class="mb-4">FlexNet JSX supports the familiar JSX syntax. When using a transpiler like Babel or TypeScript, JSX tags are converted into `createElement` function calls. This allows for a declarative syntax while preserving the underlying functional, type-safe architecture.</p>
 
                     <div class="bg-white border border-gray-200 rounded-lg mb-6">
                         <div class="border-b border-gray-200 px-4 py-3 bg-gray-50">
@@ -351,13 +413,16 @@ const UserInfo = ({ user }) =>
 );</code></pre>
                                 </div>
                                 <div>
-                                    <h5 class="font-medium mb-2">Transformed Output</h5>
+                                    <h5 class="font-medium mb-2">Transformed Output (Conceptual)</h5>
                                     <pre class="bg-gray-800 text-white p-4 rounded-lg h-full"><code class="language-javascript">const element = createElement(
   'div',
   { className: 'container' },
   createElement('h1', null, 'Hello, World!'),
   createElement('p', null, 'Welcome to FlexNet JSX')
-);</code></pre>
+);
+
+// Note: The actual return is Either&lt;Error, VNode&gt;
+</code></pre>
                                 </div>
                             </div>
                         </div>
@@ -379,7 +444,7 @@ const UserInfo = ({ user }) =>
     ["@babel/plugin-transform-react-jsx", {
       "pragma": "createElement",
       "pragmaFrag": "createFragment",
-      "importSource": "./src/core/runtime"
+      "importSource": "/src/core/runtime/jsx.js"
     }]
   ]
 }</code></pre>
@@ -448,7 +513,9 @@ const UserInfo = ({ user }) =>
                             <h4 class="font-semibold">Example Usage</h4>
                         </div>
                         <div class="p-4">
-                            <pre class="bg-gray-800 text-white p-4 rounded-lg"><code class="language-javascript">import { createElement } from './src/core/runtime/jsx.js';
+                            <pre class="bg-gray-800 text-white p-4 rounded-lg"><code class="language-javascript">import { createElement } from '/src/core/runtime/jsx.js';
+import { sanitize } from '/src/security/functions.js';
+import { Either } from '/src/core/types/either.js';
 
 // Using the key prop for list items
 const list = createElement('ul', null,
@@ -457,26 +524,27 @@ const list = createElement('ul', null,
   )
 );
 
-// Using ref to get DOM element reference
-let inputRef;
-const form = createElement('form', null,
+// Ref example using a functional approach with a callback
+const createForm = (onInputRef) => createElement('form', null,
   createElement('input', {
     type: 'text',
-    ref: el => { inputRef = el; }
-  }),
-  createElement('button', {
-    onClick: () => {
-      console.log('Input value:', inputRef.value);
-    }
-  }, 'Submit')
+    ref: el => onInputRef(Maybe.fromNullable(el))
+  })
 );
 
-// Using dangerouslySetInnerHTML (with caution)
-const content = createElement('div', {
-  dangerouslySetInnerHTML: {
-    __html: sanitizedHtml // Make sure this is properly sanitized!
-  }
-});</code></pre>
+
+// Using dangerouslySetInnerHTML safely with the framework's sanitize function
+const rawHtml = `<script>alert('xss')</script><span>Safe Content</span>`;
+const sanitizedEither = sanitize(rawHtml); // Returns Either<Error, String>
+
+const content = sanitizedEither.fold(
+  error => createElement('p', {className: 'error'}, `Invalid HTML: ${error}`),
+  safeHtml => createElement('div', {
+    dangerouslySetInnerHTML: { __html: safeHtml }
+  })
+);
+
+</code></pre>
                         </div>
                     </div>
 
@@ -485,14 +553,16 @@ const content = createElement('div', {
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-yellow-500" viewBox="0 0 20 20" fill="currentColor">
                                 <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2h-1V9z" clip-rule="evenodd" />
                             </svg>
-                            Best Practices
+                            FlexNet JSX Best Practices
                         </h4>
                         <ul class="list-disc pl-6 mt-2">
-                            <li>Always provide a unique <code>key</code> prop when rendering lists to optimize updates</li>
-                            <li>Avoid using <code>dangerouslySetInnerHTML</code> unless absolutely necessary</li>
-                            <li>When using <code>dangerouslySetInnerHTML</code>, always sanitize the HTML content first</li>
-                            <li>Prefer functional components over class components for better composition</li>
-                            <li>Keep components small and focused on a single responsibility</li>
+                            <li><strong>Embrace Pure Functions:</strong> Ensure all components and logic are pure functions. Avoid internal mutable state and side effects.</li>
+                            <li><strong>Use `compose` and `pipe`:</strong> Build complex logic by composing smaller, reusable functions. This is central to the framework's design.</li>
+                            <li><strong>Leverage Core Types:</strong> Use `Maybe`, `Either`, and `Result` to manage control flow, handle optional values, and manage errors safely. Avoid `try/catch` and `null` checks.</li>
+                            <li><strong>Isolate Side Effects:</strong> All side effects (e.g., HTTP requests, DOM mutations) must be managed by the Effect and Render systems, respectively.
+                            <li><strong>Immutable State:</strong> Never mutate state directly. Use the `Store` system to manage state with pure functional updates.</li>
+                            <li><strong>Always Sanitize:</strong> When using `dangerouslySetInnerHTML`, always process the HTML through the framework's `sanitize` function first.</li>
+                            <li><strong>Provide `key` Prop:</strong> Always provide a unique `key` prop when rendering lists to ensure efficient reconciliation.</li>
                         </ul>
                     </div>
                 </div>

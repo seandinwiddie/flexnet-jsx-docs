@@ -107,48 +107,48 @@
                     <span class="text-gray-700">Functions</span>
                 </div>
 
-                <h1 class="text-4xl font-bold mb-6">Functional Programming</h1>
-                <p class="text-lg text-gray-600 mb-8">FlexNet JSX is built on functional programming principles, providing a set of utilities to work with functions in a composable, pure way.</p>
+                <h1 class="text-4xl font-bold mb-6">Core Functions</h1>
+                <p class="text-lg text-gray-600 mb-8">FlexNet JSX is built on functional programming principles. It provides a set of core utilities to compose functions and transform data in a pure, predictable way. These functions are designed to work seamlessly with the framework's <a href="types.html" class="text-primary hover:underline">Type System</a> (Maybe, Either, and Result) to build robust applications.</p>
 
                 <div class="prose prose-blue max-w-none">
-                    <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2">Core Function Utilities</h2>
-                    <p class="mb-4">FlexNet provides a set of utilities for working with functions in a functional programming style:</p>
+                    <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2">Function Composition</h2>
+                    <p class="mb-4">FlexNet provides utilities for function composition, a central pattern in functional programming for combining smaller functions into more complex ones.</p>
 
                     <h3 class="text-xl font-medium mt-6 mb-3">compose</h3>
-                    <p class="mb-4">The <code>compose</code> function allows you to combine multiple functions together, applying them from right to left.</p>
-                    <pre class="bg-gray-800 text-white p-4 rounded-lg mb-6"><code class="language-javascript">import { compose } from './src/core/runtime/runtime.js';
+                    <p class="mb-4">The <code>compose</code> function allows you to combine multiple functions, applying them from right to left. It's a powerful way to chain operations where the output of one function becomes the input of the next.</p>
+                    <pre class="bg-gray-800 text-white p-4 rounded-lg mb-6"><code class="language-javascript">import { compose } from '../../core/functions/composition.js';
 
 // Example functions
 const double = x => x * 2;
 const increment = x => x + 1;
 const square = x => x * x;
 
-// Compose functions: (x => square(double(increment(x))))
-const doubleIncrementAndSquare = compose(square, double, increment);
+// Compose functions: square(double(increment(x)))
+const process = compose(square, double, increment);
 
 // Usage
-doubleIncrementAndSquare(3); // Result: 64
+process(3); // Result: 64
 // Calculation: square(double(increment(3))) = square(double(4)) = square(8) = 64</code></pre>
 
                     <h3 class="text-xl font-medium mt-6 mb-3">pipe</h3>
-                    <p class="mb-4">The <code>pipe</code> function is similar to <code>compose</code>, but applies the functions from left to right.</p>
-                    <pre class="bg-gray-800 text-white p-4 rounded-lg mb-6"><code class="language-javascript">import { pipe } from './src/core/runtime/runtime.js';
+                    <p class="mb-4">The <code>pipe</code> function is similar to <code>compose</code>, but it applies functions from left to right. This can sometimes feel more natural as it follows the reading order of the code.</p>
+                    <pre class="bg-gray-800 text-white p-4 rounded-lg mb-6"><code class="language-javascript">import { pipe } from '../../core/functions/composition.js';
 
 // Example functions
 const double = x => x * 2;
 const increment = x => x + 1;
 const square = x => x * x;
 
-// Pipe functions: (x => square(increment(double(x))))
-const doubleIncrementAndSquare = pipe(double, increment, square);
+// Pipe functions: square(increment(double(x)))
+const process = pipe(double, increment, square);
 
 // Usage
-doubleIncrementAndSquare(3); // Result: 49
+process(3); // Result: 49
 // Calculation: square(increment(double(3))) = square(increment(6)) = square(7) = 49</code></pre>
 
                     <h3 class="text-xl font-medium mt-6 mb-3">curry</h3>
-                    <p class="mb-4">The <code>curry</code> function transforms a function that takes multiple arguments into a sequence of functions that each take a single argument.</p>
-                    <pre class="bg-gray-800 text-white p-4 rounded-lg mb-6"><code class="language-javascript">import { curry } from './src/core/runtime/runtime.js';
+                    <p class="mb-4">The <code>curry</code> function transforms a function that takes multiple arguments into a sequence of functions that each take a single argument. This is useful for creating specialized functions through partial application.</p>
+                    <pre class="bg-gray-800 text-white p-4 rounded-lg mb-6"><code class="language-javascript">import { curry } from '../../core/functions/composition.js';
 
 // Original function with multiple arguments
 const add = (a, b, c) => a + b + c;
@@ -157,179 +157,100 @@ const add = (a, b, c) => a + b + c;
 const curriedAdd = curry(add);
 
 // Usage
-curriedAdd(1)(2)(3); // Result: 6
+const result = curriedAdd(1)(2)(3); // Result: 6
 
-// Partial application
-const add1 = curriedAdd(1);
-const add1And2 = add1(2);
-add1And2(3); // Result: 6</code></pre>
+// Partial application to create a specialized function
+const add5 = curriedAdd(5);
+const result2 = add5(2)(3); // Result: 10</code></pre>
+
+                    <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2">Data Transformation</h2>
+                    <p class="mb-4">A core part of functional programming is transforming data structures. FlexNet provides higher-order functions for common array operations, which promote immutability by returning new arrays instead of modifying the original ones.</p>
+                    
+                    <h3 class="text-xl font-medium mt-6 mb-3">map</h3>
+                    <p class="mb-4">The <code>map</code> function takes a function and an array, and applies that function to every element in the array, returning a new array with the results.</p>
+                    <pre class="bg-gray-800 text-white p-4 rounded-lg mb-6"><code class="language-javascript">import { map } from '../../core/functions/transforms.js';
+
+const double = x => x * 2;
+const numbers = [1, 2, 3];
+
+const doubledNumbers = map(double)(numbers); // Result: [2, 4, 6]</code></pre>
+
+                    <h3 class="text-xl font-medium mt-6 mb-3">filter</h3>
+                    <p class="mb-4">The <code>filter</code> function takes a predicate function and an array. It returns a new array containing only the elements for which the predicate returns `true`.</p>
+                    <pre class="bg-gray-800 text-white p-4 rounded-lg mb-6"><code class="language-javascript">import { filter } from '../../core/functions/transforms.js';
+
+const isEven = x => x % 2 === 0;
+const numbers = [1, 2, 3, 4, 5, 6];
+
+const evenNumbers = filter(isEven)(numbers); // Result: [2, 4, 6]</code></pre>
+
+                    <h3 class="text-xl font-medium mt-6 mb-3">reduce</h3>
+                    <p class="mb-4">The <code>reduce</code> function (also known as fold) executes a reducer function on each element of the array, resulting in a single output value.</p>
+                    <pre class="bg-gray-800 text-white p-4 rounded-lg mb-6"><code class="language-javascript">import { reduce } from '../../core/functions/transforms.js';
+
+const sum = (acc, x) => acc + x;
+const numbers = [1, 2, 3, 4, 5];
+
+const total = reduce(sum, 0)(numbers); // Result: 15</code></pre>
+
+                    <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2">Combining Functions and Types</h2>
+                    <p class="mb-4">The true power of FlexNet JSX comes from combining function composition with the core type system. This allows for creating safe, explicit, and resilient data processing pipelines.</p>
+                    
+                    <pre class="bg-gray-800 text-white p-4 rounded-lg mb-6"><code class="language-javascript">import { pipe } from '../../core/functions/composition.js';
+import { map } from '../../core/functions/transforms.js';
+import { Either } from '../../core/types/either.js';
+
+// A function that might fail
+const parseNumber = str => {
+    const num = parseFloat(str);
+    return isNaN(num) ? Either.Left('Invalid number') : Either.Right(num);
+}
+
+// A pure function for an operation
+const increment = n => n + 1;
+
+// Use pipe to create a safe pipeline
+const safeIncrement = pipe(
+    parseNumber,
+    Either.map(increment)
+);
+
+const result1 = safeIncrement('5');   // Either.Right(6)
+const result2 = safeIncrement('foo'); // Either.Left('Invalid number')
+
+result1.fold(
+  error => console.error(error),
+  value => console.log('Success:', value) // Logs 'Success: 6'
+);</code></pre>
+
+                    <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2">Utility Functions</h2>
+                    <p class="mb-4">FlexNet also provides helpful utilities that follow functional principles.</p>
 
                     <h3 class="text-xl font-medium mt-6 mb-3">memoize</h3>
-                    <p class="mb-4">The <code>memoize</code> function creates a cached version of a function, which remembers the results for previous inputs to avoid recalculation.</p>
-                    <pre class="bg-gray-800 text-white p-4 rounded-lg mb-6"><code class="language-javascript">import { memoize } from './src/core/runtime/runtime.js';
+                    <p class="mb-4">The <code>memoize</code> function creates a cached version of a function. It stores the results of previous calls and returns the cached result for the same input, avoiding expensive recalculations.</p>
+                    <pre class="bg-gray-800 text-white p-4 rounded-lg mb-6"><code class="language-javascript">import { memoize } from '../../utils/function.js';
 
-// Expensive computation
-const fibonacci = n => {
-  if (n <= 1) return n;
-  return fibonacci(n - 1) + fibonacci(n - 2);
+// An expensive computation
+const slowFunction = (num) => {
+  // Simulate a delay
+  for (let i = 0; i < 1e9; i++) {}
+  return num * 2;
 };
 
-// Memoized version
-const memoizedFibonacci = memoize(n => {
-  if (n <= 1) return n;
-  return memoizedFibonacci(n - 1) + memoizedFibonacci(n - 2);
-});
+const fastFunction = memoize(slowFunction);
 
-// Usage - much faster for repeated or recursive calls
-memoizedFibonacci(40); // Quick result due to memoization</code></pre>
+console.time('first call');
+fastFunction(5); // Takes a long time
+console.timeEnd('first call');
 
-                    <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2">Pure Functions</h2>
-                    <p class="mb-4">FlexNet JSX encourages the use of pure functions, which have the following characteristics:</p>
-                    <ul class="list-disc pl-6 mb-6 space-y-2">
-                        <li>They always return the same output for the same input</li>
-                        <li>They don't cause side effects (like modifying global state or making API calls)</li>
-                        <li>They don't depend on external state that might change</li>
-                    </ul>
+console.time('second call');
+fastFunction(5); // Returns instantly from cache
+console.timeEnd('second call');</code></pre>
 
                     <div class="bg-blue-50 border-l-4 border-primary p-4 rounded-md mb-6">
-                        <h4 class="font-semibold">Benefits of Pure Functions</h4>
-                        <ul class="list-disc pl-6 mt-2">
-                            <li>Easier to test</li>
-                            <li>More predictable</li>
-                            <li>Easier to debug</li>
-                            <li>Can be safely memoized</li>
-                            <li>Can be parallelized</li>
-                        </ul>
+                        <h4 class="font-semibold">Pure Functions are Key</h4>
+                        <p><code>memoize</code> works best with pure functions. Since pure functions always return the same output for the same input, their results can be safely cached without causing unexpected behavior.</p>
                     </div>
-
-                    <h3 class="text-xl font-medium mt-6 mb-3">Example: Pure vs. Impure Functions</h3>
-                    <pre class="bg-gray-800 text-white p-4 rounded-lg mb-6"><code class="language-javascript">// Impure function (depends on external state)
-let counter = 0;
-function impureIncrement() {
-  counter++;
-  return counter;
-}
-
-// Pure function (same input always gives same output)
-function pureIncrement(count) {
-  return count + 1;
-}</code></pre>
-
-                    <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2">Higher-Order Functions</h2>
-                    <p class="mb-4">Higher-order functions are functions that take other functions as arguments or return functions as results. FlexNet JSX makes extensive use of higher-order functions for composition, event handling, and more.</p>
-
-                    <h3 class="text-xl font-medium mt-6 mb-3">Function as Data</h3>
-                    <p class="mb-4">In FlexNet JSX, functions are treated as first-class citizens, meaning they can be:</p>
-                    <ul class="list-disc pl-6 mb-6 space-y-2">
-                        <li>Assigned to variables</li>
-                        <li>Passed as arguments to other functions</li>
-                        <li>Returned from functions</li>
-                        <li>Stored in data structures</li>
-                    </ul>
-
-                    <h3 class="text-xl font-medium mt-6 mb-3">Example: Event Handler with Composition</h3>
-                    <pre class="bg-gray-800 text-white p-4 rounded-lg mb-6"><code class="language-javascript">import { compose } from './src/core/runtime/runtime.js';
-import { createStore } from './src/systems/state/store.js';
-import { createElement } from './src/core/runtime/jsx.js';
-
-// Create a store with initial state
-const store = createStore({ count: 0 });
-
-// Pure functions for state transformations
-const increment = state => ({ count: state.count + 1 });
-const double = state => ({ count: state.count * 2 });
-const reset = () => ({ count: 0 });
-
-// Component with composed event handlers
-const Counter = ({ state, update }) =>
-  createElement('div', null,
-    createElement('p', null, `Count: ${state.count}`),
-    createElement('button', {
-      onClick: () => update(increment)
-    }, 'Increment'),
-    createElement('button', {
-      onClick: () => update(compose(double, increment))
-    }, 'Increment & Double'),
-    createElement('button', {
-      onClick: () => update(reset)
-    }, 'Reset')
-  );</code></pre>
-
-                    <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2">Functional Updates with Immutability</h2>
-                    <p class="mb-4">FlexNet JSX follows the principle of immutability when updating state. Instead of modifying existing objects, we create new ones with the desired changes.</p>
-
-                    <h3 class="text-xl font-medium mt-6 mb-3">Immutable Update Patterns</h3>
-                    <pre class="bg-gray-800 text-white p-4 rounded-lg mb-6"><code class="language-javascript">// Original object
-const user = {
-  name: 'John',
-  age: 30,
-  address: {
-    city: 'New York',
-    zip: '10001'
-  }
-};
-
-// Bad: Mutating the original object
-function badUpdateAge(user, newAge) {
-  user.age = newAge; // Mutation!
-  return user;
-}
-
-// Good: Creating a new object with the updated property
-function goodUpdateAge(user, newAge) {
-  return {
-    ...user,
-    age: newAge
-  };
-}
-
-// Good: Updating a nested property
-function updateCity(user, newCity) {
-  return {
-    ...user,
-    address: {
-      ...user.address,
-      city: newCity
-    }
-  };
-}</code></pre>
-
-                    <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2">Function Utilities in FlexNet</h2>
-                    <p class="mb-4">FlexNet provides additional utilities for working with functions:</p>
-
-                    <h3 class="text-xl font-medium mt-6 mb-3">debounce</h3>
-                    <p class="mb-4">The <code>debounce</code> function limits how often a function can be called, delaying execution until after a specified time has passed since the last call.</p>
-                    <pre class="bg-gray-800 text-white p-4 rounded-lg mb-6"><code class="language-javascript">import { debounce } from './src/core/runtime/runtime.js';
-
-// Original function
-const handleSearch = (query) => {
-  // Perform search operation
-  console.log(`Searching for: ${query}`);
-};
-
-// Debounced version - only executes after 300ms of inactivity
-const debouncedSearch = debounce(handleSearch, 300);
-
-// Usage
-searchInput.addEventListener('input', (e) => {
-  debouncedSearch(e.target.value);
-});</code></pre>
-
-                    <h3 class="text-xl font-medium mt-6 mb-3">throttle</h3>
-                    <p class="mb-4">The <code>throttle</code> function ensures a function is called at most once in a specified time period.</p>
-                    <pre class="bg-gray-800 text-white p-4 rounded-lg mb-6"><code class="language-javascript">import { throttle } from './src/core/runtime/runtime.js';
-
-// Original function
-const handleScroll = () => {
-  // Perform scroll-related operation
-  console.log('Scroll event handled');
-};
-
-// Throttled version - executes at most once every 200ms
-const throttledScroll = throttle(handleScroll, 200);
-
-// Usage
-window.addEventListener('scroll', throttledScroll);</code></pre>
 
                     <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded-md mt-8">
                         <h4 class="font-semibold flex items-center">
@@ -338,7 +259,7 @@ window.addEventListener('scroll', throttledScroll);</code></pre>
                             </svg>
                             Best Practice
                         </h4>
-                        <p>When working with FlexNet JSX, prefer using pure functions and functional composition over imperative approaches. This leads to more maintainable, testable, and predictable code.</p>
+                        <p>When working with FlexNet JSX, prefer using pure functions and functional composition over imperative approaches. Combine `pipe` and `compose` with the `Maybe`, `Either`, and `Result` types to create data pipelines that are safe, readable, and easy to debug.</p>
                     </div>
                 </div>
 

@@ -108,16 +108,16 @@
                 </div>
                 
                 <h1 class="text-4xl font-bold mb-6">Counter Example</h1>
-                <p class="text-lg text-gray-600 mb-8">The counter example is a classic way to demonstrate basic state management and UI updates. This example will walk you through building a simple counter application using FlexNet JSX's functional approach.</p>
+                <p class="text-lg text-gray-600 mb-8">The counter example is a classic way to demonstrate basic state management and UI updates. This example will walk you through building a simple counter application using FlexNet JSX's functional and declarative approach.</p>
 
                 <div class="prose prose-blue max-w-none">
                     <div class="bg-blue-50 border-l-4 border-primary p-4 rounded-md mb-6">
-                        <h4 class="font-semibold">Note</h4>
-                        <p>This example showcases FlexNet's core principles of functional programming, immutable state, and pure functions.</p>
+                        <h4 class="font-semibold">Core Principles Demonstrated</h4>
+                        <p>This example showcases FlexNet's core principles: functional rendering via <code>createElement</code>, immutable state managed by a reducer, and pure functions for all logic.</p>
                     </div>
 
                     <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2">What We'll Build</h2>
-                    <p class="mb-4">We'll create a counter with increment and decrement buttons:</p>
+                    <p class="mb-4">We'll create a counter with increment and decrement buttons that re-renders when the state changes.</p>
 
                     <div class="bg-white p-6 rounded-lg shadow-md border border-gray-200 mb-6 text-center">
                         <h3 class="text-2xl font-bold mb-4">Counter: <span id="counter-value" class="text-primary">0</span></h3>
@@ -145,32 +145,26 @@
 │   │   └── functions/
 │   │       └── composition.js
 │   ├── systems/
+│   │   ├── render/
+│   │   │   └── functions.js
 │   │   └── state/
-│   │       └── store.js
+│   │       └── functions.js
 │   └── features/
 │       └── counter/
 │           ├── functions.js
 │           └── index.js
-└── index.html</code></pre>
+└── public/
+    └── index.html
+</code></pre>
                 
                     <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2">Implementation</h2>
-                    <h3 class="text-xl font-medium mt-6 mb-3">Step 1: Create the Core Types</h3>
-                    <p class="mb-4">First, let's implement the Maybe type for safe state handling:</p>
+                    <p>This implementation follows the functional principles of the FlexNet JSX framework. All DOM manipulation is abstracted away by the <code>render</code> system, and state is managed immutably by a store.</p>
+                    <h3 class="text-xl font-medium mt-6 mb-3">Step 1: Core Types</h3>
+                    <p class="mb-4">The <code>Maybe</code> type is used for optional values, ensuring that null or undefined values are handled safely in a functional way.</p>
                 <pre><code class="language-javascript">// src/core/types/maybe.js
-const Maybe = {
-    Just: value => ({
-        type: 'Just',
-        value,
-        map: fn => Maybe.Just(fn(value)),
-        chain: fn => fn(value),
-        getOrElse: defaultValue => value
-    }),
-    Nothing: () => ({
-        type: 'Nothing',
-        map: fn => Maybe.Nothing(),
-        chain: fn => Maybe.Nothing(),
-        getOrElse: defaultValue => defaultValue
-    }),
+export const Maybe = {
+    Just: value => ({ type: 'Just', value }),
+    Nothing: () => ({ type: 'Nothing' }),
     fromNullable: value => value != null ? Maybe.Just(value) : Maybe.Nothing(),
     map: fn => maybe => 
         maybe.type === 'Just' ? Maybe.Just(fn(maybe.value)) : Maybe.Nothing(),
@@ -179,129 +173,162 @@ const Maybe = {
     getOrElse: defaultValue => maybe =>
         maybe.type === 'Just' ? maybe.value : defaultValue
 };
-
-export default Maybe;</code></pre>
+</code></pre>
                 
-                    <h3 class="text-xl font-medium mt-6 mb-3">Step 2: Create Function Composition Utilities</h3>
+                    <h3 class="text-xl font-medium mt-6 mb-3">Step 2: Core Functions</h3>
+                    <p>Function composition is a core tenet of the framework, allowing for complex logic to be built from simple, reusable functions.</p>
                 <pre><code class="language-javascript">// src/core/functions/composition.js
 export const compose = (...fns) => x => fns.reduceRight((y, f) => f(y), x);
 export const pipe = (...fns) => x => fns.reduce((y, f) => f(y), x);
-export const curry = fn => (...args) =>
-    args.length >= fn.length ? fn(...args) : curry(fn.bind(null, ...args));</code></pre>
+</code></pre>
                 
-                    <h3 class="text-xl font-medium mt-6 mb-3">Step 3: Implement the Store</h3>
-                <pre><code class="language-javascript">// src/systems/state/store.js
-const createStore = (initialState) => {
+                    <h3 class="text-xl font-medium mt-6 mb-3">Step 3: The Render System</h3>
+                    <p>The render system abstracts DOM manipulation. <code>createElement</code> creates a virtual DOM node (a plain JavaScript object), and <code>render</code> translates it into actual DOM elements.</p>
+                <pre><code class="language-javascript">// src/systems/render/functions.js
+export const createElement = (type, props, ...children) => ({
+    type,
+    props: { ...props, children: children.flat() }
+});
+
+function createDomElement(vnode) {
+    if (typeof vnode === 'string' || typeof vnode === 'number') {
+        return document.createTextNode(vnode);
+    }
+    
+    if (typeof vnode.type === 'function') {
+        return createDomElement(vnode.type(vnode.props));
+    }
+
+    const el = document.createElement(vnode.type);
+
+    Object.entries(vnode.props || {}).forEach(([key, value]) => {
+        if (key.startsWith('on') && typeof value === 'function') {
+            el.addEventListener(key.substring(2).toLowerCase(), value);
+        } else if (key !== 'children') {
+            el.setAttribute(key, value);
+        }
+    });
+
+    vnode.props.children.forEach(child => {
+        if (child) {
+            el.appendChild(createDomElement(child));
+        }
+    });
+
+    return el;
+}
+
+// A simplified render function for this example.
+// In a real implementation, this would involve a more complex diffing algorithm.
+export const render = (vnode, container) => {
+    container.innerHTML = ''; // Naive clearing of container
+    if (vnode) {
+        container.appendChild(createDomElement(vnode));
+    }
+};
+</code></pre>
+                
+                    <h3 class="text-xl font-medium mt-6 mb-3">Step 4: The State System</h3>
+                    <p>The store holds the application state. It can only be updated by dispatching actions to a pure function called a reducer, ensuring state transitions are predictable and immutable.</p>
+                <pre><code class="language-javascript">// src/systems/state/functions.js
+export const createStore = (reducer, initialState) => {
     const subscribers = new Set();
     let state = initialState;
 
+    const dispatch = action => {
+        state = reducer(state, action); // State is replaced, not mutated
+        subscribers.forEach(fn => fn(state));
+    };
+
     return {
         getState: () => state,
-        update: (updater) => {
-            state = updater(state);
-            subscribers.forEach(subscriber => subscriber(state));
-            return state;
-        },
-        subscribe: (subscriber) => {
-            subscribers.add(subscriber);
-            // Return unsubscribe function
-            return () => subscribers.delete(subscriber);
+        dispatch,
+        subscribe: fn => {
+            subscribers.add(fn);
+            fn(state); // Immediately notify with current state
+            return () => subscribers.delete(fn); // Return an unsubscribe function
         }
     };
 };
+</code></pre>
 
-export default createStore;</code></pre>
-                
-                    <h3 class="text-xl font-medium mt-6 mb-3">Step 4: Create Counter Functions</h3>
+                    <h3 class="text-xl font-medium mt-6 mb-3">Step 5: Counter Logic (Reducer)</h3>
+                    <p>The counter's logic is defined in a pure reducer function. It takes the current state and an action, and returns the next state.</p>
                 <pre><code class="language-javascript">// src/features/counter/functions.js
-import Maybe from '../../core/types/maybe.js';
+export const Action = {
+    Increment: 'INCREMENT',
+    Decrement: 'DECREMENT',
+};
 
-// Pure function to increment counter
-export const increment = count => Maybe.Just(count.value + 1);
-
-// Pure function to decrement counter
-export const decrement = count => Maybe.Just(count.value - 1);
-
-// Pure function to update counter with validation
-export const validateAndUpdate = (count, operation) => {
-    const result = operation(count);
-    
-    // Ensure counter doesn't go below 0 (optional validation)
-    if (result.value < 0) {
-        return Maybe.Just(0);
+export const counterReducer = (state, action) => {
+    switch (action.type) {
+        case Action.Increment:
+            return state + 1;
+        case Action.Decrement:
+            return Math.max(0, state - 1); // Business logic: don't go below 0
+        default:
+            return state;
     }
-    
-    return result;
-};</code></pre>
+};
+</code></pre>
                 
-                    <h3 class="text-xl font-medium mt-6 mb-3">Step 5: Implement the Counter Component</h3>
+                    <h3 class="text-xl font-medium mt-6 mb-3">Step 6: The Counter Component</h3>
+                    <p>The component is a pure function that takes the current state and a dispatch function as props, and returns a description of the UI using <code>createElement</code>.</p>
                 <pre><code class="language-javascript">// src/features/counter/index.js
-import createStore from '../../systems/state/store.js';
-import Maybe from '../../core/types/maybe.js';
-import { increment, decrement, validateAndUpdate } from './functions.js';
+import { createStore } from '../../systems/state/functions.js';
+import { createElement, render } from '../../systems/render/functions.js';
+import { counterReducer, Action } from './functions.js';
 
-// Create a store with initial count of 0
-const counterStore = createStore(Maybe.Just(0));
+// 1. Define the application's root component
+const App = ({ state, dispatch }) => 
+    createElement('div', { class: 'text-center' },
+        createElement('h2', { class: 'text-2xl font-bold mb-4' }, 
+            'Counter: ',
+            createElement('span', { class: 'text-primary' }, state)
+        ),
+        createElement('div', { class: 'flex justify-center space-x-4' },
+            createElement('button', {
+                class: 'px-4 py-2 bg-red-500 text-white font-semibold rounded-lg shadow-md hover:bg-red-600',
+                onClick: () => dispatch({ type: Action.Decrement })
+            }, '-'),
+            createElement('button', {
+                class: 'px-4 py-2 bg-green-500 text-white font-semibold rounded-lg shadow-md hover:bg-green-600',
+                onClick: () => dispatch({ type: Action.Increment })
+            }, '+')
+        )
+    );
 
-// Create DOM elements for the counter
-const createCounter = () => {
-    // Create container
-    const container = document.createElement('div');
-    container.className = 'counter-container';
-    
-    // Create heading
-    const heading = document.createElement('h2');
-    heading.textContent = 'Counter: ';
-    const countDisplay = document.createElement('span');
-    countDisplay.id = 'count-display';
-    countDisplay.textContent = counterStore.getState().value;
-    heading.appendChild(countDisplay);
-    
-    // Create button container
-    const buttonContainer = document.createElement('div');
-    buttonContainer.className = 'button-container';
-    
-    // Create decrement button
-    const decrementButton = document.createElement('button');
-    decrementButton.textContent = '-';
-    decrementButton.addEventListener('click', () => {
-        counterStore.update(count => validateAndUpdate(count, decrement));
-    });
-    
-    // Create increment button
-    const incrementButton = document.createElement('button');
-    incrementButton.textContent = '+';
-    incrementButton.addEventListener('click', () => {
-        counterStore.update(count => validateAndUpdate(count, increment));
-    });
-    
-    buttonContainer.appendChild(decrementButton);
-    buttonContainer.appendChild(incrementButton);
-    
-    container.appendChild(heading);
-    container.appendChild(buttonContainer);
-    
-    return container;
-};
+// 2. Initialize the store
+const store = createStore(counterReducer, 0);
 
-// Update UI on state change
-const updateUI = () => {
-    const countDisplay = document.getElementById('count-display');
-    if (countDisplay) {
-        countDisplay.textContent = counterStore.getState().value;
-    }
-};
+// 3. Get the DOM container
+const root = document.getElementById('root');
 
-// Subscribe to store changes
-counterStore.subscribe(updateUI);
+// 4. Subscribe the render function to the store
+// On every state change, the App component will be re-rendered
+store.subscribe(state => {
+    render(
+        createElement(App, { state, dispatch: store.dispatch }),
+        root
+    );
+});
+</code></pre>
 
-// Mount the component to the DOM
-document.addEventListener('DOMContentLoaded', () => {
-    const root = document.getElementById('root');
-    if (root) {
-        root.appendChild(createCounter());
-    }
-});</code></pre>
+                <h3 class="text-xl font-medium mt-6 mb-3">Step 7: The Host HTML file</h3>
+                <p>Finally, the <code>index.html</code> file includes the main script and provides the root element for the application to mount into.</p>
+
+                <pre><code class="language-html">&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+    &lt;title&gt;FlexNet JSX Counter&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;div id="root"&gt;&lt;/div&gt;
+    &lt;!-- The main entry point for the application --&gt;
+    &lt;script type="module" src="../src/features/counter/index.js"&gt;&lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</code></pre>
                 </div>
             </div>
         </main>

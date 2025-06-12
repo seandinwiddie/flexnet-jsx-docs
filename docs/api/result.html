@@ -20,7 +20,11 @@
                 }
             }
         }
-        hljs.highlightAll();
+        document.addEventListener('DOMContentLoaded', (event) => {
+            document.querySelectorAll('pre code').forEach((el) => {
+                hljs.highlightElement(el);
+            });
+        });
     </script>
 </head>
 <body class="bg-gray-50 text-gray-900 min-h-screen">
@@ -91,6 +95,7 @@
                             <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
                         </svg>
                         <div id="search-results" class="absolute mt-2 w-full bg-white rounded-md shadow-lg z-20 hidden"></div>
+                    </div>
                     <div class="flex space-x-4 ml-4">
                         <a href="https://github.com/flexnet/flexnet-jsx" target="_blank" class="text-gray-600 hover:text-primary">GitHub</a>
                         <a href="../../starter-project/README.md" target="_blank" class="text-gray-600 hover:text-primary">Starter Project</a>
@@ -108,33 +113,33 @@
                 </div>
 
                 <h1 class="text-4xl font-bold mb-6">Result API</h1>
-                <p class="text-lg text-gray-600 mb-8">The Result type represents the result of an asynchronous operation that can succeed with a value or fail with an error.</p>
+                <p class="text-lg text-gray-600 mb-8">The Result type represents the outcome of a synchronous operation that can either succeed with a value or fail with an error.</p>
 
                 <div class="prose prose-blue max-w-none">
                     <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2">Overview</h2>
-                    <p class="mb-4">The <code>Result</code> type is a Promise-compatible type for handling asynchronous operations in a functional way. It has two variants:</p>
+                    <p class="mb-4">The <code>Result</code> type is a synchronous container for the outcome of an operation that might fail, such as data parsing, validation, or computation. It explicitly separates the success and error paths, eliminating the need for defensive <code>try...catch</code> blocks in your business logic.</p>
+                    <p class="mb-4">It has two variants:</p>
                     <ul class="list-disc pl-6 mb-6 space-y-2">
-                        <li><code>Ok(value)</code>: Represents a successful operation with a value</li>
-                        <li><code>Error(error)</code>: Represents a failed operation with an error</li>
+                        <li><code>Ok(value)</code>: Represents a successful operation, holding the resulting value.</li>
+                        <li><code>Error(error)</code>: Represents a failed operation, holding the error information.</li>
                     </ul>
 
-                    <p class="mb-4">Unlike native Promises that mix success and failure in callbacks, Result uses explicit types to handle both cases, making error handling more predictable and comprehensive.</p>
+                    <p class="mb-4">By returning a <code>Result</code>, a function communicates its entire range of possible outcomes in its signature, leading to more robust and predictable code.</p>
 
                     <div class="bg-blue-50 border-l-4 border-primary p-4 rounded-md mb-6">
                         <h4 class="font-semibold">Key Features</h4>
                         <ul class="list-disc pl-6 mt-2">
-                            <li>Promise-compatible: works with <code>async/await</code> and <code>.then()</code></li>
-                            <li>Pattern matching with <code>match()</code> for handling both success and error cases</li>
-                            <li>Chainable transformations with <code>map()</code> and <code>mapError()</code></li>
-                            <li>Error recovery with <code>recover()</code> and <code>orElse()</code></li>
-                            <li>Exception handling with <code>try()</code></li>
+                            <li><strong>Explicit by Design</strong>: Makes success and failure cases impossible to ignore.</li>
+                            <li><strong>Synchronous</strong>: Used for immediate operations, not for managing asynchronous flow.</li>
+                            <li><strong>Composable</strong>: Provides <code>map</code> and <code>chain</code> for building complex, safe data transformations.</li>
+                            <li><strong>Exception-Free</strong>: The <code>fromTry</code> constructor safely wraps functions that might throw exceptions.</li>
                         </ul>
                     </div>
 
-                    <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2">Creating Results</h2>
-                    <p class="mb-4">There are several ways to create Result instances:</p>
+                    <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2">Creating a Result</h2>
 
-                    <h3 class="text-xl font-medium mt-6 mb-3">Basic Constructors</h3>
+                    <h3 class="text-xl font-medium mt-6 mb-3">Direct Construction</h3>
+                    <p class="mb-4">You can create a <code>Result</code> directly to represent a known outcome.</p>
                     <pre class="bg-gray-800 text-white p-4 rounded-lg mb-6"><code class="language-javascript">import { Result } from './src/core/types/result.js';
 
 // Create a successful Result
@@ -143,128 +148,84 @@ const success = Result.Ok(42);
 // Create a failed Result
 const failure = Result.Error('Something went wrong');</code></pre>
 
-                    <h3 class="text-xl font-medium mt-6 mb-3">From Promises</h3>
-                    <pre class="bg-gray-800 text-white p-4 rounded-lg mb-6"><code class="language-javascript">// Convert a Promise to a Result
-const fetchUser = async (userId) => {
-  try {
-    const response = await fetch(`/api/users/${userId}`);
-    
-    if (!response.ok) {
-      return Result.Error(`Failed with status: ${response.status}`);
-    }
-    
-    const data = await response.json();
-    return Result.Ok(data);
-  } catch (error) {
-    return Result.Error(`Network error: ${error.message}`);
-  }
-};</code></pre>
+                    <h3 class="text-xl font-medium mt-6 mb-3">From a Potentially Failing Function</h3>
+                    <p class="mb-4">The <code>fromTry</code> function is the standard way to safely execute a function that might throw an exception.</p>
+                    <pre class="bg-gray-800 text-white p-4 rounded-lg mb-6"><code class="language-javascript">import { Result } from './src/core/types/result.js';
 
-                    <h3 class="text-xl font-medium mt-6 mb-3">From Functions (try/catch)</h3>
-                    <pre class="bg-gray-800 text-white p-4 rounded-lg mb-6"><code class="language-javascript">// Safely execute a function that might throw
-const parseJSON = (json) => {
-  return Result.try(() => JSON.parse(json));
+// This function throws an error for invalid JSON
+const parseJSON = (jsonString) => {
+  return Result.fromTry(() => JSON.parse(jsonString));
 };
 
-// Usage
-const result = parseJSON('{"name": "John"}');
-// Result.Ok({name: "John"})
+// --- Usage ---
+const goodResult = parseJSON('{"name": "John"}');
+// Returns Result.Ok({ name: "John" })
 
-const invalid = parseJSON('invalid json');
-// Result.Error(SyntaxError: Unexpected token i in JSON at position 0)</code></pre>
+const badResult = parseJSON('invalid-json');
+// Returns Result.Error(SyntaxError: ...)</code></pre>
 
-                    <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2">Working with Results</h2>
+                    <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2">Working with a Result</h2>
 
-                    <h3 class="text-xl font-medium mt-6 mb-3">Pattern Matching</h3>
-                    <p class="mb-4">Use <code>match()</code> to handle both success and error cases:</p>
-                    <pre class="bg-gray-800 text-white p-4 rounded-lg mb-6"><code class="language-javascript">// Fetch user data
-fetchUser(123)
-  .then(result => result.match({
-    Ok: user => {
-      // Handle successful case
-      displayUserProfile(user);
-    },
-    Error: error => {
-      // Handle error case
-      showErrorMessage(error);
-    }
-  }));</code></pre>
+                    <h3 class="text-xl font-medium mt-6 mb-3">Handling Outcomes</h3>
+                    <p class="mb-4">To use the value inside a <code>Result</code>, you must handle both possible cases by checking its <code>type</code> property.</p>
+                    <pre class="bg-gray-800 text-white p-4 rounded-lg mb-6"><code class="language-javascript">const result = parseJSON(someUserInput);
 
-                    <h3 class="text-xl font-medium mt-6 mb-3">Transforming Results</h3>
-                    <p class="mb-4">Transform the value inside a Result using <code>map()</code> and <code>mapError()</code>:</p>
-                    <pre class="bg-gray-800 text-white p-4 rounded-lg mb-6"><code class="language-javascript">// Transform the success value
-const nameResult = fetchUser(123)
-  .then(result => result.map(user => user.name));
-
-// Transform the error
-const friendlyErrorResult = fetchUser(123)
-  .then(result => result.mapError(error => {
-    if (error.includes('404')) {
-      return 'User not found';
-    }
-    return 'An error occurred. Please try again.';
-  }));</code></pre>
-
-                    <h3 class="text-xl font-medium mt-6 mb-3">Chaining Results</h3>
-                    <p class="mb-4">Chain multiple async operations with <code>chain()</code>:</p>
-                    <pre class="bg-gray-800 text-white p-4 rounded-lg mb-6"><code class="language-javascript">// Chain multiple operations
-const getUserWithPosts = (userId) => {
-  return fetchUser(userId)
-    .then(userResult => 
-      userResult.chain(user => 
-        fetchPosts(user.id)
-          .then(postsResult => 
-            postsResult.map(posts => ({
-              ...user,
-              posts
-            }))
-          )
-      )
-    );
-};</code></pre>
-
-                    <h3 class="text-xl font-medium mt-6 mb-3">Error Recovery</h3>
-                    <p class="mb-4">Recover from errors with <code>recover()</code> or <code>orElse()</code>:</p>
-                    <pre class="bg-gray-800 text-white p-4 rounded-lg mb-6"><code class="language-javascript">// Recover with a default value
-const userOrDefault = fetchUser(123)
-  .then(result => result.recover(error => ({ name: 'Guest', id: 0 })));
-
-// Recover with another Result (fallback)
-const userOrFallback = fetchUser(123)
-  .then(result => result.orElse(error => {
-    if (error.includes('404')) {
-      return fetchDefaultUser();
-    }
-    return Result.Error(error);
-  }));</code></pre>
-
-                    <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2">Using with async/await</h2>
-                    <p class="mb-4">Result works seamlessly with async/await, but requires pattern matching to handle the Result type:</p>
-                    <pre class="bg-gray-800 text-white p-4 rounded-lg mb-6"><code class="language-javascript">// Using Result with async/await
-async function loadUserProfile(userId) {
-  const result = await fetchUser(userId);
-  
-  return result.match({
-    Ok: user => {
-      return renderProfile(user);
-    },
-    Error: error => {
-      return renderError(error);
-    }
-  });
+if (result.type === 'Ok') {
+  // Safely access the value
+  const data = result.value;
+  console.log('Parsed data:', data);
+} else {
+  // Handle the error
+  const error = result.error;
+  console.error('Failed to parse:', error.message);
 }</code></pre>
+
+                    <h3 class="text-xl font-medium mt-6 mb-3">Transforming a Success Value (map)</h3>
+                    <p class="mb-4">The <code>map</code> function applies a transformation to the value inside an <code>Ok</code> result. If the result is an <code>Error</code>, it does nothing.</p>
+                    <pre class="bg-gray-800 text-white p-4 rounded-lg mb-6"><code class="language-javascript">import { Result } from './src/core/types/result.js';
+
+const numberResult = Result.Ok(5);
+
+const doubledResult = Result.map(x => x * 2)(numberResult);
+// Returns Result.Ok(10)
+
+const errorResult = Result.Error('Initial error');
+
+const mappedError = Result.map(x => x * 2)(errorResult);
+// Returns Result.Error('Initial error')</code></pre>
+
+                    <h3 class="text-xl font-medium mt-6 mb-3">Chaining Operations (chain)</h3>
+                    <p class="mb-4">The <code>chain</code> function is used to sequence multiple operations that each return a <code>Result</code>.</p>
+                    <pre class="bg-gray-800 text-white p-4 rounded-lg mb-6"><code class="language-javascript">import { Result } from './src/core/types/result.js';
+
+// A function that validates a number, returning a Result
+const ensurePositive = (n) => {
+  return typeof n === 'number' && n > 0
+    ? Result.Ok(n)
+    : Result.Error('Value must be a positive number');
+};
+
+const initialResult = Result.Ok(10);
+
+// Chain the validation function
+const finalResult = Result.chain(ensurePositive)(initialResult);
+// Returns Result.Ok(10)
+
+const failedResult = Result.Ok(-5);
+const finalFailed = Result.chain(ensurePositive)(failedResult);
+// Returns Result.Error('Value must be a positive number')</code></pre>
 
                     <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2">Result API Reference</h2>
 
-                    <h3 class="text-xl font-medium mt-6 mb-3">Static Methods</h3>
+                    <h3 class="text-xl font-medium mt-6 mb-3">Constructors</h3>
                     
                     <div class="bg-white border border-gray-200 rounded-lg mb-6">
                         <div class="border-b border-gray-200 px-4 py-3 bg-gray-50">
                             <h4 class="font-semibold">Result.Ok(value)</h4>
                         </div>
                         <div class="p-4">
-                            <p class="mb-2">Creates a successful Result with the given value.</p>
-                            <pre class="bg-gray-800 text-white p-3 rounded-lg"><code class="language-javascript">const okResult = Result.Ok(42);</code></pre>
+                            <p class="mb-2">Creates a successful Result containing the given value.</p>
+                            <pre class="bg-gray-800 text-white p-3 rounded-lg"><code class="language-typescript">Result.Ok<T, E>(value: T): Result<T, E></code></pre>
                         </div>
                     </div>
 
@@ -273,113 +234,40 @@ async function loadUserProfile(userId) {
                             <h4 class="font-semibold">Result.Error(error)</h4>
                         </div>
                         <div class="p-4">
-                            <p class="mb-2">Creates a failed Result with the given error.</p>
-                            <pre class="bg-gray-800 text-white p-3 rounded-lg"><code class="language-javascript">const errorResult = Result.Error('Something went wrong');</code></pre>
+                            <p class="mb-2">Creates a failed Result containing the given error.</p>
+                            <pre class="bg-gray-800 text-white p-3 rounded-lg"><code class="language-typescript">Result.Error<T, E>(error: E): Result<T, E></code></pre>
                         </div>
                     </div>
 
                     <div class="bg-white border border-gray-200 rounded-lg mb-6">
                         <div class="border-b border-gray-200 px-4 py-3 bg-gray-50">
-                            <h4 class="font-semibold">Result.try(fn)</h4>
+                            <h4 class="font-semibold">Result.fromTry(fn)</h4>
                         </div>
                         <div class="p-4">
-                            <p class="mb-2">Executes a function and wraps the result in a Result, catching any thrown exceptions.</p>
-                            <pre class="bg-gray-800 text-white p-3 rounded-lg"><code class="language-javascript">const result = Result.try(() => JSON.parse('{"name": "John"}'));</code></pre>
+                            <p class="mb-2">Executes a synchronous function, returning <code>Result.Ok</code> with the return value or <code>Result.Error</code> if an exception is thrown.</p>
+                            <pre class="bg-gray-800 text-white p-3 rounded-lg"><code class="language-typescript">Result.fromTry<T>(fn: () => T): Result<T, Error></code></pre>
                         </div>
                     </div>
 
-                    <div class="bg-white border border-gray-200 rounded-lg mb-6">
-                        <div class="border-b border-gray-200 px-4 py-3 bg-gray-50">
-                            <h4 class="font-semibold">Result.all(results)</h4>
-                        </div>
-                        <div class="p-4">
-                            <p class="mb-2">Combines an array of Results into a single Result containing an array of values. If any Result is an Error, the combined Result will be the first encountered Error.</p>
-                            <pre class="bg-gray-800 text-white p-3 rounded-lg"><code class="language-javascript">const results = [
-  Result.Ok(1),
-  Result.Ok(2),
-  Result.Ok(3)
-];
-
-const combined = await Result.all(results);
-// Result.Ok([1, 2, 3])</code></pre>
-                        </div>
-                    </div>
-
-                    <h3 class="text-xl font-medium mt-6 mb-3">Instance Methods</h3>
+                    <h3 class="text-xl font-medium mt-6 mb-3">Functions</h3>
                     
                     <div class="bg-white border border-gray-200 rounded-lg mb-6">
                         <div class="border-b border-gray-200 px-4 py-3 bg-gray-50">
-                            <h4 class="font-semibold">match({ Ok, Error })</h4>
+                            <h4 class="font-semibold">map</h4>
                         </div>
                         <div class="p-4">
-                            <p class="mb-2">Pattern matches on the Result, executing the appropriate handler based on whether it's Ok or Error.</p>
-                            <pre class="bg-gray-800 text-white p-3 rounded-lg"><code class="language-javascript">result.match({
-  Ok: value => console.log('Success:', value),
-  Error: error => console.error('Error:', error)
-});</code></pre>
+                            <p class="mb-2">A curried function that applies a transformation to an <code>Ok</code> value, leaving an <code>Error</code> untouched.</p>
+                            <pre class="bg-gray-800 text-white p-3 rounded-lg"><code class="language-typescript">map<T, U, E>(fn: (value: T) => U): (result: Result<T, E>) => Result<U, E></code></pre>
                         </div>
                     </div>
 
                     <div class="bg-white border border-gray-200 rounded-lg mb-6">
                         <div class="border-b border-gray-200 px-4 py-3 bg-gray-50">
-                            <h4 class="font-semibold">map(fn)</h4>
+                            <h4 class="font-semibold">chain</h4>
                         </div>
                         <div class="p-4">
-                            <p class="mb-2">Transforms the value inside an Ok result using the provided function. If the Result is an Error, it's returned unchanged.</p>
-                            <pre class="bg-gray-800 text-white p-3 rounded-lg"><code class="language-javascript">const doubled = Result.Ok(21).map(x => x * 2);
-// Result.Ok(42)</code></pre>
-                        </div>
-                    </div>
-
-                    <div class="bg-white border border-gray-200 rounded-lg mb-6">
-                        <div class="border-b border-gray-200 px-4 py-3 bg-gray-50">
-                            <h4 class="font-semibold">mapError(fn)</h4>
-                        </div>
-                        <div class="p-4">
-                            <p class="mb-2">Transforms the error inside an Error result using the provided function. If the Result is Ok, it's returned unchanged.</p>
-                            <pre class="bg-gray-800 text-white p-3 rounded-lg"><code class="language-javascript">const friendlyError = Result.Error('NOT_FOUND')
-  .mapError(err => `Resource not found: ${err}`);
-// Result.Error('Resource not found: NOT_FOUND')</code></pre>
-                        </div>
-                    </div>
-
-                    <div class="bg-white border border-gray-200 rounded-lg mb-6">
-                        <div class="border-b border-gray-200 px-4 py-3 bg-gray-50">
-                            <h4 class="font-semibold">chain(fn)</h4>
-                        </div>
-                        <div class="p-4">
-                            <p class="mb-2">Transforms an Ok result using a function that returns another Result. If the original Result is an Error, it's returned unchanged.</p>
-                            <pre class="bg-gray-800 text-white p-3 rounded-lg"><code class="language-javascript">const validatedResult = Result.Ok('john@example.com')
-  .chain(email => {
-    if (isValidEmail(email)) {
-      return Result.Ok(email);
-    }
-    return Result.Error('Invalid email');
-  });</code></pre>
-                        </div>
-                    </div>
-
-                    <div class="bg-white border border-gray-200 rounded-lg mb-6">
-                        <div class="border-b border-gray-200 px-4 py-3 bg-gray-50">
-                            <h4 class="font-semibold">recover(fn)</h4>
-                        </div>
-                        <div class="p-4">
-                            <p class="mb-2">Transforms an Error result into an Ok result using the provided recovery function. If the Result is already Ok, it's returned unchanged.</p>
-                            <pre class="bg-gray-800 text-white p-3 rounded-lg"><code class="language-javascript">const recovered = Result.Error('Not found')
-  .recover(error => 'Default value');
-// Result.Ok('Default value')</code></pre>
-                        </div>
-                    </div>
-
-                    <div class="bg-white border border-gray-200 rounded-lg mb-6">
-                        <div class="border-b border-gray-200 px-4 py-3 bg-gray-50">
-                            <h4 class="font-semibold">orElse(fn)</h4>
-                        </div>
-                        <div class="p-4">
-                            <p class="mb-2">Transforms an Error result into another Result using the provided function. If the original Result is Ok, it's returned unchanged.</p>
-                            <pre class="bg-gray-800 text-white p-3 rounded-lg"><code class="language-javascript">const fallback = Result.Error('Primary source failed')
-  .orElse(error => fetchFromBackupSource());
-// A new Result from the backup source</code></pre>
+                            <p class="mb-2">A curried function that sequences an operation that returns a new <code>Result</code>.</p>
+                            <pre class="bg-gray-800 text-white p-3 rounded-lg"><code class="language-typescript">chain<T, U, E>(fn: (value: T) => Result<U, E>): (result: Result<T, E>) => Result<U, E></code></pre>
                         </div>
                     </div>
 
@@ -388,14 +276,13 @@ const combined = await Result.all(results);
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-yellow-500" viewBox="0 0 20 20" fill="currentColor">
                                 <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2h-1V9z" clip-rule="evenodd" />
                             </svg>
-                            Best Practices
+                            Framework Compliance
                         </h4>
                         <ul class="list-disc pl-6 mt-2">
-                            <li>Always handle both Ok and Error cases when working with Results</li>
-                            <li>Use Result.try() to safely execute functions that might throw exceptions</li>
-                            <li>Prefer using match() for explicit handling of both success and error cases</li>
-                            <li>Use chain() for composing multiple operations that return Results</li>
-                            <li>Convert Promises to Results for more explicit error handling</li>
+                            <li><strong>Synchronous Operations Only</strong>: Do not use <code>Result</code> to wrap Promises or for asynchronous control flow. The framework uses the Effect System and other patterns for async operations.</li>
+                            <li><strong>Explicit Handling</strong>: Always check the <code>.type</code> property to handle both <code>Ok</code> and <code>Error</code> cases. Never assume a successful outcome.</li>
+                            <li><strong>Prefer <code>fromTry</code></strong>: For any synchronous code that can throw an exception (e.g., <code>JSON.parse</code>, <code>localStorage</code> access), use <code>Result.fromTry</code> to safely contain potential errors.</li>
+                            <li><strong>Distinguish from <code>Either</code></strong>: While similar, <code>Result</code> is idiomatic for success/failure scenarios, whereas <code>Either</code> is a more general-purpose type for any kind of branching logic (e.g., Left/Right).</li>
                         </ul>
                     </div>
                 </div>
@@ -405,19 +292,19 @@ const combined = await Result.all(results);
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <a href="maybe.html" class="block p-4 border border-gray-200 rounded-lg hover:border-primary hover:shadow-md transition">
                             <h3 class="font-semibold text-lg mb-2">Maybe</h3>
-                            <p class="text-gray-600">Learn about the Maybe type for handling optional values.</p>
+                            <p class="text-gray-600">Learn about the Maybe type for handling optional values that may or may not exist.</p>
                         </a>
                         <a href="either.html" class="block p-4 border border-gray-200 rounded-lg hover:border-primary hover:shadow-md transition">
                             <h3 class="font-semibold text-lg mb-2">Either</h3>
-                            <p class="text-gray-600">Explore the Either type for handling synchronous operations that can fail.</p>
+                            <p class="text-gray-600">Explore the Either type for handling synchronous operations with two distinct outcomes (Left/Right).</p>
                         </a>
-                        <a href="../systems/errors.html" class="block p-4 border border-gray-200 rounded-lg hover:border-primary hover:shadow-md transition">
-                            <h3 class="font-semibold text-lg mb-2">Error Handling</h3>
-                            <p class="text-gray-600">Learn about FlexNet's comprehensive error handling system.</p>
+                        <a href="../features/validation.html" class="block p-4 border border-gray-200 rounded-lg hover:border-primary hover:shadow-md transition">
+                            <h3 class="font-semibold text-lg mb-2">Form Validation</h3>
+                            <p class="text-gray-600">See how <code>Result</code> is used in practice for validating complex data structures.</p>
                         </a>
-                        <a href="../systems/effects.html" class="block p-4 border border-gray-200 rounded-lg hover:border-primary hover:shadow-md transition">
-                            <h3 class="font-semibold text-lg mb-2">Effects System</h3>
-                            <p class="text-gray-600">Understand how to handle side effects in a functional way.</p>
+                        <a href="../core/types.html" class="block p-4 border border-gray-200 rounded-lg hover:border-primary hover:shadow-md transition">
+                            <h3 class="font-semibold text-lg mb-2">Core Type System</h3>
+                            <p class="text-gray-600">Get a high-level overview of the functional types that form the core of the framework.</p>
                         </a>
                     </div>
                 </div>

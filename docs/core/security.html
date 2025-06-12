@@ -108,75 +108,120 @@
                 </div>
 
                 <h1 class="text-4xl font-bold mb-6">Security</h1>
-                <p class="text-lg text-gray-600 mb-8">FlexNet JSX is designed with security as a core principle, providing built-in protections against common web vulnerabilities.</p>
+                <p class="text-lg text-gray-600 mb-8">FlexNet JSX is designed with security as a core principle. Its functional architecture provides built-in protections against common web vulnerabilities by promoting explicit data handling, immutability, and pure functions.</p>
 
                 <div class="prose prose-blue max-w-none">
-                    <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2">Security Features</h2>
-                    <p class="mb-4">FlexNet JSX provides several built-in security features to protect your application from common web vulnerabilities:</p>
+                    <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2">Core Security Principles</h2>
+                    <ul class="list-disc pl-6 mb-6 space-y-2">
+                        <li><strong>Explicit Sanitization:</strong> Content is not rendered as HTML by default. The framework provides explicit functions to sanitize input, preventing Cross-Site Scripting (XSS).</li>
+                        <li><strong>Functional Validation:</strong> All input validation is handled through pure functions that return explicit types like <code>Either</code>, making error handling robust and preventing invalid data from propagating through the system.</li>
+                        <li><strong>Immutable State:</strong> State cannot be mutated directly, which prevents a large class of vulnerabilities related to unauthorized or accidental state modification.</li>
+                        <li><strong>No Direct DOM Access:</strong> By managing rendering through a virtual DOM, the framework limits direct DOM manipulation, which is a common vector for security issues.</li>
+                    </ul>
 
-                    <h3 class="text-xl font-medium mt-6 mb-3">XSS Protection</h3>
-                    <p class="mb-4">Cross-Site Scripting (XSS) is one of the most common web vulnerabilities. FlexNet JSX automatically escapes content to prevent XSS attacks.</p>
+                    <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2">XSS Prevention</h2>
+                    <p class="mb-4">Cross-Site Scripting (XSS) is prevented by treating all strings as text, not HTML, by default. To render content safely, you must use the provided <code>sanitize</code> function.</p>
                     
                     <div class="bg-white border border-gray-200 rounded-lg mb-6">
                         <div class="border-b border-gray-200 px-4 py-3 bg-gray-50">
-                            <h4 class="font-semibold">Automatic Content Escaping</h4>
+                            <h4 class="font-semibold">Explicit Content Sanitization</h4>
                         </div>
                         <div class="p-4">
-                            <pre class="bg-gray-800 text-white p-4 rounded-lg"><code class="language-javascript">// User input (potentially malicious)
-const userInput = '<script>alert("XSS Attack!")</script>';
+                            <pre class="bg-gray-800 text-white p-4 rounded-lg"><code class="language-javascript">import { sanitize } from './src/security/functions.js';
+import { createElement } from './src/systems/render/functions.js';
 
-// JSX will automatically escape this content
-const component = createElement('div', null, userInput);
+// User input (potentially malicious)
+const userInput = '<img src=x onerror=alert("XSS")>';
 
-// Rendered as plain text, not as HTML
-// Output: &lt;script&gt;alert("XSS Attack!")&lt;/script&gt;</code></pre>
+// The `createElement` function should treat this as plain text.
+// For explicit safety, especially if building HTML strings, use sanitize.
+const safeContent = sanitize(userInput); // -> ""
+
+// An empty string is rendered, preventing the attack.
+const component = createElement('div', null, safeContent);
+</code></pre>
                         </div>
                     </div>
-
-                    <div class="bg-red-50 border-l-4 border-red-500 p-4 rounded-md mb-6">
-                        <h4 class="font-semibold">Warning: dangerouslySetInnerHTML</h4>
-                        <p class="mb-2">For cases where you need to render HTML content, FlexNet provides <code>dangerouslySetInnerHTML</code> similar to React, but use it with extreme caution:</p>
-                        <pre class="bg-gray-800 text-white p-3 rounded-lg mt-2"><code class="language-javascript">// Only use with content you fully trust and have sanitized
-createElement('div', {
-  dangerouslySetInnerHTML: {
-    __html: trustedAndSanitizedHTML
-  }
-});</code></pre>
-                        <p class="mt-2">Always sanitize HTML content before using this property, preferably with a library like DOMPurify.</p>
-                    </div>
-
-                    <h3 class="text-xl font-medium mt-6 mb-3">Input Validation</h3>
-                    <p class="mb-4">FlexNet provides utilities for validating input data, helping to prevent injection attacks and data corruption.</p>
                     
-                    <pre class="bg-gray-800 text-white p-4 rounded-lg mb-6"><code class="language-javascript">import { validate } from './src/core/security/validation.js';
+                    <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2">Input Validation</h2>
+                    <p class="mb-4">FlexNet provides two primary pure functions for validating data, both of which return an <code>Either</code> type to explicitly handle success and failure cases.</p>
+
+                    <h3 class="text-xl font-medium mt-6 mb-3">Predicate-Based Validation with `validateInput`</h3>
+                     <p class="mb-4">Use <code>validateInput</code> for simple checks on a single piece of data.</p>
+                    <pre class="bg-gray-800 text-white p-4 rounded-lg mb-6"><code class="language-javascript">import { validateInput } from './src/security/functions.js';
+
+const isNotEmpty = s => s.length > 0;
+const validateUsername = validateInput(isNotEmpty);
+
+const result1 = validateUsername('username'); // -> Either.Right('username')
+const result2 = validateUsername('');      // -> Either.Left('Invalid input')
+</code></pre>
+
+                    <h3 class="text-xl font-medium mt-6 mb-3">Schema-Based Validation with `validate`</h3>
+                     <p class="mb-4">Use <code>validate</code> from the validation feature for complex objects.</p>
+                    <pre class="bg-gray-800 text-white p-4 rounded-lg mb-6"><code class="language-javascript">import { validate } from './src/features/validation/functions.js';
+import { Result } from './src/core/types/result.js'; // Assuming validator returns a Result
+
+// Dummy validator functions that return a Result
+const isLongEnough = (str) =>
+  str.length >= 8
+    ? Result.Ok(str)
+    : Result.Error('Password must be at least 8 characters');
 
 // Define validation schema
 const userSchema = {
-  username: {
-    type: 'string',
-    minLength: 3,
-    maxLength: 20,
-    pattern: /^[a-zA-Z0-9_]+$/
-  },
-  age: {
-    type: 'number',
-    min: 13,
-    max: 120
-  }
+  password: isLongEnough,
 };
 
-// Validate user input
-const userInput = {
-  username: 'john_doe',
-  age: 25
+const validateUser = validate(userSchema);
+const validationResult = validateUser({ password: 'short' });
+
+// validationResult would contain the error from the validator
+</code></pre>
+
+
+                    <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2">Secure State Management</h2>
+                    <p class="mb-4">FlexNet's immutable, reducer-based state management provides security benefits by preventing direct mutation of state and ensuring all changes are explicit and traceable.</p>
+
+                    <h3 class="text-xl font-medium mt-6 mb-3">Example: Secure State Updates</h3>
+                    <p class="mb-4">The correct pattern is to validate input *before* dispatching an action to the store. This ensures only valid data can trigger a state change.</p>
+                    <pre class="bg-gray-800 text-white p-4 rounded-lg mb-6"><code class="language-javascript">import { createStore } from './src/systems/state/functions.js';
+import { validateInput } from './src/security/functions.js';
+import { Either } from './src/core/types/either.js';
+
+// Reducer and initial state
+const initialState = { user: null };
+const authReducer = state => action => {
+    if (action.type === 'LOGIN_SUCCESS') {
+        return { ...state, user: action.payload };
+    }
+    return state;
 };
+const store = createStore(authReducer, initialState);
 
-// Returns Either.Right(userInput) if valid, 
-// Either.Left(validationErrors) if invalid
-const validationResult = validate(userInput, userSchema);</code></pre>
+// Validation predicate
+const isValidUsername = name => typeof name === 'string' && name.length > 3;
 
-                    <h3 class="text-xl font-medium mt-6 mb-3">Content Security Policy Support</h3>
-                    <p class="mb-4">FlexNet is designed to work well with Content Security Policy (CSP), a browser security feature that helps prevent XSS and other code injection attacks.</p>
+// Secure login handler
+function handleLogin(username) {
+  const validationResult = validateInput(isValidUsername)(username);
+  
+  // Only dispatch an action if validation succeeds
+  validationResult.fold(
+    (error) => console.error('Validation failed:', error),
+    (validUsername) => {
+        console.log('Validation succeeded, dispatching action...');
+        store.dispatch({ type: 'LOGIN_SUCCESS', payload: { name: validUsername } });
+    }
+  );
+}
+
+handleLogin('Alice'); // Dispatches action
+handleLogin('No');    // Logs validation error
+</code></pre>
+
+                    <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2">Content Security Policy (CSP)</h2>
+                    <p class="mb-4">FlexNet is designed to work well with a strict Content Security Policy, as it does not rely on inline scripts or `eval` for its core functionality.</p>
                     
                     <div class="bg-white border border-gray-200 rounded-lg mb-6">
                         <div class="border-b border-gray-200 px-4 py-3 bg-gray-50">
@@ -186,135 +231,14 @@ const validationResult = validate(userInput, userSchema);</code></pre>
                             <pre class="bg-gray-800 text-white p-4 rounded-lg"><code class="language-html">&lt;meta http-equiv="Content-Security-Policy" content="
   default-src 'self';
   script-src 'self';
-  style-src 'self' 'unsafe-inline';
+  style-src 'self' 'unsafe-inline'; /* unsafe-inline might be needed for some CSS-in-JS solutions */
   img-src 'self' data:;
-  connect-src 'self' https://api.example.com;
-  font-src 'self';
+  connect-src 'self' https://api.yourdomain.com;
   object-src 'none';
-  media-src 'self';
-  frame-src 'none';
+  frame-ancestors 'none';
 "&gt;</code></pre>
                         </div>
                     </div>
-
-                    <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2">Secure State Management</h2>
-                    <p class="mb-4">FlexNet's immutable state management approach provides security benefits by preventing direct mutation of state.</p>
-
-                    <div class="bg-blue-50 border-l-4 border-primary p-4 rounded-md mb-6">
-                        <h4 class="font-semibold">Security Benefits of Immutability</h4>
-                        <ul class="list-disc pl-6 mt-2">
-                            <li>Prevents unauthorized state modifications</li>
-                            <li>Makes state changes explicit and traceable</li>
-                            <li>Enables time-travel debugging for identifying security issues</li>
-                            <li>Simplifies testing and verification of security controls</li>
-                        </ul>
-                    </div>
-
-                    <h3 class="text-xl font-medium mt-6 mb-3">Example: Secure State Updates</h3>
-                    <pre class="bg-gray-800 text-white p-4 rounded-lg mb-6"><code class="language-javascript">import { createStore } from './src/systems/state/store.js';
-import { validate } from './src/core/security/validation.js';
-
-// Initial state
-const initialState = {
-  user: null,
-  isAuthenticated: false,
-  permissions: []
-};
-
-// Create store
-const store = createStore(initialState);
-
-// Validation schema
-const loginSchema = {
-  username: { type: 'string', minLength: 1 },
-  password: { type: 'string', minLength: 8 }
-};
-
-// Secure login handler
-function handleLogin(credentials) {
-  // Validate input first
-  const validationResult = validate(credentials, loginSchema);
-  
-  // Handle validation errors
-  if (validationResult.isLeft()) {
-    return validationResult; // Return validation errors
-  }
-  
-  // Proceed with login (using valid credentials)
-  return authenticateUser(credentials)
-    .then(authResult => {
-      // Update state only if authentication succeeded
-      if (authResult.success) {
-        store.update(state => ({
-          ...state,
-          user: authResult.user,
-          isAuthenticated: true,
-          permissions: authResult.permissions
-        }));
-        return authResult;
-      }
-      return authResult;
-    });
-}</code></pre>
-
-                    <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2">Secure Error Handling</h2>
-                    <p class="mb-4">FlexNet's functional error handling with Maybe, Either, and Result types prevents sensitive information leakage and provides structured error handling.</p>
-
-                    <div class="bg-white border border-gray-200 rounded-lg mb-6">
-                        <div class="border-b border-gray-200 px-4 py-3 bg-gray-50">
-                            <h4 class="font-semibold">Example: Secure Error Handling with Result</h4>
-                        </div>
-                        <div class="p-4">
-                            <pre class="bg-gray-800 text-white p-4 rounded-lg"><code class="language-javascript">import { Result } from './src/core/types/result.js';
-
-// User authentication function
-function authenticateUser(credentials) {
-  return fetchUserData(credentials)
-    .then(response => {
-      if (response.ok) {
-        return response.json().then(data => Result.Ok(data));
-      }
-      
-      // Security best practice: don't expose detailed error information
-      if (response.status === 401) {
-        return Result.Error('Invalid credentials');
-      } else if (response.status === 429) {
-        return Result.Error('Too many attempts. Please try again later.');
-      } else {
-        return Result.Error('Authentication failed. Please try again.');
-      }
-    })
-    .catch(error => {
-      // Log the detailed error internally for debugging
-      console.error('Authentication error:', error);
-      
-      // Return a generic error message to the user
-      return Result.Error('An unexpected error occurred. Please try again.');
-    });
-}</code></pre>
-                        </div>
-                    </div>
-
-                    <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2">CSRF Protection</h2>
-                    <p class="mb-4">Cross-Site Request Forgery (CSRF) is a type of attack that tricks users into executing unwanted actions on a web application they're authenticated to.</p>
-
-                    <h3 class="text-xl font-medium mt-6 mb-3">API Request Helpers</h3>
-                    <p class="mb-4">FlexNet provides API request helpers with built-in CSRF protection:</p>
-                    
-                    <pre class="bg-gray-800 text-white p-4 rounded-lg mb-6"><code class="language-javascript">import { apiRequest } from './src/core/security/api.js';
-
-// The apiRequest function automatically adds CSRF tokens to requests
-apiRequest('/api/user/profile', {
-  method: 'POST',
-  body: JSON.stringify(userData)
-})
-  .then(result => {
-    // Handle the result safely using the Result type
-    result.match({
-      Ok: data => updateUserProfile(data),
-      Error: error => displayError(error)
-    });
-  });</code></pre>
 
                     <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded-md mt-8">
                         <h4 class="font-semibold flex items-center">
@@ -324,12 +248,11 @@ apiRequest('/api/user/profile', {
                             Security Best Practices
                         </h4>
                         <ul class="list-disc pl-6 mt-2">
-                            <li>Always validate user input on both client and server sides</li>
-                            <li>Use HTTPS for all connections</li>
-                            <li>Implement proper authentication and authorization</li>
-                            <li>Keep dependencies updated to prevent known vulnerabilities</li>
-                            <li>Apply the principle of least privilege</li>
-                            <li>Implement proper logging and monitoring for security events</li>
+                            <li>Always validate and sanitize data at the boundaries of your application.</li>
+                            <li>Use HTTPS for all connections.</li>
+                            <li>Follow the principle of least privilege for API access and data handling.</li>
+                            <li>Keep dependencies updated to prevent known vulnerabilities.</li>
+                            <li>Implement proper logging and monitoring for security events.</li>
                         </ul>
                     </div>
                 </div>
@@ -337,9 +260,9 @@ apiRequest('/api/user/profile', {
                 <div class="mt-12 border-t border-gray-200 pt-8">
                     <h2 class="text-2xl font-semibold mb-4">Next Steps</h2>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <a href="../systems/errors.html" class="block p-4 border border-gray-200 rounded-lg hover:border-primary hover:shadow-md transition">
-                            <h3 class="font-semibold text-lg mb-2">Error Handling</h3>
-                            <p class="text-gray-600">Learn about FlexNet's comprehensive error handling system.</p>
+                        <a href="types.html" class="block p-4 border border-gray-200 rounded-lg hover:border-primary hover:shadow-md transition">
+                            <h3 class="font-semibold text-lg mb-2">Type System</h3>
+                            <p class="text-gray-600">Learn how Maybe, Either, and Result contribute to robust and safe code.</p>
                         </a>
                         <a href="../systems/state.html" class="block p-4 border border-gray-200 rounded-lg hover:border-primary hover:shadow-md transition">
                             <h3 class="font-semibold text-lg mb-2">State Management</h3>

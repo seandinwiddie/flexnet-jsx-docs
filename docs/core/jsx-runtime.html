@@ -112,204 +112,143 @@
                 <h1 class="text-4xl font-bold mb-6">JSX Runtime</h1>
                 
                 <p class="text-lg text-gray-600 mb-8">
-                    The FlexNet JSX Runtime is a lightweight, functional implementation of JSX that enables declarative UI programming using JavaScript functions.
+                    The FlexNet JSX Runtime provides a functional implementation for declaring user interfaces. It transpiles JSX syntax into pure function calls that build a virtual DOM tree, which is then efficiently rendered to the browser.
                 </p>
 
                 <div class="prose prose-blue max-w-none">
                     <div class="bg-blue-50 border-l-4 border-primary p-4 rounded-md mb-6">
-                        <h4 class="font-semibold">Note</h4>
-                        <p>Unlike React, FlexNet JSX is a pure functional implementation with zero dependencies and a focus on immutability and composition.</p>
+                        <h4 class="font-semibold">A Pure Functional Approach</h4>
+                        <p>Unlike other frameworks, FlexNet JSX is built entirely on pure functions, immutability, and composition. It has zero external dependencies and integrates seamlessly with the framework's core <a href="types.html" class="text-primary hover:underline">Type System</a>.</p>
                     </div>
 
-                    <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2">How JSX Works in FlexNet</h2>
-                    <p>
-                        In FlexNet, JSX is transpiled to function calls that create virtual DOM nodes. These nodes are then rendered to the actual DOM through a pure rendering function.
-                    </p>
+                    <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2">Core API</h2>
+                    <p>The JSX runtime is powered by two main functions located in <code>src/systems/render/functions.js</code>.</p>
 
-                    <h3 class="text-xl font-semibold mt-6 mb-3">The createElement Function</h3>
+                    <h3 class="text-xl font-semibold mt-6 mb-3">createElement</h3>
                     <p class="mb-4">
-                        At the core of FlexNet's JSX runtime is the <code class="bg-gray-100 px-1 py-0.5 rounded">createElement</code> function, which transforms JSX syntax into function calls.
+                        The <code>createElement</code> function is what your JSX code gets converted into. It takes a type, props, and children, and returns a lightweight JavaScript object known as a virtual DOM node.
                     </p>
 
-                    <pre class="bg-gray-800 text-white p-4 rounded-md mb-6 overflow-x-auto"><code class="language-javascript">import { createElement } from './src/core/runtime/jsx.js';
+                    <pre class="bg-gray-800 text-white p-4 rounded-md mb-6 overflow-x-auto"><code class="language-javascript">const createElement = (type, props, ...children) => ({
+    type,
+    props: { ...props, children: children.flat() }
+});
 
 // JSX like:
-// &lt;div className="container"&gt;Hello world&lt;/div&gt;
+// &lt;div className="container"&gt;Hello World&lt;/div&gt;
 
-// Gets converted to:
-createElement('div', { className: 'container' }, 'Hello world');</code></pre>
+// Is transpiled to:
+createElement('div', { className: 'container' }, 'Hello World');</code></pre>
 
-                    <h3 class="text-xl font-semibold mt-6 mb-3">Functional Components</h3>
+                    <h3 class="text-xl font-semibold mt-6 mb-3">render</h3>
                     <p class="mb-4">
-                        FlexNet components are pure functions that accept props and return elements:
+                        The <code>render</code> function is a pipeline that takes a virtual DOM element and makes it appear in the browser. It creates a complete virtual DOM tree, reconciles it with the existing DOM, and applies only the necessary changes (patches).
                     </p>
 
-                    <pre class="bg-gray-800 text-white p-4 rounded-md mb-6 overflow-x-auto"><code class="language-javascript">// A simple functional component
-const Greeting = ({ name }) => 
+                    <pre class="bg-gray-800 text-white p-4 rounded-md mb-6 overflow-x-auto"><code class="language-javascript">import { pipe } from '../../core/functions/composition.js';
+// NOTE: createVirtualDOM, reconcile, and patch are internal functions.
+
+const render = (element, container) =>
+    pipe(
+        createVirtualDOM,
+        reconcile(container.firstChild),
+        patch(container)
+    )(element);</code></pre>
+
+                    <h2 class="text-2xl font-bold mt-8 mb-4">Functional Components</h2>
+                    <p class="mb-4">
+                        In FlexNet, components are simply pure functions that accept props and return a virtual DOM element. This makes them highly predictable, testable, and composable.
+                    </p>
+
+                    <pre class="bg-gray-800 text-white p-4 rounded-md mb-6 overflow-x-auto"><code class="language-javascript">import { createElement } from '../../systems/render/functions.js';
+
+// A pure functional component
+const Greeting = ({ name }) =>
   createElement('h1', null, `Hello, ${name}!`);
 
-// Using the component
+// Using the component produces a VDOM node
 const element = createElement(Greeting, { name: 'World' });
 
-// JSX equivalent would be:
-// &lt;Greeting name="World" /&gt;</code></pre>
+// This is the equivalent of writing:
+// &lt;Greeting name="World" /&gt;
+</code></pre>
 
-                    <h2 class="text-2xl font-bold mt-8 mb-4">Core JSX Runtime API</h2>
+                    <h2 class="text-2xl font-bold mt-8 mb-4">Rendering Example</h2>
+                    <pre class="bg-gray-800 text-white p-4 rounded-md mb-6 overflow-x-auto"><code class="language-javascript">import { createElement, render } from '../../systems/render/functions.js';
 
-                    <div class="overflow-x-auto mb-8">
-                        <table class="min-w-full border border-gray-200 rounded-lg">
-                            <thead class="bg-gray-50">
-                                <tr>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Function</th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Description</th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Usage</th>
-                                </tr>
-                            </thead>
-                            <tbody class="bg-white divide-y divide-gray-200">
-                                <tr>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">createElement</td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Creates virtual DOM elements</td>
-                                    <td class="px-6 py-4 text-sm text-gray-500"><code>createElement(type, props, ...children)</code></td>
-                                </tr>
-                                <tr>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">render</td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Renders elements to the DOM</td>
-                                    <td class="px-6 py-4 text-sm text-gray-500"><code>render(element, container)</code></td>
-                                </tr>
-                                <tr>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">Fragment</td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Group elements without creating extra nodes</td>
-                                    <td class="px-6 py-4 text-sm text-gray-500"><code>createElement(Fragment, null, ...children)</code></td>
-                                </tr>
-                                <tr>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">createContext</td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Creates a context for data sharing</td>
-                                    <td class="px-6 py-4 text-sm text-gray-500"><code>createContext(defaultValue)</code></td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-
-                    <h2 class="text-2xl font-bold mt-8 mb-4">Rendering with Pure Functions</h2>
-                    <p class="mb-4">
-                        FlexNet uses pure functions for rendering, which means:
-                    </p>
-                    <ul class="list-disc pl-6 mb-6 space-y-2">
-                        <li>Predictable rendering behavior</li>
-                        <li>No side effects during the render phase</li>
-                        <li>Immutable data patterns</li>
-                        <li>Functional composition for component building</li>
-                    </ul>
-
-                    <h3 class="text-xl font-semibold mt-6 mb-3">Rendering Example</h3>
-                    <pre class="bg-gray-800 text-white p-4 rounded-md mb-6 overflow-x-auto"><code class="language-javascript">import { createElement, render } from './src/core/runtime/jsx.js';
-import { compose, Maybe } from './src/core/runtime/runtime.js';
-
-// Pure component function
+// A pure component function
 const App = ({ message }) =>
   createElement('div', { className: 'app' },
-    createElement('h1', null, 'FlexNet App'),
-    createElement('p', null, message || 'No message provided')
+    createElement('h1', null, 'FlexNet JSX'),
+    createElement('p', null, message)
   );
 
-// Render function - pure with no side effects
+// The render function mounts the component to the DOM
 render(
-  createElement(App, { message: 'Hello, World!' }),
+  createElement(App, { message: 'Declarative UI with pure functions!' }),
   document.getElementById('root')
 );</code></pre>
 
-                    <h2 class="text-2xl font-bold mt-8 mb-4">JSX vs createElement</h2>
-                    <p class="mb-4">
-                        JSX is syntactic sugar over the <code class="bg-gray-100 px-1 py-0.5 rounded">createElement</code> function. Here's how they compare:
-                    </p>
-
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
-                        <div class="bg-white rounded-lg border border-gray-200 overflow-hidden">
-                            <div class="px-4 py-2 bg-gray-50 border-b border-gray-200">
-                                <h3 class="font-medium">JSX Syntax</h3>
-                            </div>
-                            <div class="p-4">
-                                <pre class="bg-gray-800 text-white p-3 rounded-md"><code class="language-jsx">const element = (
-  &lt;div className="container"&gt;
-    &lt;h1&gt;Title&lt;/h1&gt;
-    &lt;p&gt;Paragraph&lt;/p&gt;
-  &lt;/div&gt;
-);</code></pre>
-                            </div>
-                        </div>
-                        <div class="bg-white rounded-lg border border-gray-200 overflow-hidden">
-                            <div class="px-4 py-2 bg-gray-50 border-b border-gray-200">
-                                <h3 class="font-medium">createElement Calls</h3>
-                            </div>
-                            <div class="p-4">
-                                <pre class="bg-gray-800 text-white p-3 rounded-md"><code class="language-javascript">const element = createElement(
-  'div',
-  { className: 'container' },
-  createElement('h1', null, 'Title'),
-  createElement('p', null, 'Paragraph')
-);</code></pre>
-                            </div>
-                        </div>
-                    </div>
-
-                    <h2 class="text-2xl font-bold mt-8 mb-4">Integration with FlexNet's Type System</h2>
+                    <h2 class="text-2xl font-bold mt-8 mb-4">Integration with the Type System</h2>
                     <p class="mb-6">
-                        The JSX runtime is designed to work seamlessly with FlexNet's functional type system:
+                        The JSX runtime is designed to work seamlessly with FlexNet's functional types to handle conditional rendering and optional props safely.
                     </p>
 
-                    <pre class="bg-gray-800 text-white p-4 rounded-md mb-6 overflow-x-auto"><code class="language-javascript">import { createElement } from './src/core/runtime/jsx.js';
-import { Maybe } from './src/core/types/maybe.js';
+                    <pre class="bg-gray-800 text-white p-4 rounded-md mb-6 overflow-x-auto"><code class="language-javascript">import { createElement, render } from '../../systems/render/functions.js';
+import { Maybe } from '../../core/types/maybe.js';
 
-// Using Maybe for optional props
+// Using Maybe for an optional prop
 const UserProfile = ({ user }) => {
-  // Safely access potentially missing user data
   const username = Maybe.fromNullable(user)
-    .map(u => u.username)
+    .map(u => u.name)
     .getOrElse('Guest');
-    
-  return createElement('div', null,
+
+  return createElement('div', { className: 'profile' },
     createElement('h2', null, `Welcome, ${username}!`)
   );
-};</code></pre>
+};
+
+// Render the component with different props
+const loggedInUser = { name: 'Alice' };
+render(createElement(UserProfile, { user: loggedInUser }), document.getElementById('user1'));
+render(createElement(UserProfile, { user: null }), document.getElementById('user2'));
+</code></pre>
 
                     <div class="border border-gray-200 rounded-lg p-6 bg-white mt-8 mb-8">
-                        <h3 class="text-xl font-semibold mb-4">Key Differences from React</h3>
+                        <h3 class="text-xl font-semibold mb-4">Key Aspects of FlexNet JSX</h3>
                         <ul class="list-disc pl-6 space-y-3">
                             <li>
-                                <strong>Pure Functional:</strong> FlexNet JSX is designed around pure functions and immutability, avoiding class components entirely.
+                                <strong>Purely Functional:</strong> Components are pure functions, ensuring predictable rendering and easy testing. Class components are not used.
                             </li>
                             <li>
-                                <strong>No Virtual DOM Diffing:</strong> FlexNet uses a more direct approach to DOM updates without the overhead of a complex diffing algorithm.
+                                <strong>Lightweight VDOM & Reconciliation:</strong> FlexNet uses a virtual DOM and a reconciliation pipeline to efficiently update the UI. The entire process is a pure functional composition.
                             </li>
                             <li>
-                                <strong>Integrated Type System:</strong> The runtime is built to work with FlexNet's functional type system (Maybe, Either, Result).
+                                <strong>Integrated Type System:</strong> The runtime is built to leverage the core functional types (`Maybe`, `Either`, `Result`) for robust and safe UI logic.
                             </li>
                             <li>
-                                <strong>No Dependencies:</strong> FlexNet JSX has zero external dependencies and a much smaller footprint.
-                            </li>
-                            <li>
-                                <strong>Functional Composition:</strong> Component composition is achieved through function composition rather than component nesting.
+                                <strong>Zero Dependencies:</strong> The framework has no external dependencies, resulting in a small footprint and full control over the implementation.
                             </li>
                         </ul>
                     </div>
 
                     <h2 class="text-2xl font-bold mt-8 mb-4">Further Reading</h2>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
-                        <a href="../api/jsx.html" class="block p-6 bg-white rounded-lg border border-gray-200 hover:border-primary transition">
-                            <h3 class="text-lg font-semibold mb-2">JSX API Reference</h3>
-                            <p class="text-gray-600">Detailed API documentation for the JSX runtime</p>
+                        <a href="types.html" class="block p-6 bg-white rounded-lg border border-gray-200 hover:border-primary transition">
+                            <h3 class="text-lg font-semibold mb-2">Type System</h3>
+                            <p class="text-gray-600">Explore the Maybe, Either, and Result types.</p>
                         </a>
                         <a href="../examples/counter.html" class="block p-6 bg-white rounded-lg border border-gray-200 hover:border-primary transition">
                             <h3 class="text-lg font-semibold mb-2">Counter Example</h3>
-                            <p class="text-gray-600">See JSX in action with a simple counter application</p>
+                            <p class="text-gray-600">See JSX in action with a simple counter application.</p>
                         </a>
-                        <a href="../core/functions.html" class="block p-6 bg-white rounded-lg border border-gray-200 hover:border-primary transition">
-                            <h3 class="text-lg font-semibold mb-2">Function Composition</h3>
-                            <p class="text-gray-600">Learn how function composition powers FlexNet components</p>
+                        <a href="functions.html" class="block p-6 bg-white rounded-lg border border-gray-200 hover:border-primary transition">
+                            <h3 class="text-lg font-semibold mb-2">Core Functions</h3>
+                            <p class="text-gray-600">Learn how function composition powers FlexNet components.</p>
                         </a>
                         <a href="../systems/render.html" class="block p-6 bg-white rounded-lg border border-gray-200 hover:border-primary transition">
                             <h3 class="text-lg font-semibold mb-2">Render System</h3>
-                            <p class="text-gray-600">Understand how the rendering process works</p>
+                            <p class="text-gray-600">Understand how the rendering process works in detail.</p>
                         </a>
                     </div>
                 </div>

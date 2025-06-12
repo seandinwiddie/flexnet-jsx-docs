@@ -123,27 +123,16 @@
                         <li><strong>Either:</strong> For handling branching logic and error cases with explicit paths.</li>
                         <li><strong>Result:</strong> For capturing operation outcomes and handling exceptions functionally.</li>
                     </ul>
-                <p>These types follow the principles of functional programming, particularly the concept of monads, which allows for composition and chaining of operations.</p>
+                <p>These types follow the principles of functional programming, particularly the concept of monads, which allows for composition and chaining of operations in a safe and predictable manner.</p>
                 
                     <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2">Maybe Type</h2>
-                    <p class="mb-4">The <code>Maybe</code> type represents optional values in a functional way. It eliminates the need for null checks and makes code safer and more predictable.</p>
+                    <p class="mb-4">The <code>Maybe</code> type is a container for a value that may or may not be present. It helps you avoid `null` or `undefined` errors by forcing you to explicitly handle the case where a value is missing.</p>
                 
                     <h3 class="text-xl font-medium mt-6 mb-3">Structure</h3>
                     <pre><code class="language-javascript">// src/core/types/maybe.js
 const Maybe = {
-    Just: value => ({
-        type: 'Just',
-        value,
-        map: fn => Maybe.Just(fn(value)),
-        chain: fn => fn(value),
-        getOrElse: defaultValue => value
-    }),
-    Nothing: () => ({
-        type: 'Nothing',
-        map: fn => Maybe.Nothing(),
-        chain: fn => Maybe.Nothing(),
-        getOrElse: defaultValue => defaultValue
-    }),
+    Just: value => ({ type: 'Just', value }),
+    Nothing: () => ({ type: 'Nothing' }),
     fromNullable: value => value != null ? Maybe.Just(value) : Maybe.Nothing(),
     map: fn => maybe => 
         maybe.type === 'Just' ? Maybe.Just(fn(maybe.value)) : Maybe.Nothing(),
@@ -155,55 +144,43 @@ const Maybe = {
                 
                     <h3 class="text-xl font-medium mt-6 mb-3">Key Concepts</h3>
                     <ul class="list-disc pl-6 mb-6 space-y-2">
-                    <li><strong>Just</strong> - Contains a value</li>
-                    <li><strong>Nothing</strong> - Represents no value</li>
-                    <li><strong>map</strong> - Transform the value if it exists</li>
-                    <li><strong>chain</strong> - Apply a function that returns a Maybe</li>
-                    <li><strong>getOrElse</strong> - Extract the value or provide a default</li>
+                    <li><strong>Just(value)</strong> - A container that holds a value.</li>
+                    <li><strong>Nothing()</strong> - A container that represents the absence of a value.</li>
+                    <li><strong>fromNullable(value)</strong> - Creates a `Maybe` from a value that could be `null` or `undefined`.</li>
+                    <li><strong>map(fn)</strong> - Applies a function to the value inside a `Just`, otherwise returns `Nothing`.</li>
+                    <li><strong>chain(fn)</strong> - Applies a function that returns a `Maybe` to the value inside a `Just`. Useful for chaining operations that can fail.</li>
+                    <li><strong>getOrElse(defaultValue)</strong> - Extracts the value from a `Just` or returns a default value if it's `Nothing`.</li>
                 </ul>
                 
                     <h3 class="text-xl font-medium mt-6 mb-3">Usage Example</h3>
-                <pre><code class="language-javascript">import Maybe from '../core/types/maybe.js';
+                <pre><code class="language-javascript">import { Maybe } from '../../core/types/maybe.js';
 
-// Safe access to potentially null/undefined values
-const getUserName = user => 
+// Safely access a nested property
+const getStreetName = user =>
   Maybe.fromNullable(user)
-    .chain(u => Maybe.fromNullable(u.profile))
-    .chain(p => Maybe.fromNullable(p.name))
-    .getOrElse('Anonymous');
+    .map(u => u.address)
+    .map(a => a.street)
+    .getOrElse('No street found');
 
 // Usage
-const user1 = { profile: { name: 'Alice' }};
-const user2 = { profile: null };
+const user1 = { address: { street: '123 Main St' } };
+const user2 = { address: null };
 const user3 = null;
 
-console.log(getUserName(user1)); // 'Alice'
-console.log(getUserName(user2)); // 'Anonymous'
-console.log(getUserName(user3)); // 'Anonymous'</code></pre>
+console.log(getStreetName(user1)); // '123 Main St'
+console.log(getStreetName(user2)); // 'No street found'
+console.log(getStreetName(user3)); // 'No street found'</code></pre>
                     <p>For complete details on the Maybe type, see the <a href="../api/maybe.html" class="text-primary hover:underline">Maybe API Reference</a>.</p>
 
                     <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2">Either Type</h2>
-                    <p class="mb-4">The <code>Either</code> type represents values that can be one of two possibilities, typically used for error handling or branching logic.</p>
+                    <p class="mb-4">The <code>Either</code> type represents a value that can be one of two possibilities, conventionally named `Left` and `Right`. It is typically used for error handling, where `Left` represents an error and `Right` represents a successful value.</p>
 
                     <h3 class="text-xl font-medium mt-6 mb-3">Structure</h3>
                     <pre><code class="language-javascript">// src/core/types/either.js
 const Either = {
-    Left: value => ({
-        type: 'Left',
-        value,
-        map: fn => Either.Left(value),
-        chain: fn => Either.Left(value),
-        fold: (leftFn, rightFn) => leftFn(value)
-    }),
-    Right: value => ({
-        type: 'Right',
-        value,
-        map: fn => Either.Right(fn(value)),
-        chain: fn => fn(value),
-        fold: (leftFn, rightFn) => rightFn(value)
-    }),
-    fromNullable: (value, errorMsg = 'Value is null') => 
-        value != null ? Either.Right(value) : Either.Left(errorMsg),
+    Left: value => ({ type: 'Left', value }),
+    Right: value => ({ type: 'Right', value }),
+    fromNullable: value => value != null ? Either.Right(value) : Either.Left('Value is null'),
     map: fn => either =>
         either.type === 'Right' ? Either.Right(fn(either.value)) : either,
     chain: fn => either =>
@@ -214,47 +191,81 @@ const Either = {
                 
                     <h3 class="text-xl font-medium mt-6 mb-3">Key Concepts</h3>
                     <ul class="list-disc pl-6 mb-6 space-y-2">
-                    <li><strong>Left</strong> - Typically represents an error or failure case</li>
-                    <li><strong>Right</strong> - Typically represents a success or normal case</li>
-                    <li><strong>map</strong> - Transform the Right value, leave Left untouched</li>
-                    <li><strong>chain</strong> - Apply a function that returns an Either to a Right value</li>
-                    <li><strong>fold</strong> - Process both possibilities with separate functions</li>
+                    <li><strong>Left(value)</strong> - Represents the "failure" or alternative path, containing an error value.</li>
+                    <li><strong>Right(value)</strong> - Represents the "success" path, containing the correct value.</li>
+                    <li><strong>map(fn)</strong> - Applies a function to the value inside a `Right`, leaving a `Left` untouched.</li>
+                    <li><strong>chain(fn)</strong> - Applies a function that returns an `Either` to the value of a `Right`.</li>
+                    <li><strong>fold(leftFn, rightFn)</strong> - Provides two functions to handle both cases. It safely unwraps the `Either` by executing the appropriate function.</li>
                 </ul>
                 
                     <h3 class="text-xl font-medium mt-6 mb-3">Usage Example</h3>
-                <pre><code class="language-javascript">import Either from '../core/types/either.js';
+                <pre><code class="language-javascript">import { Either } from '../../core/types/either.js';
 
-// Parse a JSON string safely
-const parseJson = str => {
-  try {
-    return Either.Right(JSON.parse(str));
-  } catch (e) {
-    return Either.Left(`Invalid JSON: ${e.message}`);
-  }
-};
+// A function that can fail
+const findUser = id => id === 1
+  ? Either.Right({ id: 1, name: 'Alice' })
+  : Either.Left('User not found');
 
-// Process user configuration
-const processConfig = configStr => 
-  parseJson(configStr)
-    .map(config => ({
-      ...config,
-      lastUpdated: new Date().toISOString()
-    }))
+// Process the result using fold
+const getUserInfo = id =>
+  findUser(id)
+    .map(user => user.name.toUpperCase())
     .fold(
-      error => ({ error, valid: false }),
-      config => ({ config, valid: true })
+      error => `Error: ${error}`,
+      name => `User: ${name}`
     );
 
 // Usage
-const validConfig = '{"theme":"dark","notifications":true}';
-const invalidConfig = '{theme:"dark",notifications:true}';
-
-console.log(processConfig(validConfig)); 
-// { config: { theme: 'dark', notifications: true, lastUpdated: '...' }, valid: true }
-
-console.log(processConfig(invalidConfig)); 
-// { error: 'Invalid JSON: ...', valid: false }</code></pre>
+console.log(getUserInfo(1)); // 'User: ALICE'
+console.log(getUserInfo(2)); // 'Error: User not found'</code></pre>
                     <p>For complete details on the Either type, see the <a href="../api/either.html" class="text-primary hover:underline">Either API Reference</a>.</p>
+                
+                    <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2">Result Type</h2>
+                    <p class="mb-4">The <code>Result</code> type is similar to `Either` but is specifically designed for operations that can succeed (`Ok`) or fail (`Error`). It is excellent for wrapping native JavaScript functions that might throw exceptions, bringing them into the functional world.</p>
+
+                    <h3 class="text-xl font-medium mt-6 mb-3">Structure</h3>
+                    <pre><code class="language-javascript">// src/core/types/result.js
+const Result = {
+    Ok: value => ({ type: 'Ok', value }),
+    Error: error => ({ type: 'Error', error }),
+    fromTry: fn => {
+        try {
+            return Result.Ok(fn());
+        } catch (e) {
+            return Result.Error(e);
+        }
+    },
+    map: fn => result =>
+        result.type === 'Ok' ? Result.Ok(fn(result.value)) : result,
+    chain: fn => result =>
+        result.type === 'Ok' ? fn(result.value) : result
+};</code></pre>
+                
+                    <h3 class="text-xl font-medium mt-6 mb-3">Key Concepts</h3>
+                    <ul class="list-disc pl-6 mb-6 space-y-2">
+                        <li><strong>Ok(value)</strong> - Represents a successful operation, containing the resulting value.</li>
+                        <li><strong>Error(error)</strong> - Represents a failed operation, containing the error or exception.</li>
+                        <li><strong>fromTry(fn)</strong> - Executes a function and wraps its outcome in a `Result`, catching any exceptions and placing them in `Error`.</li>
+                        <li><strong>map(fn)</strong> - Applies a function to the value inside an `Ok` container.</li>
+                    </ul>
+                
+                    <h3 class="text-xl font-medium mt-6 mb-3">Usage Example</h3>
+                <pre><code class="language-javascript">import { Result } from '../../core/types/result.js';
+
+// Safely parse a JSON string that might be invalid
+const parseJson = jsonString => Result.fromTry(() => JSON.parse(jsonString));
+
+// Usage
+const validJson = '{"data": "value"}';
+const invalidJson = 'not json';
+
+const result1 = parseJson(validJson).map(data => data.data); // Result.Ok("value")
+const result2 = parseJson(invalidJson); // Result.Error(SyntaxError: ...)
+
+result1.map(value => console.log(value)); // Logs "value"
+result2.map(value => console.log(value)); // Does nothing
+</code></pre>
+                    <p>For complete details on the Result type, see the <a href="../api/result.html" class="text-primary hover:underline">Result API Reference</a>.</p>
                 </div>
             </div>
         </main>

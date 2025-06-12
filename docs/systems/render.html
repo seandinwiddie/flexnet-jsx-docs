@@ -128,7 +128,7 @@
                     <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2">Basic Rendering</h2>
                     <p class="mb-4">The core of the render system is the <code>render</code> function, which takes a virtual DOM element and a DOM container, and mounts the element into the container.</p>
 
-                    <pre class="bg-gray-800 text-white p-4 rounded-lg mb-6"><code class="language-javascript">import { createElement, render } from './src/core/runtime/jsx.js';
+                    <pre class="bg-gray-800 text-white p-4 rounded-lg mb-6"><code class="language-javascript">import { createElement, render } from './src/systems/render/functions.js';
 
 // Create a virtual DOM element
 const element = createElement('div', { className: 'greeting' }, 'Hello, World!');
@@ -139,7 +139,9 @@ render(element, document.getElementById('root'));</code></pre>
                     <h3 class="text-xl font-medium mt-6 mb-3">Functional Components</h3>
                     <p class="mb-4">FlexNet supports functional components, which are functions that accept props and return virtual DOM elements:</p>
 
-                    <pre class="bg-gray-800 text-white p-4 rounded-lg mb-6"><code class="language-javascript">// Define a functional component
+                    <pre class="bg-gray-800 text-white p-4 rounded-lg mb-6"><code class="language-javascript">import { createElement, render } from './src/systems/render/functions.js';
+
+// Define a functional component
 const Greeting = ({ name }) => 
   createElement('div', { className: 'greeting' }, 
     `Hello, ${name}!`
@@ -223,8 +225,8 @@ render(element, document.getElementById('root'));</code></pre>
                     </div>
 
                     <h3 class="text-xl font-medium mt-6 mb-3">Example: Rendering with State Updates</h3>
-                    <pre class="bg-gray-800 text-white p-4 rounded-lg mb-6"><code class="language-javascript">import { createElement, render } from './src/core/runtime/jsx.js';
-import { createStore } from './src/systems/state/store.js';
+                    <pre class="bg-gray-800 text-white p-4 rounded-lg mb-6"><code class="language-javascript">import { createElement, render } from './src/systems/render/functions.js';
+import { createStore } from './src/systems/state/functions.js';
 
 // Create a store with initial state
 const store = createStore({ count: 0 });
@@ -278,6 +280,11 @@ function createElement(type, props, ...children) {
   // Implementation details
 }</code></pre>
 
+                    <div class="bg-blue-50 border-l-4 border-primary p-4 rounded-md my-6">
+                        <h4 class="font-semibold">Security Note</h4>
+                        <p class="mt-2">For enhanced security, a safer version of <code>createElement</code> can be used, which validates inputs and returns an <code>Either</code> type to explicitly handle potential errors like invalid props or types. This prevents certain types of injection attacks. See the security guide for details.</p>
+                    </div>
+
                     <h3 class="text-xl font-medium mt-6 mb-3">createFragment</h3>
                     <p class="mb-4">Creates a fragment that can hold multiple elements without adding extra DOM nodes.</p>
                     <pre class="bg-gray-800 text-white p-4 rounded-lg mb-6"><code class="language-javascript">/**
@@ -293,25 +300,27 @@ function createFragment(children) {
                     <p class="mb-4">FlexNet JSX supports several advanced rendering techniques:</p>
 
                     <h3 class="text-xl font-medium mt-6 mb-3">Conditional Rendering</h3>
-                    <pre class="bg-gray-800 text-white p-4 rounded-lg mb-6"><code class="language-javascript">import { createElement } from './src/core/runtime/jsx.js';
-import { Maybe } from './src/core/types/maybe.js';
+                    <pre class="bg-gray-800 text-white p-4 rounded-lg mb-6"><code class="language-javascript">import { createElement } from './src/systems/render/functions.js';
+import { Either } from './src/core/types/either.js';
+import { pipe } from './src/core/functions/composition.js';
 
-// Using Maybe for conditional rendering
-const UserProfile = ({ user }) => 
+// Using Either for conditional rendering
+const UserProfile = ({ user }) =>
   createElement('div', { className: 'profile' },
     // Render user info if user exists, otherwise render a login prompt
-    Maybe.fromNullable(user).match({
-      Just: (userData) => [
-        createElement('h2', null, userData.name),
-        createElement('p', null, userData.email)
-      ],
-      Nothing: () => 
-        createElement('button', { onClick: login }, 'Log In')
-    })
+    pipe(
+      Either.fold(
+        () => [createElement('button', { onClick: () => { /* login */ } }, 'Log In')],
+        (userData) => [
+          createElement('h2', null, userData.name),
+          createElement('p', null, userData.email)
+        ]
+      )
+    )(Either.fromNullable(user))
   );</code></pre>
 
                     <h3 class="text-xl font-medium mt-6 mb-3">List Rendering</h3>
-                    <pre class="bg-gray-800 text-white p-4 rounded-lg mb-6"><code class="language-javascript">import { createElement } from './src/core/runtime/jsx.js';
+                    <pre class="bg-gray-800 text-white p-4 rounded-lg mb-6"><code class="language-javascript">import { createElement } from './src/systems/render/functions.js';
 
 // Rendering lists with proper keys
 const TodoList = ({ todos, onToggle }) =>
@@ -332,34 +341,40 @@ const TodoList = ({ todos, onToggle }) =>
   );</code></pre>
 
                     <h3 class="text-xl font-medium mt-6 mb-3">Error Boundaries</h3>
-                    <p class="mb-4">FlexNet provides a way to handle rendering errors gracefully:</p>
-                    <pre class="bg-gray-800 text-white p-4 rounded-lg mb-6"><code class="language-javascript">import { createElement } from './src/core/runtime/jsx.js';
+                    <p class="mb-4">FlexNet provides a way to handle rendering errors gracefully using a functional approach. One common pattern is to create an `ErrorBoundary` component that takes a function to execute and a fallback UI to render in case of an error.</p>
+                    <pre class="bg-gray-800 text-white p-4 rounded-lg mb-6"><code class="language-javascript">import { createElement } from './src/systems/render/functions.js';
 import { Result } from './src/core/types/result.js';
 
-// Error boundary component
-const ErrorBoundary = ({ children, fallback }) => {
-  // Try to render children safely
-  const renderResult = Result.try(() => children);
+// Error boundary component using a render prop pattern
+const ErrorBoundary = ({ childFn, fallback }) => {
+  // Attempt to execute the function that may throw an error
+  const renderResult = Result.fromTry(childFn);
+
+  // Return the successful result or the fallback UI
+  if (renderResult.type === 'Ok') {
+    return renderResult.value;
+  }
   
-  // Return children or fallback based on result
-  return renderResult.match({
-    Ok: renderedChildren => renderedChildren,
-    Error: error => 
-      typeof fallback === 'function' 
-        ? fallback(error)
-        : fallback
-  });
+  return typeof fallback === 'function'
+    ? fallback(renderResult.error)
+    : fallback;
 };
 
 // Usage
+const PotentiallyCrashingComponent = ({ user }) => {
+  if (!user) {
+    throw new Error('User data is missing!');
+  }
+  return createElement('h1', null, `Welcome, ${user.name}`);
+};
+
 const App = () =>
   createElement(ErrorBoundary, {
-    fallback: (error) => createElement('div', { className: 'error' }, 
+    fallback: (error) => createElement('div', { className: 'error' },
       `Something went wrong: ${error.message}`
-    )
-  },
-    createElement(UserProfile, { user: currentUser })
-  );</code></pre>
+    ),
+    childFn: () => createElement(PotentiallyCrashingComponent, { user: currentUser })
+  });</code></pre>
 
                     <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2">Optimizing Render Performance</h2>
                     <p class="mb-4">To optimize rendering performance in FlexNet JSX, consider the following techniques:</p>
@@ -367,7 +382,7 @@ const App = () =>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
                         <div class="bg-white p-4 border border-gray-200 rounded-lg">
                             <h4 class="font-semibold text-lg mb-2">Memoization</h4>
-                            <p class="text-gray-600">Use the <code>memoize</code> function to prevent unnecessary re-renders of expensive components.</p>
+                            <p class="text-gray-600">Use the <code>memoize</code> function to prevent unnecessary re-renders of expensive components. This works best when component props are primitive values or simple objects that can be reliably serialized.</p>
                         </div>
                         <div class="bg-white p-4 border border-gray-200 rounded-lg">
                             <h4 class="font-semibold text-lg mb-2">Keys</h4>
@@ -384,26 +399,22 @@ const App = () =>
                     </div>
 
                     <h3 class="text-xl font-medium mt-6 mb-3">Example: Memoized Component</h3>
-                    <pre class="bg-gray-800 text-white p-4 rounded-lg mb-6"><code class="language-javascript">import { createElement } from './src/core/runtime/jsx.js';
-import { memoize } from './src/core/runtime/runtime.js';
+                    <pre class="bg-gray-800 text-white p-4 rounded-lg mb-6"><code class="language-javascript">import { createElement } from './src/systems/render/functions.js';
+import { memoize } from './src/utils/function.js';
 
-// Expensive component that shouldn't re-render unless props change
+// Expensive component that shouldn't re-render unless its props change
 const ExpensiveComponent = ({ data }) => {
   // Complex processing...
-  const processedData = someExpensiveCalculation(data);
+  const processedData = JSON.stringify(data); // Example of processing
   
   return createElement('div', null,
-    // Render processed data
+    createElement('p', null, `Processed: ${processedData}`)
   );
 };
 
-// Memoized version that only re-renders when data actually changes
-const MemoizedExpensiveComponent = memoize(ExpensiveComponent, 
-  (prevProps, nextProps) => {
-    // Custom comparison function
-    return JSON.stringify(prevProps.data) === JSON.stringify(nextProps.data);
-  }
-);</code></pre>
+// Memoized version that only re-renders when its arguments change.
+// The arguments are JSON.stringified to create a cache key.
+const MemoizedExpensiveComponent = memoize(ExpensiveComponent);</code></pre>
 
                     <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded-md mt-8">
                         <h4 class="font-semibold flex items-center">

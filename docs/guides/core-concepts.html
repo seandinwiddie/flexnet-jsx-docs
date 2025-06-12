@@ -140,23 +140,27 @@
 
                     <p class="mb-6">Let's see an example of these principles in action:</p>
                     
-                    <pre class="bg-gray-800 text-white p-4 rounded-lg mb-6"><code class="language-javascript">// Pure function - always returns the same output for the same input
+                    <pre class="bg-gray-800 text-white p-4 rounded-lg mb-6"><code class="language-javascript">import { compose, pipe } from '../../core/functions/composition.js';
+
+// Pure function - always returns the same output for the same input
 const add = (a, b) => a + b;
 
 // Function composition - combining simple functions
-const compose = (f, g) => x => f(g(x));
 const double = x => x * 2;
 const increment = x => x + 1;
-const doubleAndIncrement = compose(increment, double);
+const square = x => x * x;
 
-// Immutability - creating new objects instead of modifying
-const updateUser = (user, changes) => ({ ...user, ...changes });
+const processWithCompose = compose(square, double, increment); // Executes right-to-left
+const processWithPipe = pipe(increment, double, square); // Executes left-to-right
+
+// Immutability - creating new data instead of modifying it
 const user = { name: 'Alice', age: 30 };
-const updatedUser = updateUser(user, { age: 31 });
-// user remains unchanged, updatedUser is a new object</code></pre>
+const updatedUser = { ...user, age: 31 }; // A new object is created
+// `user` remains unchanged: { name: 'Alice', age: 30 }
+</code></pre>
 
                     <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2" id="jsx-runtime">JSX Runtime</h2>
-                    <p class="mb-4">The JSX runtime in FlexNet transforms JSX syntax into function calls that create and manage virtual DOM elements.</p>
+                    <p class="mb-4">The JSX runtime in FlexNet transforms JSX syntax into pure function calls that build a virtual DOM—a lightweight representation of the UI. This virtual tree is then efficiently rendered and updated in the browser.</p>
 
                     <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-100 mb-6">
                         <h3 class="text-lg font-semibold mb-3">Key JSX Runtime Concepts</h3>
@@ -165,117 +169,111 @@ const updatedUser = updateUser(user, { age: 31 });
                                 <svg class="h-5 w-5 text-primary mt-0.5 mr-2 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
                                     <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
                                 </svg>
-                                <span><strong>createElement</strong>: Function that creates virtual DOM elements</span>
+                                <span><strong>createElement</strong>: The function that JSX transpiles to, creating virtual DOM nodes.</span>
                             </li>
                             <li class="flex items-start">
                                 <svg class="h-5 w-5 text-primary mt-0.5 mr-2 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
                                     <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
                                 </svg>
-                                <span><strong>Virtual DOM</strong>: Lightweight representation of the actual DOM</span>
+                                <span><strong>Render Pipeline</strong>: A composed function that handles creating, reconciling, and patching the DOM.</span>
                             </li>
                             <li class="flex items-start">
                                 <svg class="h-5 w-5 text-primary mt-0.5 mr-2 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
                                     <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
                                 </svg>
-                                <span><strong>Reconciliation</strong>: Efficient algorithm for updating the DOM</span>
-                            </li>
-                            <li class="flex items-start">
-                                <svg class="h-5 w-5 text-primary mt-0.5 mr-2 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
-                                </svg>
-                                <span><strong>Components</strong>: Pure functions that return virtual DOM elements</span>
+                                <span><strong>Components</strong>: Pure functions that accept props and return virtual DOM elements.</span>
                             </li>
                         </ul>
                     </div>
 
-                    <p class="mb-4">Here's how JSX transforms into function calls:</p>
+                    <p class="mb-4">Here's how JSX transforms into <code>createElement</code> function calls:</p>
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                         <div>
                             <h4 class="font-medium mb-2">JSX Syntax</h4>
-                            <pre class="bg-gray-800 text-white p-4 rounded-lg h-full"><code class="language-jsx">const element = (
-  &lt;div className="container"&gt;
-    &lt;h1&gt;Hello, world!&lt;/h1&gt;
-    &lt;p&gt;Welcome to FlexNet JSX&lt;/p&gt;
-  &lt;/div&gt;
-);</code></pre>
+                            <pre class="bg-gray-800 text-white p-4 rounded-lg h-full"><code class="language-jsx"><App>
+  <h1>Hello, FlexNet!</h1>
+</App></code></pre>
                         </div>
                         <div>
                             <h4 class="font-medium mb-2">Transformed Output</h4>
-                            <pre class="bg-gray-800 text-white p-4 rounded-lg h-full"><code class="language-javascript">const element = createElement(
-  'div',
-  { className: 'container' },
-  createElement('h1', null, 'Hello, world!'),
-  createElement('p', null, 'Welcome to FlexNet JSX')
+                            <pre class="bg-gray-800 text-white p-4 rounded-lg h-full"><code class="language-javascript">import { createElement } from '../../systems/render/functions.js';
+
+createElement(
+  App,
+  null,
+  createElement('h1', null, 'Hello, FlexNet!')
 );</code></pre>
                         </div>
                     </div>
 
                     <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2" id="type-system">Type System</h2>
-                    <p class="mb-4">FlexNet's type system provides functional data types that make code more predictable and error-resistant. These types enforce certain patterns and handle edge cases elegantly.</p>
+                    <p class="mb-4">FlexNet's type system provides functional data types to make code more predictable and robust. These types help manage common challenges like null values, errors, and asynchronous results in a safe, composable way.</p>
 
                     <div class="bg-white rounded-lg shadow-sm border border-gray-100 mb-6 overflow-hidden">
                         <div class="border-b border-gray-100">
                             <div class="flex items-center p-4">
-                                <div class="w-8 h-8 bg-blue-100 rounded-md flex items-center justify-center text-primary mr-3">M</div>
+                                <div class="w-8 h-8 bg-blue-100 rounded-md flex items-center justify-center text-primary mr-3 font-bold">M</div>
                                 <div>
                                     <h3 class="font-semibold">Maybe</h3>
-                                    <p class="text-sm text-gray-500">Handling optional values safely</p>
+                                    <p class="text-sm text-gray-500">For handling optional values safely and avoiding null checks.</p>
                                 </div>
                             </div>
                         </div>
                         <div class="p-4">
-                            <pre class="bg-gray-800 text-white p-3 rounded-lg mb-2"><code class="language-javascript">// Instead of null checks everywhere
+                            <pre class="bg-gray-800 text-white p-3 rounded-lg mb-2"><code class="language-javascript">import { Maybe } from '../../core/types/maybe.js';
+
 const getUserName = user => 
   Maybe.fromNullable(user)
     .map(u => u.name)
     .getOrElse('Guest');</code></pre>
-                            <a href="../api/maybe.html" class="text-sm text-primary hover:underline">Learn more about Maybe &rarr;</a>
+                            <a href="../core/types.html#maybe" class="text-sm text-primary hover:underline">Learn more about Maybe &rarr;</a>
                         </div>
                     </div>
 
                     <div class="bg-white rounded-lg shadow-sm border border-gray-100 mb-6 overflow-hidden">
                         <div class="border-b border-gray-100">
                             <div class="flex items-center p-4">
-                                <div class="w-8 h-8 bg-indigo-100 rounded-md flex items-center justify-center text-secondary mr-3">E</div>
+                                <div class="w-8 h-8 bg-indigo-100 rounded-md flex items-center justify-center text-secondary mr-3 font-bold">E</div>
                                 <div>
                                     <h3 class="font-semibold">Either</h3>
-                                    <p class="text-sm text-gray-500">Representing success or failure</p>
+                                    <p class="text-sm text-gray-500">For handling functions that can fail, representing success or error.</p>
                                 </div>
                             </div>
                         </div>
                         <div class="p-4">
-                            <pre class="bg-gray-800 text-white p-3 rounded-lg mb-2"><code class="language-javascript">// Handle errors without exceptions
+                            <pre class="bg-gray-800 text-white p-3 rounded-lg mb-2"><code class="language-javascript">import { Either } from '../../core/types/either.js';
+
 const divide = (a, b) => 
   b === 0
-    ? Either.Left('Division by zero')
+    ? Either.Left('Error: Division by zero')
     : Either.Right(a / b);</code></pre>
-                            <a href="../api/either.html" class="text-sm text-primary hover:underline">Learn more about Either &rarr;</a>
+                            <a href="../core/types.html#either" class="text-sm text-primary hover:underline">Learn more about Either &rarr;</a>
                         </div>
                     </div>
 
                     <div class="bg-white rounded-lg shadow-sm border border-gray-100 mb-6 overflow-hidden">
                         <div class="border-b border-gray-100">
                             <div class="flex items-center p-4">
-                                <div class="w-8 h-8 bg-green-100 rounded-md flex items-center justify-center text-green-600 mr-3">R</div>
+                                <div class="w-8 h-8 bg-green-100 rounded-md flex items-center justify-center text-green-600 mr-3 font-bold">R</div>
                                 <div>
                                     <h3 class="font-semibold">Result</h3>
-                                    <p class="text-sm text-gray-500">Representing computation results</p>
+                                    <p class="text-sm text-gray-500">For wrapping computations that might throw exceptions.</p>
                                 </div>
                             </div>
                         </div>
                         <div class="p-4">
-                            <pre class="bg-gray-800 text-white p-3 rounded-lg mb-2"><code class="language-javascript">// Track operation results with context
-const validateUser = user => 
-  user.name.length > 0
-    ? Result.Ok(user)
-    : Result.Err('Name cannot be empty');</code></pre>
-                            <a href="../api/result.html" class="text-sm text-primary hover:underline">Learn more about Result &rarr;</a>
+                            <pre class="bg-gray-800 text-white p-3 rounded-lg mb-2"><code class="language-javascript">import { Result } from '../../core/types/result.js';
+
+// Safely parse JSON without a try/catch block
+const safeJsonParse = text =>
+    Result.fromTry(() => JSON.parse(text));</code></pre>
+                            <a href="../core/types.html#result" class="text-sm text-primary hover:underline">Learn more about Result &rarr;</a>
                         </div>
                     </div>
 
                     <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2" id="state-management">State Management</h2>
-                    <p class="mb-4">FlexNet uses a functional approach to state management that emphasizes immutability and pure functions for state transitions.</p>
+                    <p class="mb-4">FlexNet uses a functional, Redux-inspired approach to state management that emphasizes immutability and pure functions. All state changes are predictable and flow in a single direction.</p>
 
                     <div class="bg-gray-100 p-6 rounded-lg mb-6">
                         <h3 class="text-lg font-semibold mb-3">State Management Principles</h3>
@@ -285,8 +283,8 @@ const validateUser = user =>
                                     <span class="inline-flex items-center justify-center h-8 w-8 rounded-full bg-blue-100 text-blue-500 text-lg font-bold">1</span>
                                 </div>
                                 <div>
-                                    <h4 class="font-medium">Immutable State</h4>
-                                    <p class="text-gray-600">State is never modified directly; instead, new state objects are created.</p>
+                                    <h4 class="font-medium">Single Source of Truth</h4>
+                                    <p class="text-gray-600">The entire state of your application is stored in a single object tree within a single store.</p>
                                 </div>
                             </li>
                             <li class="flex">
@@ -294,8 +292,8 @@ const validateUser = user =>
                                     <span class="inline-flex items-center justify-center h-8 w-8 rounded-full bg-blue-100 text-blue-500 text-lg font-bold">2</span>
                                 </div>
                                 <div>
-                                    <h4 class="font-medium">Pure Update Functions</h4>
-                                    <p class="text-gray-600">State changes are defined as pure functions that take the current state and return a new state.</p>
+                                    <h4 class="font-medium">State is Read-Only</h4>
+                                    <p class="text-gray-600">The only way to change the state is to dispatch an `action`, an object describing what happened.</p>
                                 </div>
                             </li>
                             <li class="flex">
@@ -303,158 +301,143 @@ const validateUser = user =>
                                     <span class="inline-flex items-center justify-center h-8 w-8 rounded-full bg-blue-100 text-blue-500 text-lg font-bold">3</span>
                                 </div>
                                 <div>
-                                    <h4 class="font-medium">Subscription Model</h4>
-                                    <p class="text-gray-600">Components subscribe to state changes and re-render when state updates.</p>
-                                </div>
-                            </li>
-                            <li class="flex">
-                                <div class="mr-4 flex-shrink-0">
-                                    <span class="inline-flex items-center justify-center h-8 w-8 rounded-full bg-blue-100 text-blue-500 text-lg font-bold">4</span>
-                                </div>
-                                <div>
-                                    <h4 class="font-medium">Functional Composition</h4>
-                                    <p class="text-gray-600">Complex state transformations are built by composing simpler functions.</p>
+                                    <h4 class="font-medium">Changes are made with Pure Functions</h4>
+                                    <p class="text-gray-600">To specify how the state tree is transformed by actions, you write pure `reducers`.</p>
                                 </div>
                             </li>
                         </ul>
                     </div>
 
-                    <p class="mb-4">Here's a basic example of state management with FlexNet:</p>
+                    <p class="mb-4">Here's a basic example of the state management system:</p>
 
-                    <pre class="bg-gray-800 text-white p-4 rounded-lg mb-6"><code class="language-javascript">import { createStore } from './src/systems/state/store.js';
+                    <pre class="bg-gray-800 text-white p-4 rounded-lg mb-6"><code class="language-javascript">import { createStore } from '../../systems/state/functions.js';
 
-// Create a store with initial state
-const store = createStore({ count: 0, user: null });
+// 1. The reducer is a pure function: (state, action) => newState
+const counterReducer = (state = 0, action) => {
+    switch (action.type) {
+        case 'INCREMENT':
+            return state + 1;
+        case 'DECREMENT':
+            return state - 1;
+        default:
+            return state;
+    }
+};
 
-// Define pure update functions
-const incrementCount = state => ({ ...state, count: state.count + 1 });
-const setUser = user => state => ({ ...state, user });
+// 2. Create a store with the reducer and initial state
+const store = createStore(counterReducer, 0);
 
-// Update state by passing update functions
-store.update(incrementCount);
-store.update(setUser({ id: 1, name: 'Alice' }));
+// 3. Subscribe to changes to update the UI
+store.subscribe(() => {
+    console.log('New state:', store.getState());
+    // In a real app, you would re-render your components here
+});
 
-// Subscribe to state changes
-store.subscribe(state => {
-  console.log('New state:', state);
-  // Render UI with new state
-});</code></pre>
+// 4. Dispatch actions to trigger state changes
+store.dispatch({ type: 'INCREMENT' }); // Logs: New state: 1
+store.dispatch({ type: 'INCREMENT' }); // Logs: New state: 2
+store.dispatch({ type: 'DECREMENT' }); // Logs: New state: 1</code></pre>
 
                     <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2" id="effects">Effect System</h2>
-                    <p class="mb-4">The effect system in FlexNet provides a way to handle side effects (like API calls, timers, etc.) in a functional way.</p>
+                    <p class="mb-4">The Effect System provides a way to handle side effects (like API calls, timers, or DOM manipulation) in a controlled, functional, and testable manner. Effects are contained values that describe a side effect but don't execute it until explicitly told to.</p>
 
                     <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-100 mb-6">
-                        <h3 class="text-lg font-semibold mb-3">Effect System Features</h3>
+                        <h3 class="text-lg font-semibold mb-3">Effect System Principles</h3>
                         <ul class="space-y-2">
                             <li class="flex items-start">
                                 <svg class="h-5 w-5 text-primary mt-0.5 mr-2 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
                                     <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
                                 </svg>
-                                <span>Isolation of side effects from pure logic</span>
+                                <span><strong>Isolation:</strong> Side effects are isolated from your pure business logic.</span>
                             </li>
                             <li class="flex items-start">
                                 <svg class="h-5 w-5 text-primary mt-0.5 mr-2 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
                                     <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
                                 </svg>
-                                <span>Functional composition of effects</span>
+                                <span><strong>Purity:</strong> Creating an effect is a pure operation. The effect is just a value until it's run.</span>
                             </li>
                             <li class="flex items-start">
                                 <svg class="h-5 w-5 text-primary mt-0.5 mr-2 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
                                     <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
                                 </svg>
-                                <span>Automatic cleanup of resources</span>
-                            </li>
-                            <li class="flex items-start">
-                                <svg class="h-5 w-5 text-primary mt-0.5 mr-2 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
-                                </svg>
-                                <span>Testable effect handlers</span>
+                                <span><strong>Composition:</strong> Effects can be composed and transformed using `map` and `chain`.</span>
                             </li>
                         </ul>
                     </div>
 
-                    <p class="mb-4">Example of using the effect system:</p>
+                    <p class="mb-4">Example of creating and running an effect:</p>
 
-                    <pre class="bg-gray-800 text-white p-4 rounded-lg mb-6"><code class="language-javascript">import { createEffect, runEffect } from './src/systems/effects/effect.js';
+                    <pre class="bg-gray-800 text-white p-4 rounded-lg mb-6"><code class="language-javascript">import { Effect } from '../../systems/effects/functions.js';
 
-// Create an effect for fetching data
-const fetchUserEffect = userId => createEffect(({ onSuccess, onError }) => {
-  const controller = new AbortController();
-  const signal = controller.signal;
-  
-  fetch(`/api/users/${userId}`, { signal })
-    .then(response => response.json())
-    .then(data => onSuccess(data))
-    .catch(err => onError(err));
-  
-  // Return cleanup function
-  return () => controller.abort();
-});
+// Create an effect that describes fetching a user
+const fetchUser = id => Effect.of(() => fetch(`https://api.example.com/users/${id}`));
 
-// Run the effect
-const cleanup = runEffect(fetchUserEffect(123), {
-  onSuccess: user => console.log('User:', user),
-  onError: err => console.error('Error:', err)
-});
+// `map` transforms the eventual result of the effect
+const getJson = response => Effect.of(() => response.json());
 
-// Later, if needed:
-cleanup(); // Aborts the fetch if it's still in progress</code></pre>
+const getUserAsJson = id =>
+    fetchUser(id)
+        .chain(getJson) // chain is used for effects that return effects
+        .map(user => user.name); // map is used for pure transformations
+
+// Run the effect to execute it
+const effect = getUserAsJson(1);
+const userName = Effect.run(effect); // This triggers the fetch call
+
+userName.then(name => console.log(name));</code></pre>
 
                     <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2" id="putting-it-together">Putting It All Together</h2>
-                    <p class="mb-4">Let's see how these concepts work together in a simple counter application:</p>
+                    <p class="mb-4">Let's see how these concepts work together in a simple counter application. This demonstrates the full, unidirectional data flow of a FlexNet JSX application.</p>
 
-                    <pre class="bg-gray-800 text-white p-4 rounded-lg mb-6"><code class="language-javascript">import { compose, Maybe } from './src/core/runtime/runtime.js';
-import { createStore } from './src/systems/state/store.js';
-import { createElement, render } from './src/core/runtime/jsx.js';
-import { createEffect, runEffect } from './src/systems/effects/effect.js';
+                    <pre class="bg-gray-800 text-white p-4 rounded-lg mb-6"><code class="language-javascript">import { createElement, render } from '../../systems/render/functions.js';
+import { createStore } from '../../systems/state/functions.js';
+import { Effect } from '../../systems/effects/functions.js';
 
-// === State Management ===
-const store = createStore(Maybe.Just(0));
+// 1. STATE: Define a reducer and create a store
+const counterReducer = (state = 0, action) => {
+  switch (action.type) {
+    case 'INCREMENT': return state + 1;
+    case 'DECREMENT': return state - 1;
+    default: return state;
+  }
+};
+const store = createStore(counterReducer, 0);
 
-// Pure update functions
-const increment = n => Maybe.Just(n + 1);
-const decrement = n => Maybe.Just(Math.max(0, n - 1));
-
-// === Effects ===
-const logEffect = message => createEffect(() => {
-  console.log(message);
-  return () => console.log('Effect cleaned up');
+// 2. EFFECTS: Create a reusable effect
+const logEffect = message => Effect.of(() => {
+  console.log(`[EFFECT] ${message}`);
 });
 
-// === Component ===
-const Counter = ({ count, onIncrement, onDecrement }) => {
-  // Run an effect when the component renders
-  runEffect(logEffect(`Counter rendered with count: ${count}`));
+// 3. VIEW: Create a component as a pure function
+const Counter = ({ count }) => {
+  // Log every render as a side effect
+  Effect.run(logEffect(`Rendering counter with count: ${count}`));
   
-  return createElement('div', { className: 'counter' },
-    createElement('h2', null, `Count: ${count}`),
-    createElement('div', { className: 'buttons' },
+  return createElement('div', null,
+    createElement('h1', null, `Count: ${count}`),
       createElement('button', {
-        onClick: compose(onIncrement, increment)
-      }, 'Increment'),
+      onClick: () => store.dispatch({ type: 'INCREMENT' })
+    }, '+'),
       createElement('button', {
-        onClick: compose(onDecrement, decrement)
-      }, 'Decrement')
-    )
+      onClick: () => store.dispatch({ type: 'DECREMENT' })
+    }, '-')
   );
 };
 
-// === Application Init ===
-function init() {
-  // Subscribe to state changes
-  store.subscribe(count => {
+// 4. RENDER: Create a function to render the UI based on state
+const renderApp = () => {
+  const state = store.getState();
     render(
-      createElement(Counter, {
-        count: count,
-        onIncrement: store.update,
-        onDecrement: store.update
-      }),
+    createElement(Counter, { count: state }),
       document.getElementById('root')
     );
-  });
-}
+};
 
-document.addEventListener('DOMContentLoaded', init);</code></pre>
+// 5. SUBSCRIBE: Subscribe the renderer to store updates
+store.subscribe(renderApp);
+
+// Initial render
+renderApp();</code></pre>
 
                     <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2" id="next-steps">Next Steps</h2>
                     

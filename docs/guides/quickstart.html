@@ -114,93 +114,122 @@
                 
                 <div class="prose prose-blue max-w-none">
                     <p class="lead text-xl text-gray-600 mb-8">
-                        Get up and running with FlexNet JSX in minutes with this quick start guide.
+                        Build your first FlexNet JSX application. This guide will walk you through setting up a project and creating a simple interactive counter.
                     </p>
 
-                    <h2 class="text-2xl font-bold mt-8 mb-4">Prerequisites</h2>
-                    <p class="mb-4">Before you begin, ensure you have the following installed:</p>
-                    <ul class="list-disc pl-6 mb-6 space-y-2">
-                        <li>A modern web browser (Chrome, Firefox, Safari, or Edge)</li>
-                        <li>Basic knowledge of JavaScript and HTML</li>
-                        <li>A code editor of your choice</li>
-                        <li>A local development server (optional but recommended)</li>
-                    </ul>
+                    <h2 class="text-2xl font-bold mt-8 mb-4">1. Project Setup</h2>
+                    <p class="mb-4">First, create a new directory for your project. Inside it, create the following folder and file structure. This organizes your code into features and keeps your static assets separate.</p>
+                    <pre class="bg-gray-800 text-white p-4 rounded-md mb-6 overflow-x-auto"><code class="language-bash">/my-app
+├── /public
+│   └── index.html
+└── /src
+    └── main.js
+</code></pre>
 
-                    <h2 class="text-2xl font-bold mt-8 mb-4">Installation Options</h2>
-                    
-                    <h3 class="text-xl font-semibold mt-6 mb-3">Option 1: Direct Script Import</h3>
-                    <p class="mb-4">The simplest way to get started is by directly importing the FlexNet JSX framework via a script tag:</p>
+                    <h2 class="text-2xl font-bold mt-8 mb-4">2. Create the HTML Entry Point</h2>
+                    <p class="mb-4">Your <code>public/index.html</code> file is the entry point for your application. It needs a root element for FlexNet JSX to mount into and a script tag to load your application code.</p>
                     <pre class="bg-gray-800 text-white p-4 rounded-md mb-6 overflow-x-auto"><code class="language-html">&lt;!DOCTYPE html&gt;
 &lt;html lang="en"&gt;
 &lt;head&gt;
     &lt;meta charset="UTF-8"&gt;
-    &lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;
-    &lt;title&gt;FlexNet JSX App&lt;/title&gt;
-    &lt;script type="module" src="path/to/jsx/src/index.js"&gt;&lt;/script&gt;
+    &lt;title&gt;FlexNet JSX Counter&lt;/title&gt;
 &lt;/head&gt;
 &lt;body&gt;
     &lt;div id="root"&gt;&lt;/div&gt;
-    &lt;script type="module"&gt;
-        // Your FlexNet JSX code will go here
-    &lt;/script&gt;
+    &lt;script type="module" src="../src/main.js"&gt;&lt;/script&gt;
 &lt;/body&gt;
 &lt;/html&gt;</code></pre>
 
-                    <h3 class="text-xl font-semibold mt-6 mb-3">Option 2: Use a Starter Project</h3>
-                    <p class="mb-4">For a more comprehensive setup, we recommend using one of our starter projects. These projects provide everything you need to start developing right away.</p>
+                    <h2 class="text-2xl font-bold mt-8 mb-4">3. Build Your First Application</h2>
+                    <p class="mb-4">Now, let's build the interactive counter. This example demonstrates all the core concepts of FlexNet JSX working together: state management, functional components, and rendering. Place the following code in your <code>src/main.js</code> file.</p>
                     
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-                        <div class="bg-blue-50 border-l-4 border-primary p-4 rounded-md">
-                            <h4 class="font-semibold text-lg mb-2">Full-Featured Starter</h4>
-                            <p class="text-gray-700 mb-4">A comprehensive implementation with all framework features.</p>
-                            <a href="https://github.com/flexnet/flexnet-jsx/tree/main/starter-project" target="_blank" class="text-primary font-medium hover:underline">View on GitHub &rarr;</a>
-                        </div>
-                        <div class="bg-blue-50 border-l-4 border-primary p-4 rounded-md">
-                            <h4 class="font-semibold text-lg mb-2">Minimal Starter</h4>
-                            <p class="text-gray-700 mb-4">A lightweight implementation for learning the core concepts.</p>
-                            <a href="https://github.com/flexnet/flexnet-jsx/tree/main/starter-project-minimal" target="_blank" class="text-primary font-medium hover:underline">View on GitHub &rarr;</a>
-                        </div>
-                    </div>
+                    <pre class="bg-gray-800 text-white p-4 rounded-md mb-6 overflow-x-auto"><code class="language-javascript">// NOTE: Adjust these import paths based on where the framework is located.
+import { createStore } from '../../systems/state/functions.js';
+import { createElement, render } from '../../systems/render/functions.js';
 
-                    <h2 class="text-2xl font-bold mt-8 mb-4">Your First FlexNet JSX Component</h2>
-                    <p class="mb-4">Let's create a simple "Hello, World!" component to see how easy it is to get started:</p>
-                    
-                    <pre class="bg-gray-800 text-white p-4 rounded-md mb-6 overflow-x-auto"><code class="language-javascript">// Import the necessary functions from the framework
-import { createElement, render } from './src/core/runtime/jsx.js';
+// 1. STATE: Define a reducer for state transitions
+const counterReducer = (state = 0, action) => {
+  switch (action.type) {
+    case 'INCREMENT':
+      return state + 1;
+    case 'DECREMENT':
+      return state - 1;
+    default:
+      return state;
+  }
+};
 
-// Define a simple component as a pure function
-const App = ({ name }) => (
-  createElement('h1', { className: 'greeting' }, `Hello, ${name}!`)
-);
+// 2. STORE: Create a store to hold your application state
+const store = createStore(counterReducer, 0);
 
-// Render the component to the DOM
-render(
-  createElement(App, { name: 'World' }),
-  document.getElementById('root')
-);</code></pre>
+// 3. VIEW: Create a component as a pure function
+const Counter = ({ count, onIncrement, onDecrement }) => {
+  return createElement('div', null,
+    createElement('h1', null, `Count: ${count}`),
+    createElement('button', { onClick: onIncrement }, '+'),
+    createElement('button', { onClick: onDecrement }, '-')
+  );
+};
+
+// 4. RENDER: Create a function that renders the UI based on the current state
+const renderApp = () => {
+  const state = store.getState();
+  render(
+    createElement(Counter, {
+      count: state,
+      onIncrement: () => store.dispatch({ type: 'INCREMENT' }),
+      onDecrement: () => store.dispatch({ type: 'DECREMENT' })
+    }),
+    document.getElementById('root')
+  );
+};
+
+// 5. SUBSCRIBE: Re-render the app whenever the state changes
+store.subscribe(renderApp);
+
+// Initial render
+renderApp();
+</code></pre>
 
                     <h3 class="text-xl font-semibold mt-6 mb-3">Step-by-Step Explanation</h3>
                     <ol class="list-decimal pl-6 mb-6 space-y-4">
                         <li>
-                            <strong>Import Functions</strong>
-                            <p class="font-normal text-gray-600 mt-1">We import `createElement` and `render` from the core JSX runtime. These are the two fundamental functions you'll use in every FlexNet JSX application.</p>
+                            <strong>State (Reducer)</strong>
+                            <p class="font-normal text-gray-600 mt-1">We define a `counterReducer`, a pure function that takes the current state and an action, and returns the next state. This is the only place where state logic lives.</p>
                         </li>
                         <li>
-                            <strong>Define a Component</strong>
-                            <p class="font-normal text-gray-600 mt-1">We define an `App` component. In FlexNet, components are just pure functions that accept `props` as an argument and return a description of the UI (a virtual DOM element).</p>
+                            <strong>Store</strong>
+                            <p class="font-normal text-gray-600 mt-1">We create a `store` using `createStore`, passing it our reducer and the initial state (0). The store holds our state and allows us to dispatch actions.</p>
                         </li>
                         <li>
-                            <strong>Render the Component</strong>
-                            <p class="font-normal text-gray-600 mt-1">We use the `render` function to mount our `App` component into a DOM element with the ID `root`. `render` takes the virtual DOM element and the target container as arguments.</p>
+                            <strong>View (Component)</strong>
+                            <p class="font-normal text-gray-600 mt-1">Our `Counter` component is a pure function. It receives the current `count` and functions to call (`onIncrement`, `onDecrement`) as props, and returns a description of the UI.</p>
+                        </li>
+                        <li>
+                            <strong>Render</strong>
+                            <p class="font-normal text-gray-600 mt-1">The `renderApp` function gets the latest state from the store and renders the `Counter` component with the appropriate props. The event handlers on the buttons will `dispatch` actions to the store when clicked.</p>
+                        </li>
+                         <li>
+                            <strong>Subscribe</strong>
+                            <p class="font-normal text-gray-600 mt-1">We `subscribe` the `renderApp` function to the store. Now, every time an action is dispatched and the state changes, `renderApp` will be called automatically to update the UI.</p>
                         </li>
                     </ol>
+                    
+                    <div class="bg-blue-50 border-l-4 border-primary p-4 rounded-md">
+                        <h4 class="font-semibold">Unidirectional Data Flow</h4>
+                        <p>This example demonstrates the core principle of unidirectional data flow in FlexNet JSX:
+                        <br>
+                        <strong>Action &rarr; Store &rarr; State &rarr; View</strong>
+                        <br>
+                        This makes the application's logic predictable and easy to follow.</p>
+                    </div>
 
                     <h2 class="text-2xl font-bold mt-8 mb-4">Next Steps</h2>
                     <p class="mb-4">
-                        Congratulations on creating your first FlexNet JSX component! You've learned how to set up a project, define a component, and render it to the screen.
+                        Congratulations! You've built a fully functional, interactive application with FlexNet JSX. You now understand how to set up a project, manage state, create components, and render a dynamic UI.
                     </p>
                     <p>
-                        From here, you can explore the <a href="core-concepts.html" class="text-primary hover:underline">Core Concepts</a> to gain a deeper understanding of the framework's principles.
+                        From here, you can dive deeper into the <a href="core-concepts.html" class="text-primary hover:underline">Core Concepts</a> or explore more complex patterns in the <a href="../examples/todo.html" class="text-primary hover:underline">Examples</a>.
                     </p>
                 </div>
             </div>

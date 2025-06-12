@@ -112,28 +112,19 @@
                 <h1 class="text-4xl font-bold mb-6">Todo App Example</h1>
                 
                 <p class="text-lg text-gray-600 mb-8">
-                    This example demonstrates how to build a complete Todo application using FlexNet JSX. It showcases state management, event handling, functional composition, and immutability.
+                    This example demonstrates how to build a complete Todo application using FlexNet JSX. It showcases the canonical reducer pattern for state management, input sanitization for security, and pure functional components.
                 </p>
 
                 <div class="prose prose-blue max-w-none">
                     <div class="bg-blue-50 border-l-4 border-primary p-4 rounded-md mb-6">
-                        <p class="text-sm">
-                            You can find the complete source code for this example in the <a href="https://github.com/flexnet/flexnet-jsx/examples/todo" class="font-medium underline hover:text-primary">GitHub repository</a>.
-                        </p>
+                        <h4 class="font-semibold">Core Principles Demonstrated</h4>
+                        <p>This example has been structured to align with the framework's core principles: a central reducer for predictable state, pure functions for all logic, and security-conscious input handling.</p>
                     </div>
 
                     <!-- Live Demo Section -->
                     <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2">Live Demo</h2>
-                    <div class="border border-gray-200 rounded-lg overflow-hidden mb-8">
-                        <div class="bg-gray-50 border-b border-gray-200 px-4 py-2">
-                            <h3 class="font-medium">Todo App Preview</h3>
-                        </div>
-                        <div class="p-6 bg-white">
-                            <iframe src="../../examples/todo/index.html" class="w-full h-96 border border-gray-200 rounded"></iframe>
-                        </div>
-                        <div class="bg-gray-50 border-t border-gray-200 px-4 py-2 text-right">
-                            <a href="../../examples/todo/index.html" target="_blank" class="text-primary hover:underline">Open in new window</a>
-                        </div>
+                    <div id="todo-app-demo" class="border border-gray-200 rounded-lg overflow-hidden mb-8 p-6 bg-white">
+                        <!-- The Todo app will be rendered here by the script -->
                     </div>
 
                     <!-- Project Structure -->
@@ -145,485 +136,421 @@
                     <div class="bg-white rounded-lg border border-gray-200 p-4 mb-8 overflow-auto">
                         <pre class="text-sm text-gray-700"><code>todo/
 ├── index.html
-├── src/
-│   ├── components/
-│   │   ├── App.js
-│   │   ├── TodoForm.js
-│   │   ├── TodoItem.js
-│   │   └── TodoList.js
-│   ├── store/
-│   │   ├── todoStore.js
-│   │   └── actions.js
-│   ├── types/
-│   │   └── TodoTypes.js
-│   ├── utils/
-│   │   └── uuid.js
-│   └── index.js
-└── styles.css</code></pre>
+└── src/
+    ├── app.js
+    ├── components.js
+    ├── reducer.js
+    └── systems.js
+</code></pre>
                     </div>
 
-                    <!-- State Management Implementation -->
-                    <h2 class="text-2xl font-bold mt-8 mb-4">State Management</h2>
+                    <h2 class="text-2xl font-bold mt-8 mb-4">Framework Systems</h2>
                     <p class="mb-4">
-                        The app uses FlexNet's immutable store pattern for state management. Here's how the Todo store is implemented:
+                        First, we define the core systems of our application, including rendering, state management, and security. These are simplified versions for educational purposes, based on the official framework APIs.
                     </p>
 
-                    <pre class="bg-gray-800 text-white p-4 rounded-md mb-6 overflow-x-auto"><code class="language-javascript">// src/store/todoStore.js
-import { createStore } from '../../../src/systems/state/store.js';
-import { Maybe } from '../../../src/core/types/maybe.js';
+                    <pre class="bg-gray-800 text-white p-4 rounded-md mb-6 overflow-x-auto"><code class="language-javascript">// src/systems.js
 
-// Initial state with empty todos array
-const initialState = Maybe.Just({
-  todos: [],
-  filter: 'all' // 'all', 'active', 'completed'
+// -- Render System --
+export const createElement = (type, props, ...children) => ({
+    type,
+    props: { ...props, children: children.flat() }
 });
 
-// Create the immutable store
-export const todoStore = createStore(initialState);
-
-// Selectors (pure functions to derive data from state)
-export const selectors = {
-  getAllTodos: state => state.todos,
-  
-  getFilteredTodos: state => {
-    const { todos, filter } = state;
-    
-    switch(filter) {
-      case 'active':
-        return todos.filter(todo => !todo.completed);
-      case 'completed':
-        return todos.filter(todo => todo.completed);
-      default:
-        return todos;
+function createDomElement(vnode) {
+    if (typeof vnode === 'string' || typeof vnode === 'number') {
+        return document.createTextNode(vnode);
     }
-  },
-  
-  getActiveCount: state => 
-    state.todos.filter(todo => !todo.completed).length,
     
-  getCurrentFilter: state => state.filter
-};</code></pre>
+    if (typeof vnode.type === 'function') {
+        return createDomElement(vnode.type(vnode.props));
+    }
 
-                    <!-- Actions Implementation -->
-                    <h3 class="text-xl font-semibold mt-6 mb-3">Todo Actions</h3>
+    const el = document.createElement(vnode.type);
+
+    Object.entries(vnode.props || {}).forEach(([key, value]) => {
+        if (key.startsWith('on') && typeof value === 'function') {
+            el.addEventListener(key.substring(2).toLowerCase(), value);
+        } else if (key !== 'children') {
+            el.setAttribute(key, value);
+        }
+    });
+
+    (vnode.props.children || []).forEach(child => {
+        if (child) {
+            el.appendChild(createDomElement(child));
+        }
+    });
+
+    return el;
+}
+
+export const render = (vnode, container) => {
+    container.innerHTML = '';
+    if (vnode) {
+        container.appendChild(createDomElement(vnode));
+    }
+};
+
+// -- State System --
+export const createStore = (reducer, initialState) => {
+    const subscribers = new Set();
+    let state = initialState;
+
+    const dispatch = action => {
+        state = reducer(state, action);
+        subscribers.forEach(fn => fn(state));
+    };
+
+    return {
+        getState: () => state,
+        dispatch,
+        subscribe: fn => {
+            subscribers.add(fn);
+            fn(state);
+            return () => subscribers.delete(fn);
+        }
+    };
+};
+
+// -- Security System --
+export const sanitize = input => {
+    const div = document.createElement('div');
+    div.textContent = input;
+    return div.innerHTML;
+};
+</code></pre>
+
+                    <!-- State Management Implementation -->
+                    <h2 class="text-2xl font-bold mt-8 mb-4">State Management with a Reducer</h2>
                     <p class="mb-4">
-                        Actions are pure functions that take the current state and return a new state:
+                        All state logic is centralized in a pure function called a "reducer." It calculates the next state based on the current state and a dispatched action, ensuring predictable and immutable updates.
                     </p>
 
-                    <pre class="bg-gray-800 text-white p-4 rounded-md mb-6 overflow-x-auto"><code class="language-javascript">// src/store/actions.js
-import { Maybe } from '../../../src/core/types/maybe.js';
-import { generateId } from '../utils/uuid.js';
+                    <pre class="bg-gray-800 text-white p-4 rounded-md mb-6 overflow-x-auto"><code class="language-javascript">// src/reducer.js
+import { sanitize } from './systems.js';
 
-// Pure action creators that return state transformation functions
-export const actions = {
-  // Add a new todo item
-  addTodo: text => state => 
-    Maybe.Just({
+let nextTodoId = 0;
+
+export const Action = {
+    ADD_TODO: 'ADD_TODO',
+    TOGGLE_TODO: 'TOGGLE_TODO',
+    REMOVE_TODO: 'REMOVE_TODO',
+    SET_FILTER: 'SET_FILTER',
+    CLEAR_COMPLETED: 'CLEAR_COMPLETED'
+};
+
+export const initialState = {
+  todos: [],
+  filter: 'all' // 'all', 'active', 'completed'
+};
+
+export const todoReducer = (state, action) => {
+  switch (action.type) {
+    case Action.ADD_TODO:
+      return {
       ...state,
       todos: [
         ...state.todos,
         {
-          id: generateId(),
-          text,
+            id: nextTodoId++,
+            // Sanitize input before adding to state
+            text: sanitize(action.payload.text),
           completed: false
         }
       ]
-    }),
+      };
     
-  // Toggle a todo's completed status
-  toggleTodo: id => state => 
-    Maybe.Just({
+    case Action.TOGGLE_TODO:
+      return {
       ...state,
       todos: state.todos.map(todo => 
-        todo.id === id
-          ? { ...todo, completed: !todo.completed }
-          : todo
+          todo.id === action.payload.id ? { ...todo, completed: !todo.completed } : todo
       )
-    }),
+      };
     
-  // Remove a todo item
-  removeTodo: id => state =>
-    Maybe.Just({
+    case Action.REMOVE_TODO:
+      return {
       ...state,
-      todos: state.todos.filter(todo => todo.id !== id)
-    }),
+        todos: state.todos.filter(todo => todo.id !== action.payload.id)
+      };
     
-  // Update a todo's text
-  updateTodoText: (id, text) => state =>
-    Maybe.Just({
+    case Action.SET_FILTER:
+      return {
       ...state,
-      todos: state.todos.map(todo => 
-        todo.id === id
-          ? { ...todo, text }
-          : todo
-      )
-    }),
-    
-  // Clear all completed todos
-  clearCompleted: () => state =>
-    Maybe.Just({
+        filter: action.payload.filter
+      };
+
+    case Action.CLEAR_COMPLETED:
+        return {
       ...state,
       todos: state.todos.filter(todo => !todo.completed)
-    }),
-    
-  // Set the current filter
-  setFilter: filter => state =>
-    Maybe.Just({
-      ...state,
-      filter
-    })
-};</code></pre>
+        }
 
-                    <!-- Components Implementation -->
-                    <h2 class="text-2xl font-bold mt-8 mb-4">Components</h2>
+    default:
+      return state;
+  }
+};
+</code></pre>
+                    
+                    <h2 class="text-2xl font-bold mt-8 mb-4">Pure Functional Components</h2>
                     <p class="mb-4">
-                        Let's look at the key components of our Todo app:
+                        The UI is broken down into pure functions that receive state and a `dispatch` function as props and return a description of the UI. They do not have their own internal state.
                     </p>
 
-                    <h3 class="text-xl font-semibold mt-6 mb-3">TodoItem Component</h3>
-                    <pre class="bg-gray-800 text-white p-4 rounded-md mb-6 overflow-x-auto"><code class="language-javascript">// src/components/TodoItem.js
-import { createElement } from '../../../src/core/runtime/jsx.js';
-import { compose } from '../../../src/core/runtime/runtime.js';
+                    <pre class="bg-gray-800 text-white p-4 rounded-md mb-6 overflow-x-auto"><code class="language-javascript">// src/components.js
+import { createElement } from './systems.js';
+import { Action } from './reducer.js';
 
-// TodoItem is a pure functional component
-const TodoItem = ({ todo, onToggle, onRemove, onUpdate }) => {
-  const handleDoubleClick = (e) => {
-    const text = prompt('Edit todo:', todo.text);
-    if (text !== null && text.trim() !== '') {
-      onUpdate(todo.id, text);
-    }
-  };
-
-  return createElement('li', { 
-    className: `todo-item ${todo.completed ? 'completed' : ''}`,
-    'data-id': todo.id
-  },
-    createElement('div', { className: 'view' },
-      createElement('input', {
-        type: 'checkbox',
-        className: 'toggle',
-        checked: todo.completed,
-        onChange: () => onToggle(todo.id)
-      }),
-      createElement('label', {
-        onDblClick: handleDoubleClick
+export const TodoItem = ({ todo, dispatch }) => createElement('li', 
+    { className: `py-2 px-4 flex items-center justify-between border-b ${todo.completed ? 'text-gray-400 line-through' : ''}` },
+    createElement('span', { 
+        className: 'cursor-pointer',
+        onClick: () => dispatch({ type: Action.TOGGLE_TODO, payload: { id: todo.id } })
       }, todo.text),
       createElement('button', {
-        className: 'destroy',
-        onClick: () => onRemove(todo.id)
-      })
-    )
-  );
-};
+        className: 'text-red-500 hover:text-red-700 font-bold',
+        onClick: () => dispatch({ type: Action.REMOVE_TODO, payload: { id: todo.id } })
+    }, 'X')
+);
 
-export default TodoItem;</code></pre>
-
-                    <h3 class="text-xl font-semibold mt-6 mb-3">TodoList Component</h3>
-                    <pre class="bg-gray-800 text-white p-4 rounded-md mb-6 overflow-x-auto"><code class="language-javascript">// src/components/TodoList.js
-import { createElement } from '../../../src/core/runtime/jsx.js';
-import TodoItem from './TodoItem.js';
-
-const TodoList = ({ todos, onToggle, onRemove, onUpdate }) => {
-  return createElement('ul', { className: 'todo-list' },
-    todos.map(todo => 
-      createElement(TodoItem, {
-        key: todo.id,
-        todo,
-        onToggle,
-        onRemove,
-        onUpdate
-      })
-    )
-  );
-};
-
-export default TodoList;</code></pre>
-
-                    <h3 class="text-xl font-semibold mt-6 mb-3">TodoForm Component</h3>
-                    <pre class="bg-gray-800 text-white p-4 rounded-md mb-6 overflow-x-auto"><code class="language-javascript">// src/components/TodoForm.js
-import { createElement } from '../../../src/core/runtime/jsx.js';
-import { compose } from '../../../src/core/runtime/runtime.js';
-
-const TodoForm = ({ onAdd }) => {
+export const TodoForm = ({ dispatch }) => {
   const handleSubmit = (e) => {
     e.preventDefault();
     const input = e.target.elements.newTodo;
     const text = input.value.trim();
-    
     if (text) {
-      onAdd(text);
+            dispatch({ type: Action.ADD_TODO, payload: { text } });
       input.value = '';
     }
   };
 
-  return createElement('form', { 
-    className: 'todo-form',
-    onSubmit: handleSubmit 
-  },
+    return createElement('form', { onSubmit: handleSubmit },
     createElement('input', {
-      className: 'new-todo',
       name: 'newTodo',
+            className: 'w-full p-2 border rounded',
       placeholder: 'What needs to be done?',
       autoFocus: true
     })
   );
 };
 
-export default TodoForm;</code></pre>
+export const TodoList = ({ todos, dispatch }) => createElement('ul', { className: 'mt-4' },
+    ...todos.map(todo => createElement(TodoItem, { todo, dispatch }))
+);
 
-                    <h3 class="text-xl font-semibold mt-6 mb-3">Main App Component</h3>
-                    <pre class="bg-gray-800 text-white p-4 rounded-md mb-6 overflow-x-auto"><code class="language-javascript">// src/components/App.js
-import { createElement } from '../../../src/core/runtime/jsx.js';
-import { compose } from '../../../src/core/runtime/runtime.js';
-import TodoForm from './TodoForm.js';
-import TodoList from './TodoList.js';
-import { actions } from '../store/actions.js';
-import { todoStore, selectors } from '../store/todoStore.js';
-
-const App = ({ state, dispatch }) => {
-  const todos = selectors.getFilteredTodos(state);
-  const activeCount = selectors.getActiveCount(state);
-  const currentFilter = selectors.getCurrentFilter(state);
-  
-  // Event handlers use composition to combine actions with dispatch
-  const handleAddTodo = compose(dispatch, actions.addTodo);
-  const handleToggleTodo = compose(dispatch, actions.toggleTodo);
-  const handleRemoveTodo = compose(dispatch, actions.removeTodo);
-  const handleUpdateTodo = (id, text) => dispatch(actions.updateTodoText(id, text));
-  const handleClearCompleted = compose(dispatch, actions.clearCompleted);
-  const handleFilterChange = compose(dispatch, actions.setFilter);
-  
-  return createElement('div', { className: 'todoapp' },
-    createElement('header', { className: 'header' },
-      createElement('h1', null, 'todos'),
-      createElement(TodoForm, { onAdd: handleAddTodo })
-    ),
-    
-    todos.length > 0 && createElement('section', { className: 'main' },
-      createElement(TodoList, {
-        todos,
-        onToggle: handleToggleTodo,
-        onRemove: handleRemoveTodo,
-        onUpdate: handleUpdateTodo
-      }),
-      
-      createElement('footer', { className: 'footer' },
-        createElement('span', { className: 'todo-count' },
-          createElement('strong', null, activeCount),
-          ` item${activeCount !== 1 ? 's' : ''} left`
-        ),
-        
-        createElement('ul', { className: 'filters' },
-          createElement('li', null,
-            createElement('a', { 
-              className: currentFilter === 'all' ? 'selected' : '',
-              onClick: () => handleFilterChange('all')
-            }, 'All')
-          ),
-          createElement('li', null,
-            createElement('a', { 
-              className: currentFilter === 'active' ? 'selected' : '',
-              onClick: () => handleFilterChange('active')
-            }, 'Active')
-          ),
-          createElement('li', null,
-            createElement('a', { 
-              className: currentFilter === 'completed' ? 'selected' : '',
-              onClick: () => handleFilterChange('completed')
-            }, 'Completed')
-          )
-        ),
-        
-        state.todos.some(t => t.completed) && 
-          createElement('button', {
-            className: 'clear-completed',
-            onClick: handleClearCompleted
-          }, 'Clear completed')
-      )
-    )
-  );
+export const FilterButtons = ({ currentFilter, dispatch }) => {
+    const filters = ['all', 'active', 'completed'];
+    return createElement('div', { className: 'mt-4 flex justify-center space-x-4' },
+        ...filters.map(filter => createElement('button', {
+            className: `px-3 py-1 rounded ${currentFilter === filter ? 'bg-primary text-white' : 'bg-gray-200'}`,
+            onClick: () => dispatch({ type: Action.SET_FILTER, payload: { filter } })
+        }, filter))
+    );
 };
 
-export default App;</code></pre>
+export const App = ({ state, dispatch }) => {
+    const { todos, filter } = state;
+    const filteredTodos = todos.filter(todo => {
+        if (filter === 'active') return !todo.completed;
+        if (filter === 'completed') return todo.completed;
+        return true;
+    });
+
+    const completedCount = todos.filter(t => t.completed).length;
+
+    return createElement('div', { className: 'p-4 bg-gray-100 rounded-lg shadow-inner' },
+        createElement('h1', { className: 'text-2xl font-bold text-center mb-4' }, 'Todo App'),
+        createElement(TodoForm, { dispatch }),
+        createElement(FilterButtons, { currentFilter: filter, dispatch }),
+        createElement(TodoList, { todos: filteredTodos, dispatch }),
+        completedCount > 0 && createElement('button', {
+            className: 'mt-4 text-sm text-gray-500 hover:text-red-500',
+            onClick: () => dispatch({ type: Action.CLEAR_COMPLETED })
+        }, `Clear ${completedCount} completed item(s)`)
+    );
+};
+</code></pre>
 
                     <!-- Main Index.js -->
                     <h2 class="text-2xl font-bold mt-8 mb-4">Putting It All Together</h2>
                     <p class="mb-4">
-                        The main entry point connects all the pieces together:
+                        The main entry point creates the store, subscribes the render function to state changes, and mounts the application to the DOM.
                     </p>
 
-                    <pre class="bg-gray-800 text-white p-4 rounded-md mb-6 overflow-x-auto"><code class="language-javascript">// src/index.js
-import { createElement, render } from '../../src/core/runtime/jsx.js';
-import { todoStore } from './store/todoStore.js';
-import App from './components/App.js';
+                    <pre class="bg-gray-800 text-white p-4 rounded-md mb-6 overflow-x-auto"><code class="language-javascript">// src/app.js
+import { createStore, render, createElement } from './systems.js';
+import { todoReducer, initialState } from './reducer.js';
+import { App } from './components.js';
 
-// Get the root element
-const rootElement = document.getElementById('root');
-
-// Render function that will be called on every state change
-const renderApp = (state) => {
+export const mount = (container) => {
+    const store = createStore(todoReducer, initialState);
+    
+    store.subscribe(state => {
   render(
-    createElement(App, {
-      state: state,
-      dispatch: todoStore.update
-    }),
-    rootElement
-  );
+            createElement(App, { state, dispatch: store.dispatch }),
+            container
+        );
+    });
 };
-
-// Subscribe to store updates
-todoStore.subscribe(renderApp);
-
-// Initial render
-todoStore.getState().map(renderApp);
-
-// For debugging
-window.todoStore = todoStore;</code></pre>
+</code></pre>
 
                     <!-- HTML Structure -->
                     <h3 class="text-xl font-semibold mt-6 mb-3">HTML Structure</h3>
+                    <p>Finally, the host `index.html` loads the app and provides a root element for it to render into.</p>
                     <pre class="bg-gray-800 text-white p-4 rounded-md mb-6 overflow-x-auto"><code class="language-html">&lt;!-- index.html -->
 &lt;!DOCTYPE html>
 &lt;html lang="en">
 &lt;head>
     &lt;meta charset="UTF-8">
-    &lt;meta name="viewport" content="width=device-width, initial-scale=1.0">
     &lt;title>FlexNet Todo App&lt;/title>
-    &lt;link rel="stylesheet" href="styles.css">
 &lt;/head>
 &lt;body>
     &lt;div id="root">&lt;/div>
-    
-    &lt;footer class="info">
-        &lt;p>Double-click to edit a todo&lt;/p>
-        &lt;p>Created with &lt;a href="https://github.com/flexnet/flexnet-jsx">FlexNet JSX&lt;/a>&lt;/p>
-    &lt;/footer>
-    
-    &lt;script type="module" src="src/index.js">&lt;/script>
+    &lt;script type="module">
+        import { mount } from './src/app.js';
+        const rootElement = document.getElementById('root');
+        mount(rootElement);
+    &lt;/script>
 &lt;/body>
 &lt;/html></code></pre>
-
-                    <!-- Key Concepts Used -->
-                    <h2 class="text-2xl font-bold mt-8 mb-4">Key Concepts Demonstrated</h2>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
-                        <div class="bg-white p-5 rounded-lg border border-gray-200">
-                            <h3 class="text-lg font-semibold mb-2">Immutable State</h3>
-                            <p class="text-gray-600">All state updates create new state objects rather than mutating existing ones.</p>
-                        </div>
-                        <div class="bg-white p-5 rounded-lg border border-gray-200">
-                            <h3 class="text-lg font-semibold mb-2">Functional Composition</h3>
-                            <p class="text-gray-600">Event handlers use compose() to create pipelines of functions.</p>
-                        </div>
-                        <div class="bg-white p-5 rounded-lg border border-gray-200">
-                            <h3 class="text-lg font-semibold mb-2">Pure Components</h3>
-                            <p class="text-gray-600">Components are pure functions of their props with no internal state.</p>
-                        </div>
-                        <div class="bg-white p-5 rounded-lg border border-gray-200">
-                            <h3 class="text-lg font-semibold mb-2">Unidirectional Data Flow</h3>
-                            <p class="text-gray-600">Data flows down through props, events flow up through callbacks.</p>
-                        </div>
-                        <div class="bg-white p-5 rounded-lg border border-gray-200">
-                            <h3 class="text-lg font-semibold mb-2">Type Safety</h3>
-                            <p class="text-gray-600">Using Maybe for nullable values and safe state updates.</p>
-                        </div>
-                        <div class="bg-white p-5 rounded-lg border border-gray-200">
-                            <h3 class="text-lg font-semibold mb-2">Selective Rendering</h3>
-                            <p class="text-gray-600">Conditional rendering based on state (e.g., showing clear button only when needed).</p>
-                        </div>
-                    </div>
-
-                    <!-- Further Improvements -->
-                    <h2 class="text-2xl font-bold mt-8 mb-4">Further Improvements</h2>
-                    <p class="mb-4">Here are some ways to extend this example:</p>
-                    <ul class="list-disc pl-6 mb-6 space-y-2">
-                        <li>Add local storage persistence using FlexNet's Effect system</li>
-                        <li>Implement drag-and-drop reordering of todos</li>
-                        <li>Add due dates and priority levels to todos</li>
-                        <li>Implement undo/redo functionality using command pattern</li>
-                        <li>Add categories or tags for better organization</li>
-                    </ul>
-
-                    <div class="bg-white p-6 rounded-lg border border-gray-200 mt-8 mb-8">
-                        <h3 class="text-xl font-semibold mb-4">Testing the Todo App</h3>
-                        <p class="mb-4">
-                            One of the benefits of functional programming is testability. Here's how you might test the actions:
-                        </p>
-                        <pre class="bg-gray-800 text-white p-4 rounded-md mb-4 overflow-x-auto"><code class="language-javascript">// Example test for addTodo action
-import { actions } from './store/actions.js';
-import { Maybe } from '../../src/core/types/maybe.js';
-
-// Mock state
-const mockState = {
-  todos: [],
-  filter: 'all'
-};
-
-// Test addTodo action
-const newState = actions.addTodo('Test Todo')(mockState);
-
-// Assert: should be a Maybe.Just
-console.assert(newState.type === 'Just', 'Should return a Maybe.Just');
-
-// Assert: should have one todo
-console.assert(newState.value.todos.length === 1, 'Should add one todo');
-
-// Assert: new todo should have correct text
-console.assert(newState.value.todos[0].text === 'Test Todo', 'Todo should have correct text');
-
-// Assert: new todo should not be completed
-console.assert(newState.value.todos[0].completed === false, 'Todo should not be completed');</code></pre>
-                        <p>
-                            Since actions and reducers are pure functions, they're easy to test in isolation without mocks or complex test setup.
-                        </p>
-                    </div>
-
-                    <!-- Related Links -->
-                    <h2 class="text-2xl font-bold mt-8 mb-4">Related Resources</h2>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
-                        <a href="../systems/state.html" class="block p-6 bg-white rounded-lg border border-gray-200 hover:border-primary transition">
-                            <h3 class="text-lg font-semibold mb-2">State Management</h3>
-                            <p class="text-gray-600">Learn more about FlexNet's immutable state system</p>
-                        </a>
-                        <a href="../core/functions.html" class="block p-6 bg-white rounded-lg border border-gray-200 hover:border-primary transition">
-                            <h3 class="text-lg font-semibold mb-2">Functional Composition</h3>
-                            <p class="text-gray-600">Explore how function composition works in FlexNet</p>
-                        </a>
-                        <a href="website.html" class="block p-6 bg-white rounded-lg border border-gray-200 hover:border-primary transition">
-                            <h3 class="text-lg font-semibold mb-2">Website Example</h3>
-                            <p class="text-gray-600">See a more complex FlexNet application</p>
-                        </a>
-                        <a href="../api/result.html" class="block p-6 bg-white rounded-lg border border-gray-200 hover:border-primary transition">
-                            <h3 class="text-lg font-semibold mb-2">Result Type</h3>
-                            <p class="text-gray-600">Learn about error handling with the Result type</p>
-                        </a>
-                    </div>
                 </div>
             </div>
         </main>
     </div>
+    <script type="module">
+        // This script is for the live demo embedded in the documentation page.
+        // It simulates the project structure by defining modules in-memory.
 
-    <footer class="bg-white border-t border-gray-200 py-6">
-        <div class="max-w-5xl mx-auto px-6">
-            <p class="text-center text-gray-600">&copy; 2025 FlexNet JSX Framework. Created by Dr. Robert Whetsel and the FlexNet Development Team.</p>
-            <div class="flex justify-center space-x-6 mt-4">
-                <a href="https://github.com/flexnet/flexnet-jsx" class="text-gray-600 hover:text-primary">GitHub</a>
-                <a href="../guides/contribution.html" class="text-gray-600 hover:text-primary">Contribute</a>
-                <a href="../LICENSE.html" class="text-gray-600 hover:text-primary">License</a>
-            </div>
-        </div>
-    </footer>
-
-    <script>
-        // Simple client-side search functionality
-        const searchInput = document.querySelector('input[placeholder="Search documentation..."]');
-        searchInput.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter') {
-                const query = searchInput.value.toLowerCase();
-                // Implement search functionality
-                console.log('Searching for:', query);
-                // This would typically use a search index or API
+        function defineModule(name, code) {
+            const blob = new Blob([code], { type: 'application/javascript' });
+            const url = URL.createObjectURL(blob);
+            window.demoModules[name] = url;
+        }
+        
+        function resolveImport(importer, specifier) {
+            if (specifier.startsWith('./')) {
+                const path = new URL(specifier, new URL(importer, "blob://")).pathname.slice(1);
+                return window.demoModules[path];
             }
+            return specifier;
+        }
+        
+        window.demoModules = {};
+
+        const systemsCode = `
+            export const createElement = (type, props, ...children) => ({
+                type,
+                props: { ...props, children: children.flat() }
+            });
+
+            function createDomElement(vnode) {
+                if (typeof vnode === 'string' || typeof vnode === 'number') return document.createTextNode(vnode);
+                if (typeof vnode.type === 'function') return createDomElement(vnode.type(vnode.props));
+                const el = document.createElement(vnode.type);
+                Object.entries(vnode.props || {}).forEach(([k, v]) => {
+                    if (k.startsWith('on') && typeof v === 'function') el.addEventListener(k.substring(2).toLowerCase(), v);
+                    else if (k !== 'children') el.setAttribute(k, v);
+                });
+                (vnode.props.children || []).forEach(child => child && el.appendChild(createDomElement(child)));
+                return el;
+            }
+
+            export const render = (vnode, container) => {
+                container.innerHTML = '';
+                if (vnode) container.appendChild(createDomElement(vnode));
+            };
+
+            export const createStore = (reducer, initialState) => {
+                const subscribers = new Set();
+                let state = initialState;
+                const dispatch = action => {
+                    state = reducer(state, action);
+                    subscribers.forEach(fn => fn(state));
+                };
+                return {
+                    getState: () => state,
+                    dispatch,
+                    subscribe: fn => {
+                        subscribers.add(fn);
+                        fn(state);
+                        return () => subscribers.delete(fn);
+                    }
+                };
+            };
+            export const sanitize = input => {
+                const div = document.createElement('div');
+                div.textContent = input;
+                return div.innerHTML;
+            };
+        `;
+
+        const reducerCode = `
+            import { sanitize } from './systems.js';
+            let nextTodoId = 0;
+            export const Action = { ADD_TODO: 'ADD_TODO', TOGGLE_TODO: 'TOGGLE_TODO', REMOVE_TODO: 'REMOVE_TODO', SET_FILTER: 'SET_FILTER', CLEAR_COMPLETED: 'CLEAR_COMPLETED' };
+            export const initialState = { todos: [], filter: 'all' };
+            export const todoReducer = (state, action) => {
+              switch (action.type) {
+                case Action.ADD_TODO:
+                  return { ...state, todos: [...state.todos, { id: nextTodoId++, text: sanitize(action.payload.text), completed: false }] };
+                case Action.TOGGLE_TODO:
+                  return { ...state, todos: state.todos.map(t => t.id === action.payload.id ? { ...t, completed: !t.completed } : t) };
+                case Action.REMOVE_TODO:
+                  return { ...state, todos: state.todos.filter(t => t.id !== action.payload.id) };
+                case Action.SET_FILTER:
+                  return { ...state, filter: action.payload.filter };
+                case Action.CLEAR_COMPLETED:
+                  return { ...state, todos: state.todos.filter(t => !t.completed) };
+                default: return state;
+              }
+            };
+        `;
+        
+        const componentsCode = `
+            import { createElement } from './systems.js';
+            import { Action } from './reducer.js';
+            export const TodoItem = ({ todo, dispatch }) => createElement('li', { className: 'py-2 px-4 flex items-center justify-between border-b ' + (todo.completed ? 'text-gray-400 line-through' : '') }, createElement('span', { className: 'cursor-pointer', onClick: () => dispatch({ type: Action.TOGGLE_TODO, payload: { id: todo.id } }) }, todo.text), createElement('button', { className: 'text-red-500 hover:text-red-700 font-bold', onClick: () => dispatch({ type: Action.REMOVE_TODO, payload: { id: todo.id } }) }, 'X'));
+            export const TodoForm = ({ dispatch }) => {
+                const handleSubmit = e => { e.preventDefault(); const input = e.target.elements.newTodo; const text = input.value.trim(); if (text) { dispatch({ type: Action.ADD_TODO, payload: { text } }); input.value = ''; } };
+                return createElement('form', { onSubmit: handleSubmit }, createElement('input', { name: 'newTodo', className: 'w-full p-2 border rounded', placeholder: 'What needs to be done?', autoFocus: true }));
+            };
+            export const TodoList = ({ todos, dispatch }) => createElement('ul', { className: 'mt-4' }, ...todos.map(todo => createElement(TodoItem, { todo, dispatch })));
+            export const FilterButtons = ({ currentFilter, dispatch }) => {
+                const filters = ['all', 'active', 'completed'];
+                return createElement('div', { className: 'mt-4 flex justify-center space-x-4' }, ...filters.map(filter => createElement('button', { className: 'px-3 py-1 rounded ' + (currentFilter === filter ? 'bg-primary text-white' : 'bg-gray-200'), onClick: () => dispatch({ type: Action.SET_FILTER, payload: { filter } }) }, filter)));
+            };
+            export const App = ({ state, dispatch }) => {
+                const { todos, filter } = state;
+                const filteredTodos = todos.filter(t => filter === 'active' ? !t.completed : filter === 'completed' ? t.completed : true);
+                const completedCount = todos.filter(t => t.completed).length;
+                return createElement('div', { className: 'p-4 bg-gray-100 rounded-lg shadow-inner' }, createElement('h1', { className: 'text-2xl font-bold text-center mb-4' }, 'Todo App'), createElement(TodoForm, { dispatch }), createElement(FilterButtons, { currentFilter: filter, dispatch }), createElement(TodoList, { todos: filteredTodos, dispatch }), completedCount > 0 && createElement('button', { className: 'mt-4 text-sm text-gray-500 hover:text-red-500', onClick: () => dispatch({ type: Action.CLEAR_COMPLETED }) }, 'Clear ' + completedCount + ' completed item(s)'));
+            };
+        `;
+        
+        const appCode = `
+            import { createStore, render, createElement } from './systems.js';
+            import { todoReducer, initialState } from './reducer.js';
+            import { App } from './components.js';
+            export const mount = (container) => {
+                const store = createStore(todoReducer, initialState);
+                store.subscribe(state => {
+                    render(createElement(App, { state, dispatch: store.dispatch }), container);
+                });
+            };
+        `;
+
+        defineModule('systems.js', systemsCode.replace(/import.*from\s*'.*';?/g, ''));
+        defineModule('reducer.js', reducerCode.replace(/'\.\/systems\.js'/g, `'${resolveImport('reducer.js', './systems.js')}'`));
+        defineModule('components.js', componentsCode.replace(/'\.\/systems\.js'/g, `'${resolveImport('components.js', './systems.js')}'`).replace(/'\.\/reducer\.js'/g, `'${resolveImport('components.js', './reducer.js')}'`));
+        defineModule('app.js', appCode.replace(/'\.\/systems\.js'/g, `'${resolveImport('app.js', './systems.js')}'`).replace(/'\.\/reducer\.js'/g, `'${resolveImport('app.js', './reducer.js')}'`).replace(/'\.\/components\.js'/g, `'${resolveImport('app.js', './components.js')}'`));
+
+        const mainModuleUrl = window.demoModules['app.js'];
+        import(mainModuleUrl).then(module => {
+            const container = document.getElementById('todo-app-demo');
+            module.mount(container);
         });
+
     </script>
 </body>
 </html> 
