@@ -2,87 +2,66 @@
 
 ## Overview
 
-This document reviews how the `starter-project-website` ("Lorem Ipsum Website") template aligns with the official FlexNet JSX documentation, covering principles in `api-reference.md`, `ARCHITECTUREOVERVIEW.md`, `consistency-analysis.md`, `getting-started-guide.md`, `http-system.md`, `README.md`, and `security-practices.md`.
+This document reviews how the `starter-project-website` template aligns with the official FlexNet JSX documentation, serving as a practical guide to the principles in the root-level docs.
 
 ### 1. Project Structure
-
-- Matches the multi-page layout described in the root guides:
-
-```text
-starter-project-website/
-├── src/
-│   ├── core/                # runtime, types, functions, security
-│   ├── systems/             # state, effects, events, render, errors
-│   ├── utils/               # array helpers (Maybe-based)
-│   └── features/            # navigation, homepage, services, about, contact, faqs, mission
-├── public/                  # Static entry point with CSP & cache-busting
-│   └── index.html
-├── README.md                # Documentation and setup guide
-└── dev-server.py            # Dev HTTP server with cache-busting and CORS
-``` 
+- **Principle**: `ARCHITECTUREOVERVIEW.md` specifies a modular structure with distinct directories for `core`, `systems`, `features`, and `utils`.
+- **Implementation**: The starter website adheres to this structure, organizing its multi-page features (homepage, about, etc.) and systems (state, render, errors) into the prescribed directories.
 
 ### 2. Core Types
-
-- Implements **Maybe**, **Either**, and **Result** in `src/core/types`, including both instance methods (`map`, `chain`, `fold`/`getOrElse`) and static helpers, matching `api-reference.md`.
+- **Principle**: The `api-reference.md` requires `Maybe`, `Either`, and `Result` for type-safe operations, complete with monadic methods like `map` and `chain`.
+- **Implementation**: This starter correctly implements all three types in `src/core/types`, providing both instance and static helper methods that align with the API reference.
 
 ### 3. Core Functions
-
-- Provides `compose`, `pipe`, `curry` in `src/core/functions/composition.js` and `map`, `filter`, `reduce` in `transforms.js`, in line with the functional utilities in the docs.
+- **Principle**: The framework provides core functional utilities for composition and transformation.
+- **Implementation**: The starter includes `compose`, `pipe`, `curry`, `map`, `filter`, and `reduce` in `src/core/functions`, matching the documented APIs.
 
 ### 4. Secure JSX Runtime
-
-- `src/core/runtime/jsx.js` wraps element creation in `Either`/`Result`, uses `sanitizeProps`, `validateElementType`, and `escape` for XSS prevention.
-- `src/core/runtime/runtime.js` bundles and re-exports all core APIs.
+- **Principle**: The runtime must prevent XSS attacks by default, as detailed in `security-practices.md`.
+- **Implementation**: `src/core/runtime/jsx.js` fulfills this by wrapping element creation in `Either`/`Result` and automatically using `sanitizeProps`, `validateElementType`, and `escape` for all content.
 
 ### 5. Security Utilities
-
-- `src/core/security/functions.js` implements content escaping, input validation, URL whitelisting, and safe DOM operations, fulfilling `security-practices.md`.
+- **Principle**: Security is a core, built-in feature, not an afterthought.
+- **Implementation**: The project includes a dedicated `src/core/security/functions.js` module for content escaping, input validation, and URL whitelisting, as the security docs prescribe.
 
 ### 6. Rendering System
-
-- `src/systems/render/functions.js` supplies `createVirtualDOM`, `reconcile`, `patch`, and `renderPipeline` as per the architectural overview.
+- **Principle**: Rendering is a pure, functional pipeline, as described in `ARCHITECTUREOVERVIEW.md`.
+- **Implementation**: The starter demonstrates this with a `renderPipeline` in `src/systems/render/functions.js` that composes `createVirtualDOM`, `reconcile`, and `patch`.
 
 ### 7. State Management
-
-- `src/systems/state/store.js` offers an immutable, subscriber-based `createStore`.
+- **Principle**: State must be immutable and updated via pure functions.
+- **Implementation**: The project uses an immutable, subscriber-based `createStore` from `src/systems/state/store.js`.
 
 ### 8. Effects & Events
-
-- `src/systems/effects/functions.js` provides `Effect.of`, `Effect.map`, `Effect.chain`, and `createEffect` for side-effect isolation.
-- `src/systems/events/functions.js` offers a `createEventBus` pub/sub API.
+- **Principle**: Side effects must be isolated in the `Effect` system, and a global event bus should be available for cross-component communication.
+- **Implementation**: The starter provides both `Effect` monad helpers in `src/systems/effects/` and a `createEventBus` in `src/systems/events/`.
 
 ### 9. Error Handling
-
-- `src/systems/errors/boundary.js` implements `createErrorBoundary`, global error handlers, and secure logging (`errorLogger`), matching error-handling best practices.
+- **Principle**: The framework must provide robust, functional error handling.
+- **Implementation**: `src/systems/errors/boundary.js` provides `createErrorBoundary` and `errorLogger` with data redaction, matching the patterns in `security-practices.md`.
 
 ### 10. Utilities
-
-- `src/utils/array.js` provides safe array operations (`head`, `tail`, `find`, `safeGet`) returning `Maybe` instances.
+- **Principle**: Common operations should be abstracted into safe, reusable utility functions.
+- **Implementation**: `src/utils/array.js` provides safe array operations (`head`, `tail`, etc.) that return a `Maybe`.
 
 ### 11. Feature Implementation & Routing
-
-- **Navigation**: Path-based routing using `history.pushState`, `popstate`, and custom `getPageFromPath`, rather than the documented `createRouter` API.
-- **Pages**: Homepage, Services, About, Contact, FAQs, Mission—each implemented as pure functional components with placeholder content via `Maybe`.
-- **Homepage**: Combines multiple sections (Hero, Digital Transformation, Web3 Benefits, Services, Benefits, CTA) with state and routing.
+- **Principle**: The framework provides a `createRouter` function for handling navigation.
+- **Implementation & Divergence**: This project demonstrates a more manual approach to routing using the browser's native `history.pushState` and `popstate` APIs. While effective, it bypasses the formal `createRouter` system, offering a look at a lower-level implementation.
 
 ### 12. Module Loading & Entrypoint
-
-- `public/index.html` includes a CSP header, cache-busting meta tags, and a `<script type="module">` loader that:
-  1. Clears caches (service workers, caches, sessionStorage) for dev<br>
-  2. Dynamically imports `initWebsite` with a cache-busting URL query<br>
-  3. Handles loading, initialization errors, and provides a hard-refresh button on failure
+- **Principle**: The application should load via native ES modules, with security considerations like CSP.
+- **Implementation**: `public/index.html` uses a `<script type="module">` loader with dynamic `import()`, cache-busting, and a Content Security Policy header.
 
 ### 13. Development Server
+- **Principle**: The framework is dependency-free and can be served by any static server.
+- **Implementation**: The project includes a `dev-server.py` to provide a better development experience with cache-busting and CORS headers.
 
-- `dev-server.py` runs an HTTP server with no-cache headers and CORS support, aligning with the zero-dependencies, browser-native approach for local development.
-
-## Missing Extensions (Opportunities to Teach More)
-
-1. **HTTP System**: No use of `createHTTPClient` or interceptors from `http-system.md`.
-2. **Formal Router**: Uses custom history API instead of the documented `createRouter` feature API.
-3. **Form Validation**: Contact page has no schema validation via `Result`/`Either`.
-4. **Tests**: README mentions tests, but no `tests/` directory is present.
+## Areas for Further Teaching
+The starter provides an excellent foundation but intentionally omits a few advanced systems for clarity. These represent opportunities to extend the project to teach the full framework:
+1.  **HTTP System**: The functional `createHTTPClient` from `http-system.md` is not used. An API call in the contact form feature could be added to demonstrate this.
+2.  **Formal Router**: As noted, the project uses a custom router. Refactoring it to use the official `createRouter` API would complete the systems demonstration.
+3.  **Schema-Based Validation**: The project includes input validation, but not the advanced schema validation from the `features/validation` API. The contact form is an ideal place to implement this.
+4.  **Testing**: The `README.md` mentions a `tests/` directory, but it is not included in the project. Adding property-based tests for the core functions and unit tests for the components would demonstrate the testing approach from `consistency-analysis.md`.
 
 ---
-
-The **starter-project-website** demonstrates nearly all core FlexNet JSX principles—security, type safety, functional composition, modular runtime, state/effect systems, events, rendering, and error boundaries—in a realistic multi-page website. To cover every root-level concept, add HTTP client usage, a router feature, and form-validation examples, and include a test suite.
+The **starter-project-website** demonstrates nearly all core FlexNet JSX principles in a realistic multi-page website. To cover every root-level concept, one could add HTTP client usage, a router feature, form-validation examples, and a test suite.
