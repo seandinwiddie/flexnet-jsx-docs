@@ -1,4 +1,4 @@
-# FlexNet JSX Minimal Starter Review
+# FlexNet JSX Minimal Starter
 
 ## Overview
 
