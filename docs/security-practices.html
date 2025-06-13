@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FlexNet JSX Security Best Practices</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/atom-one-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
+    <link rel="stylesheet" href="assets/main.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#3b82f6',
+                        secondary: '#6366f1',
+                        dark: '#1e293b',
+                        light: '#f8fafc'
+                    }
+                }
+            }
+        };
+        hljs.highlightAll();
+    </script>
+</head>
+<body class="bg-gray-50 text-gray-900 min-h-screen">
+    <div class="flex flex-col md:flex-row">
+        <!-- Sidebar -->
+        <aside id="sidebar-placeholder" class="w-full md:w-64 bg-white border-r border-gray-200 md:h-screen md:sticky top-0 overflow-y-auto">
+        </aside>
+
+        <!-- Main content -->
+        <main class="flex-1">
+            <header id="header-placeholder" class="border-b border-gray-200 bg-white sticky top-0 z-10">
+            </header>
+
+            <div class="p-6 max-w-5xl mx-auto">
+                <h1 class="text-3xl font-bold mb-4">FlexNet JSX Security Best Practices</h1>
+
+                <h2 class="text-2xl font-bold mb-4">XSS Prevention</h2>
+                <h3 class="text-xl font-semibold mb-2">Content Handling</h3>
+                <div class="bg-gray-900 rounded-lg mb-4 overflow-hidden relative">
+                    <button class="absolute top-2 right-2 bg-gray-700 hover:bg-gray-600 text-white text-xs font-bold py-1 px-2 rounded">Copy</button>
+                    <pre class="bg-gray-800 text-white p-4 rounded-md mb-4 overflow-x-auto"><code class="language-javascript">const escape = str => compose(
+    String,
+    s => s.replace(/&/g, '&amp;')
+         .replace(/</g, '&lt;')
+         .replace(/>/g, '&gt;')
+         .replace(/"/g, '&quot;')
+         .replace(/'/g, '&#039;')
+)(str);
+
+const validateInput = compose(
+    input => {
+        const escaped = escape(input);
+        return escaped.length === input.length
+            ? Either.Right(input)
+            : Either.Left('Invalid characters detected');
+    }
+);</code></pre>
+                </div>
+
+                <h3 class="text-xl font-semibold mb-2">DOM Interaction</h3>
+                <div class="bg-gray-900 rounded-lg mb-4 overflow-hidden relative">
+                    <button class="absolute top-2 right-2 bg-gray-700 hover:bg-gray-600 text-white text-xs font-bold py-1 px-2 rounded">Copy</button>
+                    <pre class="bg-gray-800 text-white p-4 rounded-md mb-4 overflow-x-auto"><code class="language-javascript">// Safe createElement implementation
+const createElement = (type, props, ...children) => {
+    // Validate type
+    if (typeof type !== 'string' && typeof type !== 'function') {
+        return Either.Left('Invalid element type');
+    }
+
+    // Sanitize props
+    const safeProps = Object.entries(props || {}).reduce((acc, [key, value]) => {
+        // Prevent script injection in event handlers
+        if (key.startsWith('on') && typeof value === 'string') {
+            return acc;
+        }
+        // Escape string values
+        if (typeof value === 'string') {
+            acc[key] = safeContent.escape(value);
+        } else {
+            acc[key] = value;
+        }
+        return acc;
+    }, {});
+
+    return Either.Right({ type, props: safeProps, children });
+};</code></pre>
+                </div>
+
+                <h3 class="text-xl font-semibold mb-2">URL Validation</h3>
+                <div class="bg-gray-900 rounded-lg mb-6 overflow-hidden relative">
+                    <button class="absolute top-2 right-2 bg-gray-700 hover:bg-gray-600 text-white text-xs font-bold py-1 px-2 rounded">Copy</button>
+                    <pre class="bg-gray-800 text-white p-4 rounded-md mb-6 overflow-x-auto"><code class="language-javascript">const urlValidator = {
+    // Whitelist of allowed protocols
+    allowedProtocols: ['https:', 'data:image/'],
+
+    validate: (url) => {
+        try {
+            const parsed = new URL(url);
+            return allowedProtocols.some(protocol => 
+                parsed.protocol.startsWith(protocol))
+                ? Either.Right(url)
+                : Either.Left('Invalid protocol');
+        } catch {
+            return Either.Left('Invalid URL');
+        }
+    }
+};</code></pre>
+                </div>
+
+                <h2 class="text-2xl font-bold mb-4">State Management Security</h2>
+                <h3 class="text-xl font-semibold mb-2">Immutable State Updates</h3>
+                <div class="bg-gray-900 rounded-lg mb-4 overflow-hidden relative">
+                    <button class="absolute top-2 right-2 bg-gray-700 hover:bg-gray-600 text-white text-xs font-bold py-1 px-2 rounded">Copy</button>
+                    <pre class="bg-gray-800 text-white p-4 rounded-md mb-4 overflow-x-auto"><code class="language-javascript">const secureState = {
+    update: (state, updater) => {
+        const newState = Object.freeze({
+            ...state,
+            value: updater(state.value),
+            timestamp: new Date().toISOString(),
+            hash: generateStateHash(state)
+        });
+        return validateStateIntegrity(newState);
+    },
+
+    validateStateIntegrity: (state) => {
+        const currentHash = generateStateHash(state);
+        return currentHash === state.hash
+            ? Either.Right(state)
+            : Either.Left('State integrity compromised');
+    }
+};</code></pre>
+                </div>
+
+                <h3 class="text-xl font-semibold mb-2">Access Control</h3>
+                <div class="bg-gray-900 rounded-lg mb-6 overflow-hidden relative">
+                    <button class="absolute top-2 right-2 bg-gray-700 hover:bg-gray-600 text-white text-xs font-bold py-1 px-2 rounded">Copy</button>
+                    <pre class="bg-gray-800 text-white p-4 rounded-md mb-6 overflow-x-auto"><code class="language-javascript">const stateAccess = {
+    permissions: {
+        READ: 'read',
+        WRITE: 'write',
+        ADMIN: 'admin'
+    },
+
+    validateAccess: (state, operation, permission) => {
+        const userPermissions = getCurrentUserPermissions();
+        return userPermissions.includes(permission)
+            ? Either.Right(state)
+            : Either.Left('Insufficient permissions');
+    }
+};</code></pre>
+                </div>
+
+                <h2 class="text-2xl font-bold mb-4">Error Handling</h2>
+                <h3 class="text-xl font-semibold mb-2">Error Boundaries</h3>
+                <div class="bg-gray-900 rounded-lg mb-4 overflow-hidden relative">
+                    <button class="absolute top-2 right-2 bg-gray-700 hover:bg-gray-600 text-white text-xs font-bold py-1 px-2 rounded">Copy</button>
+                    <pre class="bg-gray-800 text-white p-4 rounded-md mb-4 overflow-x-auto"><code class="language-javascript">const ErrorBoundary = ({ children, fallback }) => {
+    const [error, setError] = useState(null);
+
+    useEffect(() => {
+        const handleError = (event) => {
+            event.preventDefault();
+            setError(event.error);
+            logError(event.error);
+        };
+
+        window.addEventListener('error', handleError);
+        return () => window.removeEventListener('error', handleError);
+    }, []);
+
+    return error ? fallback(error) : children;
+};</code></pre>
+                </div>
+
+                <h3 class="text-xl font-semibold mb-2">Secure Error Logging</h3>
+                <div class="bg-gray-900 rounded-lg mb-6 overflow-hidden relative">
+                    <button class="absolute top-2 right-2 bg-gray-700 hover:bg-gray-600 text-white text-xs font-bold py-1 px-2 rounded">Copy</button>
+                    <pre class="bg-gray-800 text-white p-4 rounded-md mb-6 overflow-x-auto"><code class="language-javascript">const errorLogger = {
+    sensitiveKeys: ['password', 'token', 'secret'],
+
+    sanitizeError: (error) => {
+        const sanitized = { ...error };
+        sensitiveKeys.forEach(key => {
+            if (key in sanitized) {
+                sanitized[key] = '[REDACTED]';
+            }
+        });
+        return sanitized;
+    },
+
+    logError: (error) => {
+        const sanitizedError = sanitizeError(error);
+        console.error('Secure Error:', sanitizedError);
+    }
+};</code></pre>
+                </div>
+
+                <h2 class="text-2xl font-bold mb-4">Memory State Security</h2>
+                <h3 class="text-xl font-semibold mb-2">Context Validation</h3>
+                <div class="bg-gray-900 rounded-lg mb-4 overflow-hidden relative">
+                    <button class="absolute top-2 right-2 bg-gray-700 hover:bg-gray-600 text-white text-xs font-bold py-1 px-2 rounded">Copy</button>
+                    <pre class="bg-gray-800 text-white p=4 rounded-md mb-4 overflow-x-auto"><code class="language-javascript">const secureContext = {
+    validate: (context) => {
+        if (!context.activeFiles || !context.implementationState) {
+            return Either.Left('Invalid context structure');
+        }
+
+        return validateFilePaths(context.activeFiles)
+            .chain(validateImplementation)
+            .chain(validateStateIntegrity);
+    }
+};</code></pre>
+                </div>
+
+                <h3 class="text-xl font-semibold mb-2">File System Security</h3>
+                <div class="bg-gray-900 rounded-lg mb-6 overflow-hidden relative">
+                    <button class="absolute top-2 right-2 bg-gray-700 hover:bg-gray-600 text-white text-xs font-bold py-1 px-2 rounded">Copy</button>
+                    <pre class="bg-gray-800 text-white p-4 rounded-md mb-6 overflow-x-auto"><code class="language-javascript">const fileSystem = {
+    validatePath: (path) => {
+        // Prevent directory traversal
+        const normalized = path.replace(/\.\./g, '');
+        return path === normalized
+            ? Either.Right(path)
+            : Either.Left('Invalid path');
+    },
+
+    validatePermissions: (path) => {
+        const stats = getFileStats(path);
+        return stats.mode === expectedMode
+            ? Either.Right(path)
+            : Either.Left('Invalid permissions');
+    }
+};</code></pre>
+                </div>
+
+                <h2 class="text-2xl font-bold mb-4">Technical Standards Implementation</h2>
+                <h3 class="text-xl font-semibold mb-2">Script Safety</h3>
+                <div class="bg-gray-900 rounded-lg mb-6 overflow-hidden relative">
+                    <button class="absolute top-2 right-2 bg-gray-700 hover:bg-gray-600 text-white text-xs font-bold py-1 px-2 rounded">Copy</button>
+                    <pre class="bg-gray-800 text-white p-4 rounded-md mb-6 overflow-x-auto"><code class="language-javascript">const scriptSafety = {
+    // Error trapping
+    trapErrors: (fn) => (...args) => {
+        try {
+            return Either.Right(fn(...args));
+        } catch (error) {
+            return Either.Left(error);
+        }
+    },
+
+    // Variable quoting
+    quoteVariable: (value) => 
+        typeof value === 'string' ? `'${value}'` : value,
+
+    // Permission handling
+    checkPermissions: (operation) =>
+        validateAccess(operation)
+            .chain(validateFilesystem)
+            .chain(validateState),
+
+    // Cleanup procedures
+    ensureCleanup: (operation) => {
+        const cleanup = [];
+        return {
+            addCleanup: (fn) => cleanup.push(fn),
+            execute: () => {
+                try {
+                    return operation();
+                } finally {
+                    cleanup.forEach(fn => fn());
+                }
+            }
+        };
+    }
+};</code></pre>
+                </div>
+
+                <h2 class="text-2xl font-bold mb-4">Version Information</h2>
+                <ul class="list-disc pl-5 mb-6">
+                    <li>Security Version: 1.0</li>
+                    <li>Framework Version: 1.0</li>
+                    <li>Last Updated: 2024-12-19</li>
+                </ul>
+            </div>
+        </main>
+    </div>
+
+    <footer id="footer-placeholder" class="bg-white border-t border-gray-200 py-6">
+    </footer>
+</body>
+</html> 

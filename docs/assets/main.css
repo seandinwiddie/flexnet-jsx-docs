@@ -1,0 +1,9 @@
+/* Custom styles for the FlexNet JSX documentation can be added here. */
+body {
+    /* Example: Add a bit more line spacing for readability */
+    line-height: 1.6;
+}
+
+.text-shadow {
+    text-shadow: 0 2px 4px rgba(0,0,0,0.10);
+}

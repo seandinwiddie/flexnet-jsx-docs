@@ -2,9 +2,7 @@
 
 ## Overview
 
-This document reviews the `starter-project-website-minimal`, a conceptual template designed for building simple, multi-page static websites. It adapts the principles of the full `starter-project-website` to a flat, single-bundle architecture, similar to `local-jsx`, but with a stronger focus on adhering to the core FlexNet JSX APIs.
-
-This starter is ideal for projects where the modularity of the official architecture is unnecessary, such as landing pages, portfolios, or small marketing sites.
+This document describes a `starter-project-website-minimal`, a template designed for building simple, multi-page static websites. It adapts the principles of the full `starter-project-website` to a flat, single-bundle architecture, similar to `local-jsx`, but with a stronger focus on adhering to the core FlexNet JSX APIs.
 
 ### 1. Project Structure
 - **Principle**: `ARCHITECTUREOVERVIEW.md` mandates a modular `src/` directory.
@@ -49,6 +47,6 @@ starter-project-website-minimal/
 
 ## Conclusion
 
-The `starter-project-website-minimal` serves as a bridge between the ad-hoc approach of `local-jsx` and the fully-architected `starter-project-website`. It demonstrates how to apply core FlexNet JSX principles—type safety, security, functional composition—in a simplified, single-bundle package.
+The `starter-project-website-minimal` demonstrates how to apply core FlexNet JSX principles—type safety, security, functional composition—in a simplified, single-bundle package.
 
 While it intentionally deviates from the official directory structure and module loading strategy, it provides a valuable, pragmatic starting point for developers building small-scale static websites who still want the safety and predictability of the FlexNet JSX ecosystem. 

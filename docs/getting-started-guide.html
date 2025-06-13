@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Getting Started with FlexNet JSX</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/atom-one-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
+    <link rel="stylesheet" href="assets/main.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#3b82f6',
+                        secondary: '#6366f1',
+                        dark: '#1e293b',
+                        light: '#f8fafc'
+                    }
+                }
+            }
+        };
+        hljs.highlightAll();
+    </script>
+</head>
+<body class="bg-gray-50 text-gray-900 min-h-screen">
+    <div class="flex flex-col md:flex-row">
+        <!-- Sidebar -->
+        <aside id="sidebar-placeholder" class="w-full md:w-64 bg-white border-r border-gray-200 md:h-screen md:sticky top-0 overflow-y-auto">
+        </aside>
+
+        <!-- Main content -->
+        <main class="flex-1">
+            <header id="header-placeholder" class="border-b border-gray-200 bg-white sticky top-0 z-10">
+            </header>
+
+            <div class="p-6 max-w-5xl mx-auto">
+                <h1 class="text-3xl font-bold mb-4">Getting Started with FlexNet JSX</h1>
+                <p class="mb-6">Version: 1.0.0 (Released 2025-01-31)</p>
+
+                <h2 class="text-2xl font-bold mb-4">Project Setup</h2>
+                <h3 class="text-xl font-semibold mb-2">Directory Structure</h3>
+                <p class="mb-4">Create a new project directory with the following structure:</p>
+                <pre class="bg-gray-800 text-white p-4 rounded-md mb-4 overflow-x-auto"><code class="language-text">my-project/
+├── src/
+│   ├── core/                  # Core JSX functionality
+│   │   ├── runtime/          # JSX runtime
+│   │   │   ├── jsx.js
+│   │   │   └── transform.js
+│   │   ├── types/           # Type system
+│   │   │   ├── maybe.js
+│   │   │   ├── either.js
+│   │   │   └── result.js
+│   │   └── functions/       # Core functions
+│   │       ├── composition.js
+│   │       └── transforms.js
+│   │
+│   ├── systems/             # Framework systems
+│   │   ├── render/         # Rendering
+│   │   ├── state/          # State management
+│   │   ├── effects/        # Side effects
+│   │   └── events/         # Event handling
+│   │
+│   ├── features/           # Your app features
+│   │   └── counter/        # Example feature
+│   │       ├── functions.js
+│   │       └── index.js
+│   │
+│   └── utils/              # Utilities
+│       ├── array.js
+│       └── function.js
+│
+├── public/                  # Static assets
+│   └── index.html
+│
+└── tests/                  # Test files
+    └── features/
+        └── counter/
+            └── counter.test.js</code></pre>
+
+                <h3 class="text-xl font-semibold mb-2">Initial Setup</h3>
+                <ol class="list-decimal pl-5 mb-6">
+                    <li class="mb-4">
+                        <p>Create your <code>public/index.html</code>:</p>
+                        <pre class="bg-gray-800 text-white p-4 rounded-md mb-4 overflow-x-auto"><code class="language-html">&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+    &lt;title&gt;FlexNet JSX Project&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;div id=\"root\"&gt;&lt;/div&gt;
+    &lt;script type=\"module\" src=\"../src/core/runtime/jsx.js\"&gt;&lt;/script&gt;
+    &lt;script type=\"module\" src=\"../src/features/counter/index.js\"&gt;&lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+                    </li>
+                    <li>
+                        <p>Create your first feature (Counter Example):</p>
+                        <pre class="bg-gray-800 text-white p-4 rounded-md mb-4 overflow-x-auto"><code class="language-javascript">// src/features/counter/functions.js
+import { Maybe } from '../../core/types/maybe.js';
+import { compose } from '../../core/functions/composition.js';
+
+export const increment = n =&gt; n + 1;
+export const decrement = n =&gt; n - 1;
+export const updateCount = (count, operation) =&gt;
+  Maybe.fromNullable(count)
+    .map(operation)
+    .getOrElse(0);
+
+// src/features/counter/index.js
+import { jsx } from '../../core/runtime/jsx.js';
+import { increment, decrement, updateCount } from './functions.js';
+
+const Counter = () =&gt; {
+  let count = 0;
+  
+  return jsx('div', null, [
+    jsx('button', { onClick: () =&gt; count = updateCount(count, decrement) }, '-'),
+    jsx('span', null, count),
+    jsx('button', { onClick: () =&gt; count = updateCount(count, increment) }, '+')
+  ]);
+};
+
+export default Counter;</code></pre>
+                    </li>
+                </ol>
+
+                <h3 class="text-xl font-semibold mb-2">Core Concepts</h3>
+                <ol class="list-decimal pl-5 mb-6">
+                    <li class="mb-2">
+                        <span class="font-semibold">Pure Functions</span>
+                        <ul class="list-disc pl-5 mt-2 mb-4">
+                            <li>All operations should be pure functions</li>
+                            <li>Use composition for complex operations</li>
+                            <li>Avoid side effects outside effect system</li>
+                        </ul>
+                    </li>
+                    <li class="mb-2">
+                        <span class="font-semibold">Type Safety</span>
+                        <ul class="list-disc pl-5 mt-2 mb-4">
+                            <li>Use Maybe for optional values</li>
+                            <li>Use Either for error handling</li>
+                            <li>Use Result for operation outcomes</li>
+                        </ul>
+                    </li>
+                    <li class="mb-2">
+                        <span class="font-semibold">State Management</span>
+                        <ul class="list-disc pl-5 mt-2 mb-4">
+                            <li>Immutable state updates</li>
+                            <li>Pure state transitions</li>
+                            <li>State isolation through closures</li>
+                        </ul>
+                    </li>
+                    <li>
+                        <span class="font-semibold">Effect Handling</span>
+                        <ul class="list-disc pl-5 mt-2">
+                            <li>Isolate side effects</li>
+                            <li>Use effect system for async operations</li>
+                            <li>Clean up effects properly</li>
+                        </ul>
+                    </li>
+                </ol>
+            </div>
+        </main>
+    </div>
+
+    <footer id="footer-placeholder" class="bg-white border-t border-gray-200 py-6">
+    </footer>
+</body>
+</html> 
