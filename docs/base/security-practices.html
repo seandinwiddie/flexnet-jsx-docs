@@ -36,7 +36,6 @@
 
             <div class="p-8 max-w-5xl mx-auto">
                 <h1 class="text-3xl font-bold mb-4">FlexNet JSX Security Best Practices</h1>
-                <p class="mb-6">This document outlines the security best practices for developing applications with the FlexNet JSX Framework. It covers input sanitization, Content Security Policy (CSP), and other security considerations.</p>
 
                 <h2 class="text-2xl font-bold mb-4">XSS Prevention</h2>
                 <h3 class="text-xl font-semibold mb-2">Content Handling</h3>
@@ -203,7 +202,7 @@ const createElement = (type, props, ...children) => {
                 <h3 class="text-xl font-semibold mb-2">Context Validation</h3>
                 <div class="bg-gray-900 rounded-lg mb-4 overflow-hidden relative">
                     <button class="absolute top-2 right-2 bg-gray-700 hover:bg-gray-600 text-white text-xs font-bold py-1 px-2 rounded">Copy</button>
-                    <pre class="bg-gray-800 text-white p=4 rounded-md mb-4 overflow-x-auto"><code class="language-javascript">const secureContext = {
+                    <pre class="bg-gray-800 text-white p-4 rounded-md mb-4 overflow-x-auto"><code class="language-javascript">const secureContext = {
     validate: (context) => {
         if (!context.activeFiles || !context.implementationState) {
             return Either.Left('Invalid context structure');
