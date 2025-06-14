@@ -137,8 +137,108 @@ const createStore = (reducer, initialState) => {
 
                 <h3 class="text-xl font-semibold mb-2">Effect System</h3>
                 <pre class="bg-gray-800 text-white p-4 rounded-md mb-4 overflow-x-auto"><code class="language-javascript">// src/systems/effects/functions.js
-// ... existing code ...
-</code></pre>
+const Effect = {
+    of: value => ({ type: 'Effect', run: () => value }),
+    map: fn => effect =>
+        Effect.of(() => fn(effect.run())),
+    chain: fn => effect =>
+        Effect.of(() => fn(effect.run()).run()),
+    run: effect => effect.run()
+};</code></pre>
+
+                <h3 class="text-xl font-semibold mb-2">Event System</h3>
+                <pre class="bg-gray-800 text-white p-4 rounded-md mb-4 overflow-x-auto"><code class="language-javascript">// src/systems/events/functions.js
+const createEventBus = () => {
+    const subscribers = new Map();
+    
+    return {
+        emit: (event, data) =>
+            Maybe.fromNullable(subscribers.get(event))
+                .map(subs => subs.forEach(fn => fn(data))),
+        on: (event, callback) => {
+            const subs = subscribers.get(event) || new Set();
+            subs.add(callback);
+            subscribers.set(event, subs);
+            return () => subs.delete(callback);
+        }
+    };
+};</code></pre>
+
+                <h2 class="text-2xl font-bold mb-4">Feature APIs</h2>
+                <h3 class="text-xl font-semibold mb-2">Router</h3>
+                <pre class="bg-gray-800 text-white p-4 rounded-md mb-4 overflow-x-auto"><code class="language-javascript">// src/features/router/functions.js
+const createRouter = (routes) => {
+    const matchRoute = path =>
+        pipe(
+            Object.entries,
+            find(([pattern]) => new RegExp(`^${pattern}$`).test(path)),
+            Maybe.fromNullable,
+            Maybe.map(([_, handler]) => handler)
+        )(routes);
+
+    return {
+        navigate: path =>
+            matchRoute(path)
+                .map(Effect.of)
+                .getOrElse(Effect.of(() => console.error('Route not found')))
+    };
+};</code></pre>
+
+                <h3 class="text-xl font-semibold mb-2">Form Validation</h3>
+                <pre class="bg-gray-800 text-white p-4 rounded-md mb-4 overflow-x-auto"><code class="language-javascript">// src/features/validation/functions.js
+const validate = schema => data =>
+    pipe(
+        Object.entries,
+        map(([key, validator]) =>
+            validator(data[key])
+                .map(value => ({ [key]: value }))
+                .mapError(error => ({ [key]: error }))
+        ),
+        results => Result.all(results)
+    )(schema);</code></pre>
+
+                <h2 class="text-2xl font-bold mb-4">Security Functions</h2>
+                <h3 class="text-xl font-semibold mb-2">XSS Prevention</h3>
+                <pre class="bg-gray-800 text-white p-4 rounded-md mb-4 overflow-x-auto"><code class="language-javascript">// src/security/functions.js
+const sanitize = input =>
+    Either.fromNullable(input)
+        .map(str => str.replace(/[&lt;&gt;]/g, ''))
+        .getOrElse('');
+
+const validateInput = predicate => input =>
+    Either.fromNullable(input)
+        .chain(value =>
+            predicate(value)
+                ? Either.Right(value)
+                : Either.Left('Invalid input')
+        );</code></pre>
+
+                <h2 class="text-2xl font-bold mb-4">Utility Functions</h2>
+                <h3 class="text-xl font-semibold mb-2">Array Operations</h3>
+                <pre class="bg-gray-800 text-white p-4 rounded-md mb-4 overflow-x-auto"><code class="language-javascript">// src/utils/array.js
+const head = array =>
+    Maybe.fromNullable(array[0]);
+
+const tail = array =>
+    array.length &gt; 1 ? Maybe.Just(array.slice(1)) : Maybe.Nothing();
+
+const find = predicate => array =>
+    Maybe.fromNullable(array.find(predicate));</code></pre>
+
+                <h3 class="text-xl font-semibold mb-2">Function Operations</h3>
+                <pre class="bg-gray-800 text-white p-4 rounded-md mb-4 overflow-x-auto"><code class="language-javascript">// src/utils/function.js
+const memoize = fn => {
+    const cache = new Map();
+    return (...args) => {
+        const key = JSON.stringify(args);
+        return cache.has(key)
+            ? cache.get(key)
+            : pipe(
+                fn,
+                result => (cache.set(key, result), result)
+              )(...args);
+    };
+};</code></pre>
             </div>
         </main>
     </div>
