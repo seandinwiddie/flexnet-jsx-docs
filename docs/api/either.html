@@ -52,7 +52,7 @@
 
                 <div class="prose prose-blue max-w-none">
                     <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2" id="overview">Overview</h2>
-                    <p class="mb-4">In functional programming, <code>Either</code> is a core type used for representing a choice between two distinct values. By convention, <code>Right</code> is used to represent a success or a "correct" value, while <code>Left</code> is used to represent a failure, an error, or an "alternative" value.</p>
+                    <p class="mb-4">In <a href="../base/architecture-overview.html" class="text-primary hover:underline">functional programming</a>, <code>Either</code> is a core type used for representing a choice between two distinct values. By convention, <code>Right</code> is used to represent a success or a "correct" value, while <code>Left</code> is used to represent a failure, an error, or an "alternative" value.</p>
                     
                     <p class="mb-4">This construct allows functions to communicate failure without throwing exceptions, making error handling an explicit and manageable part of the program's data flow. It forces the developer to confront both possibilities, leading to more robust and predictable applications.</p>
                     <ul class="list-disc pl-6 mb-6 space-y-2">
@@ -240,28 +240,28 @@ Either.fold(console.error, console.log)(invalidResult); // Logs: "Password must 
                         </h4>
                         <ul class="list-disc pl-6 mt-2">
                             <li><strong>Always Handle Both Paths</strong>: The primary purpose of <code>Either</code> is to force you to handle both success and failure cases. Use <code>fold</code> to ensure both paths are covered.</li>
-                            <li><strong>Synchronous Logic Only</strong>: <code>Either</code> is for synchronous control flow. For asynchronous operations, use the framework's Effect system.</li>
-                            <li><strong>Prefer <code>Either</code> for predictable errors</strong>: Use <code>Either</code> for operations with a known set of possible failures (e.g., validation). For exceptional, unexpected errors, use the <code>Result</code> type with its <code>fromTry</code> constructor.</li>
+                            <li><strong>Synchronous Logic Only</strong>: <code>Either</code> is for synchronous control flow. For asynchronous operations, use the framework's <a href="../base/api-reference.html" class="text-primary hover:underline">Effect system</a>.</li>
+                            <li><strong>Prefer <code>Either</code> for predictable errors</strong>: Use <code>Either</code> for operations with a known set of possible failures (e.g., validation). For exceptional, unexpected errors, use the <a href="../base/api-reference.html" class="text-primary hover:underline"><code>Result</code> type</a> with its <code>fromTry</code> constructor.</li>
                         </ul>
                     </div>
 
                     <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2" id="next-steps">Next Steps</h2>
                     
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
-                        <a href="maybe.html" class="block p-4 border border-gray-200 rounded-lg hover:border-primary hover:shadow-md transition">
-                            <h3 class="font-semibold text-lg mb-2">Maybe Type</h3>
+                        <a href="../base/api-reference.html" class="block p-4 border border-gray-200 rounded-lg hover:border-primary hover:shadow-md transition">
+                            <h3 class="font-semibold text-lg mb-2">API Reference: Maybe</h3>
                             <p class="text-gray-600">Learn about handling values that might be null or undefined.</p>
                         </a>
-                        <a href="result.html" class="block p-4 border border-gray-200 rounded-lg hover:border-primary hover:shadow-md transition">
-                            <h3 class="font-semibold text-lg mb-2">Result Type</h3>
+                        <a href="../base/api-reference.html" class="block p-4 border border-gray-200 rounded-lg hover:border-primary hover:shadow-md transition">
+                            <h3 class="font-semibold text-lg mb-2">API Reference: Result</h3>
                             <p class="text-gray-600">Explore the Result type for wrapping functions that might throw exceptions.</p>
                         </a>
-                        <a href="../security/functions.html" class="block p-4 border border-gray-200 rounded-lg hover:border-primary hover:shadow-md transition">
-                            <h3 class="font-semibold text-lg mb-2">Security Functions</h3>
+                        <a href="../base/security-practices.html" class="block p-4 border border-gray-200 rounded-lg hover:border-primary hover:shadow-md transition">
+                            <h3 class="font-semibold text-lg mb-2">Security Best Practices</h3>
                             <p class="text-gray-600">See how <code>Either</code> is used for safe input validation.</p>
                         </a>
-                         <a href="../core/types.html" class="block p-4 border border-gray-200 rounded-lg hover:border-primary hover:shadow-md transition">
-                            <h3 class="font-semibold text-lg mb-2">Core Type System</h3>
+                         <a href="../base/architecture-overview.html" class="block p-4 border border-gray-200 rounded-lg hover:border-primary hover:shadow-md transition">
+                            <h3 class="font-semibold text-lg mb-2">Architecture: Core Type System</h3>
                             <p class="text-gray-600">Get a high-level overview of the functional types that form the core of the framework.</p>
                         </a>
                     </div>

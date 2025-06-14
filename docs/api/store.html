@@ -48,7 +48,7 @@
                 </div>
 
                 <h1 class="text-4xl font-bold mb-6">Store API</h1>
-                <p class="text-lg text-gray-600 mb-8">The Store API provides a pure functional, immutable state management solution, fully compliant with the FlexNet JSX Framework's core principles.</p>
+                <p class="text-lg text-gray-600 mb-8">The Store API provides a pure functional, immutable state management solution, fully compliant with the <a href="../base/architecture-overview.html" class="text-primary hover:underline">FlexNet JSX Framework's core principles</a>.</p>
 
                 <div class="prose prose-blue max-w-none">
                     <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2">Overview</h2>
@@ -57,7 +57,7 @@
                         <li><strong>Immutable State</strong>: State is never changed directly. All updates produce a new state.</li>
                         <li><strong>Pure Reducers</strong>: State transitions are managed by pure functions called reducers.</li>
                         <li><strong>Predictable Flow</strong>: State changes are centralized and occur in a strict, one-way data flow.</li>
-                        <li><strong>Type-Safe by Design</strong>: Leverages the framework's core types like <code>Maybe</code>, <code>Either</code>, and <code>Result</code> for robust state modeling.</li>
+                        <li><strong>Type-Safe by Design</strong>: Leverages the framework's core types like <a href="../base/api-reference.html" class="text-primary hover:underline"><code>Maybe</code></a>, <a href="../base/api-reference.html" class="text-primary hover:underline"><code>Either</code></a>, and <a href="../base/api-reference.html" class="text-primary hover:underline"><code>Result</code></a> for robust state modeling.</li>
                     </ul>
 
                     <div class="bg-blue-50 border-l-4 border-primary p-4 rounded-md mb-6">
@@ -139,7 +139,7 @@ unsubscribe();
 counterStore.dispatch({ type: Action.Decrement }); // No log, because we unsubscribed</code></pre>
 
                     <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2">Advanced Usage: Type-Safe State</h2>
-                    <p class="mb-4">A key strength of FlexNet JSX is integrating the core type system into state management. This example uses <code>Maybe</code> to model an optional user session.</p>
+                    <p class="mb-4">A key strength of FlexNet JSX is integrating the core type system into state management. This example uses <a href="../base/api-reference.html" class="text-primary hover:underline"><code>Maybe</code></a> to model an optional user session.</p>
 
                     <pre class="bg-gray-800 text-white p-4 rounded-lg mb-6"><code class="language-javascript">import { createStore } from './src/systems/state/functions.js';
 import { Maybe } from './src/core/types/maybe.js';
@@ -279,8 +279,8 @@ console.log(userStore.getState().isNothing()); // true</code></pre>
                         <ul class="list-disc pl-6 mt-2">
                             <li><strong>Pure Functions Only</strong>: Reducers must be pure. Given the same state and action, they must always return the same new state.</li>
                             <li><strong>Immutability</strong>: Never mutate the state object or its fields. Always return a new object.</li>
-                            <li><strong>No Side Effects</strong>: Reducers must not have side effects (e.g., API calls, timeouts). Side effects belong in the Effect System.</li>
-                            <li><strong>Functional Composition</strong>: Use <code>compose</code> and <code>pipe</code> to build more complex reducers or state transformations.</li>
+                            <li><strong>No Side Effects</strong>: Reducers must not have side effects (e.g., API calls, timeouts). Side effects belong in the <a href="../base/api-reference.html" class="text-primary hover:underline">Effect System</a>.</li>
+                            <li><strong>Functional Composition</strong>: Use <a href="../base/api-reference.html" class="text-primary hover:underline"><code>compose</code> and <code>pipe</code></a> to build more complex reducers or state transformations.</li>
                         </ul>
                     </div>
                 </div>
@@ -288,19 +288,19 @@ console.log(userStore.getState().isNothing()); // true</code></pre>
                 <div class="mt-12 border-t border-gray-200 pt-8">
                     <h2 class="text-2xl font-semibold mb-4">Related Documentation</h2>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <a href="../systems/state.html" class="block p-4 border border-gray-200 rounded-lg hover:border-primary hover:shadow-md transition">
-                            <h3 class="font-semibold text-lg mb-2">State Management</h3>
-                            <p class="text-gray-600">Learn about FlexNet's overall state management philosophy.</p>
+                        <a href="../base/api-reference.html" class="block p-4 border border-gray-200 rounded-lg hover:border-primary hover:shadow-md transition">
+                            <h3 class="font-semibold text-lg mb-2">State System API</h3>
+                            <p class="text-gray-600">Learn about FlexNet's overall state management functions in the main API Reference.</p>
                         </a>
-                        <a href="../core/types.html" class="block p-4 border border-gray-200 rounded-lg hover:border-primary hover:shadow-md transition">
+                        <a href="../base/api-reference.html" class="block p-4 border border-gray-200 rounded-lg hover:border-primary hover:shadow-md transition">
                             <h3 class="font-semibold text-lg mb-2">Type System</h3>
                             <p class="text-gray-600">Understand how the type system (Maybe, Either, Result) is essential for robust state.</p>
                         </a>
-                        <a href="../examples/counter.html" class="block p-4 border border-gray-200 rounded-lg hover:border-primary hover:shadow-md transition">
+                        <a href="../base/getting-started-guide.html" class="block p-4 border border-gray-200 rounded-lg hover:border-primary hover:shadow-md transition">
                             <h3 class="font-semibold text-lg mb-2">Counter Example</h3>
                             <p class="text-gray-600">See a complete example of using the Store API in a simple application.</p>
                         </a>
-                        <a href="../systems/effects.html" class="block p-4 border border-gray-200 rounded-lg hover:border-primary hover:shadow-md transition">
+                        <a href="../base/api-reference.html" class="block p-4 border border-gray-200 rounded-lg hover:border-primary hover:shadow-md transition">
                             <h3 class="font-semibold text-lg mb-2">Effects System</h3>
                             <p class="text-gray-600">Learn how to handle side effects like API calls in relation to state changes.</p>
                         </a>

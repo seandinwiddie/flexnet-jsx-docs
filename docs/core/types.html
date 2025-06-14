@@ -43,183 +43,67 @@
                     <span class="text-gray-700">Type System</span>
                 </div>
                 
-                <h1 class="text-4xl font-bold mb-6">Type System</h1>
-                <p class="text-lg text-gray-600 mb-8">FlexNet JSX implements a functional type system inspired by algebraic data types from functional programming languages. These types help handle common programming challenges like optional values, error handling, and operation outcomes in a pure functional way.</p>
+                <h1 class="text-4xl font-bold mb-6">Core Type System</h1>
+                <p class="text-lg text-gray-600 mb-8">FlexNet JSX implements a functional type system inspired by algebraic data types. These types help handle common programming challenges like optional values and error handling in a pure, functional way, as described in the <a href="../base/architecture-overview.html" class="text-primary hover:underline">Architecture Overview</a>.</p>
 
                 <div class="prose prose-blue max-w-none">
                     <div class="bg-blue-50 border-l-4 border-primary p-4 rounded-md mb-6">
-                        <h4 class="font-semibold">Note</h4>
-                        <p>FlexNet's type system is designed to be used with JavaScript's native capabilities, without requiring a compile-time type checker like TypeScript or Flow. However, it's fully compatible with these tools if you choose to use them.</p>
+                        <h4 class="font-semibold">Looking for In-Depth Usage?</h4>
+                        <p>This page provides a high-level summary of the core types. For detailed explanations, usage patterns, and best practices, please see the complete <a href="../systems/errors.html" class="text-primary hover:underline font-bold">Error Handling Guide</a>.</p>
+                    </div>
+                
+                    <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2">The Core Types</h2>
+                    <p class="mb-4">The FlexNet JSX type system is built on three fundamental container types. They follow the principles of functional programming, particularly the concept of monads, which allows for composing operations in a safe and predictable manner.</p>
+                    
+                    <div class="space-y-6">
+                        <!-- Maybe -->
+                        <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
+                            <h3 class="text-xl font-semibold mb-2">Maybe</h3>
+                            <p class="mb-4 text-gray-600">For handling optional values that could be `null` or `undefined`, eliminating a common source of runtime errors.</p>
+                            <div class="flex space-x-4">
+                                <a href="../base/api-reference.html#maybe-type" class="text-primary hover:underline">→ View API Reference</a>
+                                <a href="../systems/errors.html#handling-optional-values-with-maybe" class="text-primary hover:underline">→ See Usage in Guide</a>
+                            </div>
+                        </div>
+
+                        <!-- Either -->
+                        <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
+                            <h3 class="text-xl font-semibold mb-2">Either</h3>
+                            <p class="mb-4 text-gray-600">For representing a value that can be one of two distinct possibilities, typically a success (`Right`) or a failure (`Left`). It is ideal for explicit error handling.</p>
+                            <div class="flex space-x-4">
+                                <a href="../base/api-reference.html#either-type" class="text-primary hover:underline">→ View API Reference</a>
+                                <a href="../systems/errors.html#handling-synchronous-errors-with-either" class="text-primary hover:underline">→ See Usage in Guide</a>
+                            </div>
+                        </div>
+
+                        <!-- Result -->
+                        <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
+                            <h3 class="text-xl font-semibold mb-2">Result</h3>
+                            <p class="mb-4 text-gray-600">Similar to `Either`, but specifically designed for operations that can succeed (`Ok`) or fail with a native `Error` object (`Error`), making it perfect for wrapping exception-throwing code.</p>
+                            <div class="flex space-x-4">
+                                <a href="../base/api-reference.html#result-type" class="text-primary hover:underline">→ View API Reference</a>
+                                <a href="../systems/errors.html#handling-asynchronous-errors-with-result" class="text-primary hover:underline">→ See Usage in Guide</a>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                
-                    <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2">Core Types Overview</h2>
-                    <p class="mb-4">FlexNet JSX includes three fundamental types that form the backbone of the type system:</p>
-                    <ul class="list-disc pl-6 mb-6 space-y-2">
-                        <li><strong>Maybe:</strong> For handling optional values and eliminating null checks.</li>
-                        <li><strong>Either:</strong> For handling branching logic and error cases with explicit paths.</li>
-                        <li><strong>Result:</strong> For capturing operation outcomes and handling exceptions functionally.</li>
-                    </ul>
-                <p>These types follow the principles of functional programming, particularly the concept of monads, which allows for composition and chaining of operations in a safe and predictable manner.</p>
-                
-                    <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2">Maybe Type</h2>
-                    <p class="mb-4">The <code>Maybe</code> type is a container for a value that may or may not be present. It helps you avoid `null` or `undefined` errors by forcing you to explicitly handle the case where a value is missing.</p>
-                
-                    <h3 class="text-xl font-medium mt-6 mb-3">Structure</h3>
-                    <div class="bg-gray-900 rounded-lg mb-6 overflow-hidden relative">
-                        <button class="absolute top-2 right-2 bg-gray-700 hover:bg-gray-600 text-white text-xs font-bold py-1 px-2 rounded">Copy</button>
-                        <pre><code class="language-javascript">// src/core/types/maybe.js
-const Maybe = {
-    Just: value => ({ type: 'Just', value }),
-    Nothing: () => ({ type: 'Nothing' }),
-    fromNullable: value => value != null ? Maybe.Just(value) : Maybe.Nothing(),
-    map: fn => maybe => 
-        maybe.type === 'Just' ? Maybe.Just(fn(maybe.value)) : Maybe.Nothing(),
-    chain: fn => maybe =>
-        maybe.type === 'Just' ? fn(maybe.value) : Maybe.Nothing(),
-    getOrElse: defaultValue => maybe =>
-        maybe.type === 'Just' ? maybe.value : defaultValue
-};</code></pre>
+
+                <div class="mt-12 border-t border-gray-200 pt-8">
+                    <h2 class="text-2xl font-semibold mb-4">Next Steps</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <a href="../systems/errors.html" class="block p-4 border border-gray-200 rounded-lg hover:border-primary hover:shadow-md transition">
+                            <h3 class="font-semibold text-lg mb-2">Error Handling Guide</h3>
+                            <p class="text-gray-600">Read the complete guide on using these types for robust error handling.</p>
+                        </a>
+                        <a href="functions.html" class="block p-4 border border-gray-200 rounded-lg hover:border-primary hover:shadow-md transition">
+                            <h3 class="font-semibold text-lg mb-2">Core Functions</h3>
+                            <p class="text-gray-600">Learn how to compose functions to create powerful data-processing pipelines with these types.</p>
+                        </a>
+                        <a href="../base/api-reference.html" class="block p-4 border border-gray-200 rounded-lg hover:border-primary hover:shadow-md transition">
+                            <h3 class="font-semibold text-lg mb-2">API Reference</h3>
+                            <p class="text-gray-600">See the complete API definitions for all core types and functions.</p>
+                        </a>
                     </div>
-                
-                    <h3 class="text-xl font-medium mt-6 mb-3">Key Concepts</h3>
-                    <ul class="list-disc pl-6 mb-6 space-y-2">
-                    <li><strong>Just(value)</strong> - A container that holds a value.</li>
-                    <li><strong>Nothing()</strong> - A container that represents the absence of a value.</li>
-                    <li><strong>fromNullable(value)</strong> - Creates a `Maybe` from a value that could be `null` or `undefined`.</li>
-                    <li><strong>map(fn)</strong> - Applies a function to the value inside a `Just`, otherwise returns `Nothing`.</li>
-                    <li><strong>chain(fn)</strong> - Applies a function that returns a `Maybe` to the value inside a `Just`. Useful for chaining operations that can fail.</li>
-                    <li><strong>getOrElse(defaultValue)</strong> - Extracts the value from a `Just` or returns a default value if it's `Nothing`.</li>
-                </ul>
-                
-                    <h3 class="text-xl font-medium mt-6 mb-3">Usage Example</h3>
-                    <div class="bg-gray-900 rounded-lg mb-6 overflow-hidden relative">
-                        <button class="absolute top-2 right-2 bg-gray-700 hover:bg-gray-600 text-white text-xs font-bold py-1 px-2 rounded">Copy</button>
-                        <pre><code class="language-javascript">import { Maybe } from '../../core/types/maybe.js';
-
-// Safely access a nested property
-const getStreetName = user =>
-  Maybe.fromNullable(user)
-    .map(u => u.address)
-    .map(a => a.street)
-    .getOrElse('No street found');
-
-// Usage
-const user1 = { address: { street: '123 Main St' } };
-const user2 = { address: null };
-const user3 = null;
-
-console.log(getStreetName(user1)); // '123 Main St'
-console.log(getStreetName(user2)); // 'No street found'
-console.log(getStreetName(user3)); // 'No street found'</code></pre>
-                    </div>
-                    <p>For complete details on the Maybe type, see the <a href="../api/maybe.html" class="text-primary hover:underline">Maybe API Reference</a>.</p>
-
-                    <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2">Either Type</h2>
-                    <p class="mb-4">The <code>Either</code> type represents a value that can be one of two possibilities, conventionally named `Left` and `Right`. It is typically used for error handling, where `Left` represents an error and `Right` represents a successful value.</p>
-
-                    <h3 class="text-xl font-medium mt-6 mb-3">Structure</h3>
-                    <div class="bg-gray-900 rounded-lg mb-6 overflow-hidden relative">
-                        <button class="absolute top-2 right-2 bg-gray-700 hover:bg-gray-600 text-white text-xs font-bold py-1 px-2 rounded">Copy</button>
-                        <pre><code class="language-javascript">// src/core/types/either.js
-const Either = {
-    Left: value => ({ type: 'Left', value }),
-    Right: value => ({ type: 'Right', value }),
-    fromNullable: value => value != null ? Either.Right(value) : Either.Left('Value is null'),
-    map: fn => either =>
-        either.type === 'Right' ? Either.Right(fn(either.value)) : either,
-    chain: fn => either =>
-        either.type === 'Right' ? fn(either.value) : either,
-    fold: (leftFn, rightFn) => either =>
-        either.type === 'Right' ? rightFn(either.value) : leftFn(either.value)
-};</code></pre>
-                    </div>
-                
-                    <h3 class="text-xl font-medium mt-6 mb-3">Key Concepts</h3>
-                    <ul class="list-disc pl-6 mb-6 space-y-2">
-                    <li><strong>Left(value)</strong> - Represents the "failure" or alternative path, containing an error value.</li>
-                    <li><strong>Right(value)</strong> - Represents the "success" path, containing the correct value.</li>
-                    <li><strong>map(fn)</strong> - Applies a function to the value inside a `Right`, leaving a `Left` untouched.</li>
-                    <li><strong>chain(fn)</strong> - Applies a function that returns an `Either` to the value of a `Right`.</li>
-                    <li><strong>fold(leftFn, rightFn)</strong> - Provides two functions to handle both cases. It safely unwraps the `Either` by executing the appropriate function.</li>
-                </ul>
-                
-                    <h3 class="text-xl font-medium mt-6 mb-3">Usage Example</h3>
-                    <div class="bg-gray-900 rounded-lg mb-6 overflow-hidden relative">
-                        <button class="absolute top-2 right-2 bg-gray-700 hover:bg-gray-600 text-white text-xs font-bold py-1 px-2 rounded">Copy</button>
-                        <pre><code class="language-javascript">import { Either } from '../../core/types/either.js';
-
-// A function that can fail
-const findUser = id => id === 1
-  ? Either.Right({ id: 1, name: 'Alice' })
-  : Either.Left('User not found');
-
-// Process the result using fold
-const getUserInfo = id =>
-  findUser(id)
-    .map(user => user.name.toUpperCase())
-    .fold(
-      error => `Error: ${error}`,
-      name => `User: ${name}`
-    );
-
-// Usage
-console.log(getUserInfo(1)); // 'User: ALICE'
-console.log(getUserInfo(2)); // 'Error: User not found'</code></pre>
-                    </div>
-                    <p>For complete details on the Either type, see the <a href="../api/either.html" class="text-primary hover:underline">Either API Reference</a>.</p>
-                
-                    <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2">Result Type</h2>
-                    <p class="mb-4">The <code>Result</code> type is similar to `Either` but is specifically designed for operations that can succeed (`Ok`) or fail (`Error`). It is excellent for wrapping native JavaScript functions that might throw exceptions, bringing them into the functional world.</p>
-
-                    <h3 class="text-xl font-medium mt-6 mb-3">Structure</h3>
-                    <div class="bg-gray-900 rounded-lg mb-6 overflow-hidden relative">
-                        <button class="absolute top-2 right-2 bg-gray-700 hover:bg-gray-600 text-white text-xs font-bold py-1 px-2 rounded">Copy</button>
-                        <pre><code class="language-javascript">// src/core/types/result.js
-const Result = {
-    Ok: value => ({ type: 'Ok', value }),
-    Error: error => ({ type: 'Error', error }),
-    fromTry: fn => {
-        try {
-            return Result.Ok(fn());
-        } catch (e) {
-            return Result.Error(e);
-        }
-    },
-    map: fn => result =>
-        result.type === 'Ok' ? Result.Ok(fn(result.value)) : result,
-    chain: fn => result =>
-        result.type === 'Ok' ? fn(result.value) : result
-};</code></pre>
-                    </div>
-                
-                    <h3 class="text-xl font-medium mt-6 mb-3">Key Concepts</h3>
-                    <ul class="list-disc pl-6 mb-6 space-y-2">
-                        <li><strong>Ok(value)</strong> - Represents a successful operation, containing the resulting value.</li>
-                        <li><strong>Error(error)</strong> - Represents a failed operation, containing the error or exception.</li>
-                        <li><strong>fromTry(fn)</strong> - Executes a function and wraps its outcome in a `Result`, catching any exceptions and placing them in `Error`.</li>
-                        <li><strong>map(fn)</strong> - Applies a function to the value inside an `Ok` container.</li>
-                    </ul>
-                
-                    <h3 class="text-xl font-medium mt-6 mb-3">Usage Example</h3>
-                    <div class="bg-gray-900 rounded-lg mb-6 overflow-hidden relative">
-                        <button class="absolute top-2 right-2 bg-gray-700 hover:bg-gray-600 text-white text-xs font-bold py-1 px-2 rounded">Copy</button>
-                        <pre><code class="language-javascript">import { Result } from '../../core/types/result.js';
-
-// Safely parse a JSON string that might be invalid
-const parseJson = jsonString => Result.fromTry(() => JSON.parse(jsonString));
-
-// Usage
-const validJson = '{"data": "value"}';
-const invalidJson = 'not json';
-
-const result1 = parseJson(validJson).map(data => data.data); // Result.Ok("value")
-const result2 = parseJson(invalidJson); // Result.Error(SyntaxError: ...)
-
-result1.map(value => console.log(value)); // Logs "value"
-result2.map(value => console.log(value)); // Does nothing
-</code></pre>
-                    </div>
-                    <p>For complete details on the Result type, see the <a href="../api/result.html" class="text-primary hover:underline">Result API Reference</a>.</p>
                 </div>
             </div>
         </main>

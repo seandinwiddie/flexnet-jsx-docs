@@ -44,7 +44,7 @@
                 </div>
 
                 <h1 class="text-4xl font-bold mb-6">Error Handling</h1>
-                <p class="text-lg text-gray-600 mb-8">FlexNet JSX treats errors as manageable data, not as disruptive, unhandled exceptions. This is achieved by using a functional approach where operations that can fail return special container types that explicitly model success and failure paths.</p>
+                <p class="text-lg text-gray-600 mb-8">FlexNet JSX treats errors as manageable data, not as disruptive, unhandled exceptions. This is achieved by using a functional approach where operations that can fail return special container types that explicitly model success and failure paths, a core tenet described in the <a href="../base/architecture-overview.html" class="text-primary hover:underline">Architecture Overview</a>.</p>
 
                 <div class="prose prose-blue max-w-none">
                     <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2">Functional Error Handling Philosophy</h2>
@@ -69,21 +69,21 @@
                             <h4 class="font-semibold text-lg mb-2">Maybe</h4>
                             <p class="text-gray-600">For representing optional values that might be missing, but aren't errors.</p>
                             <div class="mt-2 text-sm text-primary">
-                                <a href="../api/maybe.html" class="hover:underline">View Documentation →</a>
+                                <a href="../base/api-reference.html#maybe-type" class="hover:underline">View Documentation →</a>
                             </div>
                         </div>
                         <div class="bg-white p-4 border border-gray-200 rounded-lg">
                             <h4 class="font-semibold text-lg mb-2">Either</h4>
                             <p class="text-gray-600">For representing synchronous computations that can either succeed (Right) or fail with an error value (Left).</p>
                             <div class="mt-2 text-sm text-primary">
-                                <a href="../api/either.html" class="hover:underline">View Documentation →</a>
+                                <a href="../base/api-reference.html#either-type" class="hover:underline">View Documentation →</a>
                             </div>
                         </div>
                         <div class="bg-white p-4 border border-gray-200 rounded-lg">
                             <h4 class="font-semibold text-lg mb-2">Result</h4>
                             <p class="text-gray-600">For representing operations (often asynchronous) that can succeed (Ok) or fail (Error).</p>
                             <div class="mt-2 text-sm text-primary">
-                                <a href="../api/result.html" class="hover:underline">View Documentation →</a>
+                                <a href="../base/api-reference.html#result-type" class="hover:underline">View Documentation →</a>
                             </div>
                         </div>
                     </div>
@@ -127,12 +127,13 @@
                     <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2">Handling Optional Values with `Maybe`</h2>
                     <p class="mb-4">The <code>Maybe</code> type is used for optional values. Instead of returning `null` or `undefined`, a function returns `Maybe.Nothing()` to indicate a legitimate absence of a value, preventing null reference errors.</p>
 
-                    <pre class="bg-gray-800 text-white p-4 rounded-lg mb-6"><code class="language-javascript">import { Maybe } from '/src/core/types/maybe.js';
-import { createElement } from '/src/core/runtime/jsx.js';
+                    <pre class="bg-gray-800 text-white p-4 rounded-lg mb-6"><code class="language-javascript">// Assuming this code resides in a file like /src/features/profile/ui.js
+import { Maybe } from '../../core/types/maybe.js';
+import { createElement } from '../../systems/render/functions.js';
 
 // Example: get a user from storage, which might not exist.
-const findUser = (id) => id === 1 ? { id: 1, name: 'Admin' } : null;
-const maybeUser = Maybe.fromNullable(findUser(1));
+const findUser = (id) => id === 1 ? Maybe.Just({ id: 1, name: 'Admin', email: 'admin@example.com' }) : Maybe.Nothing();
+const maybeUser = findUser(1);
 
 // Use `map` to safely access properties and `getOrElse` for a default.
 const greeting = maybeUser
@@ -143,21 +144,22 @@ const greeting = maybeUser
 
 // Rendering UI with Maybe
 const UserProfile = ({ userMaybe }) =>
-  createElement('div', { className: 'profile' },
-    userMaybe.map(user => [
+  userMaybe.fold(
+    () => createElement('p', null, 'Please log in to view your profile'),
+    user => createElement('div', { className: 'profile' }, [
         createElement('h2', null, user.name),
         createElement('p', null, user.email)
-    ]).getOrElse(
-        createElement('p', null, 'Please log in to view your profile')
-    )
-  ).getOrElse(null); // Assuming createElement is safe
+    ])
+  );
+
+// const view = UserProfile({ userMaybe: findUser(2) });
 </code></pre>
 
                     <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2">Handling Synchronous Errors with `Either`</h2>
-                    <p class="mb-4">The <code>Either</code> type represents a computation that can result in one of two outcomes: a `Right` for success or a `Left` for failure. It is ideal for operations like validation, where you need to capture a specific error message.</p>
+                    <p class="mb-4">The <code>Either</code> type represents a computation that can result in one of two outcomes: a `Right` for success or a `Left` for failure. It is ideal for operations like validation, where you need to capture a specific error message. This pattern is central to the framework's <a href="../base/security-practices.html" class="text-primary hover:underline">security model</a> for input validation.</p>
 
-                    <pre class="bg-gray-800 text-white p-4 rounded-lg mb-6"><code class="language-javascript">import { Either } from '/src/core/types/either.js';
-import { pipe } from '/src/core/functions/composition.js';
+                    <pre class="bg-gray-800 text-white p-4 rounded-lg mb-6"><code class="language-javascript">// Assuming this code resides in a file like /src/features/forms/validators.js
+import { Either } from '../../core/types/either.js';
 
 const validateEmail = email =>
   !email ? Either.Left('Email is required')
@@ -185,8 +187,9 @@ const passwordResult = validatePassword('123');
                     <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2">Composing Validation Chains</h2>
                     <p class="mb-4">The true power of `Either` is revealed when you chain multiple validation steps together. The chain will short-circuit on the first `Left`, or continue if `Right`.</p>
 
-                    <pre class="bg-gray-800 text-white p-4 rounded-lg mb-6"><code class="language-javascript">import { Either } from '/src/core/types/either.js';
-import { pipe } from '/src/core/functions/composition.js';
+                    <pre class="bg-gray-800 text-white p-4 rounded-lg mb-6"><code class="language-javascript">// Assuming this code resides in a file like /src/features/login/functions.js
+import { Either } from '../../core/types/either.js';
+import { pipe } from '../../core/functions/composition.js';
 
 // Assume validateEmail and validatePassword from the previous example.
 
@@ -208,10 +211,10 @@ loginResult.fold(
 </code></pre>
 
                     <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2">Handling Asynchronous Errors with `Result`</h2>
-                    <p class="mb-4">The <code>Result</code> type is designed for asynchronous operations that can either succeed (`Ok`) or fail (`Error`), such as API calls. It cleanly wraps Promises or `try/catch` logic.</p>
+                    <p class="mb-4">The <code>Result</code> type is designed for asynchronous operations that can either succeed (`Ok`) or fail (`Error`), such as API calls. It cleanly wraps Promises or `try/catch` logic. For a dedicated, high-level approach to network requests, see the <a href="../base/http-system.html" class="text-primary hover:underline">HTTP System documentation</a>.</p>
 
-                    <pre class="bg-gray-800 text-white p-4 rounded-lg mb-6"><code class="language-javascript">import { Result } from '/src/core/types/result.js';
-import { pipe } from '/src/core/functions/composition.js';
+                    <pre class="bg-gray-800 text-white p-4 rounded-lg mb-6"><code class="language-javascript">// Assuming this code resides in a file like /src/features/data/api.js
+import { Result } from '../../core/types/result.js';
 
 // A fold helper for Result, as it's not in the core API but is a common pattern.
 const foldResult = (onOk, onError) => result =>
@@ -255,8 +258,8 @@ const name = foldResult(
                     <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2">Functional Error Boundaries</h2>
                     <p class="mb-4">In FlexNet JSX, an "error boundary" is not a special component, but a pattern of functional composition. A component that might fail returns an `Either` type. The parent component then uses `fold` to decide whether to render the successful result or a fallback UI.</p>
 
-                    <pre class="bg-gray-800 text-white p-4 rounded-lg mb-6"><code class="language-javascript">import { createElement } from '/src/core/runtime/jsx.js';
-import { Either } from '/src/core/types/either.js';
+                    <pre class="bg-gray-800 text-white p-4 rounded-lg mb-6"><code class="language-javascript">import { createElement, render } from '../../systems/render/functions.js';
+import { Either } from '../../core/types/either.js';
 
 // This component can fail if user data is invalid.
 // It returns an Either<Error, VNode>
@@ -304,10 +307,10 @@ const App = ({ user }) => {
                         </h4>
                         <ul class="list-disc pl-6 mt-2">
                             <li>Use the appropriate type for each scenario: `Maybe` for optionality, `Either` for synchronous failure, and `Result` for asynchronous failure.</li>
-                            <li>Embrace the pipeline: Use `map` and `chain` to compose operations that can fail, letting errors propagate cleanly.</li>
+                            <li>Embrace the pipeline: Use `map` and `chain` to compose operations that can fail, letting errors propagate cleanly. Refer to the <a href="../base/api-reference.html#composition" class="text-primary hover:underline">`compose` and `pipe` documentation</a>.</li>
                             <li>Handle all paths: Use `fold` (for `Either`) or `getOrElse` (for `Maybe`) to explicitly handle both success and failure cases.</li>
                             <li>Avoid `try/catch`: Wrap potentially exception-throwing code with `Result.fromTry` to convert exceptions into data.</li>
-                            <li>Components as functions: A component that can fail should return an `Either<Error, VNode>` to be handled by its parent.</li>
+                            <li>Components as functions: A component that can fail should return an `Either&lt;Error, VNode&gt;` to be handled by its parent.</li>
                         </ul>
                     </div>
                 </div>
@@ -315,21 +318,21 @@ const App = ({ user }) => {
                 <div class="mt-12 border-t border-gray-200 pt-8">
                     <h2 class="text-2xl font-semibold mb-4">Next Steps</h2>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <a href="../api/maybe.html" class="block p-4 border border-gray-200 rounded-lg hover:border-primary hover:shadow-md transition">
-                            <h3 class="font-semibold text-lg mb-2">Maybe API</h3>
-                            <p class="text-gray-600">Learn about the Maybe type for handling optional values.</p>
+                        <a href="../base/api-reference.html" class="block p-4 border border-gray-200 rounded-lg hover:border-primary hover:shadow-md transition">
+                            <h3 class="font-semibold text-lg mb-2">API Reference</h3>
+                            <p class="text-gray-600">Review the complete API for Maybe, Either, Result, and other core functions.</p>
                         </a>
-                        <a href="../api/either.html" class="block p-4 border border-gray-200 rounded-lg hover:border-primary hover:shadow-md transition">
-                            <h3 class="font-semibold text-lg mb-2">Either API</h3>
-                            <p class="text-gray-600">Explore the Either type for handling computational errors.</p>
+                        <a href="../base/getting-started-guide.html" class="block p-4 border border-gray-200 rounded-lg hover:border-primary hover:shadow-md transition">
+                            <h3 class="font-semibold text-lg mb-2">Getting Started Guide</h3>
+                            <p class="text-gray-600">See these concepts in action in a sample project setup.</p>
                         </a>
-                        <a href="../api/result.html" class="block p-4 border border-gray-200 rounded-lg hover:border-primary hover:shadow-md transition">
-                            <h3 class="font-semibold text-lg mb-2">Result API</h3>
-                            <p class="text-gray-600">Understand the Result type for handling asynchronous errors.</p>
+                        <a href="../base/security-practices.html" class="block p-4 border border-gray-200 rounded-lg hover:border-primary hover:shadow-md transition">
+                            <h3 class="font-semibold text-lg mb-2">Security Practices</h3>
+                            <p class="text-gray-600">Learn how functional error handling contributes to a secure application.</p>
                         </a>
-                        <a href="../examples/todo.html" class="block p-4 border border-gray-200 rounded-lg hover:border-primary hover:shadow-md transition">
-                            <h3 class="font-semibold text-lg mb-2">Todo App Example</h3>
-                            <p class="text-gray-600">See error handling in action in a complete application.</p>
+                        <a href="../base/architecture-overview.html" class="block p-4 border border-gray-200 rounded-lg hover:border-primary hover:shadow-md transition">
+                            <h3 class="font-semibold text-lg mb-2">Architecture Overview</h3>
+                            <p class="text-gray-600">Understand how error handling fits into the broader framework design.</p>
                         </a>
                     </div>
                 </div>

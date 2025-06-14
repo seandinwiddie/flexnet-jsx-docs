@@ -44,14 +44,14 @@
                 </div>
 
                 <h1 class="text-4xl font-bold mb-6">JSX API</h1>
-                <p class="text-lg text-gray-600 mb-8">The core API for creating and rendering JSX elements in FlexNet JSX. The framework treats JSX as a system of pure functions and types, emphasizing functional composition, immutability, and robust error handling through its core `Maybe`, `Either`, and `Result` types.</p>
+                <p class="text-lg text-gray-600 mb-8">The core API for creating and rendering JSX elements in FlexNet JSX. The framework treats JSX as a system of pure functions and types, emphasizing functional composition, immutability, and robust error handling through its core <a href="maybe.html" class="text-primary hover:underline"><code>Maybe</code></a>, <a href="either.html" class="text-primary hover:underline"><code>Either</code></a>, and <a href="result.html" class="text-primary hover:underline"><code>Result</code></a> types.</p>
 
                 <div class="prose prose-blue max-w-none">
                     <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2">Core Functions</h2>
                     <p class="mb-4">The JSX API provides pure functions for creating and rendering virtual DOM nodes. These functions integrate deeply with the framework's type system to ensure safety and predictability.</p>
 
                     <h3 class="text-xl font-medium mt-6 mb-3">createElement</h3>
-                    <p class="mb-4">Creates a virtual DOM element, known as a `VNode`. This function is pure and includes validation for its inputs, returning an `Either` type to safely handle potential errors, such as invalid properties or children.</p>
+                    <p class="mb-4">Creates a virtual DOM element, known as a `VNode`. This is a pure function that takes a type, props, and children and returns a VNode object, ready for rendering.</p>
                     
                     <div class="bg-white border border-gray-200 rounded-lg mb-6">
                         <div class="border-b border-gray-200 px-4 py-3 bg-gray-50">
@@ -62,7 +62,7 @@
   type: string | Function,
   props: object | null,
   ...children: any[]
-): Either&lt;Error, VNode&gt;;</code></pre>
+): VNode;</code></pre>
                         </div>
                     </div>
 
@@ -109,7 +109,6 @@
 import { compose } from '/src/core/functions/composition.js';
 
 // An action function to be called on click.
-// In a real app, this would likely dispatch to a state store.
 const handleClick = () => console.log('Button clicked!');
 
 // Creating a button. Note how the onClick handler is composed.
@@ -122,16 +121,13 @@ const buttonElement = createElement(
   'Click Me'
 );
 
-// The result is an `Either` type. We can fold it to handle success or failure.
-buttonElement.fold(
-  error => console.error('Failed to create element:', error),
-  vnode => console.log('Successfully created VNode:', vnode)
-);</code></pre>
+console.log('Successfully created VNode:', buttonElement);
+</code></pre>
                         </div>
                     </div>
 
                     <h3 class="text-xl font-medium mt-6 mb-3">render</h3>
-                    <p class="mb-4">Renders a virtual DOM element into a container. As defined in the API reference, `render` is a composition of pure functions that create a virtual DOM, reconcile differences, and patch the actual DOM, isolating side effects.</p>
+                    <p class="mb-4">Renders a virtual DOM element into a container. As defined in the <a href="../base/api-reference.html" class="text-primary hover:underline">API reference</a>, `render` is a composition of pure functions that create a virtual DOM, reconcile differences, and patch the actual DOM, isolating side effects.</p>
                     
                     <div class="bg-white border border-gray-200 rounded-lg mb-6">
                         <div class="border-b border-gray-200 px-4 py-3 bg-gray-50">
@@ -181,14 +177,14 @@ buttonElement.fold(
                         <div class="p-4">
                             <pre class="bg-gray-800 text-white p-4 rounded-lg"><code class="language-javascript">import { createElement, render } from '/src/core/runtime/jsx.js';
 
-// Create an element, assuming it's valid (or handle the Either).
+// Create an element.
 const appElement = createElement('div', { className: 'app' },
   createElement('h1', null, 'Hello, FlexNet!'),
   createElement('p', null, 'A purely functional approach to UI')
 );
 
-// Render the VNode to the DOM if creation was successful.
-appElement.map(vnode => render(vnode, document.getElementById('root')));</code></pre>
+// Render the VNode to the DOM.
+render(appElement, document.getElementById('root'));</code></pre>
                         </div>
                     </div>
 
@@ -202,7 +198,7 @@ appElement.map(vnode => render(vnode, document.getElementById('root')));</code><
                         <div class="p-4">
                             <pre class="bg-gray-800 text-white p-4 rounded-lg"><code class="language-typescript">function createFragment(
   children: any[]
-): Either&lt;Error, VNode&gt;;</code></pre>
+): VNode;</code></pre>
                         </div>
                     </div>
 
@@ -236,17 +232,20 @@ appElement.map(vnode => render(vnode, document.getElementById('root')));</code><
                         </div>
                         <div class="p-4">
                             <pre class="bg-gray-800 text-white p-4 rounded-lg"><code class="language-javascript">import { createElement, createFragment } from '/src/core/runtime/jsx.js';
-import { Either } from '/src/core/types/either.js';
 
 // A component that returns multiple elements without a wrapper.
-// This demonstrates returning an `Either` from a component function.
-const UserInfo = ({ user }) => 
-  !user 
-    ? Either.Left(new Error('User data is missing.'))
-    : Either.Right(createFragment([
-        createElement('h2', null, user.name),
-        createElement('p', null, `Email: ${user.email}`)
-      ]));</code></pre>
+const UserInfo = ({ user }) => {
+  if (!user) {
+    return createFragment([
+      createElement('p', null, 'User data is not available.')
+    ]);
+  }
+  
+  return createFragment([
+    createElement('h2', null, user.name),
+    createElement('p', null, `Email: ${user.email}`)
+  ]);
+};</code></pre>
                         </div>
                     </div>
 
@@ -283,49 +282,48 @@ const UserInfo = ({ user }) =>
 import { createElement, render } from '/src/core/runtime/jsx.js';
 import { createStore } from '/src/systems/state/functions.js';
 import { compose } from '/src/core/functions/composition.js';
-import { Maybe } from '/src/core/types/maybe.js';
 
-// 1. Define pure functions for state transitions
-const increment = n => n + 1;
-const decrement = n => n - 1;
+// 1. Define actions, a pure reducer, and an immutable store
+const Action = { Increment: 'INCREMENT', Decrement: 'DECREMENT' };
 
-// 2. Create an immutable store with an initial state wrapped in a Maybe
-const store = createStore(Maybe.Just(0));
-
-// 3. Define a pure functional component
-const Counter = ({ countMaybe, onIncrement, onDecrement }) => {
-  // Use `getOrElse` to safely extract the value from the Maybe
-  const count = countMaybe.getOrElse(0);
-  
-  // `createElement` returns an `Either`, we assume success for brevity
-  return createElement('div', null,
-    createElement('h2', null, `Count: ${count}`),
-    createElement('button', { onClick: onDecrement }, '-'),
-    createElement('button', { onClick: onIncrement }, '+')
-  ).getOrElse(null); // Fallback to null on creation error
+const counterReducer = (state = 0, action = {}) => {
+  switch (action.type) {
+    case Action.Increment: return state + 1;
+    case Action.Decrement: return state - 1;
+    default: return state;
+  }
 };
 
-// 4. Compose update logic
-// `store.dispatch` expects the new state, so we map the Maybe value
-// through our pure function (increment/decrement) before dispatching.
-const handleIncrement = () => store.dispatch(store.getState().map(increment));
-const handleDecrement = () => store.dispatch(store.getState().map(decrement));
+const store = createStore(counterReducer, 0);
 
-// 5. Subscribe to the store to re-render on state changes
-store.subscribe(() => {
-  const vnode = Counter({
-    countMaybe: store.getState(),
-    onIncrement: handleIncrement,
-    onDecrement: handleDecrement,
-  });
-  
-  if (vnode) {
-    render(vnode, document.getElementById('root'));
-  }
-});
+// 2. Define a pure functional component that receives state and callbacks
+const Counter = ({ count, onIncrement, onDecrement }) => {
+  return createElement('div', { className: 'counter' },
+    createElement('h2', { className: 'count-display' }, `Count: ${count}`),
+    createElement('button', { onClick: onDecrement, className: 'btn-decr' }, '-'),
+    createElement('button', { onClick: onIncrement, className: 'btn-incr' }, '+')
+  );
+};
 
-// 6. Initial render
-store.subscribe()(); // Immediately invoke to render initial state
+// 3. Define action dispatchers
+const handleIncrement = () => store.dispatch({ type: Action.Increment });
+const handleDecrement = () => store.dispatch({ type: Action.Decrement });
+
+// 4. Create a render function that connects the store's state to the component
+const renderApp = () => {
+    render(
+        Counter({
+            count: store.getState(),
+            onIncrement: handleIncrement,
+            onDecrement: handleDecrement,
+        }),
+        document.getElementById('root')
+    );
+};
+
+// 5. Subscribe to the store to re-render on state changes and render the initial state
+store.subscribe(renderApp);
+renderApp(); // Initial render
 </code></pre>
                         </div>
                     </div>
@@ -356,8 +354,6 @@ store.subscribe()(); // Immediately invoke to render initial state
   createElement('h1', null, 'Hello, World!'),
   createElement('p', null, 'Welcome to FlexNet JSX')
 );
-
-// Note: The actual return is Either&lt;Error, VNode&gt;
 </code></pre>
                                 </div>
                             </div>
@@ -451,7 +447,7 @@ store.subscribe()(); // Immediately invoke to render initial state
                         <div class="p-4">
                             <pre class="bg-gray-800 text-white p-4 rounded-lg"><code class="language-javascript">import { createElement } from '/src/core/runtime/jsx.js';
 import { sanitize } from '/src/security/functions.js';
-import { Either } from '/src/core/types/either.js';
+import { Maybe } from '/src/core/types/maybe.js';
 
 // Using the key prop for list items
 const list = createElement('ul', null,
@@ -471,10 +467,10 @@ const createForm = (onInputRef) => createElement('form', null,
 
 // Using dangerouslySetInnerHTML safely with the framework's sanitize function
 const rawHtml = `<script>alert('xss')</script><span>Safe Content</span>`;
-const sanitizedEither = sanitize(rawHtml); // Returns Either<Error, String>
+const sanitizedEither = sanitize(rawHtml); // From security-practices.html
 
 const content = sanitizedEither.fold(
-  error => createElement('p', {className: 'error'}, `Invalid HTML: ${error}`),
+  error => createElement('p', {className: 'error'}, `Invalid HTML: ${error.message}`),
   safeHtml => createElement('div', {
     dangerouslySetInnerHTML: { __html: safeHtml }
   })
@@ -493,11 +489,11 @@ const content = sanitizedEither.fold(
                         </h4>
                         <ul class="list-disc pl-6 mt-2">
                             <li><strong>Embrace Pure Functions:</strong> Ensure all components and logic are pure functions. Avoid internal mutable state and side effects.</li>
-                            <li><strong>Use `compose` and `pipe`:</strong> Build complex logic by composing smaller, reusable functions. This is central to the framework's design.</li>
-                            <li><strong>Leverage Core Types:</strong> Use `Maybe`, `Either`, and `Result` to manage control flow, handle optional values, and manage errors safely. Avoid `try/catch` and `null` checks.</li>
-                            <li><strong>Isolate Side Effects:</strong> All side effects (e.g., HTTP requests, DOM mutations) must be managed by the Effect and Render systems, respectively.
-                            <li><strong>Immutable State:</strong> Never mutate state directly. Use the `Store` system to manage state with pure functional updates.</li>
-                            <li><strong>Always Sanitize:</strong> When using `dangerouslySetInnerHTML`, always process the HTML through the framework's `sanitize` function first.</li>
+                            <li><strong>Use `compose` and `pipe`:</strong> Build complex logic by composing smaller, reusable functions. This is central to the <a href="../base/architecture-overview.html" class="text-primary hover:underline">framework's design</a>.</li>
+                            <li><strong>Leverage Core Types:</strong> Use <a href="../base/api-reference.html" class="text-primary hover:underline">`Maybe`, `Either`, and `Result`</a> to manage control flow, handle optional values, and manage errors safely. Avoid `try/catch` and `null` checks.</li>
+                            <li><strong>Isolate Side Effects:</strong> All side effects (e.g., HTTP requests, DOM mutations) must be managed by the <a href="../base/api-reference.html" class="text-primary hover:underline">Effect</a> and <a href="../base/api-reference.html" class="text-primary hover:underline">Render</a> systems, respectively.
+                            <li><strong>Immutable State:</strong> Never mutate state directly. Use the <a href="store.html" class="text-primary hover:underline">`Store`</a> system to manage state with pure functional updates.</li>
+                            <li><strong>Always Sanitize:</strong> When using `dangerouslySetInnerHTML`, always process the HTML through the framework's <a href="../base/security-practices.html" class="text-primary hover:underline">`sanitize`</a> function first.</li>
                             <li><strong>Provide `key` Prop:</strong> Always provide a unique `key` prop when rendering lists to ensure efficient reconciliation.</li>
                         </ul>
                     </div>
@@ -506,12 +502,12 @@ const content = sanitizedEither.fold(
                 <div class="mt-12 border-t border-gray-200 pt-8">
                     <h2 class="text-2xl font-semibold mb-4">Related Documentation</h2>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <a href="../core/jsx-runtime.html" class="block p-4 border border-gray-200 rounded-lg hover:border-primary hover:shadow-md transition">
-                            <h3 class="font-semibold text-lg mb-2">JSX Runtime</h3>
+                        <a href="../base/architecture-overview.html" class="block p-4 border border-gray-200 rounded-lg hover:border-primary hover:shadow-md transition">
+                            <h3 class="font-semibold text-lg mb-2">Architecture Overview</h3>
                             <p class="text-gray-600">Learn about the runtime implementation details of the JSX engine.</p>
                         </a>
-                        <a href="../systems/render.html" class="block p-4 border border-gray-200 rounded-lg hover:border-primary hover:shadow-md transition">
-                            <h3 class="font-semibold text-lg mb-2">Render System</h3>
+                        <a href="../base/api-reference.html" class="block p-4 border border-gray-200 rounded-lg hover:border-primary hover:shadow-md transition">
+                            <h3 class="font-semibold text-lg mb-2">Render System API</h3>
                             <p class="text-gray-600">Understand how the render system works with JSX elements.</p>
                         </a>
                     </div>

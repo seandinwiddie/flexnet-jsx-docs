@@ -44,7 +44,7 @@
                 </div>
 
                 <h1 class="text-4xl font-bold mb-6">Events System</h1>
-                <p class="text-lg text-gray-600 mb-8">The FlexNet JSX events system is the bridge between user interactions—which are inherently impure—and the pure functional core of an application. It provides a structured, composable way to handle DOM events, manage application-wide communication, and trigger state changes without side effects.</p>
+                <p class="text-lg text-gray-600 mb-8">The FlexNet JSX events system is the bridge between user interactions—which are inherently impure—and the pure functional core of an application. It provides a structured, composable way to handle DOM events, manage application-wide communication, and trigger state changes without side effects, following the principles outlined in the <a href="../base/architecture-overview.html" class="text-primary hover:underline">Architecture Overview</a>.</p>
 
                 <div class="prose prose-blue max-w-none">
                     <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2">Event Handling Principles</h2>
@@ -54,19 +54,18 @@
                         <h4 class="font-semibold">Core Principles</h4>
                         <ul class="list-disc pl-6 mt-2">
                             <li>**Pure Handlers:** Event handlers should be pure functions that translate event data into actions or messages.</li>
-                            <li>**Unidirectional Data Flow:** Events trigger state changes through a central store, which then causes the UI to re-render. Data flows in one direction.</li>
-                            <li>**Isolate Side Effects:** All side effects (like `console.log` or DOM manipulation) must be handled by the Effect system, not directly in event handlers.</li>
-                            <li>**Functional Composition:** Complex event logic is built by composing smaller, pure functions using `compose` and `pipe`.</li>
+                            <li>**Unidirectional Data Flow:** Events trigger state changes through a central store, which then causes the UI to re-render. As described in the <a href="../base/architecture-overview.html" class="text-primary hover:underline">architecture guide</a>, data flows in one direction.</li>
+                            <li>**Isolate Side Effects:** All side effects (like `console.log` or DOM manipulation) must be handled by the <a href="effects.html" class="text-primary hover:underline">Effect system</a>, not directly in event handlers.</li>
+                            <li>**Functional Composition:** Complex event logic is built by composing smaller, pure functions using <a href="../base/api-reference.html#composition" class="text-primary hover:underline">`compose` and `pipe`</a>.</li>
                             <li>**Decoupled Communication:** The `EventBus` system should be used for cross-component communication instead of direct prop-drilling.</li>
                         </ul>
                     </div>
 
                     <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2">DOM Event Handling and State Integration</h2>
-                    <p class="mb-4">Events drive state changes. The correct pattern is for an event handler to dispatch a descriptive action to the central store. A pure reducer function then computes the next state, and the UI re-renders.</p>
+                    <p class="mb-4">Events drive state changes. The correct pattern is for an event handler to dispatch a descriptive action to the central <a href="../base/api-reference.html#state-system" class="text-primary hover:underline">store</a>. A pure reducer function then computes the next state, and the UI re-renders.</p>
 
-                    <pre class="bg-gray-800 text-white p-4 rounded-lg mb-6"><code class="language-javascript">import { createElement, render } from '/src/core/runtime/jsx.js';
-import { createStore } from '/src/systems/state/functions.js';
-import { pipe } from '/src/core/functions/composition.js';
+                    <pre class="bg-gray-800 text-white p-4 rounded-lg mb-6"><code class="language-javascript">import { createElement, render } from '../../systems/render/functions.js';
+import { createStore } from '../../systems/state/functions.js';
 
 // 1. Define a pure reducer function.
 const reducer = (state, action) => {
@@ -89,27 +88,24 @@ const Counter = ({ count, dispatch }) =>
     createElement('h1', null, `Count: ${count}`),
     createElement('button', { onClick: () => dispatch({ type: 'DECREMENT' }) }, '-'),
     createElement('button', { onClick: () => dispatch({ type: 'INCREMENT' }) }, '+')
-  ).getOrElse(null); // Assuming createElement is safe.
+  );
 
 
 // 4. The main render function subscribes to the store.
-const App = () => {
+const renderApp = () => {
     const currentState = store.getState();
-    return Counter({
+    const vnode = Counter({
         count: currentState.count,
         dispatch: store.dispatch // Pass the dispatch function to the component.
     });
+    // The render function is defined in /src/systems/render/functions.js
+    render(vnode, document.getElementById('root'));
 };
 
-store.subscribe(() => {
-    const vnode = App();
-    if (vnode) {
-      render(vnode, document.getElementById('root'));
-    }
-});
+store.subscribe(renderApp);
 
 // Initial render
-store.subscribe()();
+renderApp();
 </code></pre>
 
                     <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2">Application-Wide Communication with `createEventBus`</h2>
@@ -120,12 +116,24 @@ store.subscribe()();
                             <h4 class="font-semibold">Signature</h4>
                         </div>
                         <div class="p-4">
-                            <pre class="bg-gray-800 text-white p-4 rounded-lg"><code class="language-typescript">// From /src/systems/events/functions.js
+                            <pre class="bg-gray-800 text-white p-4 rounded-lg"><code class="language-javascript">// From: /src/systems/events/functions.js
+// As defined in the API Reference.
 
-createEventBus: () => ({
-  emit: (event: string, data: any) => Maybe<void>,
-  on: (event: string, callback: Function) => () => void // Returns an unsubscribe function
-});
+const createEventBus = () => {
+    const subscribers = new Map();
+    
+    return {
+        emit: (event, data) =>
+            Maybe.fromNullable(subscribers.get(event))
+                .map(subs => subs.forEach(fn => fn(data))),
+        on: (event, callback) => {
+            const subs = subscribers.get(event) || new Set();
+            subs.add(callback);
+            subscribers.set(event, subs);
+            return () => subs.delete(callback);
+        }
+    };
+};
 </code></pre>
                         </div>
                     </div>
@@ -135,26 +143,27 @@ createEventBus: () => ({
 
                     <pre class="bg-gray-800 text-white p-4 rounded-lg mb-6"><code class="language-javascript">import { createEventBus } from '/src/systems/events/functions.js';
 import { Maybe } from '/src/core/types/maybe.js';
+import { createElement } from '../../systems/render/functions.js';
 
 // 1. Create a single, shared event bus for the application.
 const appEventBus = createEventBus();
 
 // 2. A notification component listens for 'show-notification' events.
-// This example uses pseudo-code for state and effects (useState, useEffect)
-// to illustrate the concept. In a real app, you would use the framework's
-// state and effect management systems.
+// This example uses pseudo-code for state and effects (e.g., local state `message`
+// and lifecycle hooks) to illustrate the concept. In a real app, you would
+// use the framework's state and effect management systems.
 const NotificationManager = () => {
-    const [message, setMessage] = useState(Maybe.Nothing());
+    let message = Maybe.Nothing();
+    
+    const showMessage = (data) => {
+        message = Maybe.Just(data.message);
+        // In a real app, this would trigger a re-render via the state system.
+    };
 
-    // On mount, subscribe to the event.
-    useEffect(() => {
-        const unsubscribe = appEventBus.on('show-notification', (data) => {
-            setMessage(Maybe.Just(data.message));
-        });
-        
-        // Return the unsubscribe function to be called on cleanup.
-        return () => unsubscribe();
-    }, []);
+    const unsubscribe = appEventBus.on('show-notification', showMessage);
+
+    // The returned unsubscribe function should be called on cleanup to prevent memory leaks.
+    // e.g., cleanupEffect(unsubscribe);
 
     return message.map(msg =>
         createElement('div', { className: 'toast' }, msg)
@@ -162,6 +171,7 @@ const NotificationManager = () => {
 };
 
 // 3. Another part of the application emits an event.
+// The `response` is an Either or Result type, as described in the Error Handling guide.
 const handleApiResponse = (response) => {
     // The `emit` function is safe, as it returns a `Maybe` which handles cases
     // where no listeners are subscribed to the event.
@@ -183,7 +193,7 @@ const handleApiResponse = (response) => {
                             <li><strong>Dispatch Actions from Handlers:</strong> DOM event handlers should only be responsible for dispatching actions to the state store.</li>
                             <li>**Keep Reducers Pure:** All state transformation logic must happen inside pure reducer functions.</li>
                             <li>**Use EventBus for Cross-Cutting Concerns:** Use the `EventBus` for notifications, logging, or any communication between loosely coupled components.</li>
-                            <li>**Compose Functional Pipelines:** For complex input handling, use `compose` to create a pipeline that extracts, validates, and transforms data before creating an action.</li>
+                            <li>**Compose Functional Pipelines:** For complex input handling, use `compose` to create a pipeline that extracts, validates, and transforms data before creating an action. See the <a href="../base/security-practices.html" class="text-primary hover:underline">Security Guide</a> for validation patterns.</li>
                             <li>**Manage Subscriptions:** Always use the returned `unsubscribe` function from `eventBus.on()` to clean up subscriptions when a component unmounts to prevent memory leaks.</li>
                         </ul>
                     </div>
@@ -198,7 +208,15 @@ const handleApiResponse = (response) => {
                         </a>
                         <a href="errors.html" class="block p-4 border border-gray-200 rounded-lg hover:border-primary hover:shadow-md transition">
                             <h3 class="font-semibold text-lg mb-2">Error Handling</h3>
-                            <p class="text-gray-600">Explore comprehensive error handling strategies.</p>
+                            <p class="text-gray-600">Explore comprehensive error handling strategies using `Either` and `Result`.</p>
+                        </a>
+                        <a href="../base/api-reference.html#state-system" class="block p-4 border border-gray-200 rounded-lg hover:border-primary hover:shadow-md transition">
+                            <h3 class="font-semibold text-lg mb-2">State Management</h3>
+                            <p class="text-gray-600">Dive deeper into the `createStore` function and functional reducers.</p>
+                        </a>
+                         <a href="../base/security-practices.html" class="block p-4 border border-gray-200 rounded-lg hover:border-primary hover:shadow-md transition">
+                            <h3 class="font-semibold text-lg mb-2">Security Practices</h3>
+                            <p class="text-gray-600">Understand how to handle user input and events securely.</p>
                         </a>
                     </div>
                 </div>

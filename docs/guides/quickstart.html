@@ -47,20 +47,35 @@
                 
                 <div class="prose prose-blue max-w-none">
                     <p class="lead text-xl text-gray-600 mb-8">
-                        Build your first FlexNet JSX application. This guide will walk you through setting up a project and creating a simple interactive counter.
+                        Build your first FlexNet JSX application. This guide, based on the <a href="../base/getting-started-guide.html" class="text-primary hover:underline">Getting Started Guide</a>, will walk you through setting up a project and creating a simple interactive counter.
                     </p>
 
                     <h2 class="text-2xl font-bold mt-8 mb-4">1. Project Setup</h2>
-                    <p class="mb-4">First, create a new directory for your project. Inside it, create the following folder and file structure. This organizes your code into features and keeps your static assets separate.</p>
+                    <p class="mb-4">First, create a new directory for your project. Following the structure defined in the <a href="../base/consistency-analysis.html#new-standard-structure" class="text-primary hover:underline">Consistency Analysis</a>, create the following folders and files. This will house the FlexNet JSX core and your first feature.</p>
                     <pre class="bg-gray-800 text-white p-4 rounded-md mb-6 overflow-x-auto"><code class="language-bash">/my-app
 ├── /public
 │   └── index.html
 └── /src
-    └── main.js
+    ├── /core
+    │   ├── /functions
+    │   │   └── composition.js
+    │   └── /types
+    │       ├── maybe.js
+    │       ├── either.js
+    │       └── result.js
+    ├── /systems
+    │   ├── /render
+    │   │   └── functions.js
+    │   └── /state
+    │       └── functions.js
+    └── /features
+        └── /counter
+            └── index.js
 </code></pre>
+                    <p class="text-sm text-gray-600">Note: For this quickstart, you would copy the relevant framework files (e.g., `render/functions.js`, `state/functions.js`) from the FlexNet source into this structure.</p>
 
                     <h2 class="text-2xl font-bold mt-8 mb-4">2. Create the HTML Entry Point</h2>
-                    <p class="mb-4">Your <code>public/index.html</code> file is the entry point for your application. It needs a root element for FlexNet JSX to mount into and a script tag to load your application code.</p>
+                    <p class="mb-4">Your <code>public/index.html</code> file is the entry point for your application. It needs a root element for FlexNet JSX to mount into and a script tag to load your feature code.</p>
                     <pre class="bg-gray-800 text-white p-4 rounded-md mb-6 overflow-x-auto"><code class="language-html">&lt;!DOCTYPE html&gt;
 &lt;html lang="en"&gt;
 &lt;head&gt;
@@ -69,15 +84,14 @@
 &lt;/head&gt;
 &lt;body&gt;
     &lt;div id="root"&gt;&lt;/div&gt;
-    &lt;script type="module" src="../src/main.js"&gt;&lt;/script&gt;
+    &lt;script type="module" src="../src/features/counter/index.js"&gt;&lt;/script&gt;
 &lt;/body&gt;
 &lt;/html&gt;</code></pre>
 
                     <h2 class="text-2xl font-bold mt-8 mb-4">3. Build Your First Application</h2>
-                    <p class="mb-4">Now, let's build the interactive counter. This example demonstrates all the core concepts of FlexNet JSX working together: state management, functional components, and rendering. Place the following code in your <code>src/main.js</code> file.</p>
+                    <p class="mb-4">Now, let's build the interactive counter. This example demonstrates all the core concepts of FlexNet JSX working together. Place the following code in your <code>src/features/counter/index.js</code> file.</p>
                     
-                    <pre class="bg-gray-800 text-white p-4 rounded-md mb-6 overflow-x-auto"><code class="language-javascript">// NOTE: Adjust these import paths based on where the framework is located.
-import { createStore } from '../../systems/state/functions.js';
+                    <pre class="bg-gray-800 text-white p-4 rounded-md mb-6 overflow-x-auto"><code class="language-javascript">import { createStore } from '../../systems/state/functions.js';
 import { createElement, render } from '../../systems/render/functions.js';
 
 // 1. STATE: Define a reducer for state transitions
@@ -128,15 +142,15 @@ renderApp();
                     <ol class="list-decimal pl-6 mb-6 space-y-4">
                         <li>
                             <strong>State (Reducer)</strong>
-                            <p class="font-normal text-gray-600 mt-1">We define a `counterReducer`, a pure function that takes the current state and an action, and returns the next state. This is the only place where state logic lives.</p>
+                            <p class="font-normal text-gray-600 mt-1">We define a `counterReducer`, a pure function that takes the current state and an action, and returns the next state. This is the only place where state logic lives, a core principle of our <a href="../base/architecture-overview.html#state-management" class="text-primary hover:underline">State Management</a> architecture.</p>
                         </li>
                         <li>
                             <strong>Store</strong>
-                            <p class="font-normal text-gray-600 mt-1">We create a `store` using `createStore`, passing it our reducer and the initial state (0). The store holds our state and allows us to dispatch actions.</p>
+                            <p class="font-normal text-gray-600 mt-1">We create a `store` using the <a href="../base/api-reference.html#state-system" class="text-primary hover:underline">`createStore`</a> function, passing it our reducer and the initial state (0). The store holds our state and allows us to dispatch actions.</p>
                         </li>
                         <li>
                             <strong>View (Component)</strong>
-                            <p class="font-normal text-gray-600 mt-1">Our `Counter` component is a pure function. It receives the current `count` and functions to call (`onIncrement`, `onDecrement`) as props, and returns a description of the UI.</p>
+                            <p class="font-normal text-gray-600 mt-1">Our `Counter` component is a <a href="../base/architecture-overview.html#functional-architecture-principles" class="text-primary hover:underline">pure function</a>. It receives the current `count` and functions to call (`onIncrement`, `onDecrement`) as props, and returns a description of the UI using <a href="../base/api-reference.html#render-system" class="text-primary hover:underline">`createElement`</a>.</p>
                         </li>
                         <li>
                             <strong>Render</strong>
@@ -154,7 +168,7 @@ renderApp();
                         <br>
                         <strong>Action &rarr; Store &rarr; State &rarr; View</strong>
                         <br>
-                        This makes the application's logic predictable and easy to follow.</p>
+                        This makes the application's logic predictable and easy to follow, a key benefit of the architecture.</p>
                     </div>
 
                     <h2 class="text-2xl font-bold mt-8 mb-4">Next Steps</h2>
@@ -162,7 +176,7 @@ renderApp();
                         Congratulations! You've built a fully functional, interactive application with FlexNet JSX. You now understand how to set up a project, manage state, create components, and render a dynamic UI.
                     </p>
                     <p>
-                        From here, you can dive deeper into the <a href="core-concepts.html" class="text-primary hover:underline">Core Concepts</a> or explore more complex patterns in the <a href="../examples/todo.html" class="text-primary hover:underline">Examples</a>.
+                        From here, you can dive deeper into the <a href="core-concepts.html" class="text-primary hover:underline">Core Concepts</a> or review the complete <a href="../base/api-reference.html" class="text-primary hover:underline">API Reference</a>.
                     </p>
                 </div>
             </div>

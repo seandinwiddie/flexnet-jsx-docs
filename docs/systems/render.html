@@ -44,7 +44,7 @@
                 </div>
 
                 <h1 class="text-4xl font-bold mb-6">Render System</h1>
-                <p class="text-lg text-gray-600 mb-8">The FlexNet JSX render system efficiently translates virtual DOM elements into real DOM nodes while maintaining purity and immutability.</p>
+                <p class="text-lg text-gray-600 mb-8">The FlexNet JSX render system efficiently translates virtual DOM elements into real DOM nodes while maintaining purity and immutability, a core principle detailed in the <a href="../base/architecture-overview.html" class="text-primary hover:underline">Architecture Overview</a>.</p>
 
                 <div class="prose prose-blue max-w-none">
                     <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2">Overview</h2>
@@ -64,7 +64,7 @@
                     <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2">Basic Rendering</h2>
                     <p class="mb-4">The core of the render system is the <code>render</code> function, which takes a virtual DOM element and a DOM container, and mounts the element into the container.</p>
 
-                    <pre class="bg-gray-800 text-white p-4 rounded-lg mb-6"><code class="language-javascript">import { createElement, render } from './src/systems/render/functions.js';
+                    <pre class="bg-gray-800 text-white p-4 rounded-lg mb-6"><code class="language-javascript">import { createElement, render } from '../../systems/render/functions.js';
 
 // Create a virtual DOM element
 const element = createElement('div', { className: 'greeting' }, 'Hello, World!');
@@ -75,7 +75,7 @@ render(element, document.getElementById('root'));</code></pre>
                     <h3 class="text-xl font-medium mt-6 mb-3">Functional Components</h3>
                     <p class="mb-4">FlexNet supports functional components, which are functions that accept props and return virtual DOM elements:</p>
 
-                    <pre class="bg-gray-800 text-white p-4 rounded-lg mb-6"><code class="language-javascript">import { createElement, render } from './src/systems/render/functions.js';
+                    <pre class="bg-gray-800 text-white p-4 rounded-lg mb-6"><code class="language-javascript">import { createElement, render } from '../../systems/render/functions.js';
 
 // Define a functional component
 const Greeting = ({ name }) => 
@@ -161,35 +161,47 @@ render(element, document.getElementById('root'));</code></pre>
                     </div>
 
                     <h3 class="text-xl font-medium mt-6 mb-3">Example: Rendering with State Updates</h3>
-                    <pre class="bg-gray-800 text-white p-4 rounded-lg mb-6"><code class="language-javascript">import { createElement, render } from './src/systems/render/functions.js';
-import { createStore } from './src/systems/state/functions.js';
+                    <pre class="bg-gray-800 text-white p-4 rounded-lg mb-6"><code class="language-javascript">import { createElement, render } from '../../systems/render/functions.js';
+import { createStore } from '../../systems/state/functions.js';
 
-// Create a store with initial state
-const store = createStore({ count: 0 });
+// 1. Define a pure reducer function.
+const reducer = (state, action) => {
+    switch (action.type) {
+        case 'INCREMENT':
+            return { ...state, count: state.count + 1 };
+        default:
+            return state;
+    }
+};
 
-// Define a counter component
+// 2. Create a store with initial state and the reducer.
+const store = createStore(reducer, { count: 0 });
+
+// 3. Define a counter component.
 const Counter = ({ count, onIncrement }) =>
   createElement('div', null,
     createElement('h2', null, `Count: ${count}`),
-    createElement('button', {
-      onClick: onIncrement
-    }, 'Increment')
+    createElement('button', { onClick: onIncrement }, 'Increment')
   );
 
-// Subscribe to state changes
-store.subscribe(state => {
-  // Render with new state when it changes
-  render(
-    createElement(Counter, {
-      count: state.count,
-      onIncrement: () => store.update(s => ({ count: s.count + 1 }))
-    }),
-    document.getElementById('root')
-  );
-});</code></pre>
+// 4. Create a function to render the application.
+const renderApp = () => {
+    const currentState = store.getState();
+    render(
+        createElement(Counter, {
+            count: currentState.count,
+            onIncrement: () => store.dispatch({ type: 'INCREMENT' })
+        }),
+        document.getElementById('root')
+    );
+};
+
+// 5. Subscribe to state changes and perform an initial render.
+store.subscribe(renderApp);
+renderApp();</code></pre>
 
                     <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2">Render API</h2>
-                    <p class="mb-4">The FlexNet JSX render system provides the following core functions:</p>
+                    <p class="mb-4">The FlexNet JSX render system provides the following core functions, which are defined in the <a href="../base/api-reference.html#render-system" class="text-primary hover:underline">API Reference</a>:</p>
 
                     <h3 class="text-xl font-medium mt-6 mb-3">render</h3>
                     <p class="mb-4">The primary function for rendering elements to the DOM.</p>
@@ -200,7 +212,8 @@ store.subscribe(state => {
  * @returns {void}
  */
 function render(element, container) {
-  // Implementation details
+  // Implementation details...
+  // See the API reference for the full composed function.
 }</code></pre>
 
                     <h3 class="text-xl font-medium mt-6 mb-3">createElement</h3>
@@ -213,50 +226,37 @@ function render(element, container) {
  * @returns {VNode} A virtual DOM node
  */
 function createElement(type, props, ...children) {
-  // Implementation details
+  // Implementation details...
 }</code></pre>
 
                     <div class="bg-blue-50 border-l-4 border-primary p-4 rounded-md my-6">
                         <h4 class="font-semibold">Security Note</h4>
-                        <p class="mt-2">For enhanced security, a safer version of <code>createElement</code> can be used, which validates inputs and returns an <code>Either</code> type to explicitly handle potential errors like invalid props or types. This prevents certain types of injection attacks. See the security guide for details.</p>
+                        <p class="mt-2">For enhanced security, a safer version of <code>createElement</code> can be used, which validates inputs and returns an <code>Either</code> type to explicitly handle potential errors like invalid props or types. This prevents certain types of injection attacks. See the <a href="../base/security-practices.html" class="text-primary hover:underline">security guide</a> for details.</p>
                     </div>
-
-                    <h3 class="text-xl font-medium mt-6 mb-3">createFragment</h3>
-                    <p class="mb-4">Creates a fragment that can hold multiple elements without adding extra DOM nodes.</p>
-                    <pre class="bg-gray-800 text-white p-4 rounded-lg mb-6"><code class="language-javascript">/**
- * Create a virtual DOM fragment
- * @param {Array} children - The fragment children
- * @returns {VNode} A virtual DOM fragment
- */
-function createFragment(children) {
-  // Implementation details
-}</code></pre>
 
                     <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2">Advanced Rendering Techniques</h2>
                     <p class="mb-4">FlexNet JSX supports several advanced rendering techniques:</p>
 
                     <h3 class="text-xl font-medium mt-6 mb-3">Conditional Rendering</h3>
-                    <pre class="bg-gray-800 text-white p-4 rounded-lg mb-6"><code class="language-javascript">import { createElement } from './src/systems/render/functions.js';
-import { Either } from './src/core/types/either.js';
-import { pipe } from './src/core/functions/composition.js';
+                    <pre class="bg-gray-800 text-white p-4 rounded-lg mb-6"><code class="language-javascript">import { createElement } from '../../systems/render/functions.js';
+import { Either } from '../../core/types/either.js';
+import { pipe } from '../../core/functions/composition.js';
 
-// Using Either for conditional rendering
+// Using Either for conditional rendering, a pattern explained in the Error Handling guide.
 const UserProfile = ({ user }) =>
   createElement('div', { className: 'profile' },
     // Render user info if user exists, otherwise render a login prompt
-    pipe(
-      Either.fold(
-        () => [createElement('button', { onClick: () => { /* login */ } }, 'Log In')],
+    Either.fromNullable(user).fold(
+        () => createElement('button', { onClick: () => { /* login */ } }, 'Log In'),
         (userData) => [
           createElement('h2', null, userData.name),
           createElement('p', null, userData.email)
         ]
-      )
-    )(Either.fromNullable(user))
+    )
   );</code></pre>
 
                     <h3 class="text-xl font-medium mt-6 mb-3">List Rendering</h3>
-                    <pre class="bg-gray-800 text-white p-4 rounded-lg mb-6"><code class="language-javascript">import { createElement } from './src/systems/render/functions.js';
+                    <pre class="bg-gray-800 text-white p-4 rounded-lg mb-6"><code class="language-javascript">import { createElement } from '../../systems/render/functions.js';
 
 // Rendering lists with proper keys
 const TodoList = ({ todos, onToggle }) =>
@@ -277,40 +277,41 @@ const TodoList = ({ todos, onToggle }) =>
   );</code></pre>
 
                     <h3 class="text-xl font-medium mt-6 mb-3">Error Boundaries</h3>
-                    <p class="mb-4">FlexNet provides a way to handle rendering errors gracefully using a functional approach. One common pattern is to create an `ErrorBoundary` component that takes a function to execute and a fallback UI to render in case of an error.</p>
-                    <pre class="bg-gray-800 text-white p-4 rounded-lg mb-6"><code class="language-javascript">import { createElement } from './src/systems/render/functions.js';
-import { Result } from './src/core/types/result.js';
+                    <p class="mb-4">FlexNet provides a way to handle rendering errors gracefully using a functional approach. Instead of a special component, this is achieved by composing functions. A component that might fail returns an <code>Either</code> type, and its parent uses <code>fold</code> to handle both the success and failure cases. See the <a href="errors.html" class="text-primary hover:underline">Error Handling guide</a> for more details.</p>
+                    <pre class="bg-gray-800 text-white p-4 rounded-lg mb-6"><code class="language-javascript">import { createElement } from '../../systems/render/functions.js';
+import { Either } from '../../core/types/either.js';
 
-// Error boundary component using a render prop pattern
-const ErrorBoundary = ({ childFn, fallback }) => {
-  // Attempt to execute the function that may throw an error
-  const renderResult = Result.fromTry(childFn);
-
-  // Return the successful result or the fallback UI
-  if (renderResult.type === 'Ok') {
-    return renderResult.value;
+// This component can "fail" by returning a Left.
+const PotentiallyFailingComponent = ({ user }) => {
+  if (!user || !user.name) {
+    return Either.Left(new Error('User data is missing or invalid!'));
   }
-  
-  return typeof fallback === 'function'
-    ? fallback(renderResult.error)
-    : fallback;
+  return Either.Right(
+      createElement('h1', null, `Welcome, ${user.name}`)
+  );
 };
 
-// Usage
-const PotentiallyCrashingComponent = ({ user }) => {
-  if (!user) {
-    throw new Error('User data is missing!');
-  }
-  return createElement('h1', null, `Welcome, ${user.name}`);
+// The parent component acts as the "Error Boundary".
+const App = ({ user }) => {
+    const componentResult = PotentiallyFailingComponent({ user });
+
+    // Use fold to handle the two possible outcomes.
+    return componentResult.fold(
+        // The 'Left' case (failure): render a fallback UI.
+        error => createElement('div', { className: 'error' },
+            `Something went wrong: ${error.message}`
+        ),
+        // The 'Right' case (success): render the component's VNode as is.
+        successVNode => successVNode
+    );
 };
 
-const App = () =>
-  createElement(ErrorBoundary, {
-    fallback: (error) => createElement('div', { className: 'error' },
-      `Something went wrong: ${error.message}`
-    ),
-    childFn: () => createElement(PotentiallyCrashingComponent, { user: currentUser })
-  });</code></pre>
+// Example Usage:
+// const currentUser = { name: 'Jane' };
+// const missingUser = null;
+// render(App({ user: currentUser }), document.getElementById('root'));
+// render(App({ user: missingUser }), document.getElementById('root'));
+</code></pre>
 
                     <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2">Optimizing Render Performance</h2>
                     <p class="mb-4">To optimize rendering performance in FlexNet JSX, consider the following techniques:</p>
@@ -318,7 +319,7 @@ const App = () =>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
                         <div class="bg-white p-4 border border-gray-200 rounded-lg">
                             <h4 class="font-semibold text-lg mb-2">Memoization</h4>
-                            <p class="text-gray-600">Use the <code>memoize</code> function to prevent unnecessary re-renders of expensive components. This works best when component props are primitive values or simple objects that can be reliably serialized.</p>
+                            <p class="text-gray-600">Use the <code>memoize</code> function to prevent unnecessary re-renders of expensive components. This works best when component props are primitive values or simple objects that can be reliably serialized. See the <a href="../base/api-reference.html#function-operations" class="text-primary hover:underline">API reference</a> for details.</p>
                         </div>
                         <div class="bg-white p-4 border border-gray-200 rounded-lg">
                             <h4 class="font-semibold text-lg mb-2">Keys</h4>
@@ -335,8 +336,8 @@ const App = () =>
                     </div>
 
                     <h3 class="text-xl font-medium mt-6 mb-3">Example: Memoized Component</h3>
-                    <pre class="bg-gray-800 text-white p-4 rounded-lg mb-6"><code class="language-javascript">import { createElement } from './src/systems/render/functions.js';
-import { memoize } from './src/utils/function.js';
+                    <pre class="bg-gray-800 text-white p-4 rounded-lg mb-6"><code class="language-javascript">import { createElement } from '../../systems/render/functions.js';
+import { memoize } from '../../utils/function.js';
 
 // Expensive component that shouldn't re-render unless its props change
 const ExpensiveComponent = ({ data }) => {
@@ -370,9 +371,17 @@ const MemoizedExpensiveComponent = memoize(ExpensiveComponent);</code></pre>
                             <h3 class="font-semibold text-lg mb-2">Events System</h3>
                             <p class="text-gray-600">Learn how FlexNet handles DOM events in a functional way.</p>
                         </a>
-                        <a href="../api/jsx.html" class="block p-4 border border-gray-200 rounded-lg hover:border-primary hover:shadow-md transition">
-                            <h3 class="font-semibold text-lg mb-2">JSX API Reference</h3>
-                            <p class="text-gray-600">Explore the complete API reference for the JSX runtime.</p>
+                        <a href="../base/api-reference.html" class="block p-4 border border-gray-200 rounded-lg hover:border-primary hover:shadow-md transition">
+                            <h3 class="font-semibold text-lg mb-2">API Reference</h3>
+                            <p class="text-gray-600">Explore the complete API reference for the render system and other core features.</p>
+                        </a>
+                        <a href="state.html" class="block p-4 border border-gray-200 rounded-lg hover:border-primary hover:shadow-md transition">
+                            <h3 class="font-semibold text-lg mb-2">State System</h3>
+                            <p class="text-gray-600">Learn more about managing application state.</p>
+                        </a>
+                        <a href="errors.html" class="block p-4 border border-gray-200 rounded-lg hover:border-primary hover:shadow-md transition">
+                            <h3 class="font-semibold text-lg mb-2">Error Handling</h3>
+                            <p class="text-gray-600">See more advanced patterns for handling errors during rendering.</p>
                         </a>
                     </div>
                 </div>

@@ -50,7 +50,7 @@
                 <h1 class="text-4xl font-bold mb-6">Maybe API</h1>
                 
                 <p class="text-lg text-gray-600 mb-8">
-                    The Maybe type provides a functional and safe way to handle optional values, eliminating null and undefined errors.
+                    The Maybe type provides a <a href="../base/architecture-overview.html" class="text-primary hover:underline">functional and safe way</a> to handle optional values, eliminating null and undefined errors.
                 </p>
 
                 <div class="prose prose-blue max-w-none">
@@ -227,21 +227,25 @@ console.log(Maybe.getOrElse('Street not found')(missingStreet)); // 'Street not 
                             Framework Compliance
                         </h4>
                         <ul class="list-disc pl-6 mt-2">
-                             <li><strong>Use Curried Functions</strong>: The functions <code>map</code>, <code>chain</code>, and <code>getOrElse</code> are not instance methods. They are curried functions designed to be used with composition tools like <code>pipe</code>.</li>
+                             <li><strong>Use Curried Functions</strong>: The functions <code>map</code>, <code>chain</code>, and <code>getOrElse</code> are not instance methods. They are curried functions designed to be used with <a href="../base/api-reference.html" class="text-primary hover:underline">composition tools like <code>pipe</code></a>.</li>
                              <li><strong>Check the Type Property</strong>: For simple conditional logic, you can directly check <code>maybe.type</code> which will be either <code>'Just'</code> or <code>'Nothing'</code>.</li>
-                             <li><strong>Synchronous Only</strong>: <code>Maybe</code> is for handling optional values in synchronous code. It is not designed for asynchronous operations.</li>
+                             <li><strong>Synchronous Only</strong>: <code>Maybe</code> is for handling optional values in synchronous code. It is not designed for asynchronous operations, for which the framework provides an <a href="../base/api-reference.html" class="text-primary hover:underline">Effect System</a>.</li>
                     </ul>
                     </div>
 
-                    <h2 class="text-2xl font-bold mt-8 mb-4">Related Types</h2>
+                    <h2 class="text-2xl font-bold mt-8 mb-4">Related Documentation</h2>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
-                        <a href="either.html" class="block p-6 bg-white rounded-lg border border-gray-200 hover:border-primary transition">
-                            <h3 class="text-lg font-semibold mb-2">Either Type</h3>
+                        <a href="../base/api-reference.html" class="block p-4 border border-gray-200 rounded-lg hover:border-primary hover:shadow-md transition">
+                            <h3 class="font-semibold text-lg mb-2">API Reference: Either</h3>
                             <p class="text-gray-600">For values that can be one of two distinct types (e.g., Error vs. Success).</p>
                         </a>
-                        <a href="result.html" class="block p-6 bg-white rounded-lg border border-gray-200 hover:border-primary transition">
-                            <h3 class="text-lg font-semibold mb-2">Result Type</h3>
+                        <a href="../base/api-reference.html" class="block p-4 border border-gray-200 rounded-lg hover:border-primary hover:shadow-md transition">
+                            <h3 class="font-semibold text-lg mb-2">API Reference: Result</h3>
                             <p class="text-gray-600">For handling the success or failure of synchronous operations that might throw exceptions.</p>
+                        </a>
+                        <a href="../base/architecture-overview.html" class="block p-4 border border-gray-200 rounded-lg hover:border-primary hover:shadow-md transition">
+                            <h3 class="font-semibold text-lg mb-2">Architecture: Core Type System</h3>
+                            <p class="text-gray-600">Get a high-level overview of the functional types that form the core of the framework.</p>
                         </a>
                     </div>
                 </div>

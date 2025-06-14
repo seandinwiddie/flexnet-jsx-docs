@@ -50,7 +50,7 @@
                     <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2" id="introduction">Introduction</h2>
                     <p class="mb-4">Side effects are an inevitable part of web applications—from fetching data and setting timers to manipulating the DOM. The challenge in functional programming is to handle these side effects without sacrificing the purity and predictability of your functions.</p>
                     
-                    <p class="mb-4">FlexNet's Effect System provides a solution by wrapping side effects in a pure, immutable data structure called an <code>Effect</code>. This approach allows you to:</p>
+                    <p class="mb-4">FlexNet's Effect System provides a solution by wrapping side effects in a pure, immutable data structure called an <code>Effect</code>. This approach, a cornerstone of the framework's design as noted in the <a href="../base/architecture-overview.html" class="text-primary hover:underline">Architecture Overview</a>, allows you to:</p>
                     <ul class="list-disc pl-6 mb-6 space-y-2">
                         <li>Isolate side effects from pure business logic.</li>
                         <li>Treat effects as values that can be passed around, composed, and manipulated.</li>
@@ -73,7 +73,7 @@ const myEffect = {
                     <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2" id="creating-and-running-effects">Creating and Running Effects</h2>
                     <p class="mb-4">You create an effect using <code>Effect.of</code> and execute it using <code>Effect.run</code>.</p>
 
-                    <pre class="bg-gray-800 text-white p-4 rounded-lg mb-6"><code class="language-javascript">import { Effect } from './src/systems/effects/functions.js';
+                    <pre class="bg-gray-800 text-white p-4 rounded-lg mb-6"><code class="language-javascript">import { Effect } from '../../systems/effects/functions.js';
 
 // Create an effect that gets an item from localStorage
 const getItem = (key) => Effect.of(() => localStorage.getItem(key));
@@ -86,16 +86,16 @@ console.log(result); // logs the value from localStorage</code></pre>
 
                     <div class="bg-blue-50 border-l-4 border-primary p-4 rounded-md mb-6">
                         <h4 class="font-semibold">Key Idea</h4>
-                        <p>The separation between creating an effect and running it is the core principle. Your business logic should create and compose effects, while a single, top-level "end of the world" part of your application runs them.</p>
+                        <p>The separation between creating an effect and running it is the core principle. Your business logic should create and compose effects, while a single, top-level "end of the world" part of your application runs them. This adheres to the principle of <a href="../base/architecture-overview.html#effect-system" class="text-primary hover:underline">isolating side effects</a>.</p>
                     </div>
 
                     <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2" id="composing-effects">Composing Effects with `map` and `chain`</h2>
-                    <p class="mb-4">The true power of the Effect system comes from its monadic nature, allowing you to compose effects using <code>map</code> and <code>chain</code>.</p>
+                    <p class="mb-4">The true power of the Effect system comes from its monadic nature, allowing you to compose effects using <code>map</code> and <code>chain</code>. This aligns with the framework's emphasis on <a href="../base/api-reference.html#composition" class="text-primary hover:underline">functional composition</a>.</p>
                     
                     <h3 class="text-xl font-medium mt-6 mb-3">Transforming Effect Results with `map`</h3>
                     <p class="mb-4"><code>Effect.map</code> lets you apply a pure function to the result of an effect without running the effect.</p>
-                    <pre class="bg-gray-800 text-white p-4 rounded-lg mb-6"><code class="language-javascript">import { Effect } from './src/systems/effects/functions.js';
-import { pipe } from './src/core/functions/composition.js';
+                    <pre class="bg-gray-800 text-white p-4 rounded-lg mb-6"><code class="language-javascript">import { Effect } from '../../systems/effects/functions.js';
+import { pipe } from '../../core/functions/composition.js';
 
 const getItem = (key) => Effect.of(() => localStorage.getItem(key));
 const parseJson = (str) => JSON.parse(str);
@@ -111,8 +111,8 @@ const user = Effect.run(getObject('currentUser'));
 
                     <h3 class="text-xl font-medium mt-6 mb-3">Sequencing Effects with `chain`</h3>
                     <p class="mb-4"><code>Effect.chain</code> lets you sequence effects, where the next effect depends on the result of the previous one.</p>
-                     <pre class="bg-gray-800 text-white p-4 rounded-lg mb-6"><code class="language-javascript">import { Effect } from './src/systems/effects/functions.js';
-import { pipe } from './src/core/functions/composition.js';
+                     <pre class="bg-gray-800 text-white p-4 rounded-lg mb-6"><code class="language-javascript">import { Effect } from '../../systems/effects/functions.js';
+import { pipe } from '../../core/functions/composition.js';
 
 const getUserId = Effect.of(() => '123');
 const fetchUserById = (id) => Effect.of(() => fetch(`https://api.example.com/users/${id}`));
@@ -130,10 +130,10 @@ Effect.run(fetchCurrentUser).then(response => response.json()).then(console.log)
                     <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2" id="asynchronous-effects">Handling Asynchronous Effects</h2>
                     <p class="mb-4">The Effect system handles asynchronous operations naturally. If an effect's <code>run</code> function returns a <code>Promise</code>, then <code>Effect.run</code> will return that <code>Promise</code>.</p>
                     
-                    <p class="mb-4">For robust error handling, it's best practice for async effects to return a <code>Promise</code> that resolves to a <code>Result</code> or <code>Either</code> type.</p>
+                    <p class="mb-4">For robust error handling, it's best practice for async effects to return a <code>Promise</code> that resolves to a <code>Result</code> or <code>Either</code> type, as detailed in the <a href="errors.html" class="text-primary hover:underline">Error Handling guide</a>. For a higher-level approach to network requests, see the <a href="../base/http-system.html" class="text-primary hover:underline">HTTP System documentation</a>.</p>
 
-                    <pre class="bg-gray-800 text-white p-4 rounded-lg mb-6"><code class="language-javascript">import { Effect } from './src/systems/effects/functions.js';
-import { Result } from './src/core/types/result.js';
+                    <pre class="bg-gray-800 text-white p-4 rounded-lg mb-6"><code class="language-javascript">import { Effect } from '../../systems/effects/functions.js';
+import { Result } from '../../core/types/result.js';
 
 const safeFetch = (url, options) => Effect.of(() => 
     fetch(url, options)
@@ -159,9 +159,9 @@ Effect.run(fetchEffect)
 });</code></pre>
 
                     <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2" id="resource-management">Resource Management and Cleanup</h2>
-                    <p class="mb-4">While the base <code>Effect</code> type doesn't have a built-in cleanup mechanism, you can model it by having your effect's <code>run</code> function return the result along with a <code>cleanup</code> function.</p>
+                    <p class="mb-4">While the base <code>Effect</code> type doesn't have a built-in cleanup mechanism, you can model it by having your effect's <code>run</code> function return the result along with a <code>cleanup</code> function. This aligns with the architectural principle of providing <a href="../base/architecture-overview.html#effect-system" class="text-primary hover:underline">explicit cleanup functions</a>.</p>
 
-                    <pre class="bg-gray-800 text-white p-4 rounded-lg mb-6"><code class="language-javascript">import { Effect } from './src/systems/effects/functions.js';
+                    <pre class="bg-gray-800 text-white p-4 rounded-lg mb-6"><code class="language-javascript">import { Effect } from '../../systems/effects/functions.js';
 
 const timerEffect = (onTick, interval) => Effect.of(() => {
     const timerId = setInterval(onTick, interval);
@@ -209,11 +209,11 @@ promise.then(console.log).catch(err => {
                     </code></pre>
 
                     <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2" id="effects-with-state">Effects and State Management</h2>
-                    <p class="mb-4">Effects should remain separate from state updates. The correct pattern is to run an effect, get its result, and then dispatch an action to the state store based on that result.</p>
+                    <p class="mb-4">Effects should remain separate from state updates. The correct pattern is to run an effect, get its result, and then dispatch an action to the state store based on that result. This enforces the framework's <a href="../base/architecture-overview.html" class="text-primary hover:underline">unidirectional data flow</a>.</p>
 
-                    <pre class="bg-gray-800 text-white p-4 rounded-lg mb-6"><code class="language-javascript">import { createStore } from './src/systems/state/functions.js';
-import { Effect } from './src/systems/effects/functions.js';
-import { Result } from './src/core/types/result.js';
+                    <pre class="bg-gray-800 text-white p-4 rounded-lg mb-6"><code class="language-javascript">import { createStore } from '../../systems/state/functions.js';
+import { Effect } from '../../systems/effects/functions.js';
+import { Result } from '../../core/types/result.js';
 
 // Assume a store and actions are defined
 const store = createStore(reducer, { data: null, loading: true, error: null });
@@ -285,37 +285,26 @@ loadUser('123');
                                 </div>
                                 <div>
                                     <h4 class="font-medium">Use `Result` for Fallible Effects</h4>
-                                    <p class="text-gray-600">For effects that can fail (like network requests), wrap their results in a <code>Result</code> or <code>Either</code> type to handle errors functionally.</p>
+                                    <p class="text-gray-600">For effects that can fail (like network requests), wrap their results in a <code>Result</code> or <code>Either</code> type to handle errors functionally. See the <a href="errors.html" class="text-primary hover:underline">Error Handling guide</a> for patterns.</p>
                                 </div>
                             </li>
                         </ul>
                     </div>
 
                     <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2" id="api-reference">API Reference</h2>
-                    <p class="mb-4">The core <code>Effect</code> API is defined in <code>/src/systems/effects/functions.js</code>.</p>
+                    <p class="mb-4">The core <code>Effect</code> API is defined in <code>/src/systems/effects/functions.js</code>. For a complete definition, see the <a href="../base/api-reference.html#effect-system" class="text-primary hover:underline">API Reference documentation</a>.</p>
                     
-                    <h3 class="text-xl font-medium mt-6 mb-3">Effect.of</h3>
-                    <div class="bg-white p-4 rounded-lg border border-gray-200 mb-6">
-                        <pre class="bg-gray-800 text-white p-4 rounded-lg mb-2"><code class="language-javascript">Effect.of(value: () => a): Effect<a></code></pre>
-                        <p>Wraps a thunk (a zero-argument function) into an Effect. The computation is not performed until <code>run</code> is called.</p>
-                    </div>
-                        
-                    <h3 class="text-xl font-medium mt-6 mb-3">Effect.run</h3>
-                     <div class="bg-white p-4 rounded-lg border border-gray-200 mb-6">
-                        <pre class="bg-gray-800 text-white p-4 rounded-lg mb-2"><code class="language-javascript">Effect.run(effect: Effect<a>): a</code></pre>
-                        <p>Executes the given effect and returns the result of its computation.</p>
-                    </div>
-
-                    <h3 class="text-xl font-medium mt-6 mb-3">Effect.map</h3>
-                    <div class="bg-white p-4 rounded-lg border border-gray-200 mb-6">
-                        <pre class="bg-gray-800 text-white p-4 rounded-lg mb-2"><code class="language-javascript">Effect.map(fn: (a) => b): (effect: Effect<a>) => Effect<b></code></pre>
-                        <p>Returns a new effect that will apply the pure function <code>fn</code> to the result of the original effect.</p>
-                    </div>
-
-                    <h3 class="text-xl font-medium mt-6 mb-3">Effect.chain</h3>
-                    <div class="bg-white p-4 rounded-lg border border-gray-200 mb-6">
-                        <pre class="bg-gray-800 text-white p-4 rounded-lg mb-2"><code class="language-javascript">Effect.chain(fn: (a) => Effect<b>): (effect: Effect<a>) => Effect<b></code></pre>
-                        <p>Returns a new effect by applying a function <code>fn</code> (that returns a new effect) to the result of the original effect. Used for sequencing.</p>
+                    <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-100 mb-6">
+                        <pre class="bg-gray-800 text-white p-4 rounded-lg"><code class="language-javascript">// From /src/systems/effects/functions.js
+const Effect = {
+    of: value => ({ type: 'Effect', run: () => value }),
+    map: fn => effect =>
+        Effect.of(() => fn(effect.run())),
+    chain: fn => effect =>
+        Effect.of(() => fn(effect.run()).run()),
+    run: effect => effect.run()
+};
+</code></pre>
                     </div>
 
                     <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2" id="next-steps">Next Steps</h2>
@@ -323,19 +312,19 @@ loadUser('123');
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
                         <a href="state.html" class="block p-4 border border-gray-200 rounded-lg hover:border-primary hover:shadow-md transition">
                             <h3 class="font-semibold text-lg mb-2">State Management</h3>
-                            <p class="text-gray-600">Learn how to use FlexNet's state management system.</p>
+                            <p class="text-gray-600">Learn how to connect the results of effects to the state store.</p>
                         </a>
-                        <a href="render.html" class="block p-4 border border-gray-200 rounded-lg hover:border-primary hover:shadow-md transition">
-                            <h3 class="font-semibold text-lg mb-2">Render System</h3>
-                            <p class="text-gray-600">Explore the rendering system in depth.</p>
+                        <a href="errors.html" class="block p-4 border border-gray-200 rounded-lg hover:border-primary hover:shadow-md transition">
+                            <h3 class="font-semibold text-lg mb-2">Error Handling</h3>
+                            <p class="text-gray-600">Explore how to use the Result and Either types with effects.</p>
                         </a>
-                        <a href="../examples/todo.html" class="block p-4 border border-gray-200 rounded-lg hover:border-primary hover:shadow-md transition">
-                            <h3 class="font-semibold text-lg mb-2">Todo App Example</h3>
-                            <p class="text-gray-600">See effects in action in a complete application.</p>
+                        <a href="../base/api-reference.html" class="block p-4 border border-gray-200 rounded-lg hover:border-primary hover:shadow-md transition">
+                            <h3 class="font-semibold text-lg mb-2">API Reference</h3>
+                            <p class="text-gray-600">Review the full API for all framework systems.</p>
                         </a>
-                        <a href="../api/result.html" class="block p-4 border border-gray-200 rounded-lg hover:border-primary hover:shadow-md transition">
-                            <h3 class="font-semibold text-lg mb-2">Result Type</h3>
-                            <p class="text-gray-600">Learn about the Result type, which is essential for handling effects that can fail.</p>
+                        <a href="../base/http-system.html" class="block p-4 border border-gray-200 rounded-lg hover:border-primary hover:shadow-md transition">
+                            <h3 class="font-semibold text-lg mb-2">HTTP System</h3>
+                            <p class="text-gray-600">See a higher-level abstraction for handling fetch effects.</p>
                         </a>
                     </div>
                 </div>

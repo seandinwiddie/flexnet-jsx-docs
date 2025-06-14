@@ -44,51 +44,48 @@
                 </div>
 
                 <h1 class="text-4xl font-bold mb-6">Security</h1>
-                <p class="text-lg text-gray-600 mb-8">FlexNet JSX is designed with security as a core principle. Its functional architecture provides built-in protections against common web vulnerabilities by promoting explicit data handling, immutability, and pure functions.</p>
+                <p class="text-lg text-gray-600 mb-8">FlexNet JSX is designed with security as a core principle. Its functional architecture, as detailed in the <a href="../base/architecture-overview.html" class="text-primary hover:underline">Architecture Overview</a>, provides built-in protections against common web vulnerabilities by promoting explicit data handling, immutability, and pure functions.</p>
 
                 <div class="prose prose-blue max-w-none">
                     <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2">Core Security Principles</h2>
                     <ul class="list-disc pl-6 mb-6 space-y-2">
-                        <li><strong>Explicit Sanitization:</strong> Content is not rendered as HTML by default. The framework provides explicit functions to sanitize input, preventing Cross-Site Scripting (XSS).</li>
-                        <li><strong>Functional Validation:</strong> All input validation is handled through pure functions that return explicit types like <code>Either</code>, making error handling robust and preventing invalid data from propagating through the system.</li>
-                        <li><strong>Immutable State:</strong> State cannot be mutated directly, which prevents a large class of vulnerabilities related to unauthorized or accidental state modification.</li>
+                        <li><strong>Explicit Sanitization:</strong> Content is not rendered as HTML by default. The framework provides explicit functions to sanitize input, preventing Cross-Site Scripting (XSS), as defined in the <a href="../base/api-reference.html#xss-prevention" class="text-primary hover:underline">API Reference</a>.</li>
+                        <li><strong>Functional Validation:</strong> All input validation is handled through pure functions that return explicit types like <code>Either</code>, making error handling robust and preventing invalid data from propagating through the system. This pattern is explained in the <a href="../systems/errors.html" class="text-primary hover:underline">Error Handling guide</a>.</li>
+                        <li><strong>Immutable State:</strong> State cannot be mutated directly, which prevents a large class of vulnerabilities related to unauthorized or accidental state modification. See the <a href="../systems/state.html" class="text-primary hover:underline">State Management guide</a> for more.</li>
                         <li><strong>No Direct DOM Access:</strong> By managing rendering through a virtual DOM, the framework limits direct DOM manipulation, which is a common vector for security issues.</li>
                     </ul>
 
                     <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2">XSS Prevention</h2>
-                    <p class="mb-4">Cross-Site Scripting (XSS) is prevented by treating all strings as text, not HTML, by default. To render content safely, you must use the provided <code>sanitize</code> function.</p>
+                    <p class="mb-4">Cross-Site Scripting (XSS) is prevented by treating all strings as text, not HTML, by default. The <code>createElement</code> function automatically handles escaping. For an additional layer of security, the framework provides a <code>sanitize</code> function that strips potentially harmful characters from a string entirely.</p>
                     
                     <div class="bg-gray-900 rounded-lg mb-6 overflow-hidden relative">
-                        <button class="absolute top-2 right-2 bg-gray-700 hover:bg-gray-600 text-white text-xs font-bold py-1 px-2 rounded">Copy</button>
-                        <div class="border-b border-gray-700 px-4 py-3">
-                            <h4 class="font-semibold text-white">Explicit Content Sanitization</h4>
-                        </div>
                         <div class="p-4">
-                            <pre class="bg-gray-800 text-white p-4 rounded-md mb-6 overflow-x-auto"><code class="language-javascript">import { sanitize } from './src/security/functions.js';
-import { createElement } from './src/systems/render/functions.js';
+                            <pre class="bg-gray-800 text-white p-4 rounded-md mb-6 overflow-x-auto"><code class="language-javascript">import { sanitize } from '../../security/functions.js';
+import { createElement } from '../../systems/render/functions.js';
 
-const userContent = '&lt;img src=x onerror=alert(1)&gt;';
+const userContent = '<img src=x onerror=alert(1)>';
 
-// Sanitize the input before rendering
-const sanitizedContent = sanitize(userContent);
+// The sanitize function returns an Either, so we handle both cases.
+// It removes '<' and '>' characters.
+const sanitizedContent = sanitize(userContent).getOrElse('');
 
-// This will render the string as text, not as an HTML element
+// sanitizedContent is now "img src=x onerror=alert(1)"
 const element = createElement('div', null, sanitizedContent);
 
-// The resulting HTML will be:
-// &lt;div&gt;&amp;lt;img src=x onerror=alert(1)&amp;gt;&lt;/div&gt;
+// The resulting innerHTML will be:
+// &lt;div&gt;img src=x onerror=alert(1)&lt;/div&gt;
+// The browser will not interpret the string as an HTML element.
 </code></pre>
                         </div>
                     </div>
                     
                     <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2">Input Validation</h2>
-                    <p class="mb-4">FlexNet provides two primary pure functions for validating data, both of which return an <code>Either</code> type to explicitly handle success and failure cases.</p>
+                    <p class="mb-4">FlexNet provides two primary pure functions for validating data, both of which return an <code>Either</code> type to explicitly handle success and failure cases. These are defined in the <a href="../base/api-reference.html#security-functions" class="text-primary hover:underline">Security Functions API</a>.</p>
 
                     <h3 class="text-xl font-medium mt-6 mb-3">Predicate-Based Validation with `validateInput`</h3>
                      <p class="mb-4">Use <code>validateInput</code> for simple checks on a single piece of data.</p>
                     <div class="bg-gray-900 rounded-lg mb-6 overflow-hidden relative">
-                        <button class="absolute top-2 right-2 bg-gray-700 hover:bg-gray-600 text-white text-xs font-bold py-1 px-2 rounded">Copy</button>
-                        <pre class="bg-gray-800 text-white p-4 rounded-lg"><code class="language-javascript">import { validateInput } from './src/security/functions.js';
+                        <pre class="bg-gray-800 text-white p-4 rounded-lg"><code class="language-javascript">import { validateInput } from '../../security/functions.js';
 
 const isNotEmpty = s => s.length > 0;
 const validateUsername = validateInput(isNotEmpty);
@@ -99,11 +96,10 @@ const result2 = validateUsername('');      // -> Either.Left('Invalid input')
                     </div>
 
                     <h3 class="text-xl font-medium mt-6 mb-3">Schema-Based Validation with `validate`</h3>
-                     <p class="mb-4">Use <code>validate</code> from the validation feature for complex objects.</p>
+                     <p class="mb-4">Use <code>validate</code> from the <a href="../base/api-reference.html#form-validation" class="text-primary hover:underline">validation feature</a> for complex objects.</p>
                     <div class="bg-gray-900 rounded-lg mb-6 overflow-hidden relative">
-                        <button class="absolute top-2 right-2 bg-gray-700 hover:bg-gray-600 text-white text-xs font-bold py-1 px-2 rounded">Copy</button>
-                        <pre class="bg-gray-800 text-white p-4 rounded-lg"><code class="language-javascript">import { validate } from './src/features/validation/functions.js';
-import { Result } from './src/core/types/result.js'; // Assuming validator returns a Result
+                        <pre class="bg-gray-800 text-white p-4 rounded-lg"><code class="language-javascript">import { validate } from '../../features/validation/functions.js';
+import { Result } from '../../core/types/result.js';
 
 // Dummy validator functions that return a Result
 const isLongEnough = (str) =>
@@ -125,15 +121,14 @@ const validationResult = validateUser({ password: 'short' });
 
 
                     <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2">Secure State Management</h2>
-                    <p class="mb-4">FlexNet's immutable, reducer-based state management provides security benefits by preventing direct mutation of state and ensuring all changes are explicit and traceable.</p>
+                    <p class="mb-4">FlexNet's immutable, reducer-based state management provides security benefits by preventing direct mutation of state and ensuring all changes are explicit and traceable, as detailed in the <a href="../systems/state.html" class="text-primary hover:underline">State Management guide</a>.</p>
 
                     <h3 class="text-xl font-medium mt-6 mb-3">Example: Secure State Updates</h3>
                     <p class="mb-4">The correct pattern is to validate input *before* dispatching an action to the store. This ensures only valid data can trigger a state change.</p>
                     <div class="bg-gray-900 rounded-lg mb-6 overflow-hidden relative">
-                        <button class="absolute top-2 right-2 bg-gray-700 hover:bg-gray-600 text-white text-xs font-bold py-1 px-2 rounded">Copy</button>
-                        <pre class="bg-gray-800 text-white p-4 rounded-lg"><code class="language-javascript">import { createStore } from './src/systems/state/functions.js';
-import { validateInput } from './src/security/functions.js';
-import { Either } from './src/core/types/either.js';
+                        <pre class="bg-gray-800 text-white p-4 rounded-lg"><code class="language-javascript">import { createStore } from '../../systems/state/functions.js';
+import { validateInput } from '../../security/functions.js';
+import { Either } from '../../core/types/either.js';
 
 // Reducer and initial state
 const initialState = { user: null };
@@ -169,7 +164,7 @@ handleLogin('No');    // Logs validation error
 
                     <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2">Content Security Policy (CSP)</h2>
                     <p class="mb-6">
-                        While FlexNet's rendering system prevents DOM-based XSS, it is still crucial to implement a Content Security Policy (CSP) as a defense-in-depth measure. A strong CSP can prevent a wide range of injection attacks by specifying which sources of content are trusted.
+                        While FlexNet's rendering system prevents DOM-based XSS, it is still crucial to implement a Content Security Policy (CSP) as a defense-in-depth measure. A strong CSP can prevent a wide range of injection attacks by specifying which sources of content are trusted. For more information, refer to the <a href="../base/security-practices.html" class="text-primary hover:underline">main Security Practices document</a>.
                     </p>
                     <p>An example of a restrictive CSP header is:</p>
                     <pre class="bg-gray-800 text-white p-4 rounded-md mb-6 overflow-x-auto"><code class="language-http">Content-Security-Policy: default-src 'self'; script-src 'self'; style-src 'self' https://cdn.tailwindcss.com; img-src 'self';
@@ -195,13 +190,21 @@ handleLogin('No');    // Logs validation error
                 <div class="mt-12 border-t border-gray-200 pt-8">
                     <h2 class="text-2xl font-semibold mb-4">Next Steps</h2>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <a href="types.html" class="block p-4 border border-gray-200 rounded-lg hover:border-primary hover:shadow-md transition">
-                            <h3 class="font-semibold text-lg mb-2">Type System</h3>
+                        <a href="../systems/errors.html" class="block p-4 border border-gray-200 rounded-lg hover:border-primary hover:shadow-md transition">
+                            <h3 class="font-semibold text-lg mb-2">Error Handling Guide</h3>
                             <p class="text-gray-600">Learn how Maybe, Either, and Result contribute to robust and safe code.</p>
                         </a>
                         <a href="../systems/state.html" class="block p-4 border border-gray-200 rounded-lg hover:border-primary hover:shadow-md transition">
                             <h3 class="font-semibold text-lg mb-2">State Management</h3>
                             <p class="text-gray-600">Explore FlexNet's secure state management system.</p>
+                        </a>
+                        <a href="../base/api-reference.html" class="block p-4 border border-gray-200 rounded-lg hover:border-primary hover:shadow-md transition">
+                            <h3 class="font-semibold text-lg mb-2">API Reference</h3>
+                            <p class="text-gray-600">Review the full API definitions for security functions.</p>
+                        </a>
+                        <a href="../base/security-practices.html" class="block p-4 border border-gray-200 rounded-lg hover:border-primary hover:shadow-md transition">
+                            <h3 class="font-semibold text-lg mb-2">Security Best Practices</h3>
+                            <p class="text-gray-600">Read the comprehensive guide to framework security.</p>
                         </a>
                     </div>
                 </div>

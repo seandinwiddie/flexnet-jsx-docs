@@ -52,7 +52,7 @@
 
                 <div class="prose prose-blue max-w-none">
                     <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2">Overview</h2>
-                    <p class="mb-4">The <code>Result</code> type is a synchronous container for the outcome of an operation that might fail, such as data parsing, validation, or computation. It explicitly separates the success and error paths, eliminating the need for defensive <code>try...catch</code> blocks in your business logic.</p>
+                    <p class="mb-4">The <code>Result</code> type is a synchronous container for the outcome of an operation that might fail, such as data parsing, validation, or computation. As described in the <a href="../base/architecture-overview.html" class="text-primary hover:underline">framework architecture</a>, it explicitly separates the success and error paths, eliminating the need for defensive <code>try...catch</code> blocks in your business logic.</p>
                     <p class="mb-4">It has two variants:</p>
                     <ul class="list-disc pl-6 mb-6 space-y-2">
                         <li><code>Ok(value)</code>: Represents a successful operation, holding the resulting value.</li>
@@ -214,10 +214,10 @@ const finalFailed = Result.chain(ensurePositive)(failedResult);
                             Framework Compliance
                         </h4>
                         <ul class="list-disc pl-6 mt-2">
-                            <li><strong>Synchronous Operations Only</strong>: Do not use <code>Result</code> to wrap Promises or for asynchronous control flow. The framework uses the Effect System and other patterns for async operations.</li>
+                            <li><strong>Synchronous Operations Only</strong>: Do not use <code>Result</code> to wrap Promises or for asynchronous control flow. The framework uses the <a href="../base/api-reference.html" class="text-primary hover:underline">Effect System</a> and other patterns for async operations.</li>
                             <li><strong>Explicit Handling</strong>: Always check the <code>.type</code> property to handle both <code>Ok</code> and <code>Error</code> cases. Never assume a successful outcome.</li>
                             <li><strong>Prefer <code>fromTry</code></strong>: For any synchronous code that can throw an exception (e.g., <code>JSON.parse</code>, <code>localStorage</code> access), use <code>Result.fromTry</code> to safely contain potential errors.</li>
-                            <li><strong>Distinguish from <code>Either</code></strong>: While similar, <code>Result</code> is idiomatic for success/failure scenarios, whereas <code>Either</code> is a more general-purpose type for any kind of branching logic (e.g., Left/Right).</li>
+                            <li><strong>Distinguish from <code>Either</code></strong>: While similar, <code>Result</code> is idiomatic for success/failure scenarios, whereas <a href="../base/api-reference.html" class="text-primary hover:underline"><code>Either</code></a> is a more general-purpose type for any kind of branching logic (e.g., Left/Right).</li>
                         </ul>
                     </div>
                 </div>
@@ -225,20 +225,20 @@ const finalFailed = Result.chain(ensurePositive)(failedResult);
                 <div class="mt-12 border-t border-gray-200 pt-8">
                     <h2 class="text-2xl font-semibold mb-4">Related Documentation</h2>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <a href="maybe.html" class="block p-4 border border-gray-200 rounded-lg hover:border-primary hover:shadow-md transition">
-                            <h3 class="font-semibold text-lg mb-2">Maybe</h3>
+                        <a href="../base/api-reference.html" class="block p-4 border border-gray-200 rounded-lg hover:border-primary hover:shadow-md transition">
+                            <h3 class="font-semibold text-lg mb-2">API Reference: Maybe</h3>
                             <p class="text-gray-600">Learn about the Maybe type for handling optional values that may or may not exist.</p>
                         </a>
-                        <a href="either.html" class="block p-4 border border-gray-200 rounded-lg hover:border-primary hover:shadow-md transition">
-                            <h3 class="font-semibold text-lg mb-2">Either</h3>
+                        <a href="../base/api-reference.html" class="block p-4 border border-gray-200 rounded-lg hover:border-primary hover:shadow-md transition">
+                            <h3 class="font-semibold text-lg mb-2">API Reference: Either</h3>
                             <p class="text-gray-600">Explore the Either type for handling synchronous operations with two distinct outcomes (Left/Right).</p>
                         </a>
-                        <a href="../features/validation.html" class="block p-4 border border-gray-200 rounded-lg hover:border-primary hover:shadow-md transition">
-                            <h3 class="font-semibold text-lg mb-2">Form Validation</h3>
+                        <a href="../base/api-reference.html" class="block p-4 border border-gray-200 rounded-lg hover:border-primary hover:shadow-md transition">
+                            <h3 class="font-semibold text-lg mb-2">API Reference: Form Validation</h3>
                             <p class="text-gray-600">See how <code>Result</code> is used in practice for validating complex data structures.</p>
                         </a>
-                        <a href="../core/types.html" class="block p-4 border border-gray-200 rounded-lg hover:border-primary hover:shadow-md transition">
-                            <h3 class="font-semibold text-lg mb-2">Core Type System</h3>
+                        <a href="../base/architecture-overview.html" class="block p-4 border border-gray-200 rounded-lg hover:border-primary hover:shadow-md transition">
+                            <h3 class="font-semibold text-lg mb-2">Architecture: Type System</h3>
                             <p class="text-gray-600">Get a high-level overview of the functional types that form the core of the framework.</p>
                         </a>
                     </div>

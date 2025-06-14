@@ -44,14 +44,14 @@
                 </div>
                 
                 <h1 class="text-4xl font-bold mb-6">State Management</h1>
-                <p class="text-lg text-gray-600 mb-8">FlexNet JSX implements a functional, immutable, and predictable approach to state management using a centralized store and pure reducer functions.</p>
+                <p class="text-lg text-gray-600 mb-8">FlexNet JSX implements a functional, immutable, and predictable approach to state management using a centralized store and pure reducer functions, a core part of its <a href="../base/architecture-overview.html" class="text-primary hover:underline">architecture</a>.</p>
 
                 <div class="prose prose-blue max-w-none">
                     <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2">Core Principles</h2>
                     <ul class="list-disc pl-6 mb-6 space-y-2">
-                        <li><strong>Single Source of Truth:</strong> The entire state of your application is stored in a single object tree within a single store.</li>
+                        <li><strong>Single Source of Truth:</strong> The entire state of your application is stored in a single object tree within a single store. This concept is detailed in the <a href="../base/architecture-overview.html#core-operating-schema" class="text-primary hover:underline">Architecture Overview</a>.</li>
                         <li><strong>State is Read-Only:</strong> The only way to change the state is to dispatch an action, an object describing what happened.</li>
-                        <li><strong>Changes are Made with Pure Functions:</strong> To specify how the state tree is transformed by actions, you write pure reducers.</li>
+                        <li><strong>Changes are Made with Pure Functions:</strong> To specify how the state tree is transformed by actions, you write pure reducers, which are a foundational concept of the framework.</li>
                         <li><strong>Unidirectional Data Flow:</strong> State changes flow in one direction: an action is dispatched, the reducer calculates the new state, and subscribers are notified.</li>
                     </ul>
                     
@@ -59,8 +59,8 @@
                     <p class="mb-4">The three core components of FlexNet state management are the store, reducers, and actions.</p>
 
                     <h3 class="text-xl font-medium mt-6 mb-3">The Store</h3>
-                    <p class="mb-4">The store holds the application state, allows access to the state via <code>getState()</code>, allows state to be updated via <code>dispatch(action)</code>, and registers listeners via <code>subscribe(listener)</code>.</p>
-                    <pre><code class="language-javascript">// src/systems/state/functions.js
+                    <p class="mb-4">The store holds the application state, allows access to the state via <code>getState()</code>, allows state to be updated via <code>dispatch(action)</code>, and registers listeners via <code>subscribe(listener)</code>. The implementation is defined in the <a href="../base/api-reference.html#state-system" class="text-primary hover:underline">API Reference</a>.</p>
+                    <pre><code class="language-javascript">// This example from /src/systems/state/functions.js illustrates the store's structure.
 import { pipe } from '../../core/functions/composition.js';
 
 const createStore = (reducer, initialState) => {
@@ -95,7 +95,8 @@ const addTodoAction = {
 
                     <h3 class="text-xl font-medium mt-6 mb-3">Reducers</h3>
                     <p class="mb-4">A reducer is a pure, curried function that specifies how the application's state changes in response to an action. It has the signature: <code>state => action => newState</code>.</p>
-                     <pre><code class="language-javascript">// A reducer for a simple counter
+                     <pre><code class="language-javascript">// A reducer for a simple counter.
+// Note the curried function signature: state => action => newState.
 const counterReducer = state => action => {
   switch (action.type) {
     case 'INCREMENT':
@@ -109,7 +110,7 @@ const counterReducer = state => action => {
 
                     <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2">Usage Example: A Simple Counter</h2>
                     <p class="mb-4">Let's tie these concepts together with a basic counter example.</p>
-                    <pre><code class="language-javascript">import { createStore } from './src/systems/state/functions.js';
+                    <pre><code class="language-javascript">import { createStore } from '../../systems/state/functions.js';
 
 // 1. The reducer
 const counterReducer = state => action => {
@@ -143,7 +144,7 @@ unsubscribe();
 const addTodo = (text) => ({ type: 'ADD_TODO', payload: { id: Date.now(), text, completed: false } });
 const toggleTodo = (id) => ({ type: 'TOGGLE_TODO', payload: { id } });
 
-// The todos reducer
+// The todos reducer, which is also a curried function.
 const todosReducer = state => action => {
   switch (action.type) {
     case 'ADD_TODO':
@@ -169,11 +170,11 @@ console.log(todosStore.getState());
                     </code></pre>
                 
                     <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2">Integration with FlexNet Types</h2>
-                    <p class="mb-4">FlexNet's state management integrates seamlessly with its functional types, allowing you to create robust, type-safe state containers.</p>
+                    <p class="mb-4">FlexNet's state management integrates seamlessly with its functional types, allowing you to create robust, type-safe state containers. See the <a href="errors.html" class="text-primary hover:underline">Error Handling guide</a> for more on these types.</p>
                 
                     <h3 class="text-xl font-medium mt-6 mb-3">Using Maybe for Optional State</h3>
-                    <p class="mb-4">A reducer can manage a state that is a <code>Maybe</code> type, which is perfect for handling optional data like a logged-in user.</p>
-                    <pre><code class="language-javascript">import { Maybe } from './src/core/types/maybe.js';
+                    <p class="mb-4">A reducer can manage a state that is a <code>Maybe</code> type, which is perfect for handling optional data like a logged-in user. The <code>Maybe</code> type is fully documented in the <a href="../base/api-reference.html#maybe-type" class="text-primary hover:underline">API Reference</a>.</p>
+                    <pre><code class="language-javascript">import { Maybe } from '../../core/types/maybe.js';
 
 // The state is Maybe<User>
 const userProfileReducer = state => action => {
@@ -200,8 +201,8 @@ const displayName = userStore.getState()
                     </code></pre>
                 
                     <h3 class="text-xl font-medium mt-6 mb-3">Using Either for Error Handling</h3>
-                    <p class="mb-4">You can use an <code>Either</code> as your state to model data that can be in one of two states, such as valid data or an error.</p>
-                    <pre><code class="language-javascript">import { Either } from './src/core/types/either.js';
+                    <p class="mb-4">You can use an <code>Either</code> as your state to model data that can be in one of two states, such as valid data or an error. The <code>Either</code> type is fully documented in the <a href="../base/api-reference.html#either-type" class="text-primary hover:underline">API Reference</a>.</p>
+                    <pre><code class="language-javascript">import { Either } from '../../core/types/either.js';
 
 // The state is Either<Error, FormData>
 const formReducer = state => action => {
@@ -232,6 +233,27 @@ formStore.getState().fold(
   data => console.log('Submitting data:', data)
 );
                     </code></pre>
+                </div>
+                <div class="mt-12 border-t border-gray-200 pt-8">
+                    <h2 class="text-2xl font-semibold mb-4">Next Steps</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <a href="render.html" class="block p-4 border border-gray-200 rounded-lg hover:border-primary hover:shadow-md transition">
+                            <h3 class="font-semibold text-lg mb-2">Render System</h3>
+                            <p class="text-gray-600">Learn how to subscribe to the store to render UI updates.</p>
+                        </a>
+                        <a href="events.html" class="block p-4 border border-gray-200 rounded-lg hover:border-primary hover:shadow-md transition">
+                            <h3 class="font-semibold text-lg mb-2">Events System</h3>
+                            <p class="text-gray-600">See how user interactions dispatch actions to the store.</p>
+                        </a>
+                        <a href="effects.html" class="block p-4 border border-gray-200 rounded-lg hover:border-primary hover:shadow-md transition">
+                            <h3 class="font-semibold text-lg mb-2">Effects System</h3>
+                            <p class="text-gray-600">Understand how to handle side effects and update state with the results.</p>
+                        </a>
+                        <a href="../base/api-reference.html" class="block p-4 border border-gray-200 rounded-lg hover:border-primary hover:shadow-md transition">
+                            <h3 class="font-semibold text-lg mb-2">API Reference</h3>
+                            <p class="text-gray-600">Get the full details on the state management API and other core systems.</p>
+                        </a>
+                    </div>
                 </div>
             </div>
         </main>

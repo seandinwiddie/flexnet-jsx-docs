@@ -47,7 +47,7 @@
                 
                 <div class="prose prose-blue max-w-none">
                     <p class="lead text-xl text-gray-600 mb-8">
-                        FlexNet JSX is a lightweight, zero-dependency framework for building web applications with a purely functional approach. It leverages pure functions, immutable data, and composition to help you write more predictable, maintainable, and testable code.
+                        FlexNet JSX is a lightweight, zero-dependency framework for building web applications with a <a href="../base/architecture-overview.html#functional-architecture-principles" class="text-primary hover:underline">purely functional approach</a>. It leverages pure functions, immutable data, and composition to help you write more predictable, maintainable, and testable code.
                     </p>
 
                     <div class="bg-blue-50 border-l-4 border-primary p-4 rounded-md mb-8">
@@ -56,15 +56,13 @@
                     </div>
 
                     <h2 class="text-2xl font-bold mt-8 mb-4">The Four Pillars of FlexNet JSX</h2>
-                    <p class="mb-6">The framework is built on four core principles that work together to provide a powerful and predictable development experience.</p>
+                    <p class="mb-6">The framework is built on four core principles that work together to provide a powerful and predictable development experience, as detailed in the <a href="../base/architecture-overview.html#core-operating-schema" class="text-primary hover:underline">Core Operating Schema</a>.</p>
                     
                     <h3 class="text-xl font-semibold mt-6 mb-3">1. Pure Functional Components</h3>
                     <p class="mb-4">
-                        In FlexNet, components are not classes or complex objects—they are simply pure functions. Each function takes `props` as input and returns a description of the UI (a virtual DOM node). This makes your components incredibly easy to test and reason about.
+                        In FlexNet, components are not classes or complex objects—they are simply <a href="../base/architecture-overview.html#functional-architecture-principles" class="text-primary hover:underline">pure functions</a>. Each function takes <code>props</code> as input and returns a description of the UI (a virtual DOM node). This makes your components incredibly easy to test and reason about. The rendering is handled by the <a href="../base/api-reference.html#render-system" class="text-primary hover:underline">Render System</a>.
                     </p>
-                    <pre class="bg-gray-800 text-white p-4 rounded-md mb-6 overflow-x-auto"><code class="language-javascript">import { createElement, render } from '../../systems/render/functions.js';
-
-// A pure function that returns a UI description.
+                    <pre class="bg-gray-800 text-white p-4 rounded-md mb-6 overflow-x-auto"><code class="language-javascript">// A pure function that returns a UI description.
 const Greeting = ({ name }) => 
   createElement('h1', null, `Hello, ${name}!`);
 
@@ -76,11 +74,9 @@ render(
 
                     <h3 class="text-xl font-semibold mt-6 mb-3">2. Predictable State Management</h3>
                     <p class="mb-4">
-                        State is managed in a centralized store and is completely immutable. The only way to change state is by dispatching an `action`. This action is handled by a `reducer`—a pure function that calculates the next state. This pattern ensures a strict, unidirectional data flow.
+                        State is managed in a centralized store and is completely immutable. The only way to change state is by dispatching an <code>action</code>. This action is handled by a <code>reducer</code>—a pure function that calculates the next state. This pattern ensures a strict, <a href="../base/architecture-overview.html#state-management" class="text-primary hover:underline">unidirectional data flow</a>.
                     </p>
-                    <pre class="bg-gray-800 text-white p-4 rounded-md mb-6 overflow-x-auto"><code class="language-javascript">import { createStore } from '../../systems/state/functions.js';
-
-// A reducer is a pure function: (currentState, action) => newState
+                    <pre class="bg-gray-800 text-white p-4 rounded-md mb-6 overflow-x-auto"><code class="language-javascript">// A reducer is a pure function: (currentState, action) => newState
 const counterReducer = (state = 0, action) => {
     switch(action.type) {
         case 'INCREMENT': return state + 1;
@@ -98,16 +94,14 @@ console.log(store.getState()); // Output: 1
 
                     <h3 class="text-xl font-semibold mt-6 mb-3">3. Composition as the Foundation</h3>
                     <p class="mb-4">
-                        Instead of inheritance or complex lifecycle methods, FlexNet heavily relies on function composition. You build complex functionality by combining simple, reusable functions into a larger pipeline.
+                        Instead of inheritance or complex lifecycle methods, FlexNet heavily relies on <a href="../base/api-reference.html#composition" class="text-primary hover:underline">function composition</a>. You build complex functionality by combining simple, reusable functions into a larger pipeline.
                     </p>
-                    <pre class="bg-gray-800 text-white p-4 rounded-md mb-6 overflow-x-auto"><code class="language-javascript">import { compose } from '../../core/functions/composition.js';
-
-// Simple, reusable functions
+                    <pre class="bg-gray-800 text-white p-4 rounded-md mb-6 overflow-x-auto"><code class="language-javascript">// Simple, reusable functions
 const add5 = x => x + 5;
 const multiplyBy2 = x => x * 2;
 const toCurrency = x => `$${x.toFixed(2)}`;
 
-// Create a new function by composing them together
+// Create a new function by composing them together using `compose`
 const calculatePrice = compose(toCurrency, multiplyBy2, add5);
 
 console.log(calculatePrice(10)); // "$30.00"
@@ -116,17 +110,14 @@ console.log(calculatePrice(10)); // "$30.00"
 
                     <h3 class="text-xl font-semibold mt-6 mb-3">4. Type-Safe Data Handling</h3>
                     <p class="mb-4">
-                        FlexNet provides a built-in, functional type system to help you handle common sources of runtime errors, such as null values or exceptions, in a safe and explicit way—without needing a separate language like TypeScript.
+                        FlexNet provides a built-in, <a href="../core/types.html" class="text-primary hover:underline">functional type system</a> to help you handle common sources of runtime errors, such as null values or exceptions, in a safe and explicit way—without needing a separate language like TypeScript.
                     </p>
-                    <pre class="bg-gray-800 text-white p-4 rounded-md mb-6 overflow-x-auto"><code class="language-javascript">import { Result } from '../../core/types/result.js';
-import { pipe } from '../../core/functions/composition.js';
-
-// Use Result.fromTry to safely wrap a function that might throw an error
+                    <pre class="bg-gray-800 text-white p-4 rounded-md mb-6 overflow-x-auto"><code class="language-javascript">// Use Result.fromTry to safely wrap a function that might throw an error
 const safeJsonParse = jsonString => Result.fromTry(() => JSON.parse(jsonString));
 
 const getProp = key => obj => obj[key];
 
-// Build a safe pipeline
+// Build a safe pipeline using function composition
 const getUsername = pipe(
     safeJsonParse,
     Result.map(getProp('username'))
@@ -134,7 +125,7 @@ const getUsername = pipe(
 
 // No more "Uncaught TypeError: Cannot read property 'username' of null"!
 const result = getUsername('{"username": "Alice"}'); // Result.Ok("Alice")
-const failedResult = getUsername('{"name": "Bob"}'); // Result.Ok(undefined) - could be improved with Maybe!
+const failedResult = getUsername('{"name": "Bob"}'); // Result.Ok(undefined). This is where the Maybe type would be useful!
 const errorResult = getUsername('not json'); // Result.Error(SyntaxError: ...)
 </code></pre>
 
@@ -152,26 +143,26 @@ const errorResult = getUsername('not json'); // Result.Error(SyntaxError: ...)
                             </thead>
                             <tbody class="bg-white divide-y divide-gray-200">
                                 <tr>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">Programming Paradigm</td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Purely Functional</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900"><a href="../base/architecture-overview.html#functional-architecture-principles" class="text-primary hover:underline">Programming Paradigm</a></td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-green-600 font-semibold">Purely Functional</td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Mixed (Functional &amp; OOP)</td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Mixed (Reactive &amp; OOP)</td>
                                 </tr>
                                 <tr>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">State Management</td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Reducer-based Immutable Store</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900"><a href="../base/architecture-overview.html#state-management" class="text-primary hover:underline">State Management</a></td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-green-600 font-semibold">Reducer-based Immutable Store</td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Hooks / Context / Redux</td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Reactive State / Vuex</td>
                                 </tr>
                                 <tr>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">Bundle Size</td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Very Small</td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Medium</td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Medium</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900"><a href="../base/consistency-analysis.html" class="text-primary hover:underline">Dependencies</a></td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-green-600 font-semibold">Zero</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Required (React, ReactDOM)</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Required (Vue)</td>
                                 </tr>
                                 <tr>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">Type Safety</td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Built-in Functional Types</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900"><a href="../core/types.html" class="text-primary hover:underline">Type Safety</a></td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-green-600 font-semibold">Built-in Functional Types</td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Via TypeScript</td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Via TypeScript</td>
                                 </tr>
