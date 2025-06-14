@@ -70,7 +70,8 @@
     ├── api-reference.md
     └── getting-started-guide.md</code></pre>
 
-                <h2 class="text-2xl font-bold mb-4">Functional Architecture Principles</h2>
+                <h2 class="text-2xl font-bold mb-4">Core Operating Schema</h2>
+                <h3 class="text-xl font-semibold mb-4">Functional Architecture Principles</h3>
                 <ol class="list-decimal pl-5 mb-6">
                     <li class="mb-2"><span class="font-semibold">Pure Function First</span>
                         <ul class="list-disc pl-5 mt-2">
@@ -109,156 +110,205 @@
                     </li>
                 </ol>
 
-                <h2 class="text-2xl font-bold mb-4">System Components</h2>
-                <h3 class="text-xl font-semibold mb-2">Core Runtime (/src/core/runtime/)</h3>
-                <ul class="list-disc pl-5 mb-4">
-                    <li>JSX transformation</li>
-                    <li>Virtual DOM implementation</li>
-                    <li>Reconciliation engine</li>
-                    <li>Event delegation</li>
-                </ul>
-                <h3 class="text-xl font-semibold mb-2">Type System (/src/core/types/)</h3>
-                <ul class="list-disc pl-5 mb-4">
-                    <li>Functional type implementations</li>
-                    <li>Type composition utilities</li>
-                    <li>Type validation functions</li>
-                    <li>Type conversion helpers</li>
-                </ul>
-                <h3 class="text-xl font-semibold mb-2">Core Functions (/src/core/functions/)</h3>
-                <ul class="list-disc pl-5 mb-4">
-                    <li>Function composition utilities</li>
-                    <li>Data transformation helpers</li>
-                    <li>Pure utility functions</li>
-                    <li>Functional combinators</li>
-                </ul>
-                <h3 class="text-xl font-semibold mb-2">Rendering System (/src/systems/render/)</h3>
-                <ul class="list-disc pl-5 mb-4">
-                    <li>Pure render functions</li>
-                    <li>DOM diffing algorithm</li>
-                    <li>Batch updates</li>
-                    <li>Layout calculation</li>
-                </ul>
-                <h3 class="text-xl font-semibold mb-2">State System (/src/systems/state/)</h3>
-                <ul class="list-disc pl-5 mb-4">
-                    <li>State management functions</li>
-                    <li>State transitions</li>
-                    <li>State composition</li>
-                    <li>State synchronization</li>
-                </ul>
-                <h3 class="text-xl font-semibold mb-2">Effect System (/src/systems/effects/)</h3>
-                <ul class="list-disc pl-5 mb-4">
-                    <li>Effect scheduling</li>
-                    <li>Effect composition</li>
-                    <li>Cleanup functions</li>
-                    <li>Resource management</li>
-                </ul>
-                <h3 class="text-xl font-semibold mb-2">Event System (/src/systems/events/)</h3>
-                <ul class="list-disc pl-5 mb-4">
-                    <li>Event handling</li>
-                    <li>Event composition</li>
-                    <li>Event delegation</li>
-                    <li>Event filtering</li>
-                </ul>
+                <h3 class="text-xl font-semibold mb-4">System Components</h3>
+                <ol class="list-decimal pl-5 mb-6">
+                    <li class="mb-4">
+                        <h4 class="font-semibold mb-2">Core Runtime (/src/core/runtime/)</h4>
+                        <ul class="list-disc pl-5">
+                            <li>JSX transformation</li>
+                            <li>Virtual DOM implementation</li>
+                            <li>Reconciliation engine</li>
+                            <li>Event delegation</li>
+                        </ul>
+                    </li>
+                    <li class="mb-4">
+                        <h4 class="font-semibold mb-2">Type System (/src/core/types/)</h4>
+                        <ul class="list-disc pl-5">
+                            <li>Functional type implementations</li>
+                            <li>Type composition utilities</li>
+                            <li>Type validation functions</li>
+                            <li>Type conversion helpers</li>
+                        </ul>
+                    </li>
+                    <li class="mb-4">
+                        <h4 class="font-semibold mb-2">Core Functions (/src/core/functions/)</h4>
+                        <ul class="list-disc pl-5">
+                            <li>Function composition utilities</li>
+                            <li>Data transformation helpers</li>
+                            <li>Pure utility functions</li>
+                            <li>Functional combinators</li>
+                        </ul>
+                    </li>
+                    <li class="mb-4">
+                        <h4 class="font-semibold mb-2">Rendering System (/src/systems/render/)</h4>
+                        <ul class="list-disc pl-5">
+                            <li>Pure render functions</li>
+                            <li>DOM diffing algorithm</li>
+                            <li>Batch updates</li>
+                            <li>Layout calculation</li>
+                        </ul>
+                    </li>
+                    <li class="mb-4">
+                        <h4 class="font-semibold mb-2">State System (/src/systems/state/)</h4>
+                        <ul class="list-disc pl-5">
+                            <li>State management functions</li>
+                            <li>State transitions</li>
+                            <li>State composition</li>
+                            <li>State synchronization</li>
+                        </ul>
+                    </li>
+                    <li class="mb-4">
+                        <h4 class="font-semibold mb-2">Effect System (/src/systems/effects/)</h4>
+                        <ul class="list-disc pl-5">
+                            <li>Effect scheduling</li>
+                            <li>Effect composition</li>
+                            <li>Cleanup functions</li>
+                            <li>Resource management</li>
+                        </ul>
+                    </li>
+                    <li class="mb-4">
+                        <h4 class="font-semibold mb-2">Event System (/src/systems/events/)</h4>
+                        <ul class="list-disc pl-5">
+                            <li>Event handling</li>
+                            <li>Event composition</li>
+                            <li>Event delegation</li>
+                            <li>Event filtering</li>
+                        </ul>
+                    </li>
+                </ol>
 
-                <h2 class="text-2xl font-bold mb-4">Feature Components</h2>
-                <h3 class="text-xl font-semibold mb-2">Router (/src/features/router/)</h3>
-                <ul class="list-disc pl-5 mb-4">
-                    <li>Pure routing functions</li>
-                    <li>Route matching</li>
-                    <li>Navigation handling</li>
-                    <li>Guard implementation</li>
-                </ul>
-                <h3 class="text-xl font-semibold mb-2">Forms (/src/features/forms/)</h3>
-                <ul class="list-disc pl-5 mb-4">
-                    <li>Form state management</li>
-                    <li>Validation functions</li>
-                    <li>Field composition</li>
-                    <li>Form submission</li>
-                </ul>
-                <h3 class="text-xl font-semibold mb-2">Validation (/src/features/validation/)</h3>
-                <ul class="list-disc pl-5 mb-4">
-                    <li>Data validation</li>
-                    <li>Schema validation</li>
-                    <li>Type checking</li>
-                    <li>Error reporting</li>
-                </ul>
-                <h3 class="text-xl font-semibold mb-2">Animation (/src/features/animation/)</h3>
-                <ul class="list-disc pl-5 mb-6">
-                    <li>Animation functions</li>
-                    <li>Transition handling</li>
-                    <li>Timing functions</li>
-                    <li>Frame calculation</li>
-                </ul>
+                <h3 class="text-xl font-semibold mb-4">Feature Components</h3>
+                <ol class="list-decimal pl-5 mb-6">
+                    <li class="mb-4">
+                        <h4 class="font-semibold mb-2">Router (/src/features/router/)</h4>
+                        <ul class="list-disc pl-5">
+                            <li>Pure routing functions</li>
+                            <li>Route matching</li>
+                            <li>Navigation handling</li>
+                            <li>Guard implementation</li>
+                        </ul>
+                    </li>
+                    <li class="mb-4">
+                        <h4 class="font-semibold mb-2">Forms (/src/features/forms/)</h4>
+                        <ul class="list-disc pl-5">
+                            <li>Form state management</li>
+                            <li>Validation functions</li>
+                            <li>Field composition</li>
+                            <li>Form submission</li>
+                        </ul>
+                    </li>
+                    <li class="mb-4">
+                        <h4 class="font-semibold mb-2">Validation (/src/features/validation/)</h4>
+                        <ul class="list-disc pl-5">
+                            <li>Data validation</li>
+                            <li>Schema validation</li>
+                            <li>Type checking</li>
+                            <li>Error reporting</li>
+                        </ul>
+                    </li>
+                    <li class="mb-4">
+                        <h4 class="font-semibold mb-2">Animation (/src/features/animation/)</h4>
+                        <ul class="list-disc pl-5">
+                            <li>Animation functions</li>
+                            <li>Transition handling</li>
+                            <li>Timing functions</li>
+                            <li>Frame calculation</li>
+                        </ul>
+                    </li>
+                </ol>
 
-                <h2 class="text-2xl font-bold mb-4">Security Implementation</h2>
-                <h3 class="text-xl font-semibold mb-2">Core Security (/src/security/)</h3>
-                <ul class="list-disc pl-5 mb-4">
-                    <li>XSS prevention</li>
-                    <li>CSP implementation</li>
-                    <li>Input sanitization</li>
-                    <li>Output encoding</li>
-                </ul>
-                <h3 class="text-xl font-semibold mb-2">Security Functions</h3>
-                <ul class="list-disc pl-5 mb-6">
-                    <li>Validation functions</li>
-                    <li>Sanitization utilities</li>
-                    <li>Security checks</li>
-                    <li>Audit helpers</li>
-                </ul>
+                <h3 class="text-xl font-semibold mb-4">Security Implementation</h3>
+                <ol class="list-decimal pl-5 mb-6">
+                    <li class="mb-4">
+                        <h4 class="font-semibold mb-2">Core Security (/src/security/)</h4>
+                        <ul class="list-disc pl-5">
+                            <li>XSS prevention</li>
+                            <li>CSP implementation</li>
+                            <li>Input sanitization</li>
+                            <li>Output encoding</li>
+                        </ul>
+                    </li>
+                    <li class="mb-4">
+                        <h4 class="font-semibold mb-2">Security Functions</h4>
+                        <ul class="list-disc pl-5">
+                            <li>Validation functions</li>
+                            <li>Sanitization utilities</li>
+                            <li>Security checks</li>
+                            <li>Audit helpers</li>
+                        </ul>
+                    </li>
+                </ol>
 
-                <h2 class="text-2xl font-bold mb-4">Development Standards</h2>
-                <h3 class="text-xl font-semibold mb-2">File Organization</h3>
-                <ul class="list-disc pl-5 mb-4">
-                    <li><code>functions.js</code> for pure functions</li>
-                    <li>Clear module boundaries</li>
-                    <li>Explicit dependencies</li>
-                    <li>Logical grouping</li>
-                </ul>
-                <h3 class="text-xl font-semibold mb-2">Code Structure</h3>
-                <ul class="list-disc pl-5 mb-4">
-                    <li>Pure function definitions</li>
-                    <li>Type signatures</li>
-                    <li>Function composition</li>
-                    <li>No side effects</li>
-                </ul>
-                <h3 class="text-xl font-semibold mb-2">Testing Approach</h3>
-                <ul class="list-disc pl-5 mb-4">
-                    <li>Unit tests for pure functions</li>
-                    <li>Integration tests for systems</li>
-                    <li>Property-based testing</li>
-                    <li>Effect isolation in tests</li>
-                </ul>
-                <h3 class="text-xl font-semibold mb-2">Documentation</h3>
-                <ul class="list-disc pl-5 mb-6">
-                    <li>Clear function signatures</li>
-                    <li>Type documentation</li>
-                    <li>Effect documentation</li>
-                    <li>Example usage</li>
-                </ul>
+                <h3 class="text-xl font-semibold mb-4">Development Standards</h3>
+                <ol class="list-decimal pl-5 mb-6">
+                    <li class="mb-4">
+                        <h4 class="font-semibold mb-2">File Organization</h4>
+                        <ul class="list-disc pl-5">
+                            <li><code>functions.js</code> for pure functions</li>
+                            <li>Clear module boundaries</li>
+                            <li>Explicit dependencies</li>
+                            <li>Logical grouping</li>
+                        </ul>
+                    </li>
+                    <li class="mb-4">
+                        <h4 class="font-semibold mb-2">Code Structure</h4>
+                        <ul class="list-disc pl-5">
+                            <li>Pure function definitions</li>
+                            <li>Type signatures</li>
+                            <li>Function composition</li>
+                            <li>No side effects</li>
+                        </ul>
+                    </li>
+                    <li class="mb-4">
+                        <h4 class="font-semibold mb-2">Testing Approach</h4>
+                        <ul class="list-disc pl-5">
+                            <li>Unit tests for pure functions</li>
+                            <li>Integration tests for systems</li>
+                            <li>Property-based testing</li>
+                            <li>Effect isolation in tests</li>
+                        </ul>
+                    </li>
+                    <li class="mb-4">
+                        <h4 class="font-semibold mb-2">Documentation</h4>
+                        <ul class="list-disc pl-5">
+                            <li>Clear function signatures</li>
+                            <li>Type documentation</li>
+                            <li>Effect documentation</li>
+                            <li>Example usage</li>
+                        </ul>
+                    </li>
+                </ol>
 
-                <h2 class="text-2xl font-bold mb-4">Performance Considerations</h2>
-                <h3 class="text-xl font-semibold mb-2">Render Optimization</h3>
-                <ul class="list-disc pl-5 mb-4">
-                    <li>Pure render functions</li>
-                    <li>Efficient diffing</li>
-                    <li>Batch updates</li>
-                    <li>Memory management</li>
-                </ul>
-                <h3 class="text-xl font-semibold mb-2">State Efficiency</h3>
-                <ul class="list-disc pl-5 mb-4">
-                    <li>Immutable updates</li>
-                    <li>State composition</li>
-                    <li>Minimal re-renders</li>
-                    <li>Memory-efficient representation</li>
-                    <li>Performance monitoring</li>
-                </ul>
-                <h3 class="text-xl font-semibold mb-2">Effect Management</h3>
-                <ul class="list-disc pl-5 mb-6">
-                    <li>Effect scheduling</li>
-                    <li>Resource cleanup</li>
-                    <li>Memory leaks prevention</li>
-                    <li>Performance monitoring</li>
-                </ul>
+                <h3 class="text-xl font-semibold mb-4">Performance Considerations</h3>
+                <ol class="list-decimal pl-5 mb-6">
+                    <li class="mb-4">
+                        <h4 class="font-semibold mb-2">Render Optimization</h4>
+                        <ul class="list-disc pl-5">
+                            <li>Pure render functions</li>
+                            <li>Efficient diffing</li>
+                            <li>Batch updates</li>
+                            <li>Memory management</li>
+                        </ul>
+                    </li>
+                    <li class="mb-4">
+                        <h4 class="font-semibold mb-2">State Efficiency</h4>
+                        <ul class="list-disc pl-5">
+                            <li>Immutable updates</li>
+                            <li>State composition</li>
+                            <li>Minimal re-renders</li>
+                            <li>Memory-efficient representation</li>
+                        </ul>
+                    </li>
+                    <li class="mb-4">
+                        <h4 class="font-semibold mb-2">Effect Management</h4>
+                        <ul class="list-disc pl-5">
+                            <li>Effect scheduling</li>
+                            <li>Resource cleanup</li>
+                            <li>Memory leaks prevention</li>
+                            <li>Performance monitoring</li>
+                        </ul>
+                    </li>
+                </ol>
             </div>
         </main>
     </div>
