@@ -3,11 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FlexNet JSX API Reference</title>
+    <title>API Reference - FlexNet JSX</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/atom-one-dark.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
-    <link rel="stylesheet" href="assets/main.css">
     <script>
         tailwind.config = {
             theme: {
@@ -25,77 +24,19 @@
     </script>
 </head>
 <body class="bg-gray-50 text-gray-900 min-h-screen">
-    <div class="flex flex-col md:flex-row">
+    <div class="flex">
         <!-- Sidebar -->
-        <aside class="w-full md:w-64 bg-white border-r border-gray-200 md:h-screen md:sticky top-0 overflow-y-auto">
-            <div class="p-4 border-b border-gray-200">
-                <h1 class="text-2xl font-bold text-primary">FlexNet</h1>
-                <p class="text-sm text-gray-500">v1.0.0</p>
-            </div>
-            <nav class="p-4">
-                <div class="mb-6">
-                    <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">Getting Started</h3>
-                    <ul class="space-y-2">
-                        <li><a href="guides/introduction.html" class="block text-gray-700 hover:text-primary">Introduction</a></li>
-                        <li><a href="guides/installation.html" class="block text-gray-700 hover:text-primary">Installation</a></li>
-                        <li><a href="guides/quickstart.html" class="block text-gray-700 hover:text-primary">Quick Start</a></li>
-                        <li><a href="guides/core-concepts.html" class="block text-gray-700 hover:text-primary">Core Concepts</a></li>
-                    </ul>
-                </div>
-                <div class="mb-6">
-                    <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">Core</h3>
-                    <ul class="space-y-2">
-                        <li><a href="core/jsx-runtime.html" class="block text-gray-700 hover:text-primary">JSX Runtime</a></li>
-                        <li><a href="core/types.html" class="block text-gray-700 hover:text-primary">Type System</a></li>
-                        <li><a href="core/functions.html" class="block text-gray-700 hover:text-primary">Functions</a></li>
-                        <li><a href="core/security.html" class="block text-gray-700 hover:text-primary">Security</a></li>
-                    </ul>
-                </div>
-                <div class="mb-6">
-                    <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">Systems</h3>
-                    <ul class="space-y-2">
-                        <li><a href="systems/state.html" class="block text-gray-700 hover:text-primary">State Management</a></li>
-                        <li><a href="systems/effects.html" class="block text-gray-700 hover:text-primary">Effects</a></li>
-                        <li><a href="systems/render.html" class="block text-gray-700 hover:text-primary">Render</a></li>
-                        <li><a href="systems/events.html" class="block text-gray-700 hover:text-primary">Events</a></li>
-                        <li><a href="systems/errors.html" class="block text-gray-700 hover:text-primary">Error Handling</a></li>
-                    </ul>
-                </div>
-                <div class="mb-6">
-                    <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">Examples</h3>
-                    <ul class="space-y-2">
-                        <li><a href="examples/counter.html" class="block text-gray-700 hover:text-primary">Counter</a></li>
-                        <li><a href="examples/todo.html" class="block text-gray-700 hover:text-primary">Todo App</a></li>
-                        <li><a href="examples/website.html" class="block text-gray-700 hover:text-primary">Website</a></li>
-                    </ul>
-                </div>
-                <div class="mb-6">
-                    <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">API Reference</h3>
-                    <ul class="space-y-2">
-                        <li><a href="api/jsx.html" class="block text-gray-700 hover:text-primary">JSX API</a></li>
-                        <li><a href="api/maybe.html" class="block text-gray-700 hover:text-primary">Maybe</a></li>
-                        <li><a href="api/either.html" class="block text-gray-700 hover:text-primary">Either</a></li>
-                        <li><a href="api/result.html" class="block text-gray-700 hover:text-primary">Result</a></li>
-                        <li><a href="api/store.html" class="block text-gray-700 hover:text-primary">Store</a></li>
-                    </ul>
-                </div>
-            </nav>
+        <aside id="sidebar-placeholder" class="w-64 bg-white border-r border-gray-200 h-screen sticky top-0 overflow-y-auto flex-shrink-0">
         </aside>
 
         <!-- Main content -->
-        <main class="flex-1">
-            <div class="border-b border-gray-200 bg-white sticky top-0 z-10">
-                <div class="flex items-center justify-end px-4 py-3">
-                    <div class="flex space-x-4 ml-4">
-                        <a href="https://github.com/flexnet/flexnet-jsx" target="_blank" class="text-gray-600 hover:text-primary">GitHub</a>
-                        <a href="../starter-project/README.md" target="_blank" class="text-gray-600 hover:text-primary">Starter Project</a>
-                    </div>
-                </div>
-            </div>
+        <main class="flex-1 overflow-y-auto">
+            <header id="header-placeholder" class="border-b border-gray-200 bg-white sticky top-0 z-10">
+            </header>
 
-            <div class="p-6 max-w-5xl mx-auto">
+            <div class="p-8 max-w-5xl mx-auto">
                 <h1 class="text-3xl font-bold mb-4">FlexNet JSX API Reference</h1>
-                <p class="mb-6">Version: 1.0.0 (Released 2025-01-31)</p>
+                <p class="mb-6">This document provides a comprehensive reference for the FlexNet JSX Framework API. It covers all core modules, types, and functions.</p>
 
                 <h2 class="text-2xl font-bold mb-4">Core Types</h2>
                 <h3 class="text-xl font-semibold mb-2">Maybe Type</h3>
@@ -195,5 +136,14 @@ const createStore = (reducer, initialState) => {
 };</code></pre>
 
                 <h3 class="text-xl font-semibold mb-2">Effect System</h3>
-                <pre class="bg-gray-800 text-white p-4 rounded-md mb-4 overflow-x-auto"><code class="language-javascript">// src">``` (truncated for brevity)
-</code_block_to_apply_changes_from> 
+                <pre class="bg-gray-800 text-white p-4 rounded-md mb-4 overflow-x-auto"><code class="language-javascript">// src/systems/effects/functions.js
+// ... existing code ...
+</code></pre>
+            </div>
+        </main>
+    </div>
+    <footer id="footer-placeholder" class="bg-white border-t border-gray-200 py-6">
+    </footer>
+    <script src="/assets/main.js"></script>
+</body>
+</html>

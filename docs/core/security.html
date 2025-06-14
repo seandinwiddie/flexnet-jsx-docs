@@ -7,7 +7,6 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/atom-one-dark.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
-    <link rel="stylesheet" href="../assets/main.css">
     <script>
         tailwind.config = {
             theme: {
@@ -25,17 +24,17 @@
     </script>
 </head>
 <body class="bg-gray-50 text-gray-900 min-h-screen">
-    <div class="flex flex-col md:flex-row">
+    <div class="flex">
         <!-- Sidebar -->
-        <aside id="sidebar-placeholder" class="w-full md:w-64 bg-white border-r border-gray-200 md:h-screen md:sticky top-0 overflow-y-auto">
+        <aside id="sidebar-placeholder" class="w-64 bg-white border-r border-gray-200 h-screen sticky top-0 overflow-y-auto flex-shrink-0">
         </aside>
 
         <!-- Main content -->
-        <main class="flex-1">
+        <main class="flex-1 overflow-y-auto">
             <header id="header-placeholder" class="border-b border-gray-200 bg-white sticky top-0 z-10">
             </header>
 
-            <div class="p-8 max-w-4xl mx-auto">
+            <div class="p-8 max-w-5xl mx-auto">
                 <div class="flex items-center space-x-2 text-sm text-gray-500 mb-8">
                     <a href="../index.html" class="hover:text-primary">Home</a>
                     <span>/</span>
@@ -65,18 +64,19 @@
                             <h4 class="font-semibold text-white">Explicit Content Sanitization</h4>
                         </div>
                         <div class="p-4">
-                            <pre class="bg-gray-800 text-white p-4 rounded-lg"><code class="language-javascript">import { sanitize } from './src/security/functions.js';
+                            <pre class="bg-gray-800 text-white p-4 rounded-md mb-6 overflow-x-auto"><code class="language-javascript">import { sanitize } from './src/security/functions.js';
 import { createElement } from './src/systems/render/functions.js';
 
-// User input (potentially malicious)
-const userInput = '<img src=x onerror=alert("XSS")>';
+const userContent = '&lt;img src=x onerror=alert(1)&gt;';
 
-// The `createElement` function should treat this as plain text.
-// For explicit safety, especially if building HTML strings, use sanitize.
-const safeContent = sanitize(userInput); // -> ""
+// Sanitize the input before rendering
+const sanitizedContent = sanitize(userContent);
 
-// An empty string is rendered, preventing the attack.
-const component = createElement('div', null, safeContent);
+// This will render the string as text, not as an HTML element
+const element = createElement('div', null, sanitizedContent);
+
+// The resulting HTML will be:
+// &lt;div&gt;&amp;lt;img src=x onerror=alert(1)&amp;gt;&lt;/div&gt;
 </code></pre>
                         </div>
                     </div>
@@ -168,25 +168,12 @@ handleLogin('No');    // Logs validation error
                     </div>
 
                     <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2">Content Security Policy (CSP)</h2>
-                    <p class="mb-4">FlexNet is designed to work well with a strict Content Security Policy, as it does not rely on inline scripts or `eval` for its core functionality.</p>
-                    
-                    <div class="bg-gray-900 rounded-lg mb-6 overflow-hidden relative">
-                        <button class="absolute top-2 right-2 bg-gray-700 hover:bg-gray-600 text-white text-xs font-bold py-1 px-2 rounded">Copy</button>
-                        <div class="border-b border-gray-700 px-4 py-3">
-                            <h4 class="font-semibold text-white">Recommended CSP Configuration</h4>
-                        </div>
-                        <div class="p-4">
-                            <pre class="bg-gray-800 text-white p-4 rounded-lg"><code class="language-html">&lt;meta http-equiv="Content-Security-Policy" content="
-  default-src 'self';
-  script-src 'self';
-  style-src 'self' 'unsafe-inline'; /* unsafe-inline might be needed for some CSS-in-JS solutions */
-  img-src 'self' data:;
-  connect-src 'self' https://api.yourdomain.com;
-  object-src 'none';
-  frame-ancestors 'none';
-"&gt;</code></pre>
-                        </div>
-                    </div>
+                    <p class="mb-6">
+                        While FlexNet's rendering system prevents DOM-based XSS, it is still crucial to implement a Content Security Policy (CSP) as a defense-in-depth measure. A strong CSP can prevent a wide range of injection attacks by specifying which sources of content are trusted.
+                    </p>
+                    <p>An example of a restrictive CSP header is:</p>
+                    <pre class="bg-gray-800 text-white p-4 rounded-md mb-6 overflow-x-auto"><code class="language-http">Content-Security-Policy: default-src 'self'; script-src 'self'; style-src 'self' https://cdn.tailwindcss.com; img-src 'self';
+</code></pre>
 
                     <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded-md mt-8">
                         <h4 class="font-semibold flex items-center">
