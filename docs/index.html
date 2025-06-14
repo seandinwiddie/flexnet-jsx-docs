@@ -40,8 +40,8 @@
                     <h1 class="text-5xl font-bold mb-4 text-shadow">FlexNet JSX Framework</h1>
                     <p class="text-xl mb-8">A functional JavaScript implementation for building modern web applications</p>
                     <div class="flex justify-center space-x-4">
-                        <a href="guides/quickstart.html" class="px-8 py-4 bg-white text-primary rounded-md hover:bg-gray-100 transition font-semibold">Get Started</a>
-                        <a href="guides/examples.html" class="px-8 py-4 bg-transparent text-white border border-white rounded-md hover:bg-white hover:text-primary transition font-semibold">View Examples</a>
+                        <a href="base/getting-started-guide.html" class="px-8 py-4 bg-white text-primary rounded-md hover:bg-gray-100 transition font-semibold">Get Started</a>
+                        <a href="base/api-reference.html" class="px-8 py-4 bg-transparent text-white border border-white rounded-md hover:bg-white hover:text-primary transition font-semibold">API Reference</a>
                     </div>
                 </div>
 
@@ -53,7 +53,7 @@
                         </div>
                         <div>
                             <h3 class="text-lg font-semibold mb-2">Pure Functional</h3>
-                            <p class="text-gray-600">Build applications with pure functions, immutable state, and functional composition.</p>
+                            <p class="text-gray-600">Build applications with pure functions, immutable state, and functional composition. <a href="base/architecture-overview.html" class="text-primary hover:underline">Learn more.</a></p>
                         </div>
                     </div>
                     <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-100 flex items-start">
@@ -71,7 +71,7 @@
                         </div>
                         <div>
                             <h3 class="text-lg font-semibold mb-2">Type System</h3>
-                            <p class="text-gray-600">Functional type system with Maybe, Either, and Result types for better error handling.</p>
+                            <p class="text-gray-600">Functional type system with Maybe, Either, and Result types for better error handling. <a href="base/api-reference.html#core-types" class="text-primary hover:underline">See the API.</a></p>
                         </div>
                     </div>
                     <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-100 flex items-start">
@@ -80,7 +80,7 @@
                         </div>
                         <div>
                             <h3 class="text-lg font-semibold mb-2">Security First</h3>
-                            <p class="text-gray-600">Built with security in mind, including XSS prevention and input validation.</p>
+                            <p class="text-gray-600">Built with security in mind, including XSS prevention and input validation. <a href="base/security-practices.html" class="text-primary hover:underline">Read the guide.</a></p>
                         </div>
                     </div>
                 </div>
@@ -101,7 +101,7 @@ cd starter-project
 python -m http.server 3000
 # Open http://localhost:3000</code></pre>
                     </div>
-                    <a href="guides/quickstart.html" class="text-primary hover:underline">Learn More →</a>
+                    <a href="base/getting-started-guide.html" class="text-primary hover:underline">Learn More →</a>
                 </div>
 
                 <!-- Example section -->
@@ -109,37 +109,40 @@ python -m http.server 3000
                     <h2 class="text-2xl font-bold mb-4">Basic Counter Example</h2>
                     <div class="bg-gray-900 rounded-lg mb-4 overflow-hidden relative">
                         <button class="absolute top-2 right-2 bg-gray-700 hover:bg-gray-600 text-white text-xs font-bold py-1 px-2 rounded">Copy</button>
-                        <pre class="bg-gray-800 text-white p-4 overflow-x-auto"><code class="language-javascript">import { compose, Maybe } from './src/core/runtime/runtime.js';
-import { createStore } from './src/systems/state/store.js';
-import { createElement } from './src/core/runtime/jsx.js';
+                        <pre class="bg-gray-800 text-white p-4 overflow-x-auto"><code class="language-javascript">import { createElement, render } from './src/systems/render/functions.js';
+import { createStore } from './src/systems/state/functions.js';
 
-// Create immutable store
-const store = createStore(Maybe.Just(0));
+// Reducer for state management
+const counterReducer = (state = 0, action) => {
+    switch (action.type) {
+        case 'INCREMENT': return state + 1;
+        case 'DECREMENT': return state - 1;
+        default: return state;
+    }
+};
 
-// Pure function for state update
-const increment = n => Maybe.Just(n + 1);
+// Create a store with the reducer and initial state
+const store = createStore(counterReducer, 0);
 
-// Counter component as pure function
-const Counter = ({ count, onIncrement }) =>
+// Counter component
+const Counter = ({ count }) =>
   createElement('div', null,
-    createElement('h2', null, `Count: ${count}`),
-    createElement('button', {
-      onClick: compose(onIncrement, increment)
-    }, 'Increment')
+    createElement('h1', null, `Count: ${count}`),
+    createElement('button', { onClick: () => store.dispatch({ type: 'DECREMENT' }) }, '-'),
+    createElement('button', { onClick: () => store.dispatch({ type: 'INCREMENT' }) }, '+')
   );
 
-// Render with proper effect handling
-store.subscribe(count =>
-  render(
-    createElement(Counter, {
-      count: count,
-      onIncrement: store.update
-    }),
-    document.getElementById('root')
-  )
-);</code></pre>
+// Main component to render
+const App = () => createElement(Counter, { count: store.getState() });
+
+// Subscribe to store updates and re-render
+const rootElement = document.getElementById('root');
+store.subscribe(() => render(App(), rootElement));
+
+// Initial render
+render(App(), rootElement);</code></pre>
                     </div>
-                    <a href="examples/counter.html" class="text-primary hover:underline">See More Examples →</a>
+                    <a href="base/getting-started-guide.html" class="text-primary hover:underline">See More Examples →</a>
                 </div>
 
                 <!-- Starter projects section -->
