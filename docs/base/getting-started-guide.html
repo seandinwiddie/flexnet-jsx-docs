@@ -36,6 +36,7 @@
 
             <div class="p-8 max-w-5xl mx-auto">
                 <h1 class="text-3xl font-bold mb-4">Getting Started with FlexNet JSX</h1>
+                <p class="text-sm text-gray-500 mb-6">Version: 1.0.0 (Released 2025-01-31)</p>
                 <p class="mb-6">This guide will walk you through the process of setting up a new FlexNet JSX project, from installation to creating your first component.</p>
 
                 <h2 class="text-2xl font-bold mb-4">Project Setup</h2>
@@ -88,9 +89,9 @@
     &lt;title&gt;FlexNet JSX Project&lt;/title&gt;
 &lt;/head&gt;
 &lt;body&gt;
-    &lt;div id=\"root\"&gt;&lt;/div&gt;
-    &lt;script type=\"module\" src=\"../src/core/runtime/jsx.js\"&gt;&lt;/script&gt;
-    &lt;script type=\"module\" src=\"../src/features/counter/index.js\"&gt;&lt;/script&gt;
+    &lt;div id="root"&gt;&lt;/div&gt;
+    &lt;script type="module" src="../src/core/runtime/jsx.js"&gt;&lt;/script&gt;
+    &lt;script type="module" src="../src/features/counter/index.js"&gt;&lt;/script&gt;
 &lt;/body&gt;
 &lt;/html&gt;</code></pre>
                     </li>
@@ -160,6 +161,91 @@ export default Counter;</code></pre>
                         </ul>
                     </li>
                 </ol>
+
+                <h2 class="text-2xl font-bold mb-4">Development Workflow</h2>
+                <ol class="list-decimal pl-5 mb-6">
+                    <li class="mb-2">
+                        <span class="font-semibold">Feature Development</span>
+                        <ul class="list-disc pl-5 mt-2 mb-4">
+                            <li>Create feature directory in src/features/</li>
+                            <li>Implement pure functions in functions.js</li>
+                            <li>Create feature component in index.js</li>
+                            <li>Add tests in parallel</li>
+                        </ul>
+                    </li>
+                    <li class="mb-2">
+                        <span class="font-semibold">Testing</span>
+                        <ul class="list-disc pl-5 mt-2 mb-4">
+                            <li>Write tests in adjacent test directory</li>
+                            <li>Use property-based testing</li>
+                            <li>Test pure functions independently</li>
+                            <li>Test effects in isolation</li>
+                        </ul>
+                    </li>
+                    <li class="mb-2">
+                        <span class="font-semibold">Documentation</span>
+                        <ul class="list-disc pl-5 mt-2">
+                            <li>Document function signatures</li>
+                            <li>Specify type information</li>
+                            <li>Include usage examples</li>
+                            <li>Document effects</li>
+                        </ul>
+                    </li>
+                </ol>
+
+                <h2 class="text-2xl font-bold mb-4">Best Practices</h2>
+                <ol class="list-decimal pl-5 mb-6">
+                    <li class="mb-2">
+                        <span class="font-semibold">File Organization</span>
+                        <ul class="list-disc pl-5 mt-2 mb-4">
+                            <li>Keep related files together</li>
+                            <li>Use clear, descriptive names</li>
+                            <li>Follow directory structure</li>
+                            <li>Maintain separation of concerns</li>
+                        </ul>
+                    </li>
+                    <li class="mb-2">
+                        <span class="font-semibold">Code Style</span>
+                        <ul class="list-disc pl-5 mt-2 mb-4">
+                            <li>Write pure functions</li>
+                            <li>Use functional composition</li>
+                            <li>Maintain immutability</li>
+                            <li>Document types clearly</li>
+                        </ul>
+                    </li>
+                    <li class="mb-2">
+                        <span class="font-semibold">Testing</span>
+                        <ul class="list-disc pl-5 mt-2 mb-4">
+                            <li>Test pure functions</li>
+                            <li>Test effect isolation</li>
+                            <li>Use property-based tests</li>
+                            <li>Maintain test coverage</li>
+                        </ul>
+                    </li>
+                    <li>
+                        <span class="font-semibold">Performance</span>
+                        <ul class="list-disc pl-5 mt-2">
+                            <li>Optimize render functions</li>
+                            <li>Minimize state updates</li>
+                            <li>Handle effects efficiently</li>
+                            <li>Monitor performance</li>
+                        </ul>
+                    </li>
+                </ol>
+
+                <h2 class="text-2xl font-bold mb-4">Next Steps</h2>
+                <ol class="list-decimal pl-5 mb-6">
+                    <li class="mb-2">Explore the examples in /examples</li>
+                    <li class="mb-2">Read the API documentation</li>
+                    <li class="mb-2">Study the architecture overview</li>
+                    <li class="mb-2">Join the community</li>
+                </ol>
+                <p>For more detailed information, refer to:</p>
+                <ul class="list-disc pl-5">
+                    <li>API Reference</li>
+                    <li>Architecture Overview</li>
+                    <li>Security Practices Guide</li>
+                </ul>
             </div>
         </main>
     </div>
