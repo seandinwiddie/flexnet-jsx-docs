@@ -20,259 +20,95 @@
                 }
             }
         }
-        hljs.highlightAll();
     </script>
+    <script src="/assets/main.js" defer></script>
 </head>
 <body class="bg-gray-50 text-gray-900 min-h-screen">
-    <div class="flex">
-        <!-- Sidebar -->
-        <aside id="sidebar-placeholder" class="w-64 bg-white border-r border-gray-200 h-screen sticky top-0 overflow-y-auto flex-shrink-0">
-        </aside>
+    <div id="page-content">
+        <div class="flex items-center space-x-2 text-sm text-gray-500 mb-8">
+            <a href="/index.html" class="hover:text-primary">Home</a>
+            <span>/</span>
+            <a href="#" class="hover:text-primary">Examples</a>
+            <span>/</span>
+            <span class="text-gray-900">Counter</span>
+        </div>
 
-        <!-- Main content -->
-        <main class="flex-1 overflow-y-auto">
-            <header id="header-placeholder" class="border-b border-gray-200 bg-white sticky top-0 z-10">
-            </header>
+        <h1 class="text-3xl font-bold mb-6">Example: Interactive Counter</h1>
+        
+        <div class="prose prose-blue max-w-none">
+            <p class="lead text-xl text-gray-600 mb-8">
+                This example demonstrates a basic, self-contained counter application. It showcases the core concepts of state management, components, and rendering working together.
+            </p>
 
-            <div class="p-8 max-w-5xl mx-auto">
-                <div class="flex items-center space-x-2 text-sm text-gray-500 mb-8">
-                    <a href="../index.html" class="hover:text-primary">Home</a>
-                    <span>/</span>
-                    <a href="counter.html" class="hover:text-primary">Examples</a>
-                    <span>/</span>
-                    <span class="text-gray-700">Counter</span>
-                </div>
-                
-                <h1 class="text-4xl font-bold mb-6">Counter Example</h1>
-                <p class="text-lg text-gray-600 mb-8">The counter example is a classic way to demonstrate basic state management and UI updates. This example will walk you through building a simple counter application using FlexNet JSX's functional and declarative approach.</p>
+            <h2 class="text-2xl font-bold mt-8 mb-4">Complete Code</h2>
+            <p class="mb-4">
+                The following code can be saved as a single HTML file and run in a browser (served via a local web server). It uses ES module imports from a CDN for simplicity, though in a real project you would use a local copy of the framework.
+            </p>
 
-                <div class="prose prose-blue max-w-none">
-                    <div class="bg-blue-50 border-l-4 border-primary p-4 rounded-md mb-6">
-                        <h4 class="font-semibold">Core Principles Demonstrated</h4>
-                        <p>This example showcases FlexNet's core principles: functional rendering via <code>createElement</code>, immutable state managed by a reducer, and pure functions for all logic.</p>
-                    </div>
-
-                    <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2">What We'll Build</h2>
-                    <p class="mb-4">We'll create a counter with increment and decrement buttons that re-renders when the state changes.</p>
-
-                    <div class="bg-white p-6 rounded-lg shadow-md border border-gray-200 mb-6 text-center">
-                        <h3 class="text-2xl font-bold mb-4">Counter: <span id="counter-value" class="text-primary">0</span></h3>
-                        <div class="flex justify-center space-x-4">
-                            <button class="px-4 py-2 bg-red-500 text-white font-semibold rounded-lg shadow-md hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-400 focus:ring-opacity-75" onclick="updateDemoCounter(-1)">-</button>
-                            <button class="px-4 py-2 bg-green-500 text-white font-semibold rounded-lg shadow-md hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-opacity-75" onclick="updateDemoCounter(1)">+</button>
-                    </div>
-                </div>
-                
-                <script>
-                    let demoCounter = 0;
-                    function updateDemoCounter(amount) {
-                        demoCounter += amount;
-                        document.getElementById('counter-value').textContent = demoCounter;
-                    }
-                </script>
-                
-                    <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2">Project Structure</h2>
-                    <p class="mb-4">Our counter example will have the following file structure:</p>
-                <pre><code class="language-text">counter-example/
-├── src/
-│   ├── core/
-│   │   ├── types/
-│   │   │   └── maybe.js
-│   │   └── functions/
-│   │       └── composition.js
-│   ├── systems/
-│   │   ├── render/
-│   │   │   └── functions.js
-│   │   └── state/
-│   │       └── functions.js
-│   └── features/
-│       └── counter/
-│           ├── functions.js
-│           └── index.js
-└── public/
-    └── index.html
-</code></pre>
-                
-                    <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2">Implementation</h2>
-                    <p>This implementation follows the functional principles of the FlexNet JSX framework. All DOM manipulation is abstracted away by the <code>render</code> system, and state is managed immutably by a store.</p>
-                    <h3 class="text-xl font-medium mt-6 mb-3">Step 1: Core Types</h3>
-                    <p class="mb-4">The <code>Maybe</code> type is used for optional values, ensuring that null or undefined values are handled safely in a functional way.</p>
-                <pre><code class="language-javascript">// src/core/types/maybe.js
-export const Maybe = {
-    Just: value => ({ type: 'Just', value }),
-    Nothing: () => ({ type: 'Nothing' }),
-    fromNullable: value => value != null ? Maybe.Just(value) : Maybe.Nothing(),
-    map: fn => maybe => 
-        maybe.type === 'Just' ? Maybe.Just(fn(maybe.value)) : Maybe.Nothing(),
-    chain: fn => maybe =>
-        maybe.type === 'Just' ? fn(maybe.value) : Maybe.Nothing(),
-    getOrElse: defaultValue => maybe =>
-        maybe.type === 'Just' ? maybe.value : defaultValue
-};
-</code></pre>
-                
-                    <h3 class="text-xl font-medium mt-6 mb-3">Step 2: Core Functions</h3>
-                    <p>Function composition is a core tenet of the framework, allowing for complex logic to be built from simple, reusable functions.</p>
-                <pre><code class="language-javascript">// src/core/functions/composition.js
-export const compose = (...fns) => x => fns.reduceRight((y, f) => f(y), x);
-export const pipe = (...fns) => x => fns.reduce((y, f) => f(y), x);
-</code></pre>
-                
-                    <h3 class="text-xl font-medium mt-6 mb-3">Step 3: The Render System</h3>
-                    <p>The render system abstracts DOM manipulation. <code>createElement</code> creates a virtual DOM node (a plain JavaScript object), and <code>render</code> translates it into actual DOM elements.</p>
-                <pre><code class="language-javascript">// src/systems/render/functions.js
-export const createElement = (type, props, ...children) => ({
-    type,
-    props: { ...props, children: children.flat() }
-});
-
-function createDomElement(vnode) {
-    if (typeof vnode === 'string' || typeof vnode === 'number') {
-        return document.createTextNode(vnode);
-    }
-    
-    if (typeof vnode.type === 'function') {
-        return createDomElement(vnode.type(vnode.props));
-    }
-
-    const el = document.createElement(vnode.type);
-
-    Object.entries(vnode.props || {}).forEach(([key, value]) => {
-        if (key.startsWith('on') && typeof value === 'function') {
-            el.addEventListener(key.substring(2).toLowerCase(), value);
-        } else if (key !== 'children') {
-            el.setAttribute(key, value);
-        }
-    });
-
-    vnode.props.children.forEach(child => {
-        if (child) {
-            el.appendChild(createDomElement(child));
-        }
-    });
-
-    return el;
-}
-
-// A simplified render function for this example.
-// In a real implementation, this would involve a more complex diffing algorithm.
-export const render = (vnode, container) => {
-    container.innerHTML = ''; // Naive clearing of container
-    if (vnode) {
-        container.appendChild(createDomElement(vnode));
-    }
-};
-</code></pre>
-                
-                    <h3 class="text-xl font-medium mt-6 mb-3">Step 4: The State System</h3>
-                    <p>The store holds the application state. It can only be updated by dispatching actions to a pure function called a reducer, ensuring state transitions are predictable and immutable.</p>
-                <pre><code class="language-javascript">// src/systems/state/functions.js
-export const createStore = (reducer, initialState) => {
-    const subscribers = new Set();
-    let state = initialState;
-
-    const dispatch = action => {
-        state = reducer(state, action); // State is replaced, not mutated
-        subscribers.forEach(fn => fn(state));
-    };
-
-    return {
-        getState: () => state,
-        dispatch,
-        subscribe: fn => {
-            subscribers.add(fn);
-            fn(state); // Immediately notify with current state
-            return () => subscribers.delete(fn); // Return an unsubscribe function
-        }
-    };
-};
-</code></pre>
-
-                    <h3 class="text-xl font-medium mt-6 mb-3">Step 5: Counter Logic (Reducer)</h3>
-                    <p>The counter's logic is defined in a pure reducer function. It takes the current state and an action, and returns the next state.</p>
-                <pre><code class="language-javascript">// src/features/counter/functions.js
-export const Action = {
-    Increment: 'INCREMENT',
-    Decrement: 'DECREMENT',
-};
-
-export const counterReducer = (state, action) => {
-    switch (action.type) {
-        case Action.Increment:
-            return state + 1;
-        case Action.Decrement:
-            return Math.max(0, state - 1); // Business logic: don't go below 0
-        default:
-            return state;
-    }
-};
-</code></pre>
-                
-                    <h3 class="text-xl font-medium mt-6 mb-3">Step 6: The Counter Component</h3>
-                    <p>The component is a pure function that takes the current state and a dispatch function as props, and returns a description of the UI using <code>createElement</code>.</p>
-                <pre><code class="language-javascript">// src/features/counter/index.js
-import { createStore } from '../../systems/state/functions.js';
-import { createElement, render } from '../../systems/render/functions.js';
-import { counterReducer, Action } from './functions.js';
-
-// 1. Define the application's root component
-const App = ({ state, dispatch }) => 
-    createElement('div', { class: 'text-center' },
-        createElement('h2', { class: 'text-2xl font-bold mb-4' }, 
-            'Counter: ',
-            createElement('span', { class: 'text-primary' }, state)
-        ),
-        createElement('div', { class: 'flex justify-center space-x-4' },
-            createElement('button', {
-                class: 'px-4 py-2 bg-red-500 text-white font-semibold rounded-lg shadow-md hover:bg-red-600',
-                onClick: () => dispatch({ type: Action.Decrement })
-            }, '-'),
-            createElement('button', {
-                class: 'px-4 py-2 bg-green-500 text-white font-semibold rounded-lg shadow-md hover:bg-green-600',
-                onClick: () => dispatch({ type: Action.Increment })
-            }, '+')
-        )
-    );
-
-// 2. Initialize the store
-const store = createStore(counterReducer, 0);
-
-// 3. Get the DOM container
-const root = document.getElementById('root');
-
-// 4. Subscribe the render function to the store
-// On every state change, the App component will be re-rendered
-store.subscribe(state => {
-    render(
-        createElement(App, { state, dispatch: store.dispatch }),
-        root
-    );
-});
-</code></pre>
-
-                <h3 class="text-xl font-medium mt-6 mb-3">Step 7: The Host HTML file</h3>
-                <p>Finally, the <code>index.html</code> file includes the main script and provides the root element for the application to mount into.</p>
-
-                <pre><code class="language-html">&lt;!DOCTYPE html&gt;
-&lt;html&gt;
+            <pre class="bg-gray-800 text-white p-4 rounded-md mb-6 overflow-x-auto"><code class="language-html">&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
 &lt;head&gt;
-    &lt;title&gt;FlexNet JSX Counter&lt;/title&gt;
+    &lt;title&gt;FlexNet Counter Example&lt;/title&gt;
 &lt;/head&gt;
 &lt;body&gt;
     &lt;div id="root"&gt;&lt;/div&gt;
-    &lt;!-- The main entry point for the application --&gt;
-    &lt;script type="module" src="../src/features/counter/index.js"&gt;&lt;/script&gt;
+
+    &lt;script type="module"&gt;
+        // In a real project, you would import from a local path
+        import { createElement, render } from 'https://unpkg.com/flexnet-jsx@1.0.0/src/systems/render/functions.js';
+        import { createStore } from 'https://unpkg.com/flexnet-jsx@1.0.0/src/systems/state/functions.js';
+
+        // 1. The Reducer: A pure function to manage state changes
+        const counterReducer = (state = 0, action) => {
+            switch (action.type) {
+                case 'INCREMENT': return state + 1;
+                case 'DECREMENT': return state - 1;
+                default: return state;
+            }
+        };
+
+        // 2. The Store: Holds the application's state
+        const store = createStore(counterReducer, 0);
+
+        // 3. The Component: A function describing the UI
+        const Counter = ({ count }) =>
+            createElement('div', null,
+                createElement('h1', null, `Count: ${count}`),
+                createElement('button', { onClick: () => store.dispatch({ type: 'DECREMENT' }) }, '-'),
+                createElement('button', { onClick: () => store.dispatch({ type: 'INCREMENT' }) }, '+')
+            );
+
+        // 4. The main App component
+        const App = () => createElement(Counter, { count: store.getState() });
+
+        // 5. The Render logic
+        const rootElement = document.getElementById('root');
+        
+        // Subscribe to store updates and re-render
+        store.subscribe(() => render(App(), rootElement));
+
+        // Initial render
+        render(App(), rootElement);
+    &lt;/script&gt;
 &lt;/body&gt;
 &lt;/html&gt;
 </code></pre>
-                </div>
+
+            <div class="flex justify-between mt-12 pt-6 border-t border-gray-200">
+                <a href="/systems/errors.html" class="inline-flex items-center px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300 transition">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+                    </svg>
+                    Prev: Error Handling
+                </a>
+                <a href="/examples/todo.html" class="inline-flex items-center px-4 py-2 bg-primary text-white rounded-md hover:bg-blue-600 transition">
+                    Next: Todo App
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                    </svg>
+                </a>
             </div>
-        </main>
+        </div>
     </div>
-
-    <footer id="footer-placeholder" class="bg-white border-t border-gray-200 py-6">
-    </footer>
-
-    <script src="../assets/main.js"></script>
 </body>
 </html>

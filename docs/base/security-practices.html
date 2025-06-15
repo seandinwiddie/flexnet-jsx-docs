@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Security Practices - FlexNet JSX</title>
+    <title>Security Practices - FlexNet JSX Framework</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/atom-one-dark.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
@@ -19,276 +19,92 @@
                     }
                 }
             }
-        };
-        hljs.highlightAll();
+        }
     </script>
+    <script src="/assets/main.js" defer></script>
 </head>
 <body class="bg-gray-50 text-gray-900 min-h-screen">
-    <div class="flex">
-        <!-- Sidebar -->
-        <aside id="sidebar-placeholder" class="w-64 bg-white border-r border-gray-200 h-screen sticky top-0 overflow-y-auto flex-shrink-0">
-        </aside>
+    <div id="page-content">
+        <div class="flex items-center space-x-2 text-sm text-gray-500 mb-8">
+            <a href="/index.html" class="hover:text-primary">Home</a>
+            <span>/</span>
+            <a href="#" class="hover:text-primary">Base Documentation</a>
+            <span>/</span>
+            <span class="text-gray-900">Security Practices</span>
+        </div>
 
-        <!-- Main content -->
-        <main class="flex-1 overflow-y-auto">
-            <header id="header-placeholder" class="border-b border-gray-200 bg-white sticky top-0 z-10">
-            </header>
+        <h1 class="text-3xl font-bold mb-6">Security Best Practices</h1>
+        
+        <div class="prose prose-blue max-w-none">
+            <p class="lead text-xl text-gray-600 mb-8">
+                FlexNet JSX is designed with security as a core principle. Its architecture promotes practices that help mitigate common web vulnerabilities. This guide outlines the built-in security features and best practices for developing secure applications.
+            </p>
 
-            <div class="p-8 max-w-5xl mx-auto">
-                <h1 class="text-3xl font-bold mb-4">FlexNet JSX Security Best Practices</h1>
+            <h2 class="text-2xl font-bold mt-8 mb-4">Content Escaping and XSS Prevention</h2>
+            <p class="mb-4">
+                Cross-Site Scripting (XSS) is one of the most common vulnerabilities in web applications. FlexNet protects against this by default.
+            </p>
+            <h3 class="text-xl font-semibold mt-6 mb-3">Automatic Escaping</h3>
+            <p class="mb-4">
+                Any dynamic data you render in your components is automatically converted to a string and escaped before being inserted into the DOM. This means that if a user tries to inject a <code>&lt;script&gt;</code> tag or other malicious HTML into an input field, it will be rendered as harmless text rather than being executed.
+            </p>
+            <pre class="bg-gray-800 text-white p-4 rounded-md mb-6 overflow-x-auto"><code class="language-jsx">// User input with a malicious script
+const userInput = `&lt;img src="invalid" onerror="alert('XSS Attack!')"&gt;`;
 
-                <h2 class="text-2xl font-bold mb-4">XSS Prevention</h2>
-                <h3 class="text-xl font-semibold mb-2">Content Handling</h3>
-                <div class="bg-gray-900 rounded-lg mb-4 overflow-hidden relative">
-                    <button class="absolute top-2 right-2 bg-gray-700 hover:bg-gray-600 text-white text-xs font-bold py-1 px-2 rounded">Copy</button>
-                    <pre class="bg-gray-800 text-white p-4 rounded-md mb-4 overflow-x-auto"><code class="language-javascript">const escape = str => compose(
-    String,
-    s => s.replace(/&/g, '&amp;')
-         .replace(/</g, '&lt;')
-         .replace(/>/g, '&gt;')
-         .replace(/"/g, '&quot;')
-         .replace(/'/g, '&#039;')
-)(str);
+// The component renders the input
+const UserComment = ({ text }) => &lt;div&gt;{text}&lt;/div&gt;;
 
-const validateInput = compose(
-    input => {
-        const escaped = escape(input);
-        return escaped.length === input.length
-            ? Either.Right(input)
-            : Either.Left('Invalid characters detected');
-    }
-);</code></pre>
-                </div>
+// The output in the DOM will be:
+// &lt;div&gt;&amp;lt;img src="invalid" onerror="alert('XSS Attack!')"&amp;gt;&lt;/div&gt;
+// The script will NOT execute.
+</code></pre>
+            
+            <h3 class="text-xl font-semibold mt-6 mb-3">Rendering Raw HTML</h3>
+            <p class="mb-4">
+                In rare cases, you might need to render HTML that you trust. For this, FlexNet provides the <code>dangerouslySetInnerHTML</code> prop. As its name implies, this feature should be used with extreme caution.
+            </p>
+            <p class="mb-4 text-red-600 font-semibold bg-red-50 border border-red-200 rounded-md p-4">
+                <strong>Warning:</strong> Improper use of <code>dangerouslySetInnerHTML</code> can expose your users to XSS attacks. Only use it with content that has been sanitized.
+            </p>
+            <pre class="bg-gray-800 text-white p-4 rounded-md mb-6 overflow-x-auto"><code class="language-jsx">import DOMPurify from 'dompurify';
 
-                <h3 class="text-xl font-semibold mb-2">DOM Interaction</h3>
-                <div class="bg-gray-900 rounded-lg mb-4 overflow-hidden relative">
-                    <button class="absolute top-2 right-2 bg-gray-700 hover:bg-gray-600 text-white text-xs font-bold py-1 px-2 rounded">Copy</button>
-                    <pre class="bg-gray-800 text-white p-4 rounded-md mb-4 overflow-x-auto"><code class="language-javascript">// Safe createElement implementation
-const createElement = (type, props, ...children) => {
-    // Validate type
-    if (typeof type !== 'string' && typeof type !== 'function') {
-        return Either.Left('Invalid element type');
-    }
+const untrustedHtml = `&lt;h3&gt;User Content&lt;/h3&gt;&lt;script&gt;doEvil()&lt;/script&gt;`;
+const sanitizedHtml = DOMPurify.sanitize(untrustedHtml);
 
-    // Sanitize props
-    const safeProps = Object.entries(props || {}).reduce((acc, [key, value]) => {
-        // Prevent script injection in event handlers
-        if (key.startsWith('on') && typeof value === 'string') {
-            return acc;
-        }
-        // Escape string values
-        if (typeof value === 'string') {
-            acc[key] = safeContent.escape(value);
-        } else {
-            acc[key] = value;
-        }
-        return acc;
-    }, {});
+const SafeComponent = () => (
+    &lt;div dangerouslySetInnerHTML={{ __html: sanitizedHtml }} /&gt;
+);
+// The &lt;script&gt; tag will be removed by DOMPurify.
+</code></pre>
 
-    return Either.Right({ type, props: safeProps, children });
-};</code></pre>
-                </div>
+            <h2 class="text-2xl font-bold mt-8 mb-4">Immutable State</h2>
+            <p class="mb-4">
+                All state in a FlexNet application is immutable. Reducers must be pure functions that return a new state object instead of modifying the existing one. This has several security benefits:
+            </p>
+            <ul class="list-disc pl-6 space-y-2">
+                <li><strong>Prevents Unintended Side Effects:</strong> It eliminates a class of bugs where different parts of the application could unintentionally modify a shared piece of state, potentially leading to security flaws.</li>
+                <li><strong>Predictable State Transitions:</strong> Since state changes are explicit and controlled, it's easier to audit the flow of data and ensure that sensitive information is not being altered or exposed incorrectly.</li>
+            </ul>
 
-                <h3 class="text-xl font-semibold mb-2">URL Validation</h3>
-                <div class="bg-gray-900 rounded-lg mb-6 overflow-hidden relative">
-                    <button class="absolute top-2 right-2 bg-gray-700 hover:bg-gray-600 text-white text-xs font-bold py-1 px-2 rounded">Copy</button>
-                    <pre class="bg-gray-800 text-white p-4 rounded-md mb-6 overflow-x-auto"><code class="language-javascript">const urlValidator = {
-    // Whitelist of allowed protocols
-    allowedProtocols: ['https:', 'data:image/'],
+            <h2 class="text-2xl font-bold mt-8 mb-4">Security Checklist</h2>
+            <ul class="list-disc pl-6 space-y-3">
+                <li><strong class="text-green-600">Do</strong> rely on FlexNet's automatic content escaping for all dynamic data.</li>
+                <li><strong class="text-green-600">Do</strong> keep your reducers pure and your state immutable.</li>
+                <li><strong class="text-red-600">Do Not</strong> use <code>dangerouslySetInnerHTML</code> unless you are certain the source is trusted and sanitized.</li>
+                <li><strong class="text-red-600">Do Not</strong> construct component props from user input without validation.</li>
+                <li><strong class="text-red-600">Do Not</strong> expose sensitive information in the store state that could be logged or serialized.</li>
+            </ul>
 
-    validate: (url) => {
-        try {
-            const parsed = new URL(url);
-            return allowedProtocols.some(protocol => 
-                parsed.protocol.startsWith(protocol))
-                ? Either.Right(url)
-                : Either.Left('Invalid protocol');
-        } catch {
-            return Either.Left('Invalid URL');
-        }
-    }
-};</code></pre>
-                </div>
-
-                <h2 class="text-2xl font-bold mb-4">State Management Security</h2>
-                <h3 class="text-xl font-semibold mb-2">Immutable State Updates</h3>
-                <div class="bg-gray-900 rounded-lg mb-4 overflow-hidden relative">
-                    <button class="absolute top-2 right-2 bg-gray-700 hover:bg-gray-600 text-white text-xs font-bold py-1 px-2 rounded">Copy</button>
-                    <pre class="bg-gray-800 text-white p-4 rounded-md mb-4 overflow-x-auto"><code class="language-javascript">const secureState = {
-    update: (state, updater) => {
-        const newState = Object.freeze({
-            ...state,
-            value: updater(state.value),
-            timestamp: new Date().toISOString(),
-            hash: generateStateHash(state)
-        });
-        return validateStateIntegrity(newState);
-    },
-
-    validateStateIntegrity: (state) => {
-        const currentHash = generateStateHash(state);
-        return currentHash === state.hash
-            ? Either.Right(state)
-            : Either.Left('State integrity compromised');
-    }
-};</code></pre>
-                </div>
-
-                <h3 class="text-xl font-semibold mb-2">Access Control</h3>
-                <div class="bg-gray-900 rounded-lg mb-6 overflow-hidden relative">
-                    <button class="absolute top-2 right-2 bg-gray-700 hover:bg-gray-600 text-white text-xs font-bold py-1 px-2 rounded">Copy</button>
-                    <pre class="bg-gray-800 text-white p-4 rounded-md mb-6 overflow-x-auto"><code class="language-javascript">const stateAccess = {
-    permissions: {
-        READ: 'read',
-        WRITE: 'write',
-        ADMIN: 'admin'
-    },
-
-    validateAccess: (state, operation, permission) => {
-        const userPermissions = getCurrentUserPermissions();
-        return userPermissions.includes(permission)
-            ? Either.Right(state)
-            : Either.Left('Insufficient permissions');
-    }
-};</code></pre>
-                </div>
-
-                <h2 class="text-2xl font-bold mb-4">Error Handling</h2>
-                <h3 class="text-xl font-semibold mb-2">Error Boundaries</h3>
-                <div class="bg-gray-900 rounded-lg mb-4 overflow-hidden relative">
-                    <button class="absolute top-2 right-2 bg-gray-700 hover:bg-gray-600 text-white text-xs font-bold py-1 px-2 rounded">Copy</button>
-                    <pre class="bg-gray-800 text-white p-4 rounded-md mb-4 overflow-x-auto"><code class="language-javascript">const ErrorBoundary = ({ children, fallback }) => {
-    const [error, setError] = useState(null);
-
-    useEffect(() => {
-        const handleError = (event) => {
-            event.preventDefault();
-            setError(event.error);
-            logError(event.error);
-        };
-
-        window.addEventListener('error', handleError);
-        return () => window.removeEventListener('error', handleError);
-    }, []);
-
-    return error ? fallback(error) : children;
-};</code></pre>
-                </div>
-
-                <h3 class="text-xl font-semibold mb-2">Secure Error Logging</h3>
-                <div class="bg-gray-900 rounded-lg mb-6 overflow-hidden relative">
-                    <button class="absolute top-2 right-2 bg-gray-700 hover:bg-gray-600 text-white text-xs font-bold py-1 px-2 rounded">Copy</button>
-                    <pre class="bg-gray-800 text-white p-4 rounded-md mb-6 overflow-x-auto"><code class="language-javascript">const errorLogger = {
-    sensitiveKeys: ['password', 'token', 'secret'],
-
-    sanitizeError: (error) => {
-        const sanitized = { ...error };
-        sensitiveKeys.forEach(key => {
-            if (key in sanitized) {
-                sanitized[key] = '[REDACTED]';
-            }
-        });
-        return sanitized;
-    },
-
-    logError: (error) => {
-        const sanitizedError = sanitizeError(error);
-        console.error('Secure Error:', sanitizedError);
-    }
-};</code></pre>
-                </div>
-
-                <h2 class="text-2xl font-bold mb-4">Memory State Security</h2>
-                <h3 class="text-xl font-semibold mb-2">Context Validation</h3>
-                <div class="bg-gray-900 rounded-lg mb-4 overflow-hidden relative">
-                    <button class="absolute top-2 right-2 bg-gray-700 hover:bg-gray-600 text-white text-xs font-bold py-1 px-2 rounded">Copy</button>
-                    <pre class="bg-gray-800 text-white p-4 rounded-md mb-4 overflow-x-auto"><code class="language-javascript">const secureContext = {
-    validate: (context) => {
-        if (!context.activeFiles || !context.implementationState) {
-            return Either.Left('Invalid context structure');
-        }
-
-        return validateFilePaths(context.activeFiles)
-            .chain(validateImplementation)
-            .chain(validateStateIntegrity);
-    }
-};</code></pre>
-                </div>
-
-                <h3 class="text-xl font-semibold mb-2">File System Security</h3>
-                <div class="bg-gray-900 rounded-lg mb-6 overflow-hidden relative">
-                    <button class="absolute top-2 right-2 bg-gray-700 hover:bg-gray-600 text-white text-xs font-bold py-1 px-2 rounded">Copy</button>
-                    <pre class="bg-gray-800 text-white p-4 rounded-md mb-6 overflow-x-auto"><code class="language-javascript">const fileSystem = {
-    validatePath: (path) => {
-        // Prevent directory traversal
-        const normalized = path.replace(/\.\./g, '');
-        return path === normalized
-            ? Either.Right(path)
-            : Either.Left('Invalid path');
-    },
-
-    validatePermissions: (path) => {
-        const stats = getFileStats(path);
-        return stats.mode === expectedMode
-            ? Either.Right(path)
-            : Either.Left('Invalid permissions');
-    }
-};</code></pre>
-                </div>
-
-                <h2 class="text-2xl font-bold mb-4">Technical Standards Implementation</h2>
-                <h3 class="text-xl font-semibold mb-2">Script Safety</h3>
-                <div class="bg-gray-900 rounded-lg mb-6 overflow-hidden relative">
-                    <button class="absolute top-2 right-2 bg-gray-700 hover:bg-gray-600 text-white text-xs font-bold py-1 px-2 rounded">Copy</button>
-                    <pre class="bg-gray-800 text-white p-4 rounded-md mb-6 overflow-x-auto"><code class="language-javascript">const scriptSafety = {
-    // Error trapping
-    trapErrors: (fn) => (...args) => {
-        try {
-            return Either.Right(fn(...args));
-        } catch (error) {
-            return Either.Left(error);
-        }
-    },
-
-    // Variable quoting
-    quoteVariable: (value) => 
-        typeof value === 'string' ? `'${value}'` : value,
-
-    // Permission handling
-    checkPermissions: (operation) =>
-        validateAccess(operation)
-            .chain(validateFilesystem)
-            .chain(validateState),
-
-    // Cleanup procedures
-    ensureCleanup: (operation) => {
-        const cleanup = [];
-        return {
-            addCleanup: (fn) => cleanup.push(fn),
-            execute: () => {
-                try {
-                    return operation();
-                } finally {
-                    cleanup.forEach(fn => fn());
-                }
-            }
-        };
-    }
-};</code></pre>
-                </div>
-
-                <h2 class="text-2xl font-bold mb-4">Version Information</h2>
-                <ul class="list-disc pl-5 mb-6">
-                    <li>Security Version: 1.0</li>
-                    <li>Framework Version: 1.0</li>
-                    <li>Last Updated: 2024-12-19</li>
-                </ul>
+            <div class="flex justify-between mt-12 pt-6 border-t border-gray-200">
+                <span></span>
+                <a href="/base/architecture-overview.html" class="inline-flex items-center px-4 py-2 bg-primary text-white rounded-md hover:bg-blue-600 transition">
+                    Next: Architecture
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                    </svg>
+                </a>
             </div>
-        </main>
+        </div>
     </div>
-
-    <footer id="footer-placeholder" class="bg-white border-t border-gray-200 py-6">
-    </footer>
-    <script src="/assets/main.js"></script>
 </body>
-</html> 
+</html>

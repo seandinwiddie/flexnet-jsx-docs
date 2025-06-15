@@ -20,378 +20,97 @@
                 }
             }
         }
-        hljs.highlightAll();
     </script>
+    <script src="/assets/main.js" defer></script>
 </head>
 <body class="bg-gray-50 text-gray-900 min-h-screen">
-    <div class="flex">
-        <!-- Sidebar -->
-        <aside id="sidebar-placeholder" class="w-64 bg-white border-r border-gray-200 h-screen sticky top-0 overflow-y-auto flex-shrink-0">
-        </aside>
+    <div id="page-content">
+        <div class="flex items-center space-x-2 text-sm text-gray-500 mb-8">
+            <a href="/index.html" class="hover:text-primary">Home</a>
+            <span>/</span>
+            <a href="#" class="hover:text-primary">Systems</a>
+            <span>/</span>
+            <span class="text-gray-900">Render</span>
+        </div>
 
-        <!-- Main content -->
-        <main class="flex-1 overflow-y-auto">
-            <header id="header-placeholder" class="border-b border-gray-200 bg-white sticky top-0 z-10">
-            </header>
+        <h1 class="text-3xl font-bold mb-6">The Render System</h1>
+        
+        <div class="prose prose-blue max-w-none">
+            <p class="lead text-xl text-gray-600 mb-8">
+                The render system is the heart of FlexNet's UI layer. It takes a description of your UI (a virtual DOM tree) and efficiently updates the actual DOM to match it.
+            </p>
 
-            <div class="p-8 max-w-5xl mx-auto">
-                <div class="flex items-center space-x-2 text-sm text-gray-500 mb-8">
-                    <a href="../index.html" class="hover:text-primary">Home</a>
-                    <span>/</span>
-                    <a href="state.html" class="hover:text-primary">Systems</a>
-                    <span>/</span>
-                    <span class="text-gray-700">Render</span>
-                </div>
+            <h2 class="text-2xl font-bold mt-8 mb-4"><code>createElement(type, props, ...children)</code></h2>
+            <p class="mb-4">
+                This function is the fundamental building block of the UI. It doesn't create an actual DOM element, but rather a lightweight JavaScript object that describes what the element should be. This object is often called a "virtual DOM node."
+            </p>
+            <pre class="bg-gray-800 text-white p-4 rounded-md mb-6 overflow-x-auto"><code class="language-javascript">import { createElement } from './src/systems/render/functions.js';
 
-                <h1 class="text-4xl font-bold mb-6">Render System</h1>
-                <p class="text-lg text-gray-600 mb-8">The FlexNet JSX render system efficiently translates virtual DOM elements into real DOM nodes while maintaining purity and immutability, a core principle detailed in the <a href="../base/architecture-overview.html" class="text-primary hover:underline">Architecture Overview</a>.</p>
+const vNode = createElement(
+    'div', 
+    { id: 'container', className: 'wrapper' },
+    createElement('h1', null, 'Hello, World!'),
+    'This is a text node.'
+);
 
-                <div class="prose prose-blue max-w-none">
-                    <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2">Overview</h2>
-                    <p class="mb-4">The render system in FlexNet JSX is responsible for converting the virtual DOM elements created by the JSX runtime into actual DOM elements that can be displayed in the browser. The system is designed with functional programming principles in mind, ensuring that rendering operations are pure, predictable, and efficient.</p>
-
-                    <div class="bg-blue-50 border-l-4 border-primary p-4 rounded-md mb-6">
-                        <h4 class="font-semibold">Key Features</h4>
-                        <ul class="list-disc pl-6 mt-2">
-                            <li>Pure functional rendering with no side effects</li>
-                            <li>Efficient diffing algorithm for minimal DOM updates</li>
-                            <li>Immutable virtual DOM representation</li>
-                            <li>Component-based architecture</li>
-                            <li>Support for functional components</li>
-                        </ul>
-                    </div>
-
-                    <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2">Basic Rendering</h2>
-                    <p class="mb-4">The core of the render system is the <code>render</code> function, which takes a virtual DOM element and a DOM container, and mounts the element into the container.</p>
-
-                    <pre class="bg-gray-800 text-white p-4 rounded-lg mb-6"><code class="language-javascript">import { createElement, render } from '../../systems/render/functions.js';
-
-// Create a virtual DOM element
-const element = createElement('div', { className: 'greeting' }, 'Hello, World!');
-
-// Render it to the DOM
-render(element, document.getElementById('root'));</code></pre>
-
-                    <h3 class="text-xl font-medium mt-6 mb-3">Functional Components</h3>
-                    <p class="mb-4">FlexNet supports functional components, which are functions that accept props and return virtual DOM elements:</p>
-
-                    <pre class="bg-gray-800 text-white p-4 rounded-lg mb-6"><code class="language-javascript">import { createElement, render } from '../../systems/render/functions.js';
-
-// Define a functional component
-const Greeting = ({ name }) => 
-  createElement('div', { className: 'greeting' }, 
-    `Hello, ${name}!`
-  );
-
-// Use the component
-const element = createElement(Greeting, { name: 'World' });
-
-// Render it
-render(element, document.getElementById('root'));</code></pre>
-
-                    <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2">Virtual DOM</h2>
-                    <p class="mb-4">FlexNet JSX uses a virtual DOM approach to optimize rendering performance. The virtual DOM is a lightweight, immutable representation of the actual DOM structure.</p>
-
-                    <h3 class="text-xl font-medium mt-6 mb-3">Virtual DOM Structure</h3>
-                    <p class="mb-4">Each virtual DOM element has the following structure:</p>
-
-                    <pre class="bg-gray-800 text-white p-4 rounded-lg mb-6"><code class="language-javascript">// Basic structure of a virtual DOM element
+/*
+The vNode object looks something like this:
 {
-  type: 'div', // String for HTML elements, Function for components
-  props: {
-    className: 'container', // Regular DOM properties
-    children: [...] // Child elements
-  }
-}</code></pre>
-
-                    <h3 class="text-xl font-medium mt-6 mb-3">Diffing Algorithm</h3>
-                    <p class="mb-4">When re-rendering, FlexNet compares the new virtual DOM with the previous one to determine the minimal set of changes needed to update the actual DOM.</p>
-
-                    <div class="bg-white border border-gray-200 rounded-lg mb-6">
-                        <div class="border-b border-gray-200 px-4 py-3 bg-gray-50">
-                            <h4 class="font-semibold">How Diffing Works</h4>
-                        </div>
-                        <div class="p-4">
-                            <ol class="list-decimal pl-6 space-y-2">
-                                <li>Compare element types (tag names or component functions)</li>
-                                <li>If types are different, replace the entire subtree</li>
-                                <li>If types are the same, update only the changed properties</li>
-                                <li>Recursively diff the children</li>
-                                <li>Apply the minimal set of changes to the DOM</li>
-                            </ol>
-                        </div>
-                    </div>
-
-                    <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2">Rendering Process</h2>
-                    <p class="mb-4">The rendering process in FlexNet JSX follows these steps:</p>
-
-                    <div class="relative overflow-hidden mb-8">
-                        <div class="border border-gray-200 rounded-lg bg-white p-6">
-                            <ol class="list-decimal pl-6 space-y-4">
-                                <li>
-                                    <strong>Element Creation</strong>
-                                    <p class="text-gray-600">Create virtual DOM elements using the <code>createElement</code> function or JSX syntax.</p>
-                                </li>
-                                <li>
-                                    <strong>Component Resolution</strong>
-                                    <p class="text-gray-600">For component elements, call the component function to get the rendered elements.</p>
-                                </li>
-                                <li>
-                                    <strong>Tree Building</strong>
-                                    <p class="text-gray-600">Build a complete virtual DOM tree by recursively resolving all components.</p>
-                                </li>
-                                <li>
-                                    <strong>Diffing</strong>
-                                    <p class="text-gray-600">Compare the new virtual DOM tree with the previous one.</p>
-                                </li>
-                                <li>
-                                    <strong>Patch Generation</strong>
-                                    <p class="text-gray-600">Generate a set of patches (operations) needed to update the DOM.</p>
-                                </li>
-                                <li>
-                                    <strong>DOM Updates</strong>
-                                    <p class="text-gray-600">Apply the patches to the actual DOM in a single batch.</p>
-                                </li>
-                                <li>
-                                    <strong>Event Binding</strong>
-                                    <p class="text-gray-600">Attach event handlers to the rendered elements.</p>
-                                </li>
-                            </ol>
-                        </div>
-                    </div>
-
-                    <h3 class="text-xl font-medium mt-6 mb-3">Example: Rendering with State Updates</h3>
-                    <pre class="bg-gray-800 text-white p-4 rounded-lg mb-6"><code class="language-javascript">import { createElement, render } from '../../systems/render/functions.js';
-import { createStore } from '../../systems/state/functions.js';
-
-// 1. Define a pure reducer function.
-const reducer = (state, action) => {
-    switch (action.type) {
-        case 'INCREMENT':
-            return { ...state, count: state.count + 1 };
-        default:
-            return state;
+    type: 'div',
+    props: { 
+        id: 'container', 
+        className: 'wrapper',
+        children: [
+            { type: 'h1', props: { children: [...] } },
+            'This is a text node.'
+        ] 
     }
-};
+}
+*/
+</code></pre>
+            <p class="mt-4">
+                When you use <a href="/core/jsx-runtime.html" class="text-primary hover:underline">JSX</a>, your code is transpiled into these <code>createElement</code> calls.
+            </p>
 
-// 2. Create a store with initial state and the reducer.
-const store = createStore(reducer, { count: 0 });
+            <h2 class="text-2xl font-bold mt-8 mb-4"><code>render(vNode, domContainer)</code></h2>
+            <p class="mb-4">
+                The <code>render</code> function is what connects your virtual UI to the real DOM. It takes a virtual node and a container DOM element.
+            </p>
+            <pre class="bg-gray-800 text-white p-4 rounded-md mb-6 overflow-x-auto"><code class="language-javascript">import { createElement, render } from './src/systems/render/functions.js';
 
-// 3. Define a counter component.
-const Counter = ({ count, onIncrement }) =>
-  createElement('div', null,
-    createElement('h2', null, `Count: ${count}`),
-    createElement('button', { onClick: onIncrement }, 'Increment')
-  );
+const App = () => createElement('h1', null, 'My App');
+const rootElement = document.getElementById('root');
 
-// 4. Create a function to render the application.
-const renderApp = () => {
-    const currentState = store.getState();
-    render(
-        createElement(Counter, {
-            count: currentState.count,
-            onIncrement: () => store.dispatch({ type: 'INCREMENT' })
-        }),
-        document.getElementById('root')
-    );
-};
-
-// 5. Subscribe to state changes and perform an initial render.
-store.subscribe(renderApp);
-renderApp();</code></pre>
-
-                    <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2">Render API</h2>
-                    <p class="mb-4">The FlexNet JSX render system provides the following core functions, which are defined in the <a href="../base/api-reference.html#render-system" class="text-primary hover:underline">API Reference</a>:</p>
-
-                    <h3 class="text-xl font-medium mt-6 mb-3">render</h3>
-                    <p class="mb-4">The primary function for rendering elements to the DOM.</p>
-                    <pre class="bg-gray-800 text-white p-4 rounded-lg mb-6"><code class="language-javascript">/**
- * Render a virtual DOM element to a DOM container
- * @param {VNode} element - The virtual DOM element to render
- * @param {HTMLElement} container - The DOM container to render into
- * @returns {void}
- */
-function render(element, container) {
-  // Implementation details...
-  // See the API reference for the full composed function.
-}</code></pre>
-
-                    <h3 class="text-xl font-medium mt-6 mb-3">createElement</h3>
-                    <p class="mb-4">Creates virtual DOM elements that can be rendered.</p>
-                    <pre class="bg-gray-800 text-white p-4 rounded-lg mb-6"><code class="language-javascript">/**
- * Create a virtual DOM element
- * @param {string|function} type - The element type (tag name or component function)
- * @param {object} props - The element properties
- * @param {...any} children - The element children
- * @returns {VNode} A virtual DOM node
- */
-function createElement(type, props, ...children) {
-  // Implementation details...
-}</code></pre>
-
-                    <div class="bg-blue-50 border-l-4 border-primary p-4 rounded-md my-6">
-                        <h4 class="font-semibold">Security Note</h4>
-                        <p class="mt-2">For enhanced security, a safer version of <code>createElement</code> can be used, which validates inputs and returns an <code>Either</code> type to explicitly handle potential errors like invalid props or types. This prevents certain types of injection attacks. See the <a href="../base/security-practices.html" class="text-primary hover:underline">security guide</a> for details.</p>
-                    </div>
-
-                    <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2">Advanced Rendering Techniques</h2>
-                    <p class="mb-4">FlexNet JSX supports several advanced rendering techniques:</p>
-
-                    <h3 class="text-xl font-medium mt-6 mb-3">Conditional Rendering</h3>
-                    <pre class="bg-gray-800 text-white p-4 rounded-lg mb-6"><code class="language-javascript">import { createElement } from '../../systems/render/functions.js';
-import { Either } from '../../core/types/either.js';
-import { pipe } from '../../core/functions/composition.js';
-
-// Using Either for conditional rendering, a pattern explained in the Error Handling guide.
-const UserProfile = ({ user }) =>
-  createElement('div', { className: 'profile' },
-    // Render user info if user exists, otherwise render a login prompt
-    Either.fromNullable(user).fold(
-        () => createElement('button', { onClick: () => { /* login */ } }, 'Log In'),
-        (userData) => [
-          createElement('h2', null, userData.name),
-          createElement('p', null, userData.email)
-        ]
-    )
-  );</code></pre>
-
-                    <h3 class="text-xl font-medium mt-6 mb-3">List Rendering</h3>
-                    <pre class="bg-gray-800 text-white p-4 rounded-lg mb-6"><code class="language-javascript">import { createElement } from '../../systems/render/functions.js';
-
-// Rendering lists with proper keys
-const TodoList = ({ todos, onToggle }) =>
-  createElement('ul', { className: 'todo-list' },
-    todos.map(todo => 
-      createElement('li', { 
-        key: todo.id, // Unique key for efficient updates
-        className: todo.completed ? 'completed' : ''
-      },
-        createElement('input', {
-          type: 'checkbox',
-          checked: todo.completed,
-          onChange: () => onToggle(todo.id)
-        }),
-        createElement('span', null, todo.text)
-      )
-    )
-  );</code></pre>
-
-                    <h3 class="text-xl font-medium mt-6 mb-3">Error Boundaries</h3>
-                    <p class="mb-4">FlexNet provides a way to handle rendering errors gracefully using a functional approach. Instead of a special component, this is achieved by composing functions. A component that might fail returns an <code>Either</code> type, and its parent uses <code>fold</code> to handle both the success and failure cases. See the <a href="errors.html" class="text-primary hover:underline">Error Handling guide</a> for more details.</p>
-                    <pre class="bg-gray-800 text-white p-4 rounded-lg mb-6"><code class="language-javascript">import { createElement } from '../../systems/render/functions.js';
-import { Either } from '../../core/types/either.js';
-
-// This component can "fail" by returning a Left.
-const PotentiallyFailingComponent = ({ user }) => {
-  if (!user || !user.name) {
-    return Either.Left(new Error('User data is missing or invalid!'));
-  }
-  return Either.Right(
-      createElement('h1', null, `Welcome, ${user.name}`)
-  );
-};
-
-// The parent component acts as the "Error Boundary".
-const App = ({ user }) => {
-    const componentResult = PotentiallyFailingComponent({ user });
-
-    // Use fold to handle the two possible outcomes.
-    return componentResult.fold(
-        // The 'Left' case (failure): render a fallback UI.
-        error => createElement('div', { className: 'error' },
-            `Something went wrong: ${error.message}`
-        ),
-        // The 'Right' case (success): render the component's VNode as is.
-        successVNode => successVNode
-    );
-};
-
-// Example Usage:
-// const currentUser = { name: 'Jane' };
-// const missingUser = null;
-// render(App({ user: currentUser }), document.getElementById('root'));
-// render(App({ user: missingUser }), document.getElementById('root'));
+// First render: creates the DOM nodes
+render(createElement(App), rootElement);
 </code></pre>
 
-                    <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2">Optimizing Render Performance</h2>
-                    <p class="mb-4">To optimize rendering performance in FlexNet JSX, consider the following techniques:</p>
+            <h3 class="text-xl font-semibold mt-6 mb-3">The Diffing Algorithm</h3>
+            <p class="mb-2">
+                The real power of the render system comes into play on subsequent calls. When you call <code>render</code> again with an updated virtual node tree, FlexNet doesn't just clear the container and rebuild everything. Instead, it:
+            </p>
+            <ol class="list-decimal pl-6 space-y-2">
+                <li>Compares the new virtual tree to the previous one (this process is called "diffing").</li>
+                <li>Calculates the minimum set of changes required to make the real DOM match the new virtual tree.</li>
+                <li>Applies only those specific changes (e.g., updating an attribute, changing text content, adding a new element).</li>
+            </ol>
+            <p class="mt-4">This diffing and patching process is what makes the UI updates fast and efficient.</p>
 
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-                        <div class="bg-white p-4 border border-gray-200 rounded-lg">
-                            <h4 class="font-semibold text-lg mb-2">Memoization</h4>
-                            <p class="text-gray-600">Use the <code>memoize</code> function to prevent unnecessary re-renders of expensive components. This works best when component props are primitive values or simple objects that can be reliably serialized. See the <a href="../base/api-reference.html#function-operations" class="text-primary hover:underline">API reference</a> for details.</p>
-                        </div>
-                        <div class="bg-white p-4 border border-gray-200 rounded-lg">
-                            <h4 class="font-semibold text-lg mb-2">Keys</h4>
-                            <p class="text-gray-600">Always use unique keys when rendering lists to help the diffing algorithm identify changes efficiently.</p>
-                        </div>
-                        <div class="bg-white p-4 border border-gray-200 rounded-lg">
-                            <h4 class="font-semibold text-lg mb-2">Granular Components</h4>
-                            <p class="text-gray-600">Break UI into smaller, focused components to minimize the impact of state changes.</p>
-                        </div>
-                        <div class="bg-white p-4 border border-gray-200 rounded-lg">
-                            <h4 class="font-semibold text-lg mb-2">Avoid Deep Nesting</h4>
-                            <p class="text-gray-600">Excessively deep component hierarchies can slow down the diffing process.</p>
-                        </div>
-                    </div>
-
-                    <h3 class="text-xl font-medium mt-6 mb-3">Example: Memoized Component</h3>
-                    <pre class="bg-gray-800 text-white p-4 rounded-lg mb-6"><code class="language-javascript">import { createElement } from '../../systems/render/functions.js';
-import { memoize } from '../../utils/function.js';
-
-// Expensive component that shouldn't re-render unless its props change
-const ExpensiveComponent = ({ data }) => {
-  // Complex processing...
-  const processedData = JSON.stringify(data); // Example of processing
-  
-  return createElement('div', null,
-    createElement('p', null, `Processed: ${processedData}`)
-  );
-};
-
-// Memoized version that only re-renders when its arguments change.
-// The arguments are JSON.stringified to create a cache key.
-const MemoizedExpensiveComponent = memoize(ExpensiveComponent);</code></pre>
-
-                    <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded-md mt-8">
-                        <h4 class="font-semibold flex items-center">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-yellow-500" viewBox="0 0 20 20" fill="currentColor">
-                                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2h-1V9z" clip-rule="evenodd" />
-                            </svg>
-                            Tip
-                        </h4>
-                        <p>When working with the FlexNet JSX render system, embrace the functional programming paradigm. Use pure functions, immutable data structures, and composition to create predictable, maintainable, and efficient UIs.</p>
-                    </div>
-                </div>
-
-                <div class="mt-12 border-t border-gray-200 pt-8">
-                    <h2 class="text-2xl font-semibold mb-4">Next Steps</h2>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <a href="events.html" class="block p-4 border border-gray-200 rounded-lg hover:border-primary hover:shadow-md transition">
-                            <h3 class="font-semibold text-lg mb-2">Events System</h3>
-                            <p class="text-gray-600">Learn how FlexNet handles DOM events in a functional way.</p>
-                        </a>
-                        <a href="../base/api-reference.html" class="block p-4 border border-gray-200 rounded-lg hover:border-primary hover:shadow-md transition">
-                            <h3 class="font-semibold text-lg mb-2">API Reference</h3>
-                            <p class="text-gray-600">Explore the complete API reference for the render system and other core features.</p>
-                        </a>
-                        <a href="state.html" class="block p-4 border border-gray-200 rounded-lg hover:border-primary hover:shadow-md transition">
-                            <h3 class="font-semibold text-lg mb-2">State System</h3>
-                            <p class="text-gray-600">Learn more about managing application state.</p>
-                        </a>
-                        <a href="errors.html" class="block p-4 border border-gray-200 rounded-lg hover:border-primary hover:shadow-md transition">
-                            <h3 class="font-semibold text-lg mb-2">Error Handling</h3>
-                            <p class="text-gray-600">See more advanced patterns for handling errors during rendering.</p>
-                        </a>
-                    </div>
-                </div>
+            <div class="flex justify-between mt-12 pt-6 border-t border-gray-200">
+                <a href="/systems/effects.html" class="inline-flex items-center px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300 transition">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+                    </svg>
+                    Prev: Effects
+                </a>
+                <a href="/systems/events.html" class="inline-flex items-center px-4 py-2 bg-primary text-white rounded-md hover:bg-blue-600 transition">
+                    Next: Events
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                    </svg>
+                </a>
             </div>
-        </main>
+        </div>
     </div>
-
-    <footer id="footer-placeholder" class="bg-white border-t border-gray-200 py-6">
-    </footer>
-
-    <script src="../assets/main.js"></script>
 </body>
-</html> 
+</html>

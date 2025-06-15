@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Events System - FlexNet JSX Framework</title>
+    <title>Events - FlexNet JSX Framework</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/atom-one-dark.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
@@ -20,213 +20,92 @@
                 }
             }
         }
-        hljs.highlightAll();
     </script>
+    <script src="/assets/main.js" defer></script>
 </head>
 <body class="bg-gray-50 text-gray-900 min-h-screen">
-    <div class="flex">
-        <!-- Sidebar -->
-        <aside id="sidebar-placeholder" class="w-64 bg-white border-r border-gray-200 h-screen sticky top-0 overflow-y-auto flex-shrink-0">
-        </aside>
+    <div id="page-content">
+        <div class="flex items-center space-x-2 text-sm text-gray-500 mb-8">
+            <a href="/index.html" class="hover:text-primary">Home</a>
+            <span>/</span>
+            <a href="#" class="hover:text-primary">Systems</a>
+            <span>/</span>
+            <span class="text-gray-900">Events</span>
+        </div>
 
-        <!-- Main content -->
-        <main class="flex-1 overflow-y-auto">
-            <header id="header-placeholder" class="border-b border-gray-200 bg-white sticky top-0 z-10">
-            </header>
+        <h1 class="text-3xl font-bold mb-6">Event Handling</h1>
+        
+        <div class="prose prose-blue max-w-none">
+            <p class="lead text-xl text-gray-600 mb-8">
+                Handling user interactions like clicks, inputs, and submissions is a core part of any UI framework. In FlexNet, you attach event listeners declaratively as props on your elements.
+            </p>
 
-            <div class="p-8 max-w-5xl mx-auto">
-                <div class="flex items-center space-x-2 text-sm text-gray-500 mb-8">
-                    <a href="../index.html" class="hover:text-primary">Home</a>
-                    <span>/</span>
-                    <a href="state.html" class="hover:text-primary">Systems</a>
-                    <span>/</span>
-                    <span class="text-gray-700">Events</span>
-                </div>
+            <h2 class="text-2xl font-bold mt-8 mb-4">Attaching Event Listeners</h2>
+            <p class="mb-4">
+                You provide event listeners as functions passed to props that follow the camelCase convention, such as <code>onClick</code>, <code>onChange</code>, or <code>onSubmit</code>.
+            </p>
+            <pre class="bg-gray-800 text-white p-4 rounded-md mb-6 overflow-x-auto"><code class="language-javascript">import { createElement } from './src/systems/render/functions.js';
 
-                <h1 class="text-4xl font-bold mb-6">Events System</h1>
-                <p class="text-lg text-gray-600 mb-8">The FlexNet JSX events system is the bridge between user interactions—which are inherently impure—and the pure functional core of an application. It provides a structured, composable way to handle DOM events, manage application-wide communication, and trigger state changes without side effects, following the principles outlined in the <a href="../base/architecture-overview.html" class="text-primary hover:underline">Architecture Overview</a>.</p>
-
-                <div class="prose prose-blue max-w-none">
-                    <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2">Event Handling Principles</h2>
-                    <p class="mb-4">The FlexNet JSX events system is built on the following core principles:</p>
-
-                    <div class="bg-blue-50 border-l-4 border-primary p-4 rounded-md mb-6">
-                        <h4 class="font-semibold">Core Principles</h4>
-                        <ul class="list-disc pl-6 mt-2">
-                            <li>**Pure Handlers:** Event handlers should be pure functions that translate event data into actions or messages.</li>
-                            <li>**Unidirectional Data Flow:** Events trigger state changes through a central store, which then causes the UI to re-render. As described in the <a href="../base/architecture-overview.html" class="text-primary hover:underline">architecture guide</a>, data flows in one direction.</li>
-                            <li>**Isolate Side Effects:** All side effects (like `console.log` or DOM manipulation) must be handled by the <a href="effects.html" class="text-primary hover:underline">Effect system</a>, not directly in event handlers.</li>
-                            <li>**Functional Composition:** Complex event logic is built by composing smaller, pure functions using <a href="../base/api-reference.html#composition" class="text-primary hover:underline">`compose` and `pipe`</a>.</li>
-                            <li>**Decoupled Communication:** The `EventBus` system should be used for cross-component communication instead of direct prop-drilling.</li>
-                        </ul>
-                    </div>
-
-                    <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2">DOM Event Handling and State Integration</h2>
-                    <p class="mb-4">Events drive state changes. The correct pattern is for an event handler to dispatch a descriptive action to the central <a href="../base/api-reference.html#state-system" class="text-primary hover:underline">store</a>. A pure reducer function then computes the next state, and the UI re-renders.</p>
-
-                    <pre class="bg-gray-800 text-white p-4 rounded-lg mb-6"><code class="language-javascript">import { createElement, render } from '../../systems/render/functions.js';
-import { createStore } from '../../systems/state/functions.js';
-
-// 1. Define a pure reducer function.
-const reducer = (state, action) => {
-    switch (action.type) {
-        case 'INCREMENT':
-            return { ...state, count: state.count + 1 };
-        case 'DECREMENT':
-            return { ...state, count: state.count - 1 };
-        default:
-            return state;
-    }
+const handleClick = () => {
+    alert('Button clicked!');
 };
 
-// 2. Create an immutable store.
-const store = createStore(reducer, { count: 0 });
-
-// 3. The component dispatches actions onClick. It does not know the implementation.
-const Counter = ({ count, dispatch }) =>
-  createElement('div', null,
-    createElement('h1', null, `Count: ${count}`),
-    createElement('button', { onClick: () => dispatch({ type: 'DECREMENT' }) }, '-'),
-    createElement('button', { onClick: () => dispatch({ type: 'INCREMENT' }) }, '+')
-  );
-
-
-// 4. The main render function subscribes to the store.
-const renderApp = () => {
-    const currentState = store.getState();
-    const vnode = Counter({
-        count: currentState.count,
-        dispatch: store.dispatch // Pass the dispatch function to the component.
-    });
-    // The render function is defined in /src/systems/render/functions.js
-    render(vnode, document.getElementById('root'));
-};
-
-store.subscribe(renderApp);
-
-// Initial render
-renderApp();
+const MyButton = () => 
+    createElement('button', { onClick: handleClick }, 'Click Me');
+</code></pre>
+            <p class="mt-4">
+                When using JSX, the syntax is even more natural and familiar.
+            </p>
+            <pre class="bg-gray-800 text-white p-4 rounded-md mb-6 overflow-x-auto"><code class="language-jsx">const MyButton = () => (
+    &lt;button onClick={() => alert('Button clicked!')}&gt;
+        Click Me
+    &lt;/button&gt;
+);
 </code></pre>
 
-                    <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2">Application-Wide Communication with `createEventBus`</h2>
-                    <p class="mb-4">For communication between decoupled parts of an application, FlexNet JSX provides the `createEventBus` system. This avoids complex prop-drilling and allows different systems to react to named events.</p>
-
-                    <div class="bg-white border border-gray-200 rounded-lg mb-6">
-                        <div class="border-b border-gray-200 px-4 py-3 bg-gray-50">
-                            <h4 class="font-semibold">Signature</h4>
-                        </div>
-                        <div class="p-4">
-                            <pre class="bg-gray-800 text-white p-4 rounded-lg"><code class="language-javascript">// From: /src/systems/events/functions.js
-// As defined in the API Reference.
-
-const createEventBus = () => {
-    const subscribers = new Map();
-    
-    return {
-        emit: (event, data) =>
-            Maybe.fromNullable(subscribers.get(event))
-                .map(subs => subs.forEach(fn => fn(data))),
-        on: (event, callback) => {
-            const subs = subscribers.get(event) || new Set();
-            subs.add(callback);
-            subscribers.set(event, subs);
-            return () => subs.delete(callback);
-        }
-    };
-};
-</code></pre>
-                        </div>
-                    </div>
-
-                    <h3 class="text-xl font-medium mt-6 mb-3">Example: User Notifications</h3>
-                    <p class="mb-4">Imagine a scenario where a successful API call in one part of the app needs to trigger a notification toast in another. The `EventBus` is perfect for this.</p>
-
-                    <pre class="bg-gray-800 text-white p-4 rounded-lg mb-6"><code class="language-javascript">import { createEventBus } from '/src/systems/events/functions.js';
-import { Maybe } from '/src/core/types/maybe.js';
-import { createElement } from '../../systems/render/functions.js';
-
-// 1. Create a single, shared event bus for the application.
-const appEventBus = createEventBus();
-
-// 2. A notification component listens for 'show-notification' events.
-// This example uses pseudo-code for state and effects (e.g., local state `message`
-// and lifecycle hooks) to illustrate the concept. In a real app, you would
-// use the framework's state and effect management systems.
-const NotificationManager = () => {
-    let message = Maybe.Nothing();
-    
-    const showMessage = (data) => {
-        message = Maybe.Just(data.message);
-        // In a real app, this would trigger a re-render via the state system.
+            <h2 class="text-2xl font-bold mt-8 mb-4">Accessing the Event Object</h2>
+            <p class="mb-4">
+                Your event handler function will automatically receive the native browser Event object as its first argument. You can use this to access information about the event or to call methods like <code>event.preventDefault()</code>.
+            </p>
+            <pre class="bg-gray-800 text-white p-4 rounded-md mb-6 overflow-x-auto"><code class="language-jsx">const Form = () => {
+    const handleSubmit = (event) => {
+        event.preventDefault(); // Prevent the form from reloading the page
+        const formData = new FormData(event.target);
+        alert(`Hello, ${formData.get('name')}!`);
     };
 
-    const unsubscribe = appEventBus.on('show-notification', showMessage);
-
-    // The returned unsubscribe function should be called on cleanup to prevent memory leaks.
-    // e.g., cleanupEffect(unsubscribe);
-
-    return message.map(msg =>
-        createElement('div', { className: 'toast' }, msg)
-    ).getOrElse(null);
-};
-
-// 3. Another part of the application emits an event.
-// The `response` is an Either or Result type, as described in the Error Handling guide.
-const handleApiResponse = (response) => {
-    // The `emit` function is safe, as it returns a `Maybe` which handles cases
-    // where no listeners are subscribed to the event.
-    response.fold(
-      (error) => appEventBus.emit('show-notification', { message: `Error: ${error}` }),
-      (data) => appEventBus.emit('show-notification', { message: 'Data saved successfully!' })
+    return (
+        &lt;form onSubmit={handleSubmit}&gt;
+            &lt;input type="text" name="name" /&gt;
+            &lt;button type="submit"&gt;Submit&lt;/button&gt;
+        &lt;/form&gt;
     );
 };
 </code></pre>
 
-                    <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded-md mt-8">
-                        <h4 class="font-semibold flex items-center">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-yellow-500" viewBox="0 0 20 20" fill="currentColor">
-                                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2h-1V9z" clip-rule="evenodd" />
-                            </svg>
-                            Best Practices
-                        </h4>
-                        <ul class="list-disc pl-6 mt-2">
-                            <li><strong>Dispatch Actions from Handlers:</strong> DOM event handlers should only be responsible for dispatching actions to the state store.</li>
-                            <li>**Keep Reducers Pure:** All state transformation logic must happen inside pure reducer functions.</li>
-                            <li>**Use EventBus for Cross-Cutting Concerns:** Use the `EventBus` for notifications, logging, or any communication between loosely coupled components.</li>
-                            <li>**Compose Functional Pipelines:** For complex input handling, use `compose` to create a pipeline that extracts, validates, and transforms data before creating an action. See the <a href="../base/security-practices.html" class="text-primary hover:underline">Security Guide</a> for validation patterns.</li>
-                            <li>**Manage Subscriptions:** Always use the returned `unsubscribe` function from `eventBus.on()` to clean up subscriptions when a component unmounts to prevent memory leaks.</li>
-                        </ul>
-                    </div>
-                </div>
+            <h2 class="text-2xl font-bold mt-8 mb-4">How It Works</h2>
+            <p class="mb-4">
+                FlexNet's render system detects props that start with "on" and end with a capital letter (e.g., <code>onClick</code>). It then automatically adds a corresponding native event listener to the DOM element (e.g., <code>element.addEventListener('click', ...)</code>).
+            </p>
+            <p class="mb-4">
+                When the component re-renders, FlexNet is smart enough to update the listener if the handler function has changed, or remove it if the prop is no longer provided, preventing memory leaks.
+            </p>
 
-                <div class="mt-12 border-t border-gray-200 pt-8">
-                    <h2 class="text-2xl font-semibold mb-4">Next Steps</h2>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <a href="effects.html" class="block p-4 border border-gray-200 rounded-lg hover:border-primary hover:shadow-md transition">
-                            <h3 class="font-semibold text-lg mb-2">Effects System</h3>
-                            <p class="text-gray-600">Learn how to handle side effects that result from events.</p>
-                        </a>
-                        <a href="errors.html" class="block p-4 border border-gray-200 rounded-lg hover:border-primary hover:shadow-md transition">
-                            <h3 class="font-semibold text-lg mb-2">Error Handling</h3>
-                            <p class="text-gray-600">Explore comprehensive error handling strategies using `Either` and `Result`.</p>
-                        </a>
-                        <a href="../base/api-reference.html#state-system" class="block p-4 border border-gray-200 rounded-lg hover:border-primary hover:shadow-md transition">
-                            <h3 class="font-semibold text-lg mb-2">State Management</h3>
-                            <p class="text-gray-600">Dive deeper into the `createStore` function and functional reducers.</p>
-                        </a>
-                         <a href="../base/security-practices.html" class="block p-4 border border-gray-200 rounded-lg hover:border-primary hover:shadow-md transition">
-                            <h3 class="font-semibold text-lg mb-2">Security Practices</h3>
-                            <p class="text-gray-600">Understand how to handle user input and events securely.</p>
-                        </a>
-                    </div>
-                </div>
+            <div class="flex justify-between mt-12 pt-6 border-t border-gray-200">
+                <a href="/systems/render.html" class="inline-flex items-center px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300 transition">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+                    </svg>
+                    Prev: Render
+                </a>
+                <a href="/systems/errors.html" class="inline-flex items-center px-4 py-2 bg-primary text-white rounded-md hover:bg-blue-600 transition">
+                    Next: Error Handling
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                    </svg>
+                </a>
             </div>
-        </main>
+        </div>
     </div>
-
-    <footer id="footer-placeholder" class="bg-white border-t border-gray-200 py-6">
-    </footer>
-
-    <script src="../assets/main.js"></script>
 </body>
-</html> 
+</html>

@@ -20,271 +20,71 @@
                 }
             }
         }
-        document.addEventListener('DOMContentLoaded', (event) => {
-            document.querySelectorAll('pre code').forEach((el) => {
-                hljs.highlightElement(el);
-            });
-        });
     </script>
+    <script src="/assets/main.js" defer></script>
 </head>
 <body class="bg-gray-50 text-gray-900 min-h-screen">
-    <div class="flex">
-        <!-- Sidebar -->
-        <aside id="sidebar-placeholder" class="w-64 bg-white border-r border-gray-200 h-screen sticky top-0 overflow-y-auto flex-shrink-0">
-        </aside>
+    <div id="page-content">
+        <div class="flex items-center space-x-2 text-sm text-gray-500 mb-8">
+            <a href="/index.html" class="hover:text-primary">Home</a>
+            <span>/</span>
+            <a href="#" class="hover:text-primary">API Reference</a>
+            <span>/</span>
+            <span class="text-gray-900">Either</span>
+        </div>
 
-        <!-- Main content -->
-        <main class="flex-1 overflow-y-auto">
-            <header id="header-placeholder" class="border-b border-gray-200 bg-white sticky top-0 z-10">
-            </header>
+        <h1 class="text-3xl font-bold mb-6">API: Either</h1>
+        
+        <div class="prose prose-blue max-w-none">
+            <p class="lead text-xl text-gray-600 mb-8">
+                The <code>Either</code> type represents a value that can be one of two types: <code>Left</code> or <code>Right</code>. By convention, <code>Left</code> represents failure and <code>Right</code> represents success.
+            </p>
 
-            <div class="p-8 max-w-5xl mx-auto">
-                <div class="flex items-center space-x-2 text-sm text-gray-500 mb-8">
-                    <a href="../index.html" class="hover:text-primary">Home</a>
-                    <span>/</span>
-                    <a href="maybe.html" class="hover:text-primary">API</a>
-                    <span>/</span>
-                    <span class="text-gray-700">Either</span>
-                </div>
-
-                <h1 class="text-4xl font-bold mb-6">Either API</h1>
-                <p class="text-lg text-gray-600 mb-8">The Either type represents a value that can be one of two possibilities: a `Left` or a `Right`.</p>
-
-                <div class="prose prose-blue max-w-none">
-                    <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2" id="overview">Overview</h2>
-                    <p class="mb-4">In <a href="../base/architecture-overview.html" class="text-primary hover:underline">functional programming</a>, <code>Either</code> is a core type used for representing a choice between two distinct values. By convention, <code>Right</code> is used to represent a success or a "correct" value, while <code>Left</code> is used to represent a failure, an error, or an "alternative" value.</p>
-                    
-                    <p class="mb-4">This construct allows functions to communicate failure without throwing exceptions, making error handling an explicit and manageable part of the program's data flow. It forces the developer to confront both possibilities, leading to more robust and predictable applications.</p>
-                    <ul class="list-disc pl-6 mb-6 space-y-2">
-                        <li><strong>Explicit Error Handling</strong>: Functions return an <code>Either</code> to signal that they might fail, making it impossible to ignore potential errors.</li>
-                        <li><strong>No Exceptions</strong>: Avoids the use of <code>try...catch</code> for control flow, treating errors as manageable data.</li>
-                        <li><strong>Composable Workflows</strong>: Provides functions like <code>map</code> and <code>chain</code> to build safe, sequential operations where any step can fail without crashing the program.</li>
-                    </ul>
-
-                    <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2" id="usage">Basic Usage & Handling</h2>
-                    <p class="mb-4">The primary way to interact with an <code>Either</code> value is through the <code>fold</code> function, which allows you to provide a specific transformation for each case.</p>
-
-                    <pre class="bg-gray-800 text-white p-4 rounded-lg mb-6"><code class="language-javascript">import { Either } from './src/core/types/either.js';
-
-// A function that may fail
-const findUser = (id, users) => {
-    const user = users.find(u => u.id === id);
-    return user ? Either.Right(user) : Either.Left('User not found');
-};
-
-const users = [{ id: 1, name: 'Alice' }];
-const result = findUser(1, users); // Returns Either.Right({ id: 1, name: 'Alice' })
-const failedResult = findUser(2, users); // Returns Either.Left('User not found')
-
-// Use `fold` to handle both cases
-const handleResult = Either.fold(
-    (errorMessage) => `Error: ${errorMessage}`, // Left case
-    (user) => `Welcome, ${user.name}!`        // Right case
-);
-
-console.log(handleResult(result)); // "Welcome, Alice!"
-console.log(handleResult(failedResult)); // "Error: User not found"
-</code></pre>
-
-                    <p class="mb-4">You can also handle an <code>Either</code> by directly checking its <code>type</code> property.</p>
-                     <pre class="bg-gray-800 text-white p-4 rounded-lg mb-6"><code class="language-javascript">if (result.type === 'Right') {
-    console.log('Success:', result.value);
-} else { // type is 'Left'
-    console.error('Failure:', result.value);
-}</code></pre>
-
-                    <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2" id="common-use-cases">Common Use Cases</h2>
-
-                    <h3 class="text-xl font-medium mt-6 mb-3">Safe Data Transformation with `map`</h3>
-                    <p class="mb-4">The <code>map</code> function allows you to safely transform the value inside a <code>Right</code>. If the value is a <code>Left</code>, the transformation is skipped and the <code>Left</code> is passed through unchanged.</p>
-                    <pre class="bg-gray-800 text-white p-4 rounded-lg mb-6"><code class="language-javascript">import { Either } from './src/core/types/either.js';
-import { pipe } from './src/core/functions/composition.js';
-
-const divide = (a, b) => b === 0 ? Either.Left('Cannot divide by zero') : Either.Right(a / b);
-
-const double = n => n * 2;
-const addOne = n => n + 1;
-
-// A successful pipeline
-const successfulCalculation = pipe(
-    Either.map(double), // 10 -> 20
-    Either.map(addOne)  // 20 -> 21
-)(divide(10, 2)); // Starts with Either.Right(5)
-
-// The fold function is used here to extract the final value for logging
-Either.fold(console.error, console.log)(successfulCalculation); // Logs: 21
-
-// A failed pipeline
-const failedCalculation = pipe(
-    Either.map(double), // This step is skipped
-    Either.map(addOne)  // This step is also skipped
-)(divide(10, 0)); // Starts with Either.Left(...)
-
-Either.fold(console.error, console.log)(failedCalculation); // Logs: "Cannot divide by zero"
-</code></pre>
-
-                    <h3 class="text-xl font-medium mt-6 mb-3">Sequencing Operations with `chain`</h3>
-                    <p class="mb-4">Use <code>chain</code> (also known as `flatMap`) to sequence multiple functions that each return an <code>Either</code>. This is essential for creating multi-step validations or computations where any step can fail.</p>
-                    <pre class="bg-gray-800 text-white p-4 rounded-lg mb-6"><code class="language-javascript">import { Either } from './src/core/types/either.js';
-import { pipe } from './src/core/functions/composition.js';
-
-// Validation functions that return an Either
-const validatePresence = (value, error) => 
-    value ? Either.Right(value) : Either.Left(error);
-
-const validateLength = (str, error) =>
-    str.length >= 8 ? Either.Right(str) : Either.Left(error);
-
-// The chain function requires the inner function to return an Either
-const validatePassword = (password) => pipe(
-    (input) => validatePresence(input, 'Password is required'),
-    Either.chain((p) => validateLength(p, 'Password must be at least 8 characters'))
-)(password);
-
-const validResult = validatePassword('long_enough_password');
-const invalidResult = validatePassword('short');
-
-Either.fold(console.error, console.log)(validResult); // Logs: "long_enough_password"
-Either.fold(console.error, console.log)(invalidResult); // Logs: "Password must be at least 8 characters"
-</code></pre>
-
-                    <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2" id="api-reference">API Reference</h2>
-
-                    <h3 class="text-xl font-medium mt-6 mb-3">Constructors</h3>
-                    
-                    <div class="overflow-hidden bg-white shadow-sm border border-gray-200 rounded-lg mb-6">
-                        <table class="min-w-full divide-y divide-gray-200">
-                            <thead class="bg-gray-50">
-                                <tr>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Constructor</th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Description</th>
-                                </tr>
-                            </thead>
-                            <tbody class="bg-white divide-y divide-gray-200">
-                                <tr>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                        <code>Either.Left(value)</code>
-                                    </td>
-                                    <td class="px-6 py-4 text-sm text-gray-500">
-                                        Creates an instance of <code>Either</code> representing the <code>Left</code> (failure) case.
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                        <code>Either.Right(value)</code>
-                                    </td>
-                                    <td class="px-6 py-4 text-sm text-gray-500">
-                                        Creates an instance of <code>Either</code> representing the <code>Right</code> (success) case.
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                        <code>Either.fromNullable(value)</code>
-                                    </td>
-                                    <td class="px-6 py-4 text-sm text-gray-500">
-                                        Returns a <code>Right</code> if the value is not null or undefined, otherwise returns a <code>Left('Value is null')</code>.
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-
-                    <h3 class="text-xl font-medium mt-6 mb-3">Functions</h3>
-                    
-                    <div class="overflow-hidden bg-white shadow-sm border border-gray-200 rounded-lg mb-6">
-                        <table class="min-w-full divide-y divide-gray-200">
-                            <thead class="bg-gray-50">
-                                <tr>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Function</th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Description</th>
-                                </tr>
-                            </thead>
-                            <tbody class="bg-white divide-y divide-gray-200">
-                                <tr>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium align-top">
-                                        <code>map(fn)</code>
-                                    </td>
-                                    <td class="px-6 py-4 text-sm text-gray-500">
-                                        A curried function that applies <code>fn</code> to the value of a <code>Right</code>, otherwise returns the <code>Left</code> untouched.<br>
-                                        <em>Signature: <code>(fn: R -> T) => (either: Either<L, R>) => Either<L, T></code></em>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium align-top">
-                                        <code>chain(fn)</code>
-                                    </td>
-                                    <td class="px-6 py-4 text-sm text-gray-500">
-                                        A curried function that applies <code>fn</code> to the value of a <code>Right</code>. <code>fn</code> must return a new <code>Either</code>.<br>
-                                        <em>Signature: <code>(fn: R -> Either<L, T>) => (either: Either<L, R>) => Either<L, T></code></em>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium align-top">
-                                        <code>fold(leftFn, rightFn)</code>
-                                    </td>
-                                    <td class="px-6 py-4 text-sm text-gray-500">
-                                        A curried function that unwraps the <code>Either</code> by applying <code>leftFn</code> to a <code>Left</code> value or <code>rightFn</code> to a <code>Right</code> value.<br>
-                                        <em>Signature: <code>(leftFn: L -> T, rightFn: R -> T) => (either: Either<L, R>) => T</code></em>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-
-                    <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded-md mt-8">
-                        <h4 class="font-semibold flex items-center">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-yellow-500" viewBox="0 0 20 20" fill="currentColor">
-                                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2h-1V9z" clip-rule="evenodd" />
-                            </svg>
-                            Framework Compliance
-                        </h4>
-                        <ul class="list-disc pl-6 mt-2">
-                            <li><strong>Always Handle Both Paths</strong>: The primary purpose of <code>Either</code> is to force you to handle both success and failure cases. Use <code>fold</code> to ensure both paths are covered.</li>
-                            <li><strong>Synchronous Logic Only</strong>: <code>Either</code> is for synchronous control flow. For asynchronous operations, use the framework's <a href="../base/api-reference.html" class="text-primary hover:underline">Effect system</a>.</li>
-                            <li><strong>Prefer <code>Either</code> for predictable errors</strong>: Use <code>Either</code> for operations with a known set of possible failures (e.g., validation). For exceptional, unexpected errors, use the <a href="../base/api-reference.html" class="text-primary hover:underline"><code>Result</code> type</a> with its <code>fromTry</code> constructor.</li>
-                        </ul>
-                    </div>
-
-                    <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2" id="next-steps">Next Steps</h2>
-                    
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
-                        <a href="../base/api-reference.html" class="block p-4 border border-gray-200 rounded-lg hover:border-primary hover:shadow-md transition">
-                            <h3 class="font-semibold text-lg mb-2">API Reference: Maybe</h3>
-                            <p class="text-gray-600">Learn about handling values that might be null or undefined.</p>
-                        </a>
-                        <a href="../base/api-reference.html" class="block p-4 border border-gray-200 rounded-lg hover:border-primary hover:shadow-md transition">
-                            <h3 class="font-semibold text-lg mb-2">API Reference: Result</h3>
-                            <p class="text-gray-600">Explore the Result type for wrapping functions that might throw exceptions.</p>
-                        </a>
-                        <a href="../base/security-practices.html" class="block p-4 border border-gray-200 rounded-lg hover:border-primary hover:shadow-md transition">
-                            <h3 class="font-semibold text-lg mb-2">Security Best Practices</h3>
-                            <p class="text-gray-600">See how <code>Either</code> is used for safe input validation.</p>
-                        </a>
-                         <a href="../base/architecture-overview.html" class="block p-4 border border-gray-200 rounded-lg hover:border-primary hover:shadow-md transition">
-                            <h3 class="font-semibold text-lg mb-2">Architecture: Core Type System</h3>
-                            <p class="text-gray-600">Get a high-level overview of the functional types that form the core of the framework.</p>
-                        </a>
-                    </div>
-                </div>
+            <div class="api-item border-t border-gray-200 pt-6 mt-8">
+                <h3 class="text-xl font-mono font-semibold"><code>Either.Left(value)</code></h3>
+                <p class="mt-2 mb-4">Creates an Either containing a Left value.</p>
             </div>
-        </main>
+            
+            <div class="api-item border-t border-gray-200 pt-6 mt-8">
+                <h3 class="text-xl font-mono font-semibold"><code>Either.Right(value)</code></h3>
+                <p class="mt-2 mb-4">Creates an Either containing a Right value.</p>
+            </div>
+            
+            <div class="api-item border-t border-gray-200 pt-6 mt-8">
+                <h3 class="text-xl font-mono font-semibold"><code>either.isLeft()</code></h3>
+                <p class="mt-2 mb-4">Returns <code>true</code> if the Either is a <code>Left</code>.</p>
+            </div>
+            
+            <div class="api-item border-t border-gray-200 pt-6 mt-8">
+                <h3 class="text-xl font-mono font-semibold"><code>either.isRight()</code></h3>
+                <p class="mt-2 mb-4">Returns <code>true</code> if the Either is a <code>Right</code>.</p>
+            </div>
+            
+            <div class="api-item border-t border-gray-200 pt-6 mt-8">
+                <h3 class="text-xl font-mono font-semibold"><code>either.map(fn)</code></h3>
+                <p class="mt-2 mb-4">Applies a function to the value inside a <code>Right</code>. If it's <code>Left</code>, it returns the <code>Left</code> untouched.</p>
+            </div>
+            
+            <div class="api-item border-t border-gray-200 pt-6 mt-8">
+                <h3 class="text-xl font-mono font-semibold"><code>either.match({ Left, Right })</code></h3>
+                <p class="mt-2 mb-4">Provides a way to handle both cases of the Either by providing two functions.</p>
+            </div>
+
+            <div class="flex justify-between mt-12 pt-6 border-t border-gray-200">
+                <a href="/api/maybe.html" class="inline-flex items-center px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300 transition">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+                    </svg>
+                    Prev: Maybe API
+                </a>
+                <a href="/api/result.html" class="inline-flex items-center px-4 py-2 bg-primary text-white rounded-md hover:bg-blue-600 transition">
+                    Next: Result API
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                    </svg>
+                </a>
+            </div>
+        </div>
     </div>
-
-    <footer id="footer-placeholder" class="bg-white border-t border-gray-200 py-6">
-    </footer>
-
-    <script>
-        // Simple client-side search functionality
-        const searchInput = document.querySelector('input[placeholder="Search documentation..."]');
-        searchInput.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter') {
-                const query = searchInput.value.toLowerCase();
-                // Implement search functionality
-                console.log('Searching for:', query);
-                // This would typically use a search index or API
-            }
-        });
-    </script>
-    <script src="../assets/main.js"></script>
 </body>
-</html> 
+</html>

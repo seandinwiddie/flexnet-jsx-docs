@@ -22,94 +22,85 @@
         }
         hljs.highlightAll();
     </script>
+    <script src="/assets/main.js" defer></script>
 </head>
 <body class="bg-gray-50 text-gray-900 min-h-screen">
-    <div class="flex">
-        <!-- Sidebar -->
-        <aside id="sidebar-placeholder" class="w-64 bg-white border-r border-gray-200 h-screen sticky top-0 overflow-y-auto flex-shrink-0">
-        </aside>
+    <div id="page-content">
+        <!-- Hero section -->
+        <div class="py-20 text-center bg-gradient-to-r from-primary to-secondary text-white rounded-lg mb-12">
+            <h1 class="text-5xl font-bold mb-4 text-shadow">FlexNet JSX Framework</h1>
+            <p class="text-xl mb-8">A functional JavaScript implementation for building modern web applications</p>
+            <div class="flex justify-center space-x-4">
+                <a href="base/getting-started-guide.html" class="px-8 py-4 bg-white text-primary rounded-md hover:bg-gray-100 transition font-semibold">Get Started</a>
+                <a href="base/api-reference.html" class="px-8 py-4 bg-transparent text-white border border-white rounded-md hover:bg-white hover:text-primary transition font-semibold">API Reference</a>
+            </div>
+        </div>
 
-        <!-- Main content -->
-        <main class="flex-1 overflow-y-auto">
-            <header id="header-placeholder" class="border-b border-gray-200 bg-white sticky top-0 z-10">
-            </header>
-
-            <div class="p-6 max-w-5xl mx-auto">
-                <!-- Hero section -->
-                <div class="py-20 text-center bg-gradient-to-r from-primary to-secondary text-white rounded-lg mb-12">
-                    <h1 class="text-5xl font-bold mb-4 text-shadow">FlexNet JSX Framework</h1>
-                    <p class="text-xl mb-8">A functional JavaScript implementation for building modern web applications</p>
-                    <div class="flex justify-center space-x-4">
-                        <a href="base/getting-started-guide.html" class="px-8 py-4 bg-white text-primary rounded-md hover:bg-gray-100 transition font-semibold">Get Started</a>
-                        <a href="base/api-reference.html" class="px-8 py-4 bg-transparent text-white border border-white rounded-md hover:bg-white hover:text-primary transition font-semibold">API Reference</a>
-                    </div>
+        <!-- Features section -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
+            <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-100 flex items-start">
+                <div class="mr-4">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" /></svg>
                 </div>
-
-                <!-- Features section -->
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
-                    <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-100 flex items-start">
-                        <div class="mr-4">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" /></svg>
-                        </div>
-                        <div>
-                            <h3 class="text-lg font-semibold mb-2">Pure Functional</h3>
-                            <p class="text-gray-600">Build applications with pure functions, immutable state, and functional composition. <a href="base/architecture-overview.html" class="text-primary hover:underline">Learn more.</a></p>
-                        </div>
-                    </div>
-                    <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-100 flex items-start">
-                        <div class="mr-4">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 9a2 2 0 012-2h2a2 2 0 012 2v.93a2 2 0 001 1.732l1 1a2 2 0 01-2 3.464l-1-1A2 2 0 0013.07 15H11a2 2 0 01-2-2v-4z" /></svg>
-                        </div>
-                        <div>
-                            <h3 class="text-lg font-semibold mb-2">Zero Dependencies</h3>
-                            <p class="text-gray-600">FlexNet has no external dependencies and uses browser native implementation.</p>
-                        </div>
-                    </div>
-                    <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-100 flex items-start">
-                        <div class="mr-4">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" /></svg>
-                        </div>
-                        <div>
-                            <h3 class="text-lg font-semibold mb-2">Type System</h3>
-                            <p class="text-gray-600">Functional type system with Maybe, Either, and Result types for better error handling. <a href="base/api-reference.html#core-types" class="text-primary hover:underline">See the API.</a></p>
-                        </div>
-                    </div>
-                    <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-100 flex items-start">
-                        <div class="mr-4">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg>
-                        </div>
-                        <div>
-                            <h3 class="text-lg font-semibold mb-2">Security First</h3>
-                            <p class="text-gray-600">Built with security in mind, including XSS prevention and input validation. <a href="base/security-practices.html" class="text-primary hover:underline">Read the guide.</a></p>
-                        </div>
-                    </div>
+                <div>
+                    <h3 class="text-lg font-semibold mb-2">Pure Functional</h3>
+                    <p class="text-gray-600">Build applications with pure functions, immutable state, and functional composition. <a href="base/architecture-overview.html" class="text-primary hover:underline">Learn more.</a></p>
                 </div>
+            </div>
+            <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-100 flex items-start">
+                <div class="mr-4">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 9a2 2 0 012-2h2a2 2 0 012 2v.93a2 2 0 001 1.732l1 1a2 2 0 01-2 3.464l-1-1A2 2 0 0013.07 15H11a2 2 0 01-2-2v-4z" /></svg>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold mb-2">Zero Dependencies</h3>
+                    <p class="text-gray-600">FlexNet has no external dependencies and uses browser native implementation.</p>
+                </div>
+            </div>
+            <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-100 flex items-start">
+                <div class="mr-4">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" /></svg>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold mb-2">Type System</h3>
+                    <p class="text-gray-600">Functional type system with Maybe, Either, and Result types for better error handling. <a href="base/api-reference.html#core-types" class="text-primary hover:underline">See the API.</a></p>
+                </div>
+            </div>
+            <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-100 flex items-start">
+                <div class="mr-4">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold mb-2">Security First</h3>
+                    <p class="text-gray-600">Built with security in mind, including XSS prevention and input validation. <a href="base/security-practices.html" class="text-primary hover:underline">Read the guide.</a></p>
+                </div>
+            </div>
+        </div>
 
-                <!-- Quick start section -->
-                <div class="mb-12">
-                    <h2 class="text-2xl font-bold mb-4">Quick Start</h2>
-                    <p class="mb-4">Add FlexNet JSX to your project with these simple steps:</p>
-                    <div class="bg-gray-900 rounded-lg mb-4 overflow-hidden relative">
-                        <button class="absolute top-2 right-2 bg-gray-700 hover:bg-gray-600 text-white text-xs font-bold py-1 px-2 rounded">Copy</button>
-                        <pre class="bg-gray-800 text-white p-4 overflow-x-auto"><code class="language-html">&lt;script type="module" src="path/to/jsx/src/index.js"&gt;&lt;/script&gt;</code></pre>
-                    </div>
-                    <p class="mb-4">Or use one of our starter projects:</p>
-                    <div class="bg-gray-900 rounded-lg mb-4 overflow-hidden relative">
-                        <button class="absolute top-2 right-2 bg-gray-700 hover:bg-gray-600 text-white text-xs font-bold py-1 px-2 rounded">Copy</button>
-                        <pre class="bg-gray-800 text-white p-4 overflow-x-auto"><code class="language-bash"># Clone the starter project
+        <!-- Quick start section -->
+        <div class="mb-12">
+            <h2 class="text-2xl font-bold mb-4">Quick Start</h2>
+            <p class="mb-4">Add FlexNet JSX to your project with these simple steps:</p>
+            <div class="bg-gray-900 rounded-lg mb-4 overflow-hidden relative">
+                <button class="absolute top-2 right-2 bg-gray-700 hover:bg-gray-600 text-white text-xs font-bold py-1 px-2 rounded">Copy</button>
+                <pre class="bg-gray-800 text-white p-4 overflow-x-auto"><code class="language-html">&lt;script type="module" src="path/to/jsx/src/index.js"&gt;&lt;/script&gt;</code></pre>
+            </div>
+            <p class="mb-4">Or use one of our starter projects:</p>
+            <div class="bg-gray-900 rounded-lg mb-4 overflow-hidden relative">
+                <button class="absolute top-2 right-2 bg-gray-700 hover:bg-gray-600 text-white text-xs font-bold py-1 px-2 rounded">Copy</button>
+                <pre class="bg-gray-800 text-white p-4 overflow-x-auto"><code class="language-bash"># Clone the starter project
 cd starter-project
 python -m http.server 3000
 # Open http://localhost:3000</code></pre>
-                    </div>
-                    <a href="base/getting-started-guide.html" class="text-primary hover:underline">Learn More →</a>
-                </div>
+            </div>
+            <a href="base/getting-started-guide.html" class="text-primary hover:underline">Learn More →</a>
+        </div>
 
-                <!-- Example section -->
-                <div class="mb-12">
-                    <h2 class="text-2xl font-bold mb-4">Basic Counter Example</h2>
-                    <div class="bg-gray-900 rounded-lg mb-4 overflow-hidden relative">
-                        <button class="absolute top-2 right-2 bg-gray-700 hover:bg-gray-600 text-white text-xs font-bold py-1 px-2 rounded">Copy</button>
-                        <pre class="bg-gray-800 text-white p-4 overflow-x-auto"><code class="language-javascript">import { createElement, render } from './src/systems/render/functions.js';
+        <!-- Example section -->
+        <div class="mb-12">
+            <h2 class="text-2xl font-bold mb-4">Basic Counter Example</h2>
+            <div class="bg-gray-900 rounded-lg mb-4 overflow-hidden relative">
+                <button class="absolute top-2 right-2 bg-gray-700 hover:bg-gray-600 text-white text-xs font-bold py-1 px-2 rounded">Copy</button>
+                <pre class="bg-gray-800 text-white p-4 overflow-x-auto"><code class="language-javascript">import { createElement, render } from './src/systems/render/functions.js';
 import { createStore } from './src/systems/state/functions.js';
 
 // Reducer for state management
@@ -141,38 +132,31 @@ store.subscribe(() => render(App(), rootElement));
 
 // Initial render
 render(App(), rootElement);</code></pre>
-                    </div>
-                    <a href="base/getting-started-guide.html" class="text-primary hover:underline">See More Examples →</a>
-                </div>
+            </div>
+            <a href="base/getting-started-guide.html" class="text-primary hover:underline">See More Examples →</a>
+        </div>
 
-                <!-- Starter projects section -->
-                <div class="mb-12">
-                    <h2 class="text-2xl font-bold mb-4">Starter Projects</h2>
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                        <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-100">
-                            <h3 class="text-lg font-semibold mb-2">Full-Featured Starter</h3>
-                            <p class="text-gray-600 mb-4">A comprehensive implementation demonstrating all framework features.</p>
-                            <a href="../starter-project/README.md" class="text-primary hover:underline">View Project →</a>
-                        </div>
-                        <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-100">
-                            <h3 class="text-lg font-semibold mb-2">Minimal Starter</h3>
-                            <p class="text-gray-600 mb-4">A lightweight implementation focusing on core concepts.</p>
-                            <a href="../starter-project-minimal/README.md" class="text-primary hover:underline">View Project →</a>
-                        </div>
-                        <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-100">
-                            <h3 class="text-lg font-semibold mb-2">Website Example</h3>
-                            <p class="text-gray-600 mb-4">A complete website built with FlexNet JSX.</p>
-                            <a href="../starter-project-website/README.md" class="text-primary hover:underline">View Project →</a>
-                        </div>
-                    </div>
+        <!-- Starter projects section -->
+        <div class="mb-12">
+            <h2 class="text-2xl font-bold mb-4">Starter Projects</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-100">
+                    <h3 class="text-lg font-semibold mb-2">Full-Featured Starter</h3>
+                    <p class="text-gray-600 mb-4">A comprehensive implementation demonstrating all framework features.</p>
+                    <a href="../starter-project/README.md" class="text-primary hover:underline">View Project →</a>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-100">
+                    <h3 class="text-lg font-semibold mb-2">Minimal Starter</h3>
+                    <p class="text-gray-600 mb-4">A lightweight implementation focusing on core concepts.</p>
+                    <a href="../starter-project-minimal/README.md" class="text-primary hover:underline">View Project →</a>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-100">
+                    <h3 class="text-lg font-semibold mb-2">Website Example</h3>
+                    <p class="text-gray-600 mb-4">A complete website built with FlexNet JSX.</p>
+                    <a href="../starter-project-website/README.md" class="text-primary hover:underline">View Project →</a>
                 </div>
             </div>
-        </main>
+        </div>
     </div>
-
-    <footer id="footer-placeholder" class="bg-white border-t border-gray-200 py-6">
-    </footer>
-
-    <script src="/assets/main.js"></script>
 </body>
 </html>

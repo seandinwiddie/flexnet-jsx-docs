@@ -20,517 +20,75 @@
                 }
             }
         }
-        hljs.highlightAll();
     </script>
+    <script src="/assets/main.js" defer></script>
 </head>
 <body class="bg-gray-50 text-gray-900 min-h-screen">
-    <div class="flex">
-        <!-- Sidebar -->
-        <aside id="sidebar-placeholder" class="w-64 bg-white border-r border-gray-200 h-screen sticky top-0 overflow-y-auto flex-shrink-0">
-        </aside>
+    <div id="page-content">
+        <div class="flex items-center space-x-2 text-sm text-gray-500 mb-8">
+            <a href="/index.html" class="hover:text-primary">Home</a>
+            <span>/</span>
+            <a href="#" class="hover:text-primary">API Reference</a>
+            <span>/</span>
+            <span class="text-gray-900">JSX</span>
+        </div>
 
-        <!-- Main content -->
-        <main class="flex-1 overflow-y-auto">
-            <header id="header-placeholder" class="border-b border-gray-200 bg-white sticky top-0 z-10">
-            </header>
+        <h1 class="text-3xl font-bold mb-6">API: JSX & Rendering</h1>
+        
+        <div class="prose prose-blue max-w-none">
+            <p class="lead text-xl text-gray-600 mb-8">
+                This section details the core functions for creating UI elements and rendering them to the DOM.
+            </p>
 
-            <div class="p-8 max-w-5xl mx-auto">
-                <div class="flex items-center space-x-2 text-sm text-gray-500 mb-8">
-                    <a href="../index.html" class="hover:text-primary">Home</a>
-                    <span>/</span>
-                    <a href="maybe.html" class="hover:text-primary">API</a>
-                    <span>/</span>
-                    <span class="text-gray-700">JSX</span>
-                </div>
-
-                <h1 class="text-4xl font-bold mb-6">JSX API</h1>
-                <p class="text-lg text-gray-600 mb-8">The core API for creating and rendering JSX elements in FlexNet JSX. The framework treats JSX as a system of pure functions and types, emphasizing functional composition, immutability, and robust error handling through its core <a href="maybe.html" class="text-primary hover:underline"><code>Maybe</code></a>, <a href="either.html" class="text-primary hover:underline"><code>Either</code></a>, and <a href="result.html" class="text-primary hover:underline"><code>Result</code></a> types.</p>
-
-                <div class="prose prose-blue max-w-none">
-                    <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2">Core Functions</h2>
-                    <p class="mb-4">The JSX API provides pure functions for creating and rendering virtual DOM nodes. These functions integrate deeply with the framework's type system to ensure safety and predictability.</p>
-
-                    <h3 class="text-xl font-medium mt-6 mb-3">createElement</h3>
-                    <p class="mb-4">Creates a virtual DOM element, known as a `VNode`. This is a pure function that takes a type, props, and children and returns a VNode object, ready for rendering.</p>
-                    
-                    <div class="bg-white border border-gray-200 rounded-lg mb-6">
-                        <div class="border-b border-gray-200 px-4 py-3 bg-gray-50">
-                            <h4 class="font-semibold">Signature</h4>
-                        </div>
-                        <div class="p-4">
-                            <pre class="bg-gray-800 text-white p-4 rounded-lg"><code class="language-typescript">function createElement(
-  type: string | Function,
-  props: object | null,
-  ...children: any[]
-): VNode;</code></pre>
-                        </div>
-                    </div>
-
-                    <div class="bg-white border border-gray-200 rounded-lg mb-6">
-                        <div class="border-b border-gray-200 px-4 py-3 bg-gray-50">
-                            <h4 class="font-semibold">Parameters</h4>
-                        </div>
-                        <div class="p-4">
-                            <table class="min-w-full">
-                                <thead>
-                                    <tr>
-                                        <th class="text-left font-semibold">Name</th>
-                                        <th class="text-left font-semibold">Type</th>
-                                        <th class="text-left font-semibold">Description</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td class="py-2 pr-4"><code>type</code></td>
-                                        <td class="py-2 pr-4"><code>string | Function</code></td>
-                                        <td class="py-2">The type of element to create. A string for HTML elements (e.g., 'div', 'span') or a function for components.</td>
-                                    </tr>
-                                    <tr>
-                                        <td class="py-2 pr-4"><code>props</code></td>
-                                        <td class="py-2 pr-4"><code>object | null</code></td>
-                                        <td class="py-2">The properties (attributes and event handlers) to apply to the element. Can be <code>null</code> if no props are needed.</td>
-                                    </tr>
-                                    <tr>
-                                        <td class="py-2 pr-4"><code>children</code></td>
-                                        <td class="py-2 pr-4"><code>any[]</code></td>
-                                        <td class="py-2">The child elements or content. Can be other VNode elements, strings, numbers, or arrays of these.</td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-
-                    <div class="bg-white border border-gray-200 rounded-lg mb-6">
-                        <div class="border-b border-gray-200 px-4 py-3 bg-gray-50">
-                            <h4 class="font-semibold">Example</h4>
-                        </div>
-                        <div class="p-4">
-                            <pre class="bg-gray-800 text-white p-4 rounded-lg"><code class="language-javascript">import { createElement } from '/src/core/runtime/jsx.js';
-import { compose } from '/src/core/functions/composition.js';
-
-// An action function to be called on click.
-const handleClick = () => console.log('Button clicked!');
-
-// Creating a button. Note how the onClick handler is composed.
-const buttonElement = createElement(
-  'button', 
-  { 
-    onClick: compose(handleClick),
-    className: 'btn' 
-  },
-  'Click Me'
-);
-
-console.log('Successfully created VNode:', buttonElement);
-</code></pre>
-                        </div>
-                    </div>
-
-                    <h3 class="text-xl font-medium mt-6 mb-3">render</h3>
-                    <p class="mb-4">Renders a virtual DOM element into a container. As defined in the <a href="../base/api-reference.html" class="text-primary hover:underline">API reference</a>, `render` is a composition of pure functions that create a virtual DOM, reconcile differences, and patch the actual DOM, isolating side effects.</p>
-                    
-                    <div class="bg-white border border-gray-200 rounded-lg mb-6">
-                        <div class="border-b border-gray-200 px-4 py-3 bg-gray-50">
-                            <h4 class="font-semibold">Signature</h4>
-                        </div>
-                        <div class="p-4">
-                            <pre class="bg-gray-800 text-white p-4 rounded-lg"><code class="language-typescript">function render(
-  element: VNode,
-  container: HTMLElement
-): void;</code></pre>
-                        </div>
-                    </div>
-
-                    <div class="bg-white border border-gray-200 rounded-lg mb-6">
-                        <div class="border-b border-gray-200 px-4 py-3 bg-gray-50">
-                            <h4 class="font-semibold">Parameters</h4>
-                        </div>
-                        <div class="p-4">
-                            <table class="min-w-full">
-                                <thead>
-                                    <tr>
-                                        <th class="text-left font-semibold">Name</th>
-                                        <th class="text-left font-semibold">Type</th>
-                                        <th class="text-left font-semibold">Description</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td class="py-2 pr-4"><code>element</code></td>
-                                        <td class="py-2 pr-4"><code>VNode</code></td>
-                                        <td class="py-2">The virtual DOM element to render.</td>
-                                    </tr>
-                                    <tr>
-                                        <td class="py-2 pr-4"><code>container</code></td>
-                                        <td class="py-2 pr-4"><code>HTMLElement</code></td>
-                                        <td class="py-2">The DOM container to render into.</td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-
-                    <div class="bg-white border border-gray-200 rounded-lg mb-6">
-                        <div class="border-b border-gray-200 px-4 py-3 bg-gray-50">
-                            <h4 class="font-semibold">Example</h4>
-                        </div>
-                        <div class="p-4">
-                            <pre class="bg-gray-800 text-white p-4 rounded-lg"><code class="language-javascript">import { createElement, render } from '/src/core/runtime/jsx.js';
-
-// Create an element.
-const appElement = createElement('div', { className: 'app' },
-  createElement('h1', null, 'Hello, FlexNet!'),
-  createElement('p', null, 'A purely functional approach to UI')
-);
-
-// Render the VNode to the DOM.
-render(appElement, document.getElementById('root'));</code></pre>
-                        </div>
-                    </div>
-
-                    <h3 class="text-xl font-medium mt-6 mb-3">createFragment</h3>
-                    <p class="mb-4">Creates a fragment that can contain multiple elements without adding an extra DOM node.</p>
-                    
-                    <div class="bg-white border border-gray-200 rounded-lg mb-6">
-                        <div class="border-b border-gray-200 px-4 py-3 bg-gray-50">
-                            <h4 class="font-semibold">Signature</h4>
-                        </div>
-                        <div class="p-4">
-                            <pre class="bg-gray-800 text-white p-4 rounded-lg"><code class="language-typescript">function createFragment(
-  children: any[]
-): VNode;</code></pre>
-                        </div>
-                    </div>
-
-                    <div class="bg-white border border-gray-200 rounded-lg mb-6">
-                        <div class="border-b border-gray-200 px-4 py-3 bg-gray-50">
-                            <h4 class="font-semibold">Parameters</h4>
-                        </div>
-                        <div class="p-4">
-                            <table class="min-w-full">
-                                <thead>
-                                    <tr>
-                                        <th class="text-left font-semibold">Name</th>
-                                        <th class="text-left font-semibold">Type</th>
-                                        <th class="text-left font-semibold">Description</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td class="py-2 pr-4"><code>children</code></td>
-                                        <td class="py-2 pr-4"><code>any[]</code></td>
-                                        <td class="py-2">The child elements or content to include in the fragment.</td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-
-                    <div class="bg-white border border-gray-200 rounded-lg mb-6">
-                        <div class="border-b border-gray-200 px-4 py-3 bg-gray-50">
-                            <h4 class="font-semibold">Example</h4>
-                        </div>
-                        <div class="p-4">
-                            <pre class="bg-gray-800 text-white p-4 rounded-lg"><code class="language-javascript">import { createElement, createFragment } from '/src/core/runtime/jsx.js';
-
-// A component that returns multiple elements without a wrapper.
-const UserInfo = ({ user }) => {
-  if (!user) {
-    return createFragment([
-      createElement('p', null, 'User data is not available.')
-    ]);
-  }
-  
-  return createFragment([
-    createElement('h2', null, user.name),
-    createElement('p', null, `Email: ${user.email}`)
-  ]);
-};</code></pre>
-                        </div>
-                    </div>
-
-                    <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2">Virtual DOM Types</h2>
-                    
-                    <h3 class="text-xl font-medium mt-6 mb-3">VNode</h3>
-                    <p class="mb-4">The core structure representing a virtual DOM node in FlexNet JSX.</p>
-                    
-                    <div class="bg-white border border-gray-200 rounded-lg mb-6">
-                        <div class="border-b border-gray-200 px-4 py-3 bg-gray-50">
-                            <h4 class="font-semibold">Structure</h4>
-                        </div>
-                        <div class="p-4">
-                            <pre class="bg-gray-800 text-white p-4 rounded-lg"><code class="language-typescript">interface VNode {
-  type: string | Function | Symbol; // Element type, component, or Fragment symbol
-  props: {
-    children: any[];  // Child elements
-    [key: string]: any; // Other properties
-  };
-  key?: string | number; // Optional key for efficient updates
-}</code></pre>
-                        </div>
-                    </div>
-
-                    <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2">The Functional Approach to JSX</h2>
-                    <p class="mb-4">In FlexNet JSX, creating UI is not just about writing elements, but about composing pure functions and managing state with immutable patterns. The following example demonstrates the idiomatic approach, integrating state management and functional composition directly into a simple counter component.</p>
-
-                    <div class="bg-white border border-gray-200 rounded-lg mb-6">
-                        <div class="border-b border-gray-200 px-4 py-3 bg-gray-50">
-                            <h4 class="font-semibold">Idiomatic Counter Example</h4>
-                        </div>
-                        <div class="p-4">
-                            <pre class="bg-gray-800 text-white p-4 rounded-lg"><code class="language-javascript">// Import necessary functions and types
-import { createElement, render } from '/src/core/runtime/jsx.js';
-import { createStore } from '/src/systems/state/functions.js';
-import { compose } from '/src/core/functions/composition.js';
-
-// 1. Define actions, a pure reducer, and an immutable store
-const Action = { Increment: 'INCREMENT', Decrement: 'DECREMENT' };
-
-const counterReducer = (state = 0, action = {}) => {
-  switch (action.type) {
-    case Action.Increment: return state + 1;
-    case Action.Decrement: return state - 1;
-    default: return state;
-  }
-};
-
-const store = createStore(counterReducer, 0);
-
-// 2. Define a pure functional component that receives state and callbacks
-const Counter = ({ count, onIncrement, onDecrement }) => {
-  return createElement('div', { className: 'counter' },
-    createElement('h2', { className: 'count-display' }, `Count: ${count}`),
-    createElement('button', { onClick: onDecrement, className: 'btn-decr' }, '-'),
-    createElement('button', { onClick: onIncrement, className: 'btn-incr' }, '+')
-  );
-};
-
-// 3. Define action dispatchers
-const handleIncrement = () => store.dispatch({ type: Action.Increment });
-const handleDecrement = () => store.dispatch({ type: Action.Decrement });
-
-// 4. Create a render function that connects the store's state to the component
-const renderApp = () => {
-    render(
-        Counter({
-            count: store.getState(),
-            onIncrement: handleIncrement,
-            onDecrement: handleDecrement,
-        }),
-        document.getElementById('root')
-    );
-};
-
-// 5. Subscribe to the store to re-render on state changes and render the initial state
-store.subscribe(renderApp);
-renderApp(); // Initial render
-</code></pre>
-                        </div>
-                    </div>
-
-                    <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2">Using JSX Syntax</h2>
-                    <p class="mb-4">FlexNet JSX supports the familiar JSX syntax. When using a transpiler like Babel or TypeScript, JSX tags are converted into `createElement` function calls. This allows for a declarative syntax while preserving the underlying functional, type-safe architecture.</p>
-
-                    <div class="bg-white border border-gray-200 rounded-lg mb-6">
-                        <div class="border-b border-gray-200 px-4 py-3 bg-gray-50">
-                            <h4 class="font-semibold">JSX Transformation</h4>
-                        </div>
-                        <div class="p-4">
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <div>
-                                    <h5 class="font-medium mb-2">JSX Syntax</h5>
-                                    <pre class="bg-gray-800 text-white p-4 rounded-lg h-full"><code class="language-jsx">const element = (
-  <div className="container">
-    <h1>Hello, World!</h1>
-    <p>Welcome to FlexNet JSX</p>
-  </div>
-);</code></pre>
-                                </div>
-                                <div>
-                                    <h5 class="font-medium mb-2">Transformed Output (Conceptual)</h5>
-                                    <pre class="bg-gray-800 text-white p-4 rounded-lg h-full"><code class="language-javascript">const element = createElement(
-  'div',
-  { className: 'container' },
-  createElement('h1', null, 'Hello, World!'),
-  createElement('p', null, 'Welcome to FlexNet JSX')
-);
-</code></pre>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <h3 class="text-xl font-medium mt-6 mb-3">JSX Configuration</h3>
-                    <p class="mb-4">To use JSX with FlexNet, you need to configure your transpiler to use the FlexNet JSX runtime:</p>
-
-                    <div class="bg-white border border-gray-200 rounded-lg mb-6">
-                        <div class="border-b border-gray-200 px-4 py-3 bg-gray-50">
-                            <h4 class="font-semibold">Babel Configuration</h4>
-                        </div>
-                        <div class="p-4">
-                            <pre class="bg-gray-800 text-white p-4 rounded-lg"><code class="language-json">{
-  "presets": [
-    "@babel/preset-env"
-  ],
-  "plugins": [
-    ["@babel/plugin-transform-react-jsx", {
-      "pragma": "createElement",
-      "pragmaFrag": "createFragment",
-      "importSource": "/src/core/runtime/jsx.js"
-    }]
-  ]
-}</code></pre>
-                        </div>
-                    </div>
-
-                    <div class="bg-white border border-gray-200 rounded-lg mb-6">
-                        <div class="border-b border-gray-200 px-4 py-3 bg-gray-50">
-                            <h4 class="font-semibold">TypeScript Configuration</h4>
-                        </div>
-                        <div class="p-4">
-                            <pre class="bg-gray-800 text-white p-4 rounded-lg"><code class="language-json">{
-  "compilerOptions": {
-    "jsx": "react",
-    "jsxFactory": "createElement",
-    "jsxFragmentFactory": "createFragment"
-    // other options...
-  }
-}</code></pre>
-                        </div>
-                    </div>
-
-                    <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2">Special Props</h2>
-                    <p class="mb-4">FlexNet JSX supports several special props that have specific behavior:</p>
-
-                    <div class="bg-white border border-gray-200 rounded-lg mb-6">
-                        <div class="border-b border-gray-200 px-4 py-3 bg-gray-50">
-                            <h4 class="font-semibold">Special Properties</h4>
-                        </div>
-                        <div class="p-4">
-                            <table class="min-w-full">
-                                <thead>
-                                    <tr>
-                                        <th class="text-left font-semibold">Prop</th>
-                                        <th class="text-left font-semibold">Description</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td class="py-2 pr-4"><code>key</code></td>
-                                        <td class="py-2">A special string attribute for uniquely identifying elements in lists. Not actually set as a property on the DOM element.</td>
-                                    </tr>
-                                    <tr>
-                                        <td class="py-2 pr-4"><code>ref</code></td>
-                                        <td class="py-2">A callback that receives the corresponding DOM element or component instance.</td>
-                                    </tr>
-                                    <tr>
-                                        <td class="py-2 pr-4"><code>dangerouslySetInnerHTML</code></td>
-                                        <td class="py-2">An object with a <code>__html</code> property containing HTML to inject directly into the element. Use with caution due to XSS risks.</td>
-                                    </tr>
-                                    <tr>
-                                        <td class="py-2 pr-4"><code>className</code></td>
-                                        <td class="py-2">Maps to the DOM's <code>class</code> attribute for CSS classes.</td>
-                                    </tr>
-                                    <tr>
-                                        <td class="py-2 pr-4"><code>htmlFor</code></td>
-                                        <td class="py-2">Maps to the DOM's <code>for</code> attribute for label elements.</td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-
-                    <div class="bg-white border border-gray-200 rounded-lg mb-6">
-                        <div class="border-b border-gray-200 px-4 py-3 bg-gray-50">
-                            <h4 class="font-semibold">Example Usage</h4>
-                        </div>
-                        <div class="p-4">
-                            <pre class="bg-gray-800 text-white p-4 rounded-lg"><code class="language-javascript">import { createElement } from '/src/core/runtime/jsx.js';
-import { sanitize } from '/src/security/functions.js';
-import { Maybe } from '/src/core/types/maybe.js';
-
-// Using the key prop for list items
-const list = createElement('ul', null,
-  items.map(item => 
-    createElement('li', { key: item.id }, item.text)
-  )
-);
-
-// Ref example using a functional approach with a callback
-const createForm = (onInputRef) => createElement('form', null,
-  createElement('input', {
-    type: 'text',
-    ref: el => onInputRef(Maybe.fromNullable(el))
-  })
-);
-
-
-// Using dangerouslySetInnerHTML safely with the framework's sanitize function
-const rawHtml = `<script>alert('xss')</script><span>Safe Content</span>`;
-const sanitizedEither = sanitize(rawHtml); // From security-practices.html
-
-const content = sanitizedEither.fold(
-  error => createElement('p', {className: 'error'}, `Invalid HTML: ${error.message}`),
-  safeHtml => createElement('div', {
-    dangerouslySetInnerHTML: { __html: safeHtml }
-  })
-);
-
-</code></pre>
-                        </div>
-                    </div>
-
-                    <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded-md mt-8">
-                        <h4 class="font-semibold flex items-center">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-yellow-500" viewBox="0 0 20 20" fill="currentColor">
-                                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2h-1V9z" clip-rule="evenodd" />
-                            </svg>
-                            FlexNet JSX Best Practices
-                        </h4>
-                        <ul class="list-disc pl-6 mt-2">
-                            <li><strong>Embrace Pure Functions:</strong> Ensure all components and logic are pure functions. Avoid internal mutable state and side effects.</li>
-                            <li><strong>Use `compose` and `pipe`:</strong> Build complex logic by composing smaller, reusable functions. This is central to the <a href="../base/architecture-overview.html" class="text-primary hover:underline">framework's design</a>.</li>
-                            <li><strong>Leverage Core Types:</strong> Use <a href="../base/api-reference.html" class="text-primary hover:underline">`Maybe`, `Either`, and `Result`</a> to manage control flow, handle optional values, and manage errors safely. Avoid `try/catch` and `null` checks.</li>
-                            <li><strong>Isolate Side Effects:</strong> All side effects (e.g., HTTP requests, DOM mutations) must be managed by the <a href="../base/api-reference.html" class="text-primary hover:underline">Effect</a> and <a href="../base/api-reference.html" class="text-primary hover:underline">Render</a> systems, respectively.
-                            <li><strong>Immutable State:</strong> Never mutate state directly. Use the <a href="store.html" class="text-primary hover:underline">`Store`</a> system to manage state with pure functional updates.</li>
-                            <li><strong>Always Sanitize:</strong> When using `dangerouslySetInnerHTML`, always process the HTML through the framework's <a href="../base/security-practices.html" class="text-primary hover:underline">`sanitize`</a> function first.</li>
-                            <li><strong>Provide `key` Prop:</strong> Always provide a unique `key` prop when rendering lists to ensure efficient reconciliation.</li>
-                        </ul>
-                    </div>
-                </div>
-
-                <div class="mt-12 border-t border-gray-200 pt-8">
-                    <h2 class="text-2xl font-semibold mb-4">Related Documentation</h2>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <a href="../base/architecture-overview.html" class="block p-4 border border-gray-200 rounded-lg hover:border-primary hover:shadow-md transition">
-                            <h3 class="font-semibold text-lg mb-2">Architecture Overview</h3>
-                            <p class="text-gray-600">Learn about the runtime implementation details of the JSX engine.</p>
-                        </a>
-                        <a href="../base/api-reference.html" class="block p-4 border border-gray-200 rounded-lg hover:border-primary hover:shadow-md transition">
-                            <h3 class="font-semibold text-lg mb-2">Render System API</h3>
-                            <p class="text-gray-600">Understand how the render system works with JSX elements.</p>
-                        </a>
-                    </div>
-                </div>
+            <div class="api-item border-t border-gray-200 pt-6 mt-8">
+                <h3 class="text-xl font-mono font-semibold"><code>createElement(type, props, ...children)</code></h3>
+                <p class="mt-2 mb-4">Creates and returns a new FlexNet element (a virtual DOM node).</p>
+                <ul class="mb-4">
+                    <li><strong><code>type</code></strong>: A string (e.g., 'div', 'p') or a FlexNet component function.</li>
+                    <li><strong><code>props</code></strong>: An object containing properties for the element.</li>
+                    <li><strong><code>children</code></strong>: A list of child elements or text nodes.</li>
+                </ul>
+                <pre class="bg-gray-800 text-white p-4 rounded-md"><code class="language-javascript">createElement('h1', { className: 'title' }, 'Hello');</code></pre>
             </div>
-        </main>
+            
+            <div class="api-item border-t border-gray-200 pt-6 mt-8">
+                <h3 class="text-xl font-mono font-semibold"><code>render(element, container)</code></h3>
+                <p class="mt-2 mb-4">Renders a FlexNet element into a DOM container, and handles updating the DOM on subsequent calls.</p>
+                <ul class="mb-4">
+                    <li><strong><code>element</code></strong>: The FlexNet element to render.</li>
+                    <li><strong><code>container</code></strong>: The DOM node to render the element into.</li>
+                </ul>
+                <pre class="bg-gray-800 text-white p-4 rounded-md"><code class="language-javascript">render(
+    createElement(App),
+    document.getElementById('root')
+);</code></pre>
+            </div>
+
+            <div class="api-item border-t border-gray-200 pt-6 mt-8">
+                <h3 class="text-xl font-mono font-semibold"><code>Fragment</code></h3>
+                <p class="mt-2 mb-4">A component that lets you group a list of children without adding extra nodes to the DOM.</p>
+                <pre class="bg-gray-800 text-white p-4 rounded-md"><code class="language-jsx">&lt;&gt;
+    &lt;ChildA /&gt;
+    &lt;ChildB /&gt;
+&lt;/&gt;
+</code></pre>
+            </div>
+
+            <div class="flex justify-between mt-12 pt-6 border-t border-gray-200">
+                <a href="/examples/website.html" class="inline-flex items-center px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300 transition">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+                    </svg>
+                    Prev: Website Example
+                </a>
+                <a href="/api/maybe.html" class="inline-flex items-center px-4 py-2 bg-primary text-white rounded-md hover:bg-blue-600 transition">
+                    Next: Maybe API
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                    </svg>
+                </a>
+            </div>
+        </div>
     </div>
-
-    <footer id="footer-placeholder" class="bg-white border-t border-gray-200 py-6">
-    </footer>
-
-    <script>
-        // Simple client-side search functionality
-        const searchInput = document.querySelector('input[placeholder="Search documentation..."]');
-        searchInput.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter') {
-                const query = searchInput.value.toLowerCase();
-                // Implement search functionality
-                console.log('Searching for:', query);
-                // This would typically use a search index or API
-            }
-        });
-    </script>
-    <script src="../assets/main.js"></script>
 </body>
-</html> 
+</html>

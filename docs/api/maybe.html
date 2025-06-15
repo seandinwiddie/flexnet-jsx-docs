@@ -20,254 +20,71 @@
                 }
             }
         }
-        document.addEventListener('DOMContentLoaded', (event) => {
-            document.querySelectorAll('pre code').forEach((el) => {
-                hljs.highlightElement(el);
-            });
-        });
     </script>
+    <script src="/assets/main.js" defer></script>
 </head>
 <body class="bg-gray-50 text-gray-900 min-h-screen">
-    <div class="flex">
-        <!-- Sidebar -->
-        <aside id="sidebar-placeholder" class="w-64 bg-white border-r border-gray-200 h-screen sticky top-0 overflow-y-auto flex-shrink-0">
-        </aside>
+    <div id="page-content">
+        <div class="flex items-center space-x-2 text-sm text-gray-500 mb-8">
+            <a href="/index.html" class="hover:text-primary">Home</a>
+            <span>/</span>
+            <a href="#" class="hover:text-primary">API Reference</a>
+            <span>/</span>
+            <span class="text-gray-900">Maybe</span>
+        </div>
 
-        <!-- Main content -->
-        <main class="flex-1 overflow-y-auto">
-            <header id="header-placeholder" class="border-b border-gray-200 bg-white sticky top-0 z-10">
-            </header>
+        <h1 class="text-3xl font-bold mb-6">API: Maybe</h1>
+        
+        <div class="prose prose-blue max-w-none">
+            <p class="lead text-xl text-gray-600 mb-8">
+                The <code>Maybe</code> type is used to represent an optional value. See the <a href="/core/types.html#maybe" class="text-primary hover:underline">guide on the type system</a> for more details.
+            </p>
 
-            <div class="p-8 max-w-5xl mx-auto">
-                <div class="flex items-center space-x-2 text-sm text-gray-500 mb-8">
-                    <a href="../index.html" class="hover:text-primary">Home</a>
-                    <span>/</span>
-                    <a href="maybe.html" class="hover:text-primary">API</a>
-                    <span>/</span>
-                    <span class="text-gray-700">Maybe</span>
-                </div>
-
-                <h1 class="text-4xl font-bold mb-6">Maybe API</h1>
-                
-                <p class="text-lg text-gray-600 mb-8">
-                    The Maybe type provides a <a href="../base/architecture-overview.html" class="text-primary hover:underline">functional and safe way</a> to handle optional values, eliminating null and undefined errors.
-                </p>
-
-                <div class="prose prose-blue max-w-none">
-                    <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2">Overview</h2>
-                    <p>
-                        The <code>Maybe</code> type is a container that represents a value that may or may not exist. It has two possible variants:
-                    </p>
-                    <ul class="list-disc pl-6 mb-6 space-y-2">
-                        <li><strong><code>Just(value)</code></strong>: An object representing the presence of a value, e.g., <code>{ type: 'Just', value: 42 }</code>.</li>
-                        <li><strong><code>Nothing()</code></strong>: An object representing the absence of a value, e.g., <code>{ type: 'Nothing' }</code>.</li>
-                    </ul>
-
-                    <p>
-                        By using <code>Maybe</code>, you make the possibility of a missing value explicit in your function signatures. This forces you to handle the "nothing" case, preventing entire classes of runtime errors and making your code more robust and predictable.
-                    </p>
-
-                     <div class="bg-blue-50 border-l-4 border-primary p-4 rounded-md mb-6">
-                        <h4 class="font-semibold">Key Principles</h4>
-                        <ul class="list-disc pl-6 mt-2">
-                            <li><strong>Eliminate Null Errors</strong>: Replaces the need for defensive null/undefined checks throughout your code.</li>
-                            <li><strong>Explicit Handling</strong>: Forces you to consider both the "Just" and "Nothing" cases when using a value.</li>
-                            <li><strong>Composable Pipelines</strong>: Allows for safe, sequential operations on values that might be missing at any step.</li>
-                        </ul>
-                    </div>
-
-                    <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2">Creating and Using a Maybe</h2>
-                    
-                    <h3 class="text-xl font-medium mt-6 mb-3">Constructors</h3>
-                    <p class="mb-4">You can create a <code>Maybe</code> directly or from a potentially nullish value.</p>
-                    <pre class="bg-gray-800 text-white p-4 rounded-lg mb-6"><code class="language-javascript">import { Maybe } from './src/core/types/maybe.js';
-
-// Create a Maybe containing a value
-const aJust = Maybe.Just(42); // { type: 'Just', value: 42 }
-
-// Create an empty Maybe
-const aNothing = Maybe.Nothing(); // { type: 'Nothing' }
-
-// Safely create a Maybe from a variable that might be null or undefined
-const user = { name: 'Alice' };
-const noUser = null;
-
-const maybeUser = Maybe.fromNullable(user); // Just({ name: 'Alice' })
-const maybeNoUser = Maybe.fromNullable(noUser); // Nothing()</code></pre>
-
-                    <h3 class="text-xl font-medium mt-6 mb-3">Safely Accessing the Value</h3>
-                    <p class="mb-4">The safest way to get a value out of a <code>Maybe</code> is with <code>getOrElse</code>, which provides a default value if the <code>Maybe</code> is <code>Nothing</code>.</p>
-                     <pre class="bg-gray-800 text-white p-4 rounded-md mb-6 overflow-x-auto"><code class="language-javascript">import { Maybe } from './src/core/types/maybe.js';
-
-const maybeName = Maybe.fromNullable(user.name);
-const maybeMissingName = Maybe.Nothing();
-
-const getName = Maybe.getOrElse('Guest');
-
-console.log(getName(maybeName)); // 'Alice'
-console.log(getName(maybeMissingName)); // 'Guest'
-</code></pre>
-
-                    <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2">Composing Operations</h2>
-                    <p class="mb-4">The true power of <code>Maybe</code> comes from its composable functions, which allow you to build safe data pipelines.</p>
-
-                    <h3 class="text-xl font-medium mt-6 mb-3">Transforming a Value with `map`</h3>
-                    <p class="mb-4">The <code>map</code> function applies a transformation to the value inside a <code>Just</code> and does nothing to a <code>Nothing</code>.</p>
-                    <pre class="bg-gray-800 text-white p-4 rounded-md mb-6 overflow-x-auto"><code class="language-javascript">import { Maybe } from './src/core/types/maybe.js';
-import { pipe } from './src/core/functions/composition.js';
-
-const config = { port: 8080 };
-const noConfig = null;
-
-const getPort = (c) => c.port;
-const increment = (n) => n + 1;
-
-const getNextPort = pipe(
-    Maybe.map(getPort),    // Maybe({ port: 8080 }) -> Maybe(8080)
-    Maybe.map(increment) // Maybe(8080) -> Maybe(8081)
-);
-
-const nextPort = getNextPort(Maybe.fromNullable(config)); // Just(8081)
-const noNextPort = getNextPort(Maybe.fromNullable(noConfig)); // Nothing()
-
-console.log(Maybe.getOrElse(3000)(nextPort)); // 8081
-console.log(Maybe.getOrElse(3000)(noNextPort)); // 3000
-</code></pre>
-
-                    <h3 class="text-xl font-semibold mt-6 mb-3">Sequencing with `chain`</h3>
-                    <p class="mb-4">Use <code>chain</code> to sequence operations where each step returns a new <code>Maybe</code>. This is perfect for safely accessing nested properties.</p>
-                    <pre class="bg-gray-800 text-white p-4 rounded-md mb-6 overflow-x-auto"><code class="language-javascript">import { Maybe } from './src/core/types/maybe.js';
-import { pipe } from './src/core/functions/composition.js';
-
-const user = {
-  name: 'John',
-  address: {
-    street: '123 Main St'
-  }
-};
-
-const getAddress = (u) => Maybe.fromNullable(u.address);
-const getStreet = (a) => Maybe.fromNullable(a.street);
-
-const getStreetName = pipe(
-    Maybe.chain(getAddress), // Maybe(user) -> Maybe(address)
-    Maybe.chain(getStreet)   // Maybe(address) -> Maybe(street)
-);
-
-const street = getStreetName(Maybe.fromNullable(user)); // Just('123 Main St')
-
-console.log(Maybe.getOrElse('Street not found')(street)); // '123 Main St'
-
-// Example with missing data
-const userWithoutAddress = { name: 'Jane' };
-const missingStreet = getStreetName(Maybe.fromNullable(userWithoutAddress)); // Nothing()
-
-console.log(Maybe.getOrElse('Street not found')(missingStreet)); // 'Street not found'
-</code></pre>
-                    
-                    <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2">API Reference</h2>
-
-                    <h3 class="text-xl font-medium mt-6 mb-3">Constructors</h3>
-                     <div class="overflow-hidden bg-white shadow-sm border border-gray-200 rounded-lg mb-6">
-                        <table class="min-w-full divide-y divide-gray-200">
-                            <thead class="bg-gray-50">
-                                <tr>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Constructor</th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Description</th>
-                                </tr>
-                            </thead>
-                            <tbody class="bg-white divide-y divide-gray-200">
-                                <tr>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium"><code>Maybe.Just(value)</code></td>
-                                    <td class="px-6 py-4 text-sm text-gray-500">Creates a <code>Maybe</code> container for an existing value.</td>
-                                </tr>
-                                <tr>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium"><code>Maybe.Nothing()</code></td>
-                                    <td class="px-6 py-4 text-sm text-gray-500">Creates an empty <code>Maybe</code> container representing a missing value.</td>
-                                </tr>
-                                 <tr>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium"><code>Maybe.fromNullable(value)</code></td>
-                                    <td class="px-6 py-4 text-sm text-gray-500">Creates a <code>Just</code> if the value is not null or undefined, otherwise returns <code>Nothing</code>.</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-
-                    <h3 class="text-xl font-medium mt-6 mb-3">Functions</h3>
-                     <div class="overflow-hidden bg-white shadow-sm border border-gray-200 rounded-lg mb-6">
-                        <table class="min-w-full divide-y divide-gray-200">
-                            <thead class="bg-gray-50">
-                                <tr>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Function</th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Description</th>
-                                </tr>
-                            </thead>
-                            <tbody class="bg-white divide-y divide-gray-200">
-                                <tr>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium align-top"><code>map(fn)</code></td>
-                                    <td class="px-6 py-4 text-sm text-gray-500">A curried function that applies <code>fn</code> to the value inside a <code>Just</code>, otherwise returns <code>Nothing</code>.<br><em>Signature: <code>(fn: A -> B) => (maybe: Maybe<A>) => Maybe<B></code></em></td>
-                                </tr>
-                                <tr>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium align-top"><code>chain(fn)</code></td>
-                                    <td class="px-6 py-4 text-sm text-gray-500">A curried function that applies <code>fn</code> to the value inside a <code>Just</code>, where <code>fn</code> must return a new <code>Maybe</code>.<br><em>Signature: <code>(fn: A -> Maybe<B>) => (maybe: Maybe<A>) => Maybe<B></code></em></td>
-                                </tr>
-                                <tr>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium align-top"><code>getOrElse(defaultValue)</code></td>
-                                    <td class="px-6 py-4 text-sm text-gray-500">A curried function that unwraps a <code>Just</code> to get its value, or returns <code>defaultValue</code> if it's a <code>Nothing</code>.<br><em>Signature: <code>(defaultValue: A) => (maybe: Maybe<A>) => A</code></em></td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-
-                     <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded-md mt-8">
-                        <h4 class="font-semibold flex items-center">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-yellow-500" viewBox="0 0 20 20" fill="currentColor">
-                                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2h-1V9z" clip-rule="evenodd" />
-                            </svg>
-                            Framework Compliance
-                        </h4>
-                        <ul class="list-disc pl-6 mt-2">
-                             <li><strong>Use Curried Functions</strong>: The functions <code>map</code>, <code>chain</code>, and <code>getOrElse</code> are not instance methods. They are curried functions designed to be used with <a href="../base/api-reference.html" class="text-primary hover:underline">composition tools like <code>pipe</code></a>.</li>
-                             <li><strong>Check the Type Property</strong>: For simple conditional logic, you can directly check <code>maybe.type</code> which will be either <code>'Just'</code> or <code>'Nothing'</code>.</li>
-                             <li><strong>Synchronous Only</strong>: <code>Maybe</code> is for handling optional values in synchronous code. It is not designed for asynchronous operations, for which the framework provides an <a href="../base/api-reference.html" class="text-primary hover:underline">Effect System</a>.</li>
-                    </ul>
-                    </div>
-
-                    <h2 class="text-2xl font-bold mt-8 mb-4">Related Documentation</h2>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
-                        <a href="../base/api-reference.html" class="block p-4 border border-gray-200 rounded-lg hover:border-primary hover:shadow-md transition">
-                            <h3 class="font-semibold text-lg mb-2">API Reference: Either</h3>
-                            <p class="text-gray-600">For values that can be one of two distinct types (e.g., Error vs. Success).</p>
-                        </a>
-                        <a href="../base/api-reference.html" class="block p-4 border border-gray-200 rounded-lg hover:border-primary hover:shadow-md transition">
-                            <h3 class="font-semibold text-lg mb-2">API Reference: Result</h3>
-                            <p class="text-gray-600">For handling the success or failure of synchronous operations that might throw exceptions.</p>
-                        </a>
-                        <a href="../base/architecture-overview.html" class="block p-4 border border-gray-200 rounded-lg hover:border-primary hover:shadow-md transition">
-                            <h3 class="font-semibold text-lg mb-2">Architecture: Core Type System</h3>
-                            <p class="text-gray-600">Get a high-level overview of the functional types that form the core of the framework.</p>
-                        </a>
-                    </div>
-                </div>
+            <div class="api-item border-t border-gray-200 pt-6 mt-8">
+                <h3 class="text-xl font-mono font-semibold"><code>Maybe.Just(value)</code></h3>
+                <p class="mt-2 mb-4">Creates a Maybe containing a value.</p>
             </div>
-        </main>
+            
+            <div class="api-item border-t border-gray-200 pt-6 mt-8">
+                <h3 class="text-xl font-mono font-semibold"><code>Maybe.Nothing()</code></h3>
+                <p class="mt-2 mb-4">Creates a Maybe representing the absence of a value.</p>
+            </div>
+            
+            <div class="api-item border-t border-gray-200 pt-6 mt-8">
+                <h3 class="text-xl font-mono font-semibold"><code>maybe.isJust()</code></h3>
+                <p class="mt-2 mb-4">Returns <code>true</code> if the Maybe is a <code>Just</code>.</p>
+            </div>
+            
+            <div class="api-item border-t border-gray-200 pt-6 mt-8">
+                <h3 class="text-xl font-mono font-semibold"><code>maybe.isNothing()</code></h3>
+                <p class="mt-2 mb-4">Returns <code>true</code> if the Maybe is a <code>Nothing</code>.</p>
+            </div>
+            
+            <div class="api-item border-t border-gray-200 pt-6 mt-8">
+                <h3 class="text-xl font-mono font-semibold"><code>maybe.map(fn)</code></h3>
+                <p class="mt-2 mb-4">Applies a function to the value inside a <code>Just</code> and returns a new <code>Just</code>. If it's <code>Nothing</code>, it returns <code>Nothing</code>.</p>
+            </div>
+            
+            <div class="api-item border-t border-gray-200 pt-6 mt-8">
+                <h3 class="text-xl font-mono font-semibold"><code>maybe.unwrapOr(defaultValue)</code></h3>
+                <p class="mt-2 mb-4">Returns the value inside a <code>Just</code> or returns the <code>defaultValue</code> if it's <code>Nothing</code>.</p>
+            </div>
+
+            <div class="flex justify-between mt-12 pt-6 border-t border-gray-200">
+                <a href="/api/jsx.html" class="inline-flex items-center px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300 transition">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+                    </svg>
+                    Prev: JSX API
+                </a>
+                <a href="/api/either.html" class="inline-flex items-center px-4 py-2 bg-primary text-white rounded-md hover:bg-blue-600 transition">
+                    Next: Either API
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                    </svg>
+                </a>
+            </div>
+        </div>
     </div>
-
-    <footer id="footer-placeholder" class="bg-white border-t border-gray-200 py-6">
-    </footer>
-
-    <script>
-        // Simple client-side search functionality
-        const searchInput = document.querySelector('input[placeholder="Search documentation..."]');
-        searchInput.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter') {
-                const query = searchInput.value.toLowerCase();
-                // Implement search functionality
-                console.log('Searching for:', query);
-                // This would typically use a search index or API
-            }
-        });
-    </script>
-    <script src="../assets/main.js"></script>
 </body>
 </html>

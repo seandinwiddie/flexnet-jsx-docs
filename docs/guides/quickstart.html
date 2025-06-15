@@ -20,172 +20,134 @@
                 }
             }
         }
-        hljs.highlightAll();
     </script>
+    <script src="/assets/main.js" defer></script>
 </head>
 <body class="bg-gray-50 text-gray-900 min-h-screen">
-    <div class="flex">
-        <!-- Sidebar -->
-        <aside id="sidebar-placeholder" class="w-64 bg-white border-r border-gray-200 h-screen sticky top-0 overflow-y-auto flex-shrink-0">
-        </aside>
+    <div id="page-content">
+        <div class="flex items-center space-x-2 text-sm text-gray-500 mb-8">
+            <a href="/index.html" class="hover:text-primary">Home</a>
+            <span>/</span>
+            <a href="#" class="hover:text-primary">Getting Started</a>
+            <span>/</span>
+            <span class="text-gray-900">Quick Start</span>
+        </div>
 
-        <!-- Main content -->
-        <main class="flex-1 overflow-y-auto">
-            <header id="header-placeholder" class="border-b border-gray-200 bg-white sticky top-0 z-10">
-            </header>
+        <h1 class="text-3xl font-bold mb-6">Quick Start: Building a Counter</h1>
+        
+        <div class="prose prose-blue max-w-none">
+            <p class="lead text-xl text-gray-600 mb-8">
+                This guide will walk you through building a simple interactive counter application. It's the "Hello, World!" of UI frameworks and covers the essential concepts of FlexNet JSX.
+            </p>
 
-            <div class="p-8 max-w-5xl mx-auto">
-                <div class="flex items-center space-x-2 text-sm text-gray-500 mb-8">
-                    <a href="../index.html" class="hover:text-primary">Home</a>
-                    <span>/</span>
-                    <a href="#" class="hover:text-primary">Getting Started</a>
-                    <span>/</span>
-                    <span class="text-gray-900">Quick Start</span>
-                </div>
+            <div class="bg-blue-50 border-l-4 border-primary p-4 rounded-md mb-8">
+                <h4 class="font-semibold">Prerequisites</h4>
+                <p>Before you start, make sure you have followed the <a href="/guides/installation.html" class="text-primary hover:underline">Installation Guide</a> and have a starter project ready.</p>
+            </div>
 
-                <h1 class="text-3xl font-bold mb-6">Quick Start</h1>
-                
-                <div class="prose prose-blue max-w-none">
-                    <p class="lead text-xl text-gray-600 mb-8">
-                        Build your first FlexNet JSX application. This guide, based on the <a href="../base/getting-started-guide.html" class="text-primary hover:underline">Getting Started Guide</a>, will walk you through setting up a project and creating a simple interactive counter.
-                    </p>
-
-                    <h2 class="text-2xl font-bold mt-8 mb-4">1. Project Setup</h2>
-                    <p class="mb-4">First, create a new directory for your project. Following the structure defined in the <a href="../base/consistency-analysis.html#new-standard-structure" class="text-primary hover:underline">Consistency Analysis</a>, create the following folders and files. This will house the FlexNet JSX core and your first feature.</p>
-                    <pre class="bg-gray-800 text-white p-4 rounded-md mb-6 overflow-x-auto"><code class="language-bash">/my-app
-├── /public
-│   └── index.html
-└── /src
-    ├── /core
-    │   ├── /functions
-    │   │   └── composition.js
-    │   └── /types
-    │       ├── maybe.js
-    │       ├── either.js
-    │       └── result.js
-    ├── /systems
-    │   ├── /render
-    │   │   └── functions.js
-    │   └── /state
-    │       └── functions.js
-    └── /features
-        └── /counter
-            └── index.js
-</code></pre>
-                    <p class="text-sm text-gray-600">Note: For this quickstart, you would copy the relevant framework files (e.g., `render/functions.js`, `state/functions.js`) from the FlexNet source into this structure.</p>
-
-                    <h2 class="text-2xl font-bold mt-8 mb-4">2. Create the HTML Entry Point</h2>
-                    <p class="mb-4">Your <code>public/index.html</code> file is the entry point for your application. It needs a root element for FlexNet JSX to mount into and a script tag to load your feature code.</p>
-                    <pre class="bg-gray-800 text-white p-4 rounded-md mb-6 overflow-x-auto"><code class="language-html">&lt;!DOCTYPE html&gt;
+            <h2 class="text-2xl font-bold mt-8 mb-4">Step 1: Setting up the HTML</h2>
+            <p class="mb-4">
+                First, create an <code>index.html</code> file. The only thing we need is a root element where our application will be rendered.
+            </p>
+            <pre class="bg-gray-800 text-white p-4 rounded-md mb-6 overflow-x-auto"><code class="language-html">&lt;!DOCTYPE html&gt;
 &lt;html lang="en"&gt;
 &lt;head&gt;
-    &lt;meta charset="UTF-8"&gt;
-    &lt;title&gt;FlexNet JSX Counter&lt;/title&gt;
+    &lt;title&gt;FlexNet Counter&lt;/title&gt;
 &lt;/head&gt;
 &lt;body&gt;
     &lt;div id="root"&gt;&lt;/div&gt;
-    &lt;script type="module" src="../src/features/counter/index.js"&gt;&lt;/script&gt;
+    &lt;script type="module" src="./app.js"&gt;&lt;/script&gt;
 &lt;/body&gt;
-&lt;/html&gt;</code></pre>
-
-                    <h2 class="text-2xl font-bold mt-8 mb-4">3. Build Your First Application</h2>
-                    <p class="mb-4">Now, let's build the interactive counter. This example demonstrates all the core concepts of FlexNet JSX working together. Place the following code in your <code>src/features/counter/index.js</code> file.</p>
-                    
-                    <pre class="bg-gray-800 text-white p-4 rounded-md mb-6 overflow-x-auto"><code class="language-javascript">import { createStore } from '../../systems/state/functions.js';
-import { createElement, render } from '../../systems/render/functions.js';
-
-// 1. STATE: Define a reducer for state transitions
-const counterReducer = (state = 0, action) => {
-  switch (action.type) {
-    case 'INCREMENT':
-      return state + 1;
-    case 'DECREMENT':
-      return state - 1;
-    default:
-      return state;
-  }
-};
-
-// 2. STORE: Create a store to hold your application state
-const store = createStore(counterReducer, 0);
-
-// 3. VIEW: Create a component as a pure function
-const Counter = ({ count, onIncrement, onDecrement }) => {
-  return createElement('div', null,
-    createElement('h1', null, `Count: ${count}`),
-    createElement('button', { onClick: onIncrement }, '+'),
-    createElement('button', { onClick: onDecrement }, '-')
-  );
-};
-
-// 4. RENDER: Create a function that renders the UI based on the current state
-const renderApp = () => {
-  const state = store.getState();
-  render(
-    createElement(Counter, {
-      count: state,
-      onIncrement: () => store.dispatch({ type: 'INCREMENT' }),
-      onDecrement: () => store.dispatch({ type: 'DECREMENT' })
-    }),
-    document.getElementById('root')
-  );
-};
-
-// 5. SUBSCRIBE: Re-render the app whenever the state changes
-store.subscribe(renderApp);
-
-// Initial render
-renderApp();
+&lt;/html&gt;
 </code></pre>
 
-                    <h3 class="text-xl font-semibold mt-6 mb-3">Step-by-Step Explanation</h3>
-                    <ol class="list-decimal pl-6 mb-6 space-y-4">
-                        <li>
-                            <strong>State (Reducer)</strong>
-                            <p class="font-normal text-gray-600 mt-1">We define a `counterReducer`, a pure function that takes the current state and an action, and returns the next state. This is the only place where state logic lives, a core principle of our <a href="../base/architecture-overview.html#state-management" class="text-primary hover:underline">State Management</a> architecture.</p>
-                        </li>
-                        <li>
-                            <strong>Store</strong>
-                            <p class="font-normal text-gray-600 mt-1">We create a `store` using the <a href="../base/api-reference.html#state-system" class="text-primary hover:underline">`createStore`</a> function, passing it our reducer and the initial state (0). The store holds our state and allows us to dispatch actions.</p>
-                        </li>
-                        <li>
-                            <strong>View (Component)</strong>
-                            <p class="font-normal text-gray-600 mt-1">Our `Counter` component is a <a href="../base/architecture-overview.html#functional-architecture-principles" class="text-primary hover:underline">pure function</a>. It receives the current `count` and functions to call (`onIncrement`, `onDecrement`) as props, and returns a description of the UI using <a href="../base/api-reference.html#render-system" class="text-primary hover:underline">`createElement`</a>.</p>
-                        </li>
-                        <li>
-                            <strong>Render</strong>
-                            <p class="font-normal text-gray-600 mt-1">The `renderApp` function gets the latest state from the store and renders the `Counter` component with the appropriate props. The event handlers on the buttons will `dispatch` actions to the store when clicked.</p>
-                        </li>
-                         <li>
-                            <strong>Subscribe</strong>
-                            <p class="font-normal text-gray-600 mt-1">We `subscribe` the `renderApp` function to the store. Now, every time an action is dispatched and the state changes, `renderApp` will be called automatically to update the UI.</p>
-                        </li>
-                    </ol>
-                    
-                    <div class="bg-blue-50 border-l-4 border-primary p-4 rounded-md">
-                        <h4 class="font-semibold">Unidirectional Data Flow</h4>
-                        <p>This example demonstrates the core principle of unidirectional data flow in FlexNet JSX:
-                        <br>
-                        <strong>Action &rarr; Store &rarr; State &rarr; View</strong>
-                        <br>
-                        This makes the application's logic predictable and easy to follow, a key benefit of the architecture.</p>
-                    </div>
+            <h2 class="text-2xl font-bold mt-8 mb-4">Step 2: Creating the Application File</h2>
+            <p class="mb-4">
+                Next, create an <code>app.js</code> file. This is where we will write our application logic. We'll start by importing the necessary functions from the framework.
+            </p>
+            <pre class="bg-gray-800 text-white p-4 rounded-md mb-6 overflow-x-auto"><code class="language-javascript">// app.js
+import { createElement, render } from './src/systems/render/functions.js';
+import { createStore } from './src/systems/state/functions.js';
+</code></pre>
 
-                    <h2 class="text-2xl font-bold mt-8 mb-4">Next Steps</h2>
-                    <p class="mb-4">
-                        Congratulations! You've built a fully functional, interactive application with FlexNet JSX. You now understand how to set up a project, manage state, create components, and render a dynamic UI.
-                    </p>
-                    <p>
-                        From here, you can dive deeper into the <a href="core-concepts.html" class="text-primary hover:underline">Core Concepts</a> or review the complete <a href="../base/api-reference.html" class="text-primary hover:underline">API Reference</a>.
-                    </p>
-                </div>
+            <h2 class="text-2xl font-bold mt-8 mb-4">Step 3: Defining the Reducer</h2>
+            <p class="mb-4">
+                A <a href="/systems/state.html" class="text-primary hover:underline">reducer</a> is a pure function that determines how the application state changes in response to an action. For our counter, we need to handle "INCREMENT" and "DECREMENT" actions.
+            </p>
+            <pre class="bg-gray-800 text-white p-4 rounded-md mb-6 overflow-x-auto"><code class="language-javascript">const counterReducer = (state = 0, action) => {
+    switch (action.type) {
+        case 'INCREMENT':
+            return state + 1;
+        case 'DECREMENT':
+            return state - 1;
+        default:
+            return state;
+    }
+};
+</code></pre>
+
+            <h2 class="text-2xl font-bold mt-8 mb-4">Step 4: Creating the Store</h2>
+            <p class="mb-4">
+                The <a href="/systems/state.html" class="text-primary hover:underline">store</a> holds our application's state. We create it by passing our reducer and an initial state value.
+            </p>
+            <pre class="bg-gray-800 text-white p-4 rounded-md mb-6 overflow-x-auto"><code class="language-javascript">const store = createStore(counterReducer, 0); // Initial state is 0
+</code></pre>
+
+            <h2 class="text-2xl font-bold mt-8 mb-4">Step 5: Building the Component</h2>
+            <p class="mb-4">
+                Components in FlexNet are just functions that return a description of the UI. Our <code>Counter</code> component will display the current count and two buttons.
+            </p>
+            <pre class="bg-gray-800 text-white p-4 rounded-md mb-6 overflow-x-auto"><code class="language-javascript">const Counter = ({ count }) =>
+    createElement('div', null,
+        createElement('h1', { class: 'text-2xl' }, `Count: ${count}`),
+        createElement('button', { 
+            onClick: () => store.dispatch({ type: 'DECREMENT' }) 
+        }, '-'),
+        createElement('button', { 
+            onClick: () => store.dispatch({ type: 'INCREMENT' }) 
+        }, '+')
+    );
+</code></pre>
+            <p class="mt-4 mb-4">
+                When a button is clicked, it dispatches an action to the store. The store then runs the reducer, calculates the new state, and notifies all subscribers of the change.
+            </p>
+
+            <h2 class="text-2xl font-bold mt-8 mb-4">Step 6: Rendering the Application</h2>
+            <p class="mb-4">
+                Finally, we need to render our application and make sure it re-renders whenever the state changes.
+            </p>
+            <pre class="bg-gray-800 text-white p-4 rounded-md mb-6 overflow-x-auto"><code class="language-javascript">const rootElement = document.getElementById('root');
+
+// The main App component gets the current state
+const App = () => createElement(Counter, { count: store.getState() });
+
+// Subscribe to store updates to re-render the UI
+store.subscribe(() => {
+    render(App(), rootElement);
+});
+
+// Initial render
+render(App(), rootElement);
+</code></pre>
+            <p class="mt-4 mb-4">
+                Save your files and open <code>index.html</code> in a browser (served via a local server). You should now have a fully functional counter!
+            </p>
+
+            <div class="flex justify-between mt-12 pt-6 border-t border-gray-200">
+                <a href="/guides/installation.html" class="inline-flex items-center px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300 transition">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+                    </svg>
+                    Prev: Installation
+                </a>
+                <a href="/guides/core-concepts.html" class="inline-flex items-center px-4 py-2 bg-primary text-white rounded-md hover:bg-blue-600 transition">
+                    Next: Core Concepts
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                    </svg>
+                </a>
             </div>
-        </main>
+        </div>
     </div>
-
-    <footer id="footer-placeholder" class="bg-white border-t border-gray-200 py-6">
-    </footer>
-
-    <script src="../assets/main.js"></script>
 </body>
-</html> 
+</html>

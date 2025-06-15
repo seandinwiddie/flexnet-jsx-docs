@@ -20,248 +20,76 @@
                 }
             }
         }
-        document.addEventListener('DOMContentLoaded', (event) => {
-            document.querySelectorAll('pre code').forEach((el) => {
-                hljs.highlightElement(el);
-            });
-        });
     </script>
+    <script src="/assets/main.js" defer></script>
 </head>
 <body class="bg-gray-50 text-gray-900 min-h-screen">
-    <div class="flex">
-        <!-- Sidebar -->
-        <aside id="sidebar-placeholder" class="w-64 bg-white border-r border-gray-200 h-screen sticky top-0 overflow-y-auto flex-shrink-0">
-        </aside>
+    <div id="page-content">
+        <div class="flex items-center space-x-2 text-sm text-gray-500 mb-8">
+            <a href="/index.html" class="hover:text-primary">Home</a>
+            <span>/</span>
+            <a href="#" class="hover:text-primary">API Reference</a>
+            <span>/</span>
+            <span class="text-gray-900">Result</span>
+        </div>
 
-        <!-- Main content -->
-        <main class="flex-1 overflow-y-auto">
-            <header id="header-placeholder" class="border-b border-gray-200 bg-white sticky top-0 z-10">
-            </header>
+        <h1 class="text-3xl font-bold mb-6">API: Result</h1>
+        
+        <div class="prose prose-blue max-w-none">
+            <p class="lead text-xl text-gray-600 mb-8">
+                The <code>Result</code> type is for operations that can succeed or fail. It is either an <code>Ok</code> or an <code>Error</code>.
+            </p>
 
-            <div class="p-8 max-w-5xl mx-auto">
-                <div class="flex items-center space-x-2 text-sm text-gray-500 mb-8">
-                    <a href="../index.html" class="hover:text-primary">Home</a>
-                    <span>/</span>
-                    <a href="maybe.html" class="hover:text-primary">API</a>
-                    <span>/</span>
-                    <span class="text-gray-700">Result</span>
-                </div>
-
-                <h1 class="text-4xl font-bold mb-6">Result API</h1>
-                <p class="text-lg text-gray-600 mb-8">The Result type represents the outcome of a synchronous operation that can either succeed with a value or fail with an error.</p>
-
-                <div class="prose prose-blue max-w-none">
-                    <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2">Overview</h2>
-                    <p class="mb-4">The <code>Result</code> type is a synchronous container for the outcome of an operation that might fail, such as data parsing, validation, or computation. As described in the <a href="../base/architecture-overview.html" class="text-primary hover:underline">framework architecture</a>, it explicitly separates the success and error paths, eliminating the need for defensive <code>try...catch</code> blocks in your business logic.</p>
-                    <p class="mb-4">It has two variants:</p>
-                    <ul class="list-disc pl-6 mb-6 space-y-2">
-                        <li><code>Ok(value)</code>: Represents a successful operation, holding the resulting value.</li>
-                        <li><code>Error(error)</code>: Represents a failed operation, holding the error information.</li>
-                    </ul>
-
-                    <p class="mb-4">By returning a <code>Result</code>, a function communicates its entire range of possible outcomes in its signature, leading to more robust and predictable code.</p>
-
-                    <div class="bg-blue-50 border-l-4 border-primary p-4 rounded-md mb-6">
-                        <h4 class="font-semibold">Key Features</h4>
-                        <ul class="list-disc pl-6 mt-2">
-                            <li><strong>Explicit by Design</strong>: Makes success and failure cases impossible to ignore.</li>
-                            <li><strong>Synchronous</strong>: Used for immediate operations, not for managing asynchronous flow.</li>
-                            <li><strong>Composable</strong>: Provides <code>map</code> and <code>chain</code> for building complex, safe data transformations.</li>
-                            <li><strong>Exception-Free</strong>: The <code>fromTry</code> constructor safely wraps functions that might throw exceptions.</li>
-                        </ul>
-                    </div>
-
-                    <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2">Creating a Result</h2>
-
-                    <h3 class="text-xl font-medium mt-6 mb-3">Direct Construction</h3>
-                    <p class="mb-4">You can create a <code>Result</code> directly to represent a known outcome.</p>
-                    <pre class="bg-gray-800 text-white p-4 rounded-lg mb-6"><code class="language-javascript">import { Result } from './src/core/types/result.js';
-
-// Create a successful Result
-const success = Result.Ok(42);
-
-// Create a failed Result
-const failure = Result.Error('Something went wrong');</code></pre>
-
-                    <h3 class="text-xl font-medium mt-6 mb-3">From a Potentially Failing Function</h3>
-                    <p class="mb-4">The <code>fromTry</code> function is the standard way to safely execute a function that might throw an exception.</p>
-                    <pre class="bg-gray-800 text-white p-4 rounded-lg mb-6"><code class="language-javascript">import { Result } from './src/core/types/result.js';
-
-// This function throws an error for invalid JSON
-const parseJSON = (jsonString) => {
-  return Result.fromTry(() => JSON.parse(jsonString));
-};
-
-// --- Usage ---
-const goodResult = parseJSON('{"name": "John"}');
-// Returns Result.Ok({ name: "John" })
-
-const badResult = parseJSON('invalid-json');
-// Returns Result.Error(SyntaxError: ...)</code></pre>
-
-                    <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2">Working with a Result</h2>
-
-                    <h3 class="text-xl font-medium mt-6 mb-3">Handling Outcomes</h3>
-                    <p class="mb-4">To use the value inside a <code>Result</code>, you must handle both possible cases by checking its <code>type</code> property.</p>
-                    <pre class="bg-gray-800 text-white p-4 rounded-lg mb-6"><code class="language-javascript">const result = parseJSON(someUserInput);
-
-if (result.type === 'Ok') {
-  // Safely access the value
-  const data = result.value;
-  console.log('Parsed data:', data);
-} else {
-  // Handle the error
-  const error = result.error;
-  console.error('Failed to parse:', error.message);
-}</code></pre>
-
-                    <h3 class="text-xl font-medium mt-6 mb-3">Transforming a Success Value (map)</h3>
-                    <p class="mb-4">The <code>map</code> function applies a transformation to the value inside an <code>Ok</code> result. If the result is an <code>Error</code>, it does nothing.</p>
-                    <pre class="bg-gray-800 text-white p-4 rounded-lg mb-6"><code class="language-javascript">import { Result } from './src/core/types/result.js';
-
-const numberResult = Result.Ok(5);
-
-const doubledResult = Result.map(x => x * 2)(numberResult);
-// Returns Result.Ok(10)
-
-const errorResult = Result.Error('Initial error');
-
-const mappedError = Result.map(x => x * 2)(errorResult);
-// Returns Result.Error('Initial error')</code></pre>
-
-                    <h3 class="text-xl font-medium mt-6 mb-3">Chaining Operations (chain)</h3>
-                    <p class="mb-4">The <code>chain</code> function is used to sequence multiple operations that each return a <code>Result</code>.</p>
-                    <pre class="bg-gray-800 text-white p-4 rounded-lg mb-6"><code class="language-javascript">import { Result } from './src/core/types/result.js';
-
-// A function that validates a number, returning a Result
-const ensurePositive = (n) => {
-  return typeof n === 'number' && n > 0
-    ? Result.Ok(n)
-    : Result.Error('Value must be a positive number');
-};
-
-const initialResult = Result.Ok(10);
-
-// Chain the validation function
-const finalResult = Result.chain(ensurePositive)(initialResult);
-// Returns Result.Ok(10)
-
-const failedResult = Result.Ok(-5);
-const finalFailed = Result.chain(ensurePositive)(failedResult);
-// Returns Result.Error('Value must be a positive number')</code></pre>
-
-                    <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2">Result API Reference</h2>
-
-                    <h3 class="text-xl font-medium mt-6 mb-3">Constructors</h3>
-                    
-                    <div class="bg-white border border-gray-200 rounded-lg mb-6">
-                        <div class="border-b border-gray-200 px-4 py-3 bg-gray-50">
-                            <h4 class="font-semibold">Result.Ok(value)</h4>
-                        </div>
-                        <div class="p-4">
-                            <p class="mb-2">Creates a successful Result containing the given value.</p>
-                            <pre class="bg-gray-800 text-white p-3 rounded-lg"><code class="language-typescript">Result.Ok<T, E>(value: T): Result<T, E></code></pre>
-                        </div>
-                    </div>
-
-                    <div class="bg-white border border-gray-200 rounded-lg mb-6">
-                        <div class="border-b border-gray-200 px-4 py-3 bg-gray-50">
-                            <h4 class="font-semibold">Result.Error(error)</h4>
-                        </div>
-                        <div class="p-4">
-                            <p class="mb-2">Creates a failed Result containing the given error.</p>
-                            <pre class="bg-gray-800 text-white p-3 rounded-lg"><code class="language-typescript">Result.Error<T, E>(error: E): Result<T, E></code></pre>
-                        </div>
-                    </div>
-
-                    <div class="bg-white border border-gray-200 rounded-lg mb-6">
-                        <div class="border-b border-gray-200 px-4 py-3 bg-gray-50">
-                            <h4 class="font-semibold">Result.fromTry(fn)</h4>
-                        </div>
-                        <div class="p-4">
-                            <p class="mb-2">Executes a synchronous function, returning <code>Result.Ok</code> with the return value or <code>Result.Error</code> if an exception is thrown.</p>
-                            <pre class="bg-gray-800 text-white p-3 rounded-lg"><code class="language-typescript">Result.fromTry<T>(fn: () => T): Result<T, Error></code></pre>
-                        </div>
-                    </div>
-
-                    <h3 class="text-xl font-medium mt-6 mb-3">Functions</h3>
-                    
-                    <div class="bg-white border border-gray-200 rounded-lg mb-6">
-                        <div class="border-b border-gray-200 px-4 py-3 bg-gray-50">
-                            <h4 class="font-semibold">map</h4>
-                        </div>
-                        <div class="p-4">
-                            <p class="mb-2">A curried function that applies a transformation to an <code>Ok</code> value, leaving an <code>Error</code> untouched.</p>
-                            <pre class="bg-gray-800 text-white p-3 rounded-lg"><code class="language-typescript">map<T, U, E>(fn: (value: T) => U): (result: Result<T, E>) => Result<U, E></code></pre>
-                        </div>
-                    </div>
-
-                    <div class="bg-white border border-gray-200 rounded-lg mb-6">
-                        <div class="border-b border-gray-200 px-4 py-3 bg-gray-50">
-                            <h4 class="font-semibold">chain</h4>
-                        </div>
-                        <div class="p-4">
-                            <p class="mb-2">A curried function that sequences an operation that returns a new <code>Result</code>.</p>
-                            <pre class="bg-gray-800 text-white p-3 rounded-lg"><code class="language-typescript">chain<T, U, E>(fn: (value: T) => Result<U, E>): (result: Result<T, E>) => Result<U, E></code></pre>
-                        </div>
-                    </div>
-
-                    <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded-md mt-8">
-                        <h4 class="font-semibold flex items-center">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-yellow-500" viewBox="0 0 20 20" fill="currentColor">
-                                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2h-1V9z" clip-rule="evenodd" />
-                            </svg>
-                            Framework Compliance
-                        </h4>
-                        <ul class="list-disc pl-6 mt-2">
-                            <li><strong>Synchronous Operations Only</strong>: Do not use <code>Result</code> to wrap Promises or for asynchronous control flow. The framework uses the <a href="../base/api-reference.html" class="text-primary hover:underline">Effect System</a> and other patterns for async operations.</li>
-                            <li><strong>Explicit Handling</strong>: Always check the <code>.type</code> property to handle both <code>Ok</code> and <code>Error</code> cases. Never assume a successful outcome.</li>
-                            <li><strong>Prefer <code>fromTry</code></strong>: For any synchronous code that can throw an exception (e.g., <code>JSON.parse</code>, <code>localStorage</code> access), use <code>Result.fromTry</code> to safely contain potential errors.</li>
-                            <li><strong>Distinguish from <code>Either</code></strong>: While similar, <code>Result</code> is idiomatic for success/failure scenarios, whereas <a href="../base/api-reference.html" class="text-primary hover:underline"><code>Either</code></a> is a more general-purpose type for any kind of branching logic (e.g., Left/Right).</li>
-                        </ul>
-                    </div>
-                </div>
-
-                <div class="mt-12 border-t border-gray-200 pt-8">
-                    <h2 class="text-2xl font-semibold mb-4">Related Documentation</h2>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <a href="../base/api-reference.html" class="block p-4 border border-gray-200 rounded-lg hover:border-primary hover:shadow-md transition">
-                            <h3 class="font-semibold text-lg mb-2">API Reference: Maybe</h3>
-                            <p class="text-gray-600">Learn about the Maybe type for handling optional values that may or may not exist.</p>
-                        </a>
-                        <a href="../base/api-reference.html" class="block p-4 border border-gray-200 rounded-lg hover:border-primary hover:shadow-md transition">
-                            <h3 class="font-semibold text-lg mb-2">API Reference: Either</h3>
-                            <p class="text-gray-600">Explore the Either type for handling synchronous operations with two distinct outcomes (Left/Right).</p>
-                        </a>
-                        <a href="../base/api-reference.html" class="block p-4 border border-gray-200 rounded-lg hover:border-primary hover:shadow-md transition">
-                            <h3 class="font-semibold text-lg mb-2">API Reference: Form Validation</h3>
-                            <p class="text-gray-600">See how <code>Result</code> is used in practice for validating complex data structures.</p>
-                        </a>
-                        <a href="../base/architecture-overview.html" class="block p-4 border border-gray-200 rounded-lg hover:border-primary hover:shadow-md transition">
-                            <h3 class="font-semibold text-lg mb-2">Architecture: Type System</h3>
-                            <p class="text-gray-600">Get a high-level overview of the functional types that form the core of the framework.</p>
-                        </a>
-                    </div>
-                </div>
+            <div class="api-item border-t border-gray-200 pt-6 mt-8">
+                <h3 class="text-xl font-mono font-semibold"><code>Result.Ok(value)</code></h3>
+                <p class="mt-2 mb-4">Creates a Result representing a successful operation.</p>
             </div>
-        </main>
+            
+            <div class="api-item border-t border-gray-200 pt-6 mt-8">
+                <h3 class="text-xl font-mono font-semibold"><code>Result.Error(value)</code></h3>
+                <p class="mt-2 mb-4">Creates a Result representing a failed operation.</p>
+            </div>
+            
+            <div class="api-item border-t border-gray-200 pt-6 mt-8">
+                <h3 class="text-xl font-mono font-semibold"><code>Result.fromTry(fn)</code></h3>
+                <p class="mt-2 mb-4">Executes a function that might throw an exception and wraps it in a Result.</p>
+            </div>
+            
+            <div class="api-item border-t border-gray-200 pt-6 mt-8">
+                <h3 class="text-xl font-mono font-semibold"><code>result.isOk()</code></h3>
+                <p class="mt-2 mb-4">Returns <code>true</code> if the Result is <code>Ok</code>.</p>
+            </div>
+            
+            <div class="api-item border-t border-gray-200 pt-6 mt-8">
+                <h3 class="text-xl font-mono font-semibold"><code>result.isError()</code></h3>
+                <p class="mt-2 mb-4">Returns <code>true</code> if the Result is an <code>Error</code>.</p>
+            </div>
+            
+            <div class="api-item border-t border-gray-200 pt-6 mt-8">
+                <h3 class="text-xl font-mono font-semibold"><code>result.map(fn)</code></h3>
+                <p class="mt-2 mb-4">Applies a function to the value inside an <code>Ok</code> result.</p>
+            </div>
+            
+            <div class="api-item border-t border-gray-200 pt-6 mt-8">
+                <h3 class="text-xl font-mono font-semibold"><code>result.unwrapOr(defaultValue)</code></h3>
+                <p class="mt-2 mb-4">Returns the value from an <code>Ok</code> or the provided default if it's an <code>Error</code>.</p>
+            </div>
+
+            <div class="flex justify-between mt-12 pt-6 border-t border-gray-200">
+                <a href="/api/either.html" class="inline-flex items-center px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300 transition">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+                    </svg>
+                    Prev: Either API
+                </a>
+                <a href="/api/store.html" class="inline-flex items-center px-4 py-2 bg-primary text-white rounded-md hover:bg-blue-600 transition">
+                    Next: Store API
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                    </svg>
+                </a>
+            </div>
+        </div>
     </div>
-
-    <footer id="footer-placeholder" class="bg-white border-t border-gray-200 py-6">
-    </footer>
-
-    <script>
-        // Simple client-side search functionality
-        const searchInput = document.querySelector('input[placeholder="Search documentation..."]');
-        searchInput.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter') {
-                const query = searchInput.value.toLowerCase();
-                // Implement search functionality
-                console.log('Searching for:', query);
-                // This would typically use a search index or API
-            }
-        });
-    </script>
-    <script src="../assets/main.js"></script>
 </body>
-</html> 
+</html>

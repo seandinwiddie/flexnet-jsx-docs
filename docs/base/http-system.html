@@ -3,11 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FlexNet JSX Framework - HTTP System</title>
+    <title>HTTP System - FlexNet JSX Framework</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/atom-one-dark.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
-    <link rel="stylesheet" href="/assets/main.css">
     <script>
         tailwind.config = {
             theme: {
@@ -20,108 +19,70 @@
                     }
                 }
             }
-        };
-        hljs.highlightAll();
+        }
     </script>
+    <script src="/assets/main.js" defer></script>
 </head>
 <body class="bg-gray-50 text-gray-900 min-h-screen">
-    <div class="flex">
-        <!-- Sidebar -->
-        <aside id="sidebar-placeholder" class="w-64 bg-white border-r border-gray-200 h-screen sticky top-0 overflow-y-auto flex-shrink-0">
-        </aside>
+    <div id="page-content">
+        <div class="flex items-center space-x-2 text-sm text-gray-500 mb-8">
+            <a href="/index.html" class="hover:text-primary">Home</a>
+            <span>/</span>
+            <a href="#" class="hover:text-primary">Base Documentation</a>
+            <span>/</span>
+            <span class="text-gray-900">HTTP System</span>
+        </div>
 
-        <!-- Main content -->
-        <main class="flex-1 overflow-y-auto">
-            <header id="header-placeholder" class="border-b border-gray-200 bg-white sticky top-0 z-10">
-            </header>
+        <h1 class="text-3xl font-bold mb-6">HTTP System</h1>
+        
+        <div class="prose prose-blue max-w-none">
+            <p class="lead text-xl text-gray-600 mb-8">
+                FlexNet JSX does not include a built-in HTTP client. Instead, it relies on the browser's native <code>fetch</code> API and integrates with the state and effect systems to manage asynchronous network requests.
+            </p>
 
-            <div class="p-8 max-w-5xl mx-auto">
-                <h1 class="text-3xl font-bold mb-4">FlexNet JSX Framework - HTTP System</h1>
-                <h2 class="text-2xl font-bold mb-4">Overview</h2>
-                <p class="mb-4">The HTTP system provides a functional implementation for making HTTP requests. It follows the FlexNet JSX Framework's core principles:</p>
-                <ul class="list-disc pl-5 mb-6">
-                    <li>Functional programming</li>
-                    <li>Zero external dependencies</li>
-                    <li>Immutable state management</li>
-                    <li>Effect isolation</li>
-                </ul>
+            <h2 class="text-2xl font-bold mt-8 mb-4">The Recommended Pattern</h2>
+            <p class="mb-4">
+                The standard way to handle HTTP requests is to use the <a href="/systems/effects.html" class="text-primary hover:underline">Effect System</a>. This pattern keeps your data flow predictable and separates the impure API call from your pure rendering logic.
+            </p>
+            <ol class="list-decimal pl-6 space-y-3 mb-6">
+                <li><strong>Dispatch a Request Action:</strong> A component dispatches an action to signal the start of a request (e.g., <code>{ type: 'FETCH_USER_REQUEST', payload: { id: 123 } }</code>).</li>
+                <li><strong>Handle in an Effect:</strong> An effect listens for this action type, makes the <code>fetch</code> call, and handles the promise.</li>
+                <li><strong>Dispatch Result Actions:</strong> Based on the outcome of the fetch call, the effect dispatches a success (e.g., <code>FETCH_USER_SUCCESS</code>) or failure (<code>FETCH_USER_FAILURE</code>) action with the resulting data or error.</li>
+                <li><strong>Update State in Reducer:</strong> The reducer handles these result actions to update the state (e.g., setting a loading flag, storing the user data, or storing the error message).</li>
+            </ol>
 
-                <h2 class="text-2xl font-bold mb-4">Core Types</h2>
-                <h3 class="text-xl font-semibold mb-2">Request Type</h3>
-                <pre class="bg-gray-800 text-white p-4 rounded-md mb-4 overflow-x-auto"><code class="language-javascript">Request = Method -> URL -> Headers -> Body -> Timeout -> Retry -> Cache -> Either Error Request</code></pre>
+            <pre class="bg-gray-800 text-white p-4 rounded-md mb-6 overflow-x-auto"><code class="language-javascript">// Example API effect
+const apiEffect = (store, action) => {
+    if (action.type === 'FETCH_USER_REQUEST') {
+        store.dispatch({ type: 'SET_LOADING', payload: true });
 
-                <h3 class="text-xl font-semibold mb-2">Response Type</h3>
-                <pre class="bg-gray-800 text-white p-4 rounded-md mb-4 overflow-x-auto"><code class="language-javascript">Response = Data -> Status -> Headers -> Either Error Response</code></pre>
+        fetch(`/api/users/${action.payload.id}`)
+            .then(res => {
+                if (!res.ok) throw new Error('Network response was not ok');
+                return res.json();
+            })
+            .then(data => {
+                store.dispatch({ type: 'FETCH_USER_SUCCESS', payload: data });
+                store.dispatch({ type: 'SET_LOADING', payload: false });
+            })
+            .catch(error => {
+                store.dispatch({ type: 'FETCH_USER_FAILURE', payload: error.message });
+                store.dispatch({ type: 'SET_LOADING', payload: false });
+            });
+    }
+};
+</code></pre>
 
-                <h3 class="text-xl font-semibold mb-2">Cache Type</h3>
-                <pre class="bg-gray-800 text-white p-4 rounded-md mb-4 overflow-x-auto"><code class="language-javascript">Cache = Entries -> MaxAge -> MaxSize -> Either Error Cache</code></pre>
-
-                <h3 class="text-xl font-semibold mb-2">Interceptor Type</h3>
-                <pre class="bg-gray-800 text-white p-4 rounded-md mb-6 overflow-x-auto"><code class="language-javascript">Interceptor = (Request -> Either Error Request) -> (Response -> Either Error Response) -> (Error -> Either Error Error) -> Either Error Interceptor</code></pre>
-
-                <h2 class="text-2xl font-bold mb-4">HTTP Client API</h2>
-                <h3 class="text-xl font-semibold mb-2">Creating a Client</h3>
-                <pre class="bg-gray-800 text-white p-4 rounded-md mb-4 overflow-x-auto"><code class="language-javascript">const client = createHTTPClient(baseURL)(options);</code></pre>
-
-                <h3 class="text-xl font-semibold mb-2">Making Requests</h3>
-                <pre class="bg-gray-800 text-white p-4 rounded-md mb-4 overflow-x-auto"><code class="language-javascript">// GET request
-client.get(url)(headers)(timeout)(retry)(cache);
-
-// POST request
-client.post(url)(data)(headers)(timeout)(retry)(cache);
-
-// PUT request
-client.put(url)(data)(headers)(timeout)(retry)(cache);
-
-// DELETE request
-client.delete(url)(headers)(timeout)(retry)(cache);</code></pre>
-
-                <h3 class="text-xl font-semibold mb-2">Using Interceptors</h3>
-                <pre class="bg-gray-800 text-white p-4 rounded-md mb-4 overflow-x-auto"><code class="language-javascript">// Add request interceptor
-client.addRequestInterceptor(request => 
-  Either.Right({ ...request, headers: { ...request.headers, 'X-Custom': 'value' } })
-);
-
-// Add response interceptor
-client.addResponseInterceptor(response =>
-  Either.Right({ ...response, data: transformData(response.data) })
-);
-
-// Add error interceptor
-client.addErrorInterceptor(error =>
-  error.status === 401 ? refreshToken().chain(() => retry(error.request)) : Either.Left(error)
-);</code></pre>
-
-                <h3 class="text-xl font-semibold mb-2">Cache Operations</h3>
-                <pre class="bg-gray-800 text-white p-4 rounded-md mb-6 overflow-x-auto"><code class="language-javascript">// Get current cache state
-const cache = client.getCache();
-
-// Clear cache
-client.clearCache();</code></pre>
-
-                <h2 class="text-2xl font-bold mb-4">Type Verification</h2>
-                <p class="mb-4">All types include strict verification:</p>
-                <ul class="list-disc pl-5 mb-6">
-                    <li>Request verification ensures valid method, URL, headers, timeout, retry config</li>
-                    <li>Response verification ensures valid status code, headers, data format</li>
-                    <li>Cache verification ensures valid entries, max age, max size</li>
-                    <li>Interceptor verification ensures valid function types</li>
-                </ul>
-
-                <h2 class="text-2xl font-bold mb-4">Error Handling</h2>
-                <p class="mb-4">All operations return Either type for proper error handling:</p>
-                <pre class="bg-gray-800 text-white p-4 rounded-md mb-6 overflow-x-auto"><code class="language-javascript">client.get('/api/data')(headers)(timeout)(retry)(cache)
-  .map(response => processData(response.data))
-  .mapLeft(error => logError(error));</code></pre>
-
-                <h2 class="text-2xl font-bold mb-4">Effect Isolation</h2>
-                <p class="mb-6">All side effects (network requests, cache operations) are properly isolated in the effect system using functional composition.</p>
+            <div class="flex justify-between mt-12 pt-6 border-t border-gray-200">
+                <a href="/base/architecture-overview.html" class="inline-flex items-center px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300 transition">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+                    </svg>
+                    Prev: Architecture
+                </a>
+                <span></span>
             </div>
-        </main>
+        </div>
     </div>
-
-    <footer id="footer-placeholder" class="bg-white border-t border-gray-200 py-6">
-    </footer>
-    <script src="/assets/main.js"></script>
 </body>
-</html> 
+</html>

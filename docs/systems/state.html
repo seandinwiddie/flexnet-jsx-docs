@@ -20,248 +20,109 @@
                 }
             }
         }
-        hljs.highlightAll();
     </script>
+    <script src="/assets/main.js" defer></script>
 </head>
 <body class="bg-gray-50 text-gray-900 min-h-screen">
-    <div class="flex">
-        <!-- Sidebar -->
-        <aside id="sidebar-placeholder" class="w-64 bg-white border-r border-gray-200 h-screen sticky top-0 overflow-y-auto flex-shrink-0">
-        </aside>
+    <div id="page-content">
+        <div class="flex items-center space-x-2 text-sm text-gray-500 mb-8">
+            <a href="/index.html" class="hover:text-primary">Home</a>
+            <span>/</span>
+            <a href="#" class="hover:text-primary">Systems</a>
+            <span>/</span>
+            <span class="text-gray-900">State Management</span>
+        </div>
 
-        <!-- Main content -->
-        <main class="flex-1 overflow-y-auto">
-            <header id="header-placeholder" class="border-b border-gray-200 bg-white sticky top-0 z-10">
-            </header>
+        <h1 class="text-3xl font-bold mb-6">State Management</h1>
+        
+        <div class="prose prose-blue max-w-none">
+            <p class="lead text-xl text-gray-600 mb-8">
+                FlexNet provides a simple, centralized state management system inspired by Redux. It enforces a predictable state container and a unidirectional data flow, making your application's logic easy to follow and debug.
+            </p>
 
-            <div class="p-8 max-w-5xl mx-auto">
-                <div class="flex items-center space-x-2 text-sm text-gray-500 mb-8">
-                    <a href="../index.html" class="hover:text-primary">Home</a>
-                    <span>/</span>
-                    <a href="state.html" class="hover:text-primary">Systems</a>
-                    <span>/</span>
-                    <span class="text-gray-700">State Management</span>
-                </div>
-                
-                <h1 class="text-4xl font-bold mb-6">State Management</h1>
-                <p class="text-lg text-gray-600 mb-8">FlexNet JSX implements a functional, immutable, and predictable approach to state management using a centralized store and pure reducer functions, a core part of its <a href="../base/architecture-overview.html" class="text-primary hover:underline">architecture</a>.</p>
+            <h2 class="text-2xl font-bold mt-8 mb-4">Core Components of the State System</h2>
+            <ul class="list-disc pl-6 mb-6 space-y-3">
+                <li>
+                    <strong>Store:</strong> A single object that holds the entire state of your application. It is the "single source of truth."
+                </li>
+                <li>
+                    <strong>Action:</strong> A plain JavaScript object that describes an intention to change the state. It must have a <code>type</code> property.
+                </li>
+                <li>
+                    <strong>Reducer:</strong> A pure function that takes the current state and an action, and returns the next state.
+                </li>
+            </ul>
 
-                <div class="prose prose-blue max-w-none">
-                    <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2">Core Principles</h2>
-                    <ul class="list-disc pl-6 mb-6 space-y-2">
-                        <li><strong>Single Source of Truth:</strong> The entire state of your application is stored in a single object tree within a single store. This concept is detailed in the <a href="../base/architecture-overview.html#core-operating-schema" class="text-primary hover:underline">Architecture Overview</a>.</li>
-                        <li><strong>State is Read-Only:</strong> The only way to change the state is to dispatch an action, an object describing what happened.</li>
-                        <li><strong>Changes are Made with Pure Functions:</strong> To specify how the state tree is transformed by actions, you write pure reducers, which are a foundational concept of the framework.</li>
-                        <li><strong>Unidirectional Data Flow:</strong> State changes flow in one direction: an action is dispatched, the reducer calculates the new state, and subscribers are notified.</li>
-                    </ul>
-                    
-                    <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2">The Store, Reducers, and Actions</h2>
-                    <p class="mb-4">The three core components of FlexNet state management are the store, reducers, and actions.</p>
+            <h2 class="text-2xl font-bold mt-8 mb-4"><code>createStore(reducer, initialState)</code></h2>
+            <p class="mb-4">
+                This function creates the state container for your application.
+            </p>
+            <pre class="bg-gray-800 text-white p-4 rounded-md mb-6 overflow-x-auto"><code class="language-javascript">import { createStore } from './src/systems/state/functions.js';
 
-                    <h3 class="text-xl font-medium mt-6 mb-3">The Store</h3>
-                    <p class="mb-4">The store holds the application state, allows access to the state via <code>getState()</code>, allows state to be updated via <code>dispatch(action)</code>, and registers listeners via <code>subscribe(listener)</code>. The implementation is defined in the <a href="../base/api-reference.html#state-system" class="text-primary hover:underline">API Reference</a>.</p>
-                    <pre><code class="language-javascript">// This example from /src/systems/state/functions.js illustrates the store's structure.
-import { pipe } from '../../core/functions/composition.js';
-
-const createStore = (reducer, initialState) => {
-    const subscribers = new Set();
-    let state = initialState;
-
-    return {
-        getState: () => state,
-        dispatch: action =>
-            pipe(
-                reducer(state),
-                newState => { state = newState; },
-                () => subscribers.forEach(fn => fn())
-            )(action),
-        subscribe: fn => {
-            subscribers.add(fn);
-            return () => subscribers.delete(fn);
-        }
-    };
-};</code></pre>
-
-                    <h3 class="text-xl font-medium mt-6 mb-3">Actions</h3>
-                     <p class="mb-4">Actions are plain JavaScript objects that represent an intention to change the state. They must have a <code>type</code> property.</p>
-                    <pre><code class="language-javascript">// An action to increment a counter
-const incrementAction = { type: 'INCREMENT' };
-
-// An action to add a todo, with a payload
-const addTodoAction = { 
-  type: 'ADD_TODO',
-  payload: 'Learn functional programming'
-};</code></pre>
-
-                    <h3 class="text-xl font-medium mt-6 mb-3">Reducers</h3>
-                    <p class="mb-4">A reducer is a pure, curried function that specifies how the application's state changes in response to an action. It has the signature: <code>state => action => newState</code>.</p>
-                     <pre><code class="language-javascript">// A reducer for a simple counter.
-// Note the curried function signature: state => action => newState.
-const counterReducer = state => action => {
-  switch (action.type) {
-    case 'INCREMENT':
-      return state + 1;
-    case 'DECREMENT':
-      return state - 1;
-    default:
-      return state; // MUST handle the default case
-  }
-};</code></pre>
-
-                    <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2">Usage Example: A Simple Counter</h2>
-                    <p class="mb-4">Let's tie these concepts together with a basic counter example.</p>
-                    <pre><code class="language-javascript">import { createStore } from '../../systems/state/functions.js';
-
-// 1. The reducer
-const counterReducer = state => action => {
-  switch (action.type) {
-    case 'INCREMENT': return state + 1;
-    case 'DECREMENT': return state - 1;
-    default: return state;
-  }
-};
-
-// 2. Create the store
-const store = createStore(counterReducer, 0);
-
-// 3. Subscribe to changes to update the UI
-const unsubscribe = store.subscribe(() => {
-  console.log('State changed:', store.getState());
-});
-
-// 4. Dispatch actions to update the state
-store.dispatch({ type: 'INCREMENT' }); // Logs: State changed: 1
-store.dispatch({ type: 'INCREMENT' }); // Logs: State changed: 2
-store.dispatch({ type: 'DECREMENT' }); // Logs: State changed: 1
-
-// 5. Unsubscribe when the listener is no longer needed
-unsubscribe();
-                    </code></pre>
-                
-                    <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2">Complex State Updates: Todo List</h2>
-                    <p class="mb-4">The reducer pattern scales well for more complex state structures like a todo list.</p>
-                    <pre><code class="language-javascript">// Action creator functions
-const addTodo = (text) => ({ type: 'ADD_TODO', payload: { id: Date.now(), text, completed: false } });
-const toggleTodo = (id) => ({ type: 'TOGGLE_TODO', payload: { id } });
-
-// The todos reducer, which is also a curried function.
-const todosReducer = state => action => {
-  switch (action.type) {
-    case 'ADD_TODO':
-      return [...state, action.payload];
-    case 'TOGGLE_TODO':
-      return state.map(todo =>
-        todo.id === action.payload.id
-          ? { ...todo, completed: !todo.completed }
-          : todo
-      );
-    default:
-      return state;
-  }
-};
-
-const todosStore = createStore(todosReducer, []);
-
-todosStore.dispatch(addTodo('Learn FlexNet'));
-todosStore.dispatch(addTodo('Build an app'));
-todosStore.dispatch(toggleTodo(todosStore.getState()[0].id));
-
-console.log(todosStore.getState());
-                    </code></pre>
-                
-                    <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2">Integration with FlexNet Types</h2>
-                    <p class="mb-4">FlexNet's state management integrates seamlessly with its functional types, allowing you to create robust, type-safe state containers. See the <a href="errors.html" class="text-primary hover:underline">Error Handling guide</a> for more on these types.</p>
-                
-                    <h3 class="text-xl font-medium mt-6 mb-3">Using Maybe for Optional State</h3>
-                    <p class="mb-4">A reducer can manage a state that is a <code>Maybe</code> type, which is perfect for handling optional data like a logged-in user. The <code>Maybe</code> type is fully documented in the <a href="../base/api-reference.html#maybe-type" class="text-primary hover:underline">API Reference</a>.</p>
-                    <pre><code class="language-javascript">import { Maybe } from '../../core/types/maybe.js';
-
-// The state is Maybe<User>
-const userProfileReducer = state => action => {
+// 1. Define a reducer
+const counterReducer = (state = 0, action) => {
     switch (action.type) {
-        case 'FETCH_USER_SUCCESS':
-            return Maybe.Just(action.payload);
-        case 'FETCH_USER_FAILURE':
-        case 'LOGOUT':
-            return Maybe.Nothing();
-        default:
-            return state;
+        case 'INCREMENT': return state + 1;
+        case 'DECREMENT': return state - 1;
+        default: return state;
     }
 };
 
-const userStore = createStore(userProfileReducer, Maybe.Nothing());
+// 2. Define an initial state
+const initialState = 0;
 
-// Dispatch actions
-userStore.dispatch({ type: 'FETCH_USER_SUCCESS', payload: { name: 'Alice' } });
+// 3. Create the store
+const store = createStore(counterReducer, initialState);
+</code></pre>
 
-// Get user display name safely
-const displayName = userStore.getState()
-    .map(profile => profile.name)
-    .getOrElse('Anonymous'); // "Alice"
-                    </code></pre>
-                
-                    <h3 class="text-xl font-medium mt-6 mb-3">Using Either for Error Handling</h3>
-                    <p class="mb-4">You can use an <code>Either</code> as your state to model data that can be in one of two states, such as valid data or an error. The <code>Either</code> type is fully documented in the <a href="../base/api-reference.html#either-type" class="text-primary hover:underline">API Reference</a>.</p>
-                    <pre><code class="language-javascript">import { Either } from '../../core/types/either.js';
+            <h2 class="text-2xl font-bold mt-8 mb-4">Store API</h2>
+            <p class="mb-4">
+                The store object returned by <code>createStore</code> has a few simple methods:
+            </p>
 
-// The state is Either<Error, FormData>
-const formReducer = state => action => {
-  if (action.type === 'UPDATE_FIELD') {
-    const { field, value } = action.payload;
-    const currentData = state.getOrElse({ email: '', password: '' });
-    const newData = { ...currentData, [field]: value };
-    
-    // Perform validation, returning a Left for an error, or a Right for valid data
-    if (!newData.email) {
-      return Either.Left('Email is required');
-    }
-    if (!/\S+@\S+\.\S+/.test(newData.email)) {
-      return Either.Left('Email is invalid');
-    }
-    return Either.Right(newData);
-  }
-  return state;
+            <h3 class="text-xl font-semibold mt-6 mb-3"><code>store.getState()</code></h3>
+            <p class="mb-2">Returns the current state of the application. Your UI components will use this to get the data they need to render.</p>
+            <pre class="bg-gray-800 text-white p-2 rounded-md"><code class="language-javascript">console.log(store.getState()); // 0
+</code></pre>
+
+            <h3 class="text-xl font-semibold mt-6 mb-3"><code>store.dispatch(action)</code></h3>
+            <p class="mb-2">This is the only way to trigger a state change. You pass an action object to it. The store will then call your reducer with the current state and this action.</p>
+            <pre class="bg-gray-800 text-white p-2 rounded-md"><code class="language-javascript">store.dispatch({ type: 'INCREMENT' });
+console.log(store.getState()); // 1
+</code></pre>
+
+            <h3 class="text-xl font-semibold mt-6 mb-3"><code>store.subscribe(listener)</code></h3>
+            <p class="mb-2">Adds a listener function that will be called every time an action is dispatched and the state might have changed. This is how you connect your UI to the store.</p>
+            <p class="mb-2">It returns an <code>unsubscribe</code> function to remove the listener.</p>
+            <pre class="bg-gray-800 text-white p-4 rounded-md mb-6 overflow-x-auto"><code class="language-javascript">const render = () => {
+    // Logic to re-render your application's UI
+    console.log('State changed to:', store.getState());
 };
 
-const formStore = createStore(formReducer, Either.Right({ email: '', password: '' }));
+const unsubscribe = store.subscribe(render);
 
-formStore.dispatch({ type: 'UPDATE_FIELD', payload: { field: 'email', value: 'invalid-email' } });
+store.dispatch({ type: 'INCREMENT' }); // "State changed to: 2"
+store.dispatch({ type: 'INCREMENT' }); // "State changed to: 3"
 
-// Handle form state
-formStore.getState().fold(
-  error => console.error('Form has errors:', error), // This will run
-  data => console.log('Submitting data:', data)
-);
-                    </code></pre>
-                </div>
-                <div class="mt-12 border-t border-gray-200 pt-8">
-                    <h2 class="text-2xl font-semibold mb-4">Next Steps</h2>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <a href="render.html" class="block p-4 border border-gray-200 rounded-lg hover:border-primary hover:shadow-md transition">
-                            <h3 class="font-semibold text-lg mb-2">Render System</h3>
-                            <p class="text-gray-600">Learn how to subscribe to the store to render UI updates.</p>
-                        </a>
-                        <a href="events.html" class="block p-4 border border-gray-200 rounded-lg hover:border-primary hover:shadow-md transition">
-                            <h3 class="font-semibold text-lg mb-2">Events System</h3>
-                            <p class="text-gray-600">See how user interactions dispatch actions to the store.</p>
-                        </a>
-                        <a href="effects.html" class="block p-4 border border-gray-200 rounded-lg hover:border-primary hover:shadow-md transition">
-                            <h3 class="font-semibold text-lg mb-2">Effects System</h3>
-                            <p class="text-gray-600">Understand how to handle side effects and update state with the results.</p>
-                        </a>
-                        <a href="../base/api-reference.html" class="block p-4 border border-gray-200 rounded-lg hover:border-primary hover:shadow-md transition">
-                            <h3 class="font-semibold text-lg mb-2">API Reference</h3>
-                            <p class="text-gray-600">Get the full details on the state management API and other core systems.</p>
-                        </a>
-                    </div>
-                </div>
+// Stop listening to updates
+unsubscribe();
+</code></pre>
+
+            <div class="flex justify-between mt-12 pt-6 border-t border-gray-200">
+                <a href="/core/security.html" class="inline-flex items-center px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300 transition">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+                    </svg>
+                    Prev: Security
+                </a>
+                <a href="/systems/effects.html" class="inline-flex items-center px-4 py-2 bg-primary text-white rounded-md hover:bg-blue-600 transition">
+                    Next: Effects
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                    </svg>
+                </a>
             </div>
-        </main>
+        </div>
     </div>
-
-    <footer id="footer-placeholder" class="bg-white border-t border-gray-200 py-6">
-    </footer>
-
-    <script src="../assets/main.js"></script>
 </body>
 </html>

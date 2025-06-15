@@ -20,108 +20,89 @@
                 }
             }
         }
-        hljs.highlightAll();
     </script>
+    <script src="/assets/main.js" defer></script>
 </head>
 <body class="bg-gray-50 text-gray-900 min-h-screen">
-    <div class="flex">
-        <!-- Sidebar -->
-        <aside id="sidebar-placeholder" class="w-64 bg-white border-r border-gray-200 h-screen sticky top-0 overflow-y-auto flex-shrink-0">
-        </aside>
+    <div id="page-content">
+        <div class="flex items-center space-x-2 text-sm text-gray-500 mb-8">
+            <a href="/index.html" class="hover:text-primary">Home</a>
+            <span>/</span>
+            <a href="#" class="hover:text-primary">Getting Started</a>
+            <span>/</span>
+            <span class="text-gray-900">Installation</span>
+        </div>
 
-        <!-- Main content -->
-        <main class="flex-1 overflow-y-auto">
-            <header id="header-placeholder" class="border-b border-gray-200 bg-white sticky top-0 z-10">
-            </header>
+        <h1 class="text-3xl font-bold mb-6">Installation</h1>
 
-            <div class="p-8 max-w-5xl mx-auto">
-                <div class="flex items-center space-x-2 text-sm text-gray-500 mb-8">
-                    <a href="../index.html" class="hover:text-primary">Home</a>
-                    <span>/</span>
-                    <a href="#" class="hover:text-primary">Getting Started</a>
-                    <span>/</span>
-                    <span class="text-gray-900">Installation</span>
-                </div>
+        <div class="prose prose-blue max-w-none">
+            <p class="lead text-xl text-gray-600 mb-8">
+                FlexNet JSX is designed for simplicity. With zero external dependencies, you can get started by including a single script file in your project or by cloning one of our starter templates.
+            </p>
 
-                <h1 class="text-3xl font-bold mb-6">Installation</h1>
-                
-                <div class="prose prose-blue max-w-none">
-                    <p class="lead text-xl text-gray-600 mb-8">
-                        FlexNet JSX is designed for a straightforward setup with zero external dependencies. The recommended way to start is by cloning the official repository and using one of our pre-configured starter projects.
-                    </p>
+            <h2 class="text-2xl font-bold mt-8 mb-4">Option 1: Using the Starter Projects</h2>
+            <p class="mb-4">
+                This is the recommended approach for most users. We provide several starter projects to help you get up and running quickly.
+            </p>
 
-                    <div class="bg-blue-50 border-l-4 border-primary p-4 rounded-md mb-8">
-                        <h4 class="font-semibold">Core Principle: Zero Dependencies</h4>
-                        <p>FlexNet JSX uses only browser-native implementations and has no reliance on package managers like NPM or Yarn, a core principle defined in our <a href="../base/consistency-analysis.html" class="text-primary hover:underline">Consistency Analysis</a>. Installation is as simple as getting the code and serving it.</p>
-                    </div>
-                
-                    <h2 class="text-2xl font-bold mt-8 mb-4">Using the Starter Projects (Recommended)</h2>
-                    
-                    <p class="mb-4">The starter projects provide a complete, correctly structured foundation for your application. They are the quickest and most reliable way to begin developing with FlexNet JSX, following the patterns in the <a href="quickstart.html" class="text-primary hover:underline">Quick Start guide</a>.</p>
+            <h3 class="text-xl font-semibold mt-6 mb-3">Full-Featured Starter</h3>
+            <p class="mb-2">A comprehensive implementation demonstrating all framework features, including state management, effects, and routing.</p>
+            <pre class="bg-gray-800 text-white p-4 rounded-md mb-6 overflow-x-auto"><code class="language-bash"># Clone the repository
+git clone https://github.com/flexnet/starter-project.git
 
-                    <h3 class="text-lg font-semibold mt-6 mb-3">Step 1: Get the Repository</h3>
-                     <p class="mb-4">First, clone the official FlexNet JSX repository to get access to the starter projects and the full framework source.</p>
-                    <pre class="bg-gray-800 text-white p-4 rounded-md mb-6 overflow-x-auto"><code class="language-bash">git clone https://github.com/flexnet/flexnet-jsx.git
-cd flexnet-jsx</code></pre>
-
-                    <h3 class="text-lg font-semibold mt-6 mb-3">Step 2: Choose a Starter and Serve</h3>
-                    <p class="mb-4">Two starter projects are available inside the cloned repository. Choose one and serve it locally.</p>
-
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-                        <div class="bg-white rounded-lg border border-gray-200 p-6">
-                            <h4 class="font-semibold text-lg mb-2">🚀 Full-Featured Starter</h4>
-                            <p class="text-gray-700 mb-4">A comprehensive project demonstrating all framework features, including routing, state management, and the effect system. Ideal for production applications. Found in <code>/starter-project</code>.</p>
-                             <pre class="bg-gray-800 text-white p-4 rounded-md mb-4 overflow-x-auto"><code class="language-bash"># Navigate to the full-featured starter and serve it
+# Navigate to the project directory
 cd starter-project
-python -m http.server 3000</code></pre>
-                             <p class="text-sm text-gray-600">Now, open your browser to <a href="http://localhost:3000" target="_blank" class="text-primary hover:underline">http://localhost:3000</a>.</p>
-                        </div>
-                        <div class="bg-white rounded-lg border border-gray-200 p-6">
-                            <h4 class="font-semibold text-lg mb-2">⚡ Minimal Starter</h4>
-                            <p class="text-gray-700 mb-4">A lightweight boilerplate focusing on the concepts from the <a href="quickstart.html" class="text-primary hover:underline">Quick Start guide</a>. Perfect for learning or prototypes. Found in <code>/starter-project-minimal</code>.</p>
-                             <pre class="bg-gray-800 text-white p-4 rounded-md mb-4 overflow-x-auto"><code class="language-bash"># Navigate to the minimal starter and serve it
-cd starter-project-minimal
-python -m http.server 3000</code></pre>
-                            <p class="text-sm text-gray-600">Now, open your browser to <a href="http://localhost:3000" target="_blank" class="text-primary hover:underline">http://localhost:3000</a>.</p>
-                        </div>
-                    </div>
-                    
-                    <h2 class="text-2xl font-bold mt-8 mb-4">Starter Project Structure</h2>
-                    <p class="mb-4">Both starter projects follow the recommended application directory structure defined in the <a href="../base/getting-started-guide.html" class="text-primary hover:underline">Getting Started Guide</a>, which ensures maintainability and a clear separation of concerns.</p>
-                    
-                    <details class="bg-gray-100 p-4 rounded-md mb-6">
-                        <summary class="font-semibold cursor-pointer">View Recommended Application Structure</summary>
-                        <pre class="bg-gray-800 text-white p-4 rounded-md mt-4 overflow-x-auto"><code class="language-text">/starter-project
-├── /public
-│   └── index.html
-└── /src
-    ├── /core
-    │   ├── /functions
-    │   └── /types
-    ├── /systems
-    │   ├── /render
-    │   └── /state
-    └── /features
-        └── /counter
-            └── index.js
-</code></pre>
-                    </details>
 
-                    <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded-md mt-8">
-                        <h4 class="font-semibold flex items-center">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-yellow-500" viewBox="0 0 20 20" fill="currentColor">
-                                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2h-1V9z" clip-rule="evenodd" />
-                            </svg>
-                            Next Steps
-                        </h4>
-                        <p>Once you have a starter project running, the best next step is the <a href="quickstart.html" class="text-primary hover:underline font-semibold">Quick Start guide</a>, which will walk you through building your first interactive component.</p>
-                    </div>
-                </div>
+# Serve the application
+python -m http.server 3000
+
+# Open http://localhost:3000 in your browser
+</code></pre>
+
+            <h3 class="text-xl font-semibold mt-6 mb-3">Minimal Starter</h3>
+            <p class="mb-2">A lightweight implementation focusing on core rendering concepts, perfect for learning the basics.</p>
+            <pre class="bg-gray-800 text-white p-4 rounded-md mb-6 overflow-x-auto"><code class="language-bash"># Clone the repository
+git clone https://github.com/flexnet/starter-project-minimal.git
+cd starter-project-minimal
+python -m http.server 3000
+</code></pre>
+            
+            <h2 class="text-2xl font-bold mt-8 mb-4">Option 2: Manual Setup</h2>
+            <p class="mb-4">
+                If you prefer to integrate FlexNet JSX into an existing project, you can do so by including the core script file.
+            </p>
+            
+            <ol class="list-decimal pl-6 space-y-2 mb-6">
+                <li>Download the latest release from the <a href="https://github.com/flexnet/flexnet-jsx/releases" class="text-primary hover:underline">GitHub releases page</a>.</li>
+                <li>Extract the contents and locate the <code>src</code> directory.</li>
+                <li>Copy the <code>src</code> directory into your project.</li>
+                <li>Include the main JSX runtime file in your HTML:</li>
+            </ol>
+
+            <pre class="bg-gray-800 text-white p-4 rounded-md mb-6 overflow-x-auto"><code class="language-html">&lt;!-- This file includes all core systems needed to run FlexNet --&gt;
+&lt;script type="module" src="path/to/your/src/index.js"&gt;&lt;/script&gt;
+</code></pre>
+
+            <div class="bg-blue-50 border-l-4 border-primary p-4 rounded-md my-8">
+                <h4 class="font-semibold">Important Note</h4>
+                <p>FlexNet JSX uses native ES modules, so you must serve your files from a web server (like <code>python -m http.server</code> or Live Server for VS Code). Opening the HTML file directly from your filesystem will not work.</p>
             </div>
-        </main>
+
+            <div class="flex justify-between mt-12 pt-6 border-t border-gray-200">
+                <a href="/guides/introduction.html" class="inline-flex items-center px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300 transition">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+                    </svg>
+                    Prev: Introduction
+                </a>
+                <a href="/guides/quickstart.html" class="inline-flex items-center px-4 py-2 bg-primary text-white rounded-md hover:bg-blue-600 transition">
+                    Next: Quick Start
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                    </svg>
+                </a>
+            </div>
+        </div>
     </div>
-    <footer id="footer-placeholder" class="bg-white border-t border-gray-200 py-6">
-    </footer>
-    <script src="../assets/main.js"></script>
 </body>
 </html>

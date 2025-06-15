@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Core Functions - FlexNet JSX Framework</title>
+    <title>Functions - FlexNet JSX Framework</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/atom-one-dark.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
@@ -20,229 +20,88 @@
                 }
             }
         }
-        hljs.highlightAll();
     </script>
+    <script src="/assets/main.js" defer></script>
 </head>
 <body class="bg-gray-50 text-gray-900 min-h-screen">
-    <div class="flex">
-        <!-- Sidebar -->
-        <aside id="sidebar-placeholder" class="w-64 bg-white border-r border-gray-200 h-screen sticky top-0 overflow-y-auto flex-shrink-0">
-        </aside>
+    <div id="page-content">
+        <div class="flex items-center space-x-2 text-sm text-gray-500 mb-8">
+            <a href="/index.html" class="hover:text-primary">Home</a>
+            <span>/</span>
+            <a href="#" class="hover:text-primary">Core</a>
+            <span>/</span>
+            <span class="text-gray-900">Functions</span>
+        </div>
 
-        <!-- Main content -->
-        <main class="flex-1 overflow-y-auto">
-            <header id="header-placeholder" class="border-b border-gray-200 bg-white sticky top-0 z-10">
-            </header>
+        <h1 class="text-3xl font-bold mb-6">Utility Functions</h1>
+        
+        <div class="prose prose-blue max-w-none">
+            <p class="lead text-xl text-gray-600 mb-8">
+                FlexNet includes a small set of powerful utility functions for composition and data manipulation. These are the tools you'll use to build complex logic from simple, reusable pieces.
+            </p>
 
-            <div class="p-8 max-w-5xl mx-auto">
-                <div class="flex items-center space-x-2 text-sm text-gray-500 mb-8">
-                    <a href="../index.html" class="hover:text-primary">Home</a>
-                    <span>/</span>
-                    <a href="jsx-runtime.html" class="hover:text-primary">Core</a>
-                    <span>/</span>
-                    <span class="text-gray-700">Functions</span>
-                </div>
+            <h2 class="text-2xl font-bold mt-8 mb-4"><code>pipe(...fns)</code></h2>
+            <p class="mb-4">
+                Performs left-to-right function composition. It takes a sequence of functions and returns a new function. When the new function is called, it passes its arguments to the first function, the result of that to the second, and so on.
+            </p>
+            <pre class="bg-gray-800 text-white p-4 rounded-md mb-6 overflow-x-auto"><code class="language-javascript">import { pipe } from './src/core/functions.js';
 
-                <h1 class="text-4xl font-bold mb-6">Core Functions</h1>
-                <p class="text-lg text-gray-600 mb-8">FlexNet JSX is built on functional programming principles, a core concept detailed in the <a href="../base/architecture-overview.html" class="text-primary hover:underline">Architecture Overview</a>. It provides a set of core utilities to compose functions and transform data in a pure, predictable way. These functions are designed to work seamlessly with the framework's <a href="../systems/errors.html" class="text-primary hover:underline">Type System</a> (Maybe, Either, and Result) to build robust applications.</p>
+const add5 = x => x + 5;
+const multiplyBy2 = x => x * 2;
 
-                <div class="prose prose-blue max-w-none">
-                    <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2">Function Composition</h2>
-                    <p class="mb-4">FlexNet provides utilities for function composition, a central pattern in functional programming for combining smaller functions into more complex ones. These are defined in the <a href="../base/api-reference.html#composition" class="text-primary hover:underline">API Reference</a>.</p>
+const calculate = pipe(add5, multiplyBy2);
 
-                    <h3 class="text-xl font-medium mt-6 mb-3">compose</h3>
-                    <p class="mb-4">The <code>compose</code> function allows you to combine multiple functions, applying them from right to left. It's a powerful way to chain operations where the output of one function becomes the input of the next.</p>
-                    <div class="bg-gray-900 rounded-lg mb-6 overflow-hidden relative">
-                        <button class="absolute top-2 right-2 bg-gray-700 hover:bg-gray-600 text-white text-xs font-bold py-1 px-2 rounded">Copy</button>
-                        <pre class="bg-gray-800 text-white p-4 rounded-lg"><code class="language-javascript">import { compose } from '../../src/core/functions/composition.js';
+// is equivalent to: multiplyBy2(add5(10))
+const result = calculate(10); // 30
+</code></pre>
 
-// Example functions
-const double = x => x * 2;
-const increment = x => x + 1;
-const square = x => x * x;
+            <h2 class="text-2xl font-bold mt-8 mb-4"><code>compose(...fns)</code></h2>
+            <p class="mb-4">
+                Performs right-to-left function composition. It's the same as <code>pipe</code>, but the functions are applied in the reverse order.
+            </p>
+            <pre class="bg-gray-800 text-white p-4 rounded-md mb-6 overflow-x-auto"><code class="language-javascript">import { compose } from './src/core/functions.js';
 
-// Compose functions: square(double(increment(x)))
-const process = compose(square, double, increment);
+const add5 = x => x + 5;
+const multiplyBy2 = x => x * 2;
 
-// Usage
-process(3); // Result: 64
-// Calculation: square(double(increment(3))) = square(double(4)) = square(8) = 64</code></pre>
-                    </div>
+const calculate = compose(multiplyBy2, add5);
 
-                    <h3 class="text-xl font-medium mt-6 mb-3">pipe</h3>
-                    <p class="mb-4">The <code>pipe</code> function is similar to <code>compose</code>, but it applies functions from left to right. This can sometimes feel more natural as it follows the reading order of the code.</p>
-                    <div class="bg-gray-900 rounded-lg mb-6 overflow-hidden relative">
-                        <button class="absolute top-2 right-2 bg-gray-700 hover:bg-gray-600 text-white text-xs font-bold py-1 px-2 rounded">Copy</button>
-                        <pre class="bg-gray-800 text-white p-4 rounded-lg"><code class="language-javascript">import { pipe } from '../../src/core/functions/composition.js';
+// is equivalent to: multiplyBy2(add5(10))
+const result = calculate(10); // 30
+</code></pre>
+            <p class="mt-4">
+                The choice between <code>pipe</code> and <code>compose</code> is a matter of preference. <code>pipe</code> often feels more natural as it follows the order of reading.
+            </p>
 
-// Example functions
-const double = x => x * 2;
-const increment = x => x + 1;
-const square = x => x * x;
+            <h2 class="text-2xl font-bold mt-8 mb-4"><code>curry(fn)</code></h2>
+            <p class="mb-4">
+                Transforms a function that takes multiple arguments into a sequence of functions that each take a single argument. This is useful for creating specialized functions from more generic ones.
+            </p>
+            <pre class="bg-gray-800 text-white p-4 rounded-md mb-6 overflow-x-auto"><code class="language-javascript">import { curry } from './src/core/functions.js';
 
-// Pipe functions: square(increment(double(x)))
-const process = pipe(double, increment, square);
-
-// Usage
-process(3); // Result: 49
-// Calculation: square(increment(double(3))) = square(increment(6)) = square(7) = 49</code></pre>
-                    </div>
-
-                    <h3 class="text-xl font-medium mt-6 mb-3">curry</h3>
-                    <p class="mb-4">The <code>curry</code> function transforms a function that takes multiple arguments into a sequence of functions that each take a single argument. This is useful for creating specialized functions through partial application.</p>
-                    <div class="bg-gray-900 rounded-lg mb-6 overflow-hidden relative">
-                        <button class="absolute top-2 right-2 bg-gray-700 hover:bg-gray-600 text-white text-xs font-bold py-1 px-2 rounded">Copy</button>
-                        <pre class="bg-gray-800 text-white p-4 rounded-lg"><code class="language-javascript">import { curry } from '../../src/core/functions/composition.js';
-
-// Original function with multiple arguments
-const add = (a, b, c) => a + b + c;
-
-// Curried version
+const add = (a, b) => a + b;
 const curriedAdd = curry(add);
 
-// Usage
-const result = curriedAdd(1)(2)(3); // Result: 6
+const add10 = curriedAdd(10); // Creates a new function that adds 10
 
-// Partial application to create a specialized function
-const add5 = curriedAdd(5);
-const result2 = add5(2)(3); // Result: 10</code></pre>
-                    </div>
-
-                    <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2">Data Transformation</h2>
-                    <p class="mb-4">A core part of functional programming is transforming data structures. FlexNet provides higher-order functions for common array operations, which promote immutability by returning new arrays instead of modifying the original ones. These are defined in the <a href="../base/api-reference.html#transforms" class="text-primary hover:underline">API Reference</a>.</p>
-                    
-                    <h3 class="text-xl font-medium mt-6 mb-3">map</h3>
-                    <p class="mb-4">The <code>map</code> function takes a function and an array, and applies that function to every element in the array, returning a new array with the results.</p>
-                    <div class="bg-gray-900 rounded-lg mb-6 overflow-hidden relative">
-                        <button class="absolute top-2 right-2 bg-gray-700 hover:bg-gray-600 text-white text-xs font-bold py-1 px-2 rounded">Copy</button>
-                        <pre class="bg-gray-800 text-white p-4 rounded-lg"><code class="language-javascript">import { map } from '../../src/core/functions/transforms.js';
-
-const double = x => x * 2;
-const numbers = [1, 2, 3];
-
-const doubledNumbers = map(double)(numbers); // Result: [2, 4, 6]</code></pre>
-                    </div>
-
-                    <h3 class="text-xl font-medium mt-6 mb-3">filter</h3>
-                    <p class="mb-4">The <code>filter</code> function takes a predicate function and an array. It returns a new array containing only the elements for which the predicate returns `true`.</p>
-                    <div class="bg-gray-900 rounded-lg mb-6 overflow-hidden relative">
-                        <button class="absolute top-2 right-2 bg-gray-700 hover:bg-gray-600 text-white text-xs font-bold py-1 px-2 rounded">Copy</button>
-                        <pre class="bg-gray-800 text-white p-4 rounded-lg"><code class="language-javascript">import { filter } from '../../src/core/functions/transforms.js';
-
-const isEven = x => x % 2 === 0;
-const numbers = [1, 2, 3, 4, 5, 6];
-
-const evenNumbers = filter(isEven)(numbers); // Result: [2, 4, 6]</code></pre>
-                    </div>
-
-                    <h3 class="text-xl font-medium mt-6 mb-3">reduce</h3>
-                    <p class="mb-4">The <code>reduce</code> function (also known as fold) executes a reducer function on each element of the array, resulting in a single output value.</p>
-                    <div class="bg-gray-900 rounded-lg mb-6 overflow-hidden relative">
-                        <button class="absolute top-2 right-2 bg-gray-700 hover:bg-gray-600 text-white text-xs font-bold py-1 px-2 rounded">Copy</button>
-                        <pre class="bg-gray-800 text-white p-4 rounded-lg"><code class="language-javascript">import { reduce } from '../../src/core/functions/transforms.js';
-
-const sum = (acc, x) => acc + x;
-const numbers = [1, 2, 3, 4, 5];
-
-const total = reduce(sum, 0)(numbers); // Result: 15</code></pre>
-                    </div>
-
-                    <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2">Combining Functions and Types</h2>
-                    <p class="mb-4">The true power of FlexNet JSX comes from combining function composition with the core type system. This allows for creating safe, explicit, and resilient data processing pipelines, as explained in the <a href="../systems/errors.html" class="text-primary hover:underline">Error Handling guide</a>.</p>
-                    
-                    <div class="bg-gray-900 rounded-lg mb-6 overflow-hidden relative">
-                        <button class="absolute top-2 right-2 bg-gray-700 hover:bg-gray-600 text-white text-xs font-bold py-1 px-2 rounded">Copy</button>
-                        <pre class="bg-gray-800 text-white p-4 rounded-lg"><code class="language-javascript">import { pipe } from '../../src/core/functions/composition.js';
-import { map } from '../../src/core/functions/transforms.js';
-import { Either } from '../../src/core/types/either.js';
-
-// A function that might fail
-const parseNumber = str => {
-    const num = parseFloat(str);
-    return isNaN(num) ? Either.Left('Invalid number') : Either.Right(num);
-}
-
-// A pure function for an operation
-const increment = n => n + 1;
-
-// Use pipe to create a safe pipeline
-const safeIncrement = pipe(
-    parseNumber,
-    Either.map(increment)
-);
-
-const result1 = safeIncrement('5');   // Either.Right(6)
-const result2 = safeIncrement('foo'); // Either.Left('Invalid number')
-
-result1.fold(
-  error => console.error(error),
-  value => console.log('Success:', value) // Logs 'Success: 6'
-);</code></pre>
-                    </div>
-
-                    <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2">Utility Functions</h2>
-                    <p class="mb-4">FlexNet also provides helpful utilities that follow functional principles. These are defined in the <a href="../base/api-reference.html#utility-functions" class="text-primary hover:underline">API Reference</a>.</p>
-
-                    <h3 class="text-xl font-medium mt-6 mb-3">memoize</h3>
-                    <p class="mb-4">The <code>memoize</code> function creates a cached version of a function. It stores the results of previous calls and returns the cached result for the same input, avoiding expensive recalculations.</p>
-                    <div class="bg-gray-900 rounded-lg mb-6 overflow-hidden relative">
-                        <button class="absolute top-2 right-2 bg-gray-700 hover:bg-gray-600 text-white text-xs font-bold py-1 px-2 rounded">Copy</button>
-                        <pre class="bg-gray-800 text-white p-4 rounded-lg"><code class="language-javascript">import { memoize } from '../../src/utils/function.js';
-
-// An expensive computation
-const slowFunction = (num) => {
-  // Simulate a delay
-  for (let i = 0; i < 1e9; i++) {}
-  return num * 2;
-};
-
-const fastFunction = memoize(slowFunction);
-
-console.time('first call');
-fastFunction(5); // Takes a long time
-console.timeEnd('first call');
-
-console.time('second call');
-fastFunction(5); // Returns instantly from cache
-console.timeEnd('second call');</code></pre>
-                    </div>
-
-                    <div class="bg-blue-50 border-l-4 border-primary p-4 rounded-md mb-6">
-                        <h4 class="font-semibold">Pure Functions are Key</h4>
-                        <p><code>memoize</code> works best with pure functions. Since pure functions always return the same output for the same input, their results can be safely cached without causing unexpected behavior.</p>
-                    </div>
-
-                    <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded-md mt-8">
-                        <h4 class="font-semibold flex items-center">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-yellow-500" viewBox="0 0 20 20" fill="currentColor">
-                                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2h-1V9z" clip-rule="evenodd" />
-                            </svg>
-                            Best Practice
-                        </h4>
-                        <p>When working with FlexNet JSX, prefer using pure functions and functional composition over imperative approaches. Combine `pipe` and `compose` with the `Maybe`, `Either`, and `Result` types to create data pipelines that are safe, readable, and easy to debug.</p>
-                    </div>
-                </div>
-
-                <div class="mt-12 border-t border-gray-200 pt-8">
-                    <h2 class="text-2xl font-semibold mb-4">Next Steps</h2>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <a href="../systems/errors.html" class="block p-4 border border-gray-200 rounded-lg hover:border-primary hover:shadow-md transition">
-                            <h3 class="font-semibold text-lg mb-2">Error Handling Guide</h3>
-                            <p class="text-gray-600">Learn about FlexNet's functional type system with Maybe, Either, and Result.</p>
-                        </a>
-                        <a href="../base/api-reference.html" class="block p-4 border border-gray-200 rounded-lg hover:border-primary hover:shadow-md transition">
-                            <h3 class="font-semibold text-lg mb-2">API Reference</h3>
-                            <p class="text-gray-600">See the complete list of core functions and their signatures.</p>
-                        </a>
-                    </div>
-                </div>
+const result = add10(5); // 15
+</code></pre>
+            
+            <div class="flex justify-between mt-12 pt-6 border-t border-gray-200">
+                <a href="/core/types.html" class="inline-flex items-center px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300 transition">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+                    </svg>
+                    Prev: Type System
+                </a>
+                <a href="/core/security.html" class="inline-flex items-center px-4 py-2 bg-primary text-white rounded-md hover:bg-blue-600 transition">
+                    Next: Security
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                    </svg>
+                </a>
             </div>
-        </main>
+        </div>
     </div>
-
-    <footer id="footer-placeholder" class="bg-white border-t border-gray-200 py-6">
-    </footer>
-
-    <script src="../assets/main.js"></script>
 </body>
 </html>

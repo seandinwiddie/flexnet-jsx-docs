@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>API Reference - FlexNet JSX</title>
+    <title>API Reference - FlexNet JSX Framework</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/atom-one-dark.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
@@ -20,230 +20,78 @@
                 }
             }
         }
-        hljs.highlightAll();
     </script>
+    <script src="/assets/main.js" defer></script>
 </head>
 <body class="bg-gray-50 text-gray-900 min-h-screen">
-    <div class="flex">
-        <!-- Sidebar -->
-        <aside id="sidebar-placeholder" class="w-64 bg-white border-r border-gray-200 h-screen sticky top-0 overflow-y-auto flex-shrink-0">
-        </aside>
+    <div id="page-content">
+        <div class="flex items-center space-x-2 text-sm text-gray-500 mb-8">
+            <a href="/index.html" class="hover:text-primary">Home</a>
+            <span>/</span>
+            <a href="#" class="hover:text-primary">Base Documentation</a>
+            <span>/</span>
+            <span class="text-gray-900">API Reference</span>
+        </div>
 
-        <!-- Main content -->
-        <main class="flex-1 overflow-y-auto">
-            <header id="header-placeholder" class="border-b border-gray-200 bg-white sticky top-0 z-10">
-            </header>
+        <h1 class="text-3xl font-bold mb-6">API Reference</h1>
+        
+        <div class="prose prose-blue max-w-none">
+            <p class="lead text-xl text-gray-600 mb-8">
+                This page provides a high-level overview of the main APIs available in FlexNet JSX. For detailed information, please see the specific API pages.
+            </p>
 
-            <div class="p-8 max-w-5xl mx-auto">
-                <h1 class="text-3xl font-bold mb-4">FlexNet JSX API Reference</h1>
-                <p class="mb-6">This document provides a comprehensive reference for the FlexNet JSX Framework API. It covers all core modules, types, and functions.</p>
+            <h2 id="core-functions" class="text-2xl font-bold mt-8 mb-4">Core Functions</h2>
+            <p class="mb-4">Utilities for functional programming.</p>
+            <ul class="list-disc pl-6 space-y-2 mb-6">
+                <li><code>pipe(...fns)</code>: Left-to-right function composition.</li>
+                <li><code>compose(...fns)</code>: Right-to-left function composition.</li>
+                <li><code>curry(fn)</code>: Curries a function.</li>
+            </ul>
+            <a href="/api/functions.html" class="text-primary hover:underline">Go to Core Functions API &rarr;</a>
 
-                <h2 class="text-2xl font-bold mb-4">Core Types</h2>
-                <h3 class="text-xl font-semibold mb-2">Maybe Type</h3>
-                <pre class="bg-gray-800 text-white p-4 rounded-md mb-4 overflow-x-auto"><code class="language-javascript">// src/core/types/maybe.js
-const Maybe = {
-    Just: value => ({ type: 'Just', value }),
-    Nothing: () => ({ type: 'Nothing' }),
-    fromNullable: value => value != null ? Maybe.Just(value) : Maybe.Nothing(),
-    map: fn => maybe => 
-        maybe.type === 'Just' ? Maybe.Just(fn(maybe.value)) : Maybe.Nothing(),
-    chain: fn => maybe =>
-        maybe.type === 'Just' ? fn(maybe.value) : Maybe.Nothing(),
-    getOrElse: defaultValue => maybe =>
-        maybe.type === 'Just' ? maybe.value : defaultValue
-};</code></pre>
+            <h2 id="core-types" class="text-2xl font-bold mt-8 mb-4">Core Types</h2>
+            <p class="mb-4">Data structures for safe and explicit data handling.</p>
+            <ul class="list-disc pl-6 space-y-2 mb-6">
+                <li><code>Maybe</code>: For optional values (<code>Just</code> or <code>Nothing</code>).</li>
+                <li><code>Either</code>: For values that can be one of two types (<code>Left</code> or <code>Right</code>).</li>
+                <li><code>Result</code>: For operations that can succeed or fail (<code>Ok</code> or <code>Error</code>).</li>
+            </ul>
+            <a href="/api/maybe.html" class="text-primary hover:underline">Go to Types API &rarr;</a>
 
-                <h3 class="text-xl font-semibold mb-2">Either Type</h3>
-                <pre class="bg-gray-800 text-white p-4 rounded-md mb-4 overflow-x-auto"><code class="language-javascript">// src/core/types/either.js
-const Either = {
-    Left: value => ({ type: 'Left', value }),
-    Right: value => ({ type: 'Right', value }),
-    fromNullable: value => value != null ? Either.Right(value) : Either.Left('Value is null'),
-    map: fn => either =>
-        either.type === 'Right' ? Either.Right(fn(either.value)) : either,
-    chain: fn => either =>
-        either.type === 'Right' ? fn(either.value) : either,
-    fold: (leftFn, rightFn) => either =>
-        either.type === 'Right' ? rightFn(either.value) : leftFn(either.value)
-};</code></pre>
+            <h2 id="render-system" class="text-2xl font-bold mt-8 mb-4">Render System</h2>
+            <p class="mb-4">Functions for creating and rendering UI elements.</p>
+            <ul class="list-disc pl-6 space-y-2 mb-6">
+                <li><code>createElement(type, props, ...children)</code>: Creates a virtual DOM node.</li>
+                <li><code>render(vNode, container)</code>: Renders a virtual DOM tree to a real DOM container.</li>
+                <li><code>Fragment</code>: A component for grouping elements without a wrapper node.</li>
+            </ul>
+            <a href="/api/jsx.html" class="text-primary hover:underline">Go to Render API &rarr;</a>
 
-                <h3 class="text-xl font-semibold mb-2">Result Type</h3>
-                <pre class="bg-gray-800 text-white p-4 rounded-md mb-4 overflow-x-auto"><code class="language-javascript">// src/core/types/result.js
-const Result = {
-    Ok: value => ({ type: 'Ok', value }),
-    Error: error => ({ type: 'Error', error }),
-    fromTry: fn => {
-        try {
-            return Result.Ok(fn());
-        } catch (e) {
-            return Result.Error(e);
-        }
-    },
-    map: fn => result =>
-        result.type === 'Ok' ? Result.Ok(fn(result.value)) : result,
-    chain: fn => result =>
-        result.type === 'Ok' ? fn(result.value) : result
-};</code></pre>
-
-                <h2 class="text-2xl font-bold mb-4">Core Functions</h2>
-                <h3 class="text-xl font-semibold mb-2">Composition</h3>
-                <pre class="bg-gray-800 text-white p-4 rounded-md mb-4 overflow-x-auto"><code class="language-javascript">// src/core/functions/composition.js
-const compose = (...fns) => x => fns.reduceRight((y, f) => f(y), x);
-const pipe = (...fns) => x => fns.reduce((y, f) => f(y), x);
-const curry = fn => (...args) =>
-    args.length >= fn.length ? fn(...args) : curry(fn.bind(null, ...args));</code></pre>
-
-                <h3 class="text-xl font-semibold mb-2">Transforms</h3>
-                <pre class="bg-gray-800 text-white p-4 rounded-md mb-4 overflow-x-auto"><code class="language-javascript">// src/core/functions/transforms.js
-const map = fn => array => array.map(fn);
-const filter = predicate => array => array.filter(predicate);
-const reduce = (fn, initial) => array => array.reduce(fn, initial);</code></pre>
-
-                <h2 class="text-2xl font-bold mb-4">System APIs</h2>
-                <h3 class="text-xl font-semibold mb-2">Render System</h3>
-                <pre class="bg-gray-800 text-white p-4 rounded-md mb-4 overflow-x-auto"><code class="language-javascript">// src/systems/render/functions.js
-const createElement = (type, props, ...children) => ({
-    type,
-    props: { ...props, children: children.flat() }
-});
-
-const render = (element, container) =>
-    pipe(
-        createVirtualDOM,
-        reconcile(container.firstChild),
-        patch(container)
-    )(element);</code></pre>
-
-                <h3 class="text-xl font-semibold mb-2">State System</h3>
-                <pre class="bg-gray-800 text-white p-4 rounded-md mb-4 overflow-x-auto"><code class="language-javascript">// src/systems/state/functions.js
-const createStore = (reducer, initialState) => {
-    const subscribers = new Set();
-    let state = initialState;
-
-    return {
-        getState: () => state,
-        dispatch: action =>
-            pipe(
-                reducer(state),
-                newState => { state = newState; },
-                () => subscribers.forEach(fn => fn())
-            )(action),
-        subscribe: fn => {
-            subscribers.add(fn);
-            return () => subscribers.delete(fn);
-        }
-    };
-};</code></pre>
-
-                <h3 class="text-xl font-semibold mb-2">Effect System</h3>
-                <pre class="bg-gray-800 text-white p-4 rounded-md mb-4 overflow-x-auto"><code class="language-javascript">// src/systems/effects/functions.js
-const Effect = {
-    of: value => ({ type: 'Effect', run: () => value }),
-    map: fn => effect =>
-        Effect.of(() => fn(effect.run())),
-    chain: fn => effect =>
-        Effect.of(() => fn(effect.run()).run()),
-    run: effect => effect.run()
-};</code></pre>
-
-                <h3 class="text-xl font-semibold mb-2">Event System</h3>
-                <pre class="bg-gray-800 text-white p-4 rounded-md mb-4 overflow-x-auto"><code class="language-javascript">// src/systems/events/functions.js
-const createEventBus = () => {
-    const subscribers = new Map();
-    
-    return {
-        emit: (event, data) =>
-            Maybe.fromNullable(subscribers.get(event))
-                .map(subs => subs.forEach(fn => fn(data))),
-        on: (event, callback) => {
-            const subs = subscribers.get(event) || new Set();
-            subs.add(callback);
-            subscribers.set(event, subs);
-            return () => subs.delete(callback);
-        }
-    };
-};</code></pre>
-
-                <h2 class="text-2xl font-bold mb-4">Feature APIs</h2>
-                <h3 class="text-xl font-semibold mb-2">Router</h3>
-                <pre class="bg-gray-800 text-white p-4 rounded-md mb-4 overflow-x-auto"><code class="language-javascript">// src/features/router/functions.js
-const createRouter = (routes) => {
-    const matchRoute = path =>
-        pipe(
-            Object.entries,
-            find(([pattern]) => new RegExp(`^${pattern}$`).test(path)),
-            Maybe.fromNullable,
-            Maybe.map(([_, handler]) => handler)
-        )(routes);
-
-    return {
-        navigate: path =>
-            matchRoute(path)
-                .map(Effect.of)
-                .getOrElse(Effect.of(() => console.error('Route not found')))
-    };
-};</code></pre>
-
-                <h3 class="text-xl font-semibold mb-2">Form Validation</h3>
-                <pre class="bg-gray-800 text-white p-4 rounded-md mb-4 overflow-x-auto"><code class="language-javascript">// src/features/validation/functions.js
-const validate = schema => data =>
-    pipe(
-        Object.entries,
-        map(([key, validator]) =>
-            validator(data[key])
-                .map(value => ({ [key]: value }))
-                .mapError(error => ({ [key]: error }))
-        ),
-        results => Result.all(results)
-    )(schema);</code></pre>
-
-                <h2 class="text-2xl font-bold mb-4">Security Functions</h2>
-                <h3 class="text-xl font-semibold mb-2">XSS Prevention</h3>
-                <pre class="bg-gray-800 text-white p-4 rounded-md mb-4 overflow-x-auto"><code class="language-javascript">// src/security/functions.js
-const sanitize = input =>
-    Either.fromNullable(input)
-        .map(str => str.replace(/[&lt;&gt;]/g, ''))
-        .getOrElse('');
-
-const validateInput = predicate => input =>
-    Either.fromNullable(input)
-        .chain(value =>
-            predicate(value)
-                ? Either.Right(value)
-                : Either.Left('Invalid input')
-        );</code></pre>
-
-                <h2 class="text-2xl font-bold mb-4">Utility Functions</h2>
-                <h3 class="text-xl font-semibold mb-2">Array Operations</h3>
-                <pre class="bg-gray-800 text-white p-4 rounded-md mb-4 overflow-x-auto"><code class="language-javascript">// src/utils/array.js
-const head = array =>
-    Maybe.fromNullable(array[0]);
-
-const tail = array =>
-    array.length &gt; 1 ? Maybe.Just(array.slice(1)) : Maybe.Nothing();
-
-const find = predicate => array =>
-    Maybe.fromNullable(array.find(predicate));</code></pre>
-
-                <h3 class="text-xl font-semibold mb-2">Function Operations</h3>
-                <pre class="bg-gray-800 text-white p-4 rounded-md mb-4 overflow-x-auto"><code class="language-javascript">// src/utils/function.js
-const memoize = fn => {
-    const cache = new Map();
-    return (...args) => {
-        const key = JSON.stringify(args);
-        return cache.has(key)
-            ? cache.get(key)
-            : pipe(
-                fn,
-                result => (cache.set(key, result), result)
-              )(...args);
-    };
-};</code></pre>
+            <h2 id="state-system" class="text-2xl font-bold mt-8 mb-4">State System</h2>
+            <p class="mb-4">Functions for centralized state management.</p>
+            <ul class="list-disc pl-6 space-y-2 mb-6">
+                <li><code>createStore(reducer, initialState, effects)</code>: Creates the application store.</li>
+                <li><code>store.getState()</code>: Gets the current state.</li>
+                <li><code>store.dispatch(action)</code>: Sends an action to the reducer.</li>
+                <li><code>store.subscribe(listener)</code>: Listens for state changes.</li>
+            </ul>
+            <a href="/api/store.html" class="text-primary hover:underline">Go to Store API &rarr;</a>
+            
+            <div class="flex justify-between mt-12 pt-6 border-t border-gray-200">
+                <a href="/base/consistency-analysis.html" class="inline-flex items-center px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300 transition">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+                    </svg>
+                    Prev: Consistency Analysis
+                </a>
+                <a href="/base/security-practices.html" class="inline-flex items-center px-4 py-2 bg-primary text-white rounded-md hover:bg-blue-600 transition">
+                    Next: Security
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                    </svg>
+                </a>
             </div>
-        </main>
+        </div>
     </div>
-    <footer id="footer-placeholder" class="bg-white border-t border-gray-200 py-6">
-    </footer>
-    <script src="/assets/main.js"></script>
 </body>
 </html>

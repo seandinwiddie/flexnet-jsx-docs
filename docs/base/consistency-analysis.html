@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Consistency Analysis - FlexNet JSX</title>
+    <title>Consistency Analysis - FlexNet JSX Framework</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/atom-one-dark.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
@@ -19,492 +19,97 @@
                     }
                 }
             }
-        };
-        hljs.highlightAll();
+        }
     </script>
+    <script src="/assets/main.js" defer></script>
 </head>
 <body class="bg-gray-50 text-gray-900 min-h-screen">
-    <div class="flex">
-        <!-- Sidebar -->
-        <aside id="sidebar-placeholder" class="w-64 bg-white border-r border-gray-200 h-screen sticky top-0 overflow-y-auto flex-shrink-0">
-        </aside>
+    <div id="page-content">
+        <div class="flex items-center space-x-2 text-sm text-gray-500 mb-8">
+            <a href="/index.html" class="hover:text-primary">Home</a>
+            <span>/</span>
+            <a href="#" class="hover:text-primary">Base Documentation</a>
+            <span>/</span>
+            <span class="text-gray-900">Consistency Analysis</span>
+        </div>
 
-        <!-- Main content -->
-        <main class="flex-1 overflow-y-auto">
-            <header id="header-placeholder" class="border-b border-gray-200 bg-white sticky top-0 z-10">
-            </header>
+        <h1 class="text-3xl font-bold mb-6">Framework Consistency Analysis</h1>
+        
+        <div class="prose prose-blue max-w-none">
+            <p class="lead text-xl text-gray-600 mb-8">
+                A key goal of FlexNet JSX is to provide a consistent and predictable developer experience. This analysis outlines how the framework maintains internal consistency across its various systems, from state management to rendering.
+            </p>
 
-            <div class="p-8 max-w-5xl mx-auto">
-                <h1 class="text-3xl font-bold mb-4">FlexNet JSX Framework Consistency Analysis</h1>
-                <h2 class="text-2xl font-bold mb-4">Version Status</h2>
-                <p class="mb-4">Current Framework Version: 1.0.0 (Released 2025-01-31)</p>
-                <p class="mb-6">This document reflects the current state of framework consistency and compliance with the mandatory FlexNet JSX Framework rules. The framework maintains strict adherence to functional programming principles, with zero external dependencies.</p>
+            <h2 class="text-2xl font-bold mt-8 mb-4">The Single Source of Truth: The Store</h2>
+            <p class="mb-4">
+                The foundation of consistency in a FlexNet application is the centralized state store. Unlike frameworks where state can be scattered across many components, FlexNet mandates a single, immutable state tree.
+            </p>
+            <ul class="list-disc pl-6 space-y-2 mb-6">
+                <li><strong>One State Tree:</strong> All application data lives in one object graph within the store. This makes it easy to locate and debug data issues.</li>
+                <li><strong>Read-Only State:</strong> The only way to change the state is by dispatching an action. The UI cannot directly mutate the state, preventing inconsistencies.</li>
+                <li><strong>Pure Reducers:</strong> State transitions are handled by pure functions (reducers), which ensures that given the same state and action, the result is always the same.</li>
+            </ul>
 
-                <h2 class="text-2xl font-bold mb-4">Directory Structure Alignment</h2>
-                <h3 class="text-xl font-semibold mb-2">New Standard Structure</h3>
-                <pre class="bg-gray-800 text-white p-4 rounded-md mb-4 overflow-x-auto"><code class="language-text">JSX/
-├── src/
-│   ├── core/                  # Core JSX engine
-│   │   ├── runtime/          # Core runtime implementation
-│   │   │   ├── jsx.js
-│   │   │   └── transform.js
-│   │   ├── types/           # Core type system
-│   │   │   ├── maybe.js
-│   │   │   ├── either.js
-│   │   │   └── result.js
-│   │   └── functions/       # Core functions
-│   │       ├── composition.js
-│   │       └── transforms.js
-│
-│   ├── systems/              # System implementations
-│   │   ├── render/          # Rendering system
-│   │   │   ├── functions.js
-│   │   │   └── vdom.js
-│   │   ├── state/          # State management
-│   │   │   ├── functions.js
-│   │   │   └── store.js
-│   │   ├── effects/        # Effect handling
-│   │   │   ├── functions.js
-│   │   │   └── scheduler.js
-│   │   └── events/         # Event system
-│   │       ├── functions.js
-│   │       └── emitter.js
-│
-│   ├── features/            # Feature implementations
-│   │   ├── router/
-│   │   ├── forms/
-│   │   ├── validation/
-│   │   └── animation/
-│
-│   ├── security/            # Security features
-│   │   ├── functions.js
-│   │   ├── csp.js
-│   │   └── xss.js
-│
-│   └── utils/               # Utility functions
-│       ├── array.js
-│       ├── string.js
-│       └── function.js
-│
-├── __tests__/                # Tests adjacent to source
-│   ├── core/
-│   ├── systems/
-│   └── features/
-│
-├── examples/                # Example implementations
-│   ├── basic/
-│   └── advanced/
-│
-└── docs/                    # Documentation
-    ├── architecture/
-    ├── api/
-    └── guides/</code></pre>
+            <h2 class="text-2xl font-bold mt-8 mb-4">Consistent Data Flow</h2>
+            <p class="mb-4">
+                FlexNet strictly enforces a <a href="/guides/core-concepts.html#unidirectional-data-flow" class="text-primary hover:underline">unidirectional data flow</a>. This pattern is applied consistently for both synchronous and asynchronous operations.
+            </p>
+            <h3 class="text-xl font-semibold mt-6 mb-3">Synchronous Flow</h3>
+            <p class="mb-2">
+                <code>UI Event → dispatch(action) → Reducer → New State → UI Re-render</code>
+            </p>
+            <h3 class="text-xl font-semibold mt-6 mb-3">Asynchronous Flow (with Effects)</h3>
+            <p class="mb-2">
+                <code>UI Event → dispatch(requestAction) → Effect (API Call) → dispatch(success/failureAction) → Reducer → New State → UI Re-render</code>
+            </p>
+            <p class="mt-4">
+                In both cases, the mechanism for updating state (dispatching an action) and reflecting it on the UI (subscribing to store updates) is identical. This consistency makes the system easier to reason about.
+            </p>
 
-                <h3 class="text-xl font-semibold mb-2">Key Organizational Principles</h3>
-                <ol class="list-decimal pl-5 mb-6">
-                    <li class="mb-2"><span class="font-semibold">Core Engine Isolation</span>
-                        <ul class="list-disc pl-5 mt-2 mb-4">
-                            <li>Core JSX functionality isolated in core/</li>
-                            <li>Clear separation of runtime, types, and functions</li>
-                            <li>Functional implementation</li>
-                        </ul>
-                    </li>
-                    <li class="mb-2"><span class="font-semibold">System Organization</span>
-                        <ul class="list-disc pl-5 mt-2 mb-4">
-                            <li>All systems under systems/ directory</li>
-                            <li>Each system has dedicated functions.js</li>
-                            <li>Clear separation of concerns</li>
-                        </ul>
-                    </li>
-                    <li class="mb-2"><span class="font-semibold">Feature Management</span>
-                        <ul class="list-disc pl-5 mt-2 mb-4">
-                            <li>Features isolated in features/ directory</li>
-                            <li>Each feature is self-contained</li>
-                            <li>Reduced root directory complexity</li>
-                        </ul>
-                    </li>
-                    <li class="mb-2"><span class="font-semibold">Security Focus</span>
-                        <ul class="list-disc pl-5 mt-2 mb-4">
-                            <li>Dedicated security/ directory</li>
-                            <li>Centralized security functions</li>
-                            <li>Easy security auditing</li>
-                        </ul>
-                    </li>
-                    <li class="mb-2"><span class="font-semibold">Utility Functions</span>
-                        <ul class="list-disc pl-5 mt-2 mb-4">
-                            <li>Functions for common operations</li>
-                            <li>Organized by data type</li>
-                            <li>Easily composable</li>
-                        </ul>
-                    </li>
-                    <li class="mb-2"><span class="font-semibold">Test Organization</span>
-                        <ul class="list-disc pl-5 mt-2 mb-4">
-                            <li>Tests mirror source structure</li>
-                            <li>Co-located with implementation</li>
-                            <li>Facilitates TDD approach</li>
-                        </ul>
-                    </li>
-                    <li class="mb-2"><span class="font-semibold">Example Structure</span>
-                        <ul class="list-disc pl-5 mt-2 mb-4">
-                            <li>Clear progression path</li>
-                            <li>Basic to advanced examples</li>
-                            <li>Educational organization</li>
-                        </ul>
-                    </li>
-                    <li><span class="font-semibold">Documentation</span>
-                        <ul class="list-disc pl-5 mt-2">
-                            <li>Organized by purpose</li>
-                            <li>Clear architectural docs</li>
-                            <li>Maintainable structure</li>
-                        </ul>
-                    </li>
-                </ol>
+            <h2 class="text-2xl font-bold mt-8 mb-4">Consistent API Naming and Design</h2>
+            <p class="mb-4">
+                The function names and design patterns are kept consistent across the framework's modules.
+            </p>
+            <ul class="list-disc pl-6 space-y-3 mb-6">
+                <li><strong>Verb-Noun Naming:</strong> Functions that create something are prefixed with <code>create</code> (e.g., <code>createStore</code>, <code>createElement</code>).</li>
+                <li><strong>Functional Types:</strong> The <code>Maybe</code>, <code>Either</code>, and <code>Result</code> types share a consistent set of methods like <code>.map()</code> and predicate functions like <code>.isJust()</code> or <code>.isOk()</code>.</li>
+                <li><strong>Configuration Objects:</strong> Functions that take multiple options often use a single configuration object as an argument, making them easier to extend without breaking changes.</li>
+            </ul>
 
-                <h3 class="text-xl font-semibold mb-2">Implementation Guidelines</h3>
-                <ol class="list-decimal pl-5 mb-6">
-                    <li class="mb-2"><span class="font-semibold">File Naming</span>
-                        <ul class="list-disc pl-5 mt-2 mb-4">
-                            <li>Use kebab-case for files</li>
-                            <li>functions.js for functions</li>
-                            <li>Clear, descriptive names</li>
-                        </ul>
-                    </li>
-                    <li class="mb-2"><span class="font-semibold">Function Organization</span>
-                        <ul class="list-disc pl-5 mt-2 mb-4">
-                            <li>Functions in functions.js</li>
-                            <li>Implementation details separate</li>
-                            <li>Clear type signatures</li>
-                        </ul>
-                    </li>
-                    <li class="mb-2"><span class="font-semibold">Module Structure</span>
-                        <ul class="list-disc pl-5 mt-2 mb-4">
-                            <li>Export functions</li>
-                            <li>No side effects</li>
-                            <li>Clear dependencies</li>
-                        </ul>
-                    </li>
-                    <li><span class="font-semibold">Testing Requirements</span>
-                        <ul class="list-disc pl-5 mt-2">
-                            <li>Test files mirror source</li>
-                            <li>Function testing</li>
-                            <li>Property-based tests</li>
-                        </ul>
-                    </li>
-                </ol>
+            <h2 class="text-2xl font-bold mt-8 mb-4">Declarative UI and Rendering</h2>
+            <p class="mb-4">
+                The UI is always a function of the state. This is the core principle of declarative rendering and is applied consistently.
+            </p>
+            <p class="mb-4">
+                You declare what the UI should look like for a given state, and FlexNet's render system handles the imperative DOM manipulations to make it so. You never need to write code like <code>document.getElementById('...').innerText = '...'</code>. This declarative approach eliminates an entire category of bugs related to manual DOM updates getting out of sync with the application state.
+            </p>
+            <pre class="bg-gray-800 text-white p-4 rounded-md mb-6 overflow-x-auto"><code class="language-javascript">// You always describe the "what", not the "how"
+const UserDisplay = ({ user }) => {
+    // If the user exists, show their name. Otherwise, show 'Loading...'
+    // The component doesn't care how the user data arrived, only what it is now.
+    if (user) {
+        return createElement('h1', null, `Welcome, ${user.name}`);
+    } else {
+        return createElement('p', null, 'Loading...');
+    }
+};
+</code></pre>
 
-                <h3 class="text-xl font-semibold mb-2">Migration Strategy</h3>
-                <ol class="list-decimal pl-5 mb-6">
-                    <li class="mb-2"><span class="font-semibold">Core Migration</span>
-                        <ul class="list-disc pl-5 mt-2 mb-4">
-                            <li>Move core files first</li>
-                            <li>Update imports</li>
-                            <li>Verify functionality</li>
-                        </ul>
-                    </li>
-                    <li class="mb-2"><span class="font-semibold">System Migration</span>
-                        <ul class="list-disc pl-5 mt-2 mb-4">
-                            <li>Migrate one system at a time</li>
-                            <li>Update dependencies</li>
-                            <li>Maintain functionality</li>
-                        </ul>
-                    </li>
-                    <li class="mb-2"><span class="font-semibold">Feature Migration</span>
-                        <ul class="list-disc pl-5 mt-2 mb-4">
-                            <li>Move features individually</li>
-                            <li>Update imports</li>
-                            <li>Test thoroughly</li>
-                        </ul>
-                    </li>
-                    <li><span class="font-semibold">Documentation Update</span>
-                        <ul class="list-disc pl-5 mt-2">
-                            <li>Update all docs</li>
-                            <li>Verify consistency</li>
-                            <li>Update examples</li>
-                        </ul>
-                    </li>
-                </ol>
-
-                <h2 class="text-2xl font-bold mb-4">Implementation Standards</h2>
-                <dl class="mb-6">
-                    <dt class="font-semibold text-lg mb-2">1. Type System</dt>
-                    <dd class="pl-5 mb-4">
-                        <ul class="list-disc pl-5">
-                            <li>Mandatory use of Maybe, Either, Result types</li>
-                            <li>Functional type definitions only</li>
-                            <li>No class-based or object-oriented patterns</li>
-                        </ul>
-                    </dd>
-                    <dt class="font-semibold text-lg mb-2">2. State Management</dt>
-                    <dd class="pl-5 mb-4">
-                        <p class="mt-2">Functional state transitions only:</p>
-                        <pre class="bg-gray-800 text-white p-4 rounded-md my-4 overflow-x-auto"><code class="language-javascript">// Standard Functional State Pattern
-const updateState = compose(
-  validateState,
-  transformState,
-  verifyImmutability
-);</code></pre>
-                    </dd>
-                    <dt class="font-semibold text-lg mb-2">3. Effect System</dt>
-                    <dd class="pl-5">
-                        <ul class="list-disc pl-5">
-                            <li>Consistent naming: Effect.of</li>
-                            <li>Functional effect composition</li>
-                            <li>Isolated side effects in effect system only</li>
-                        </ul>
-                    </dd>
-                </dl>
-
-                <h2 class="text-2xl font-bold mb-4">Technical Standards</h2>
-
-                <h2 class="text-2xl font-bold mb-4">Core Implementation Patterns</h2>
-                <ol class="list-decimal pl-5 mb-6">
-                    <li class="mb-2"><span class="font-semibold">Functional Composition</span>
-                        <ul class="list-disc pl-5 mt-2 mb-4">
-                            <li>All operations use compose/pipe patterns</li>
-                            <li>Pure function composition for all features</li>
-                            <li>Curry implementation for partial application</li>
-                            <li>No class-based or object-oriented patterns</li>
-                        </ul>
-                    </li>
-                    <li class="mb-2"><span class="font-semibold">Type System Implementation</span>
-                        <ul class="list-disc pl-5 mt-2 mb-4">
-                            <li>Maybe type for optional values</li>
-                            <li>Either type for error handling</li>
-                            <li>Result type for operation outcomes</li>
-                            <li>Validation type for form validation</li>
-                            <li>All types implemented as pure functions</li>
-                        </ul>
-                    </li>
-                    <li class="mb-2"><span class="font-semibold">State Management</span>
-                        <ul class="list-disc pl-5 mt-2 mb-4">
-                            <li>Immutable state transitions only</li>
-                            <li>Functional data structures throughout</li>
-                            <li>No JavaScript objects for state</li>
-                            <li>Pure functional state updates</li>
-                        </ul>
-                    </li>
-                    <li class="mb-2"><span class="font-semibold">Effect System</span>
-                        <ul class="list-disc pl-5 mt-2 mb-4">
-                            <li>Isolated side effects in effect system</li>
-                            <li>Pure effect cleanup functions</li>
-                            <li>Explicit effect dependencies</li>
-                            <li>No unconstrained side effects</li>
-                        </ul>
-                    </li>
-                    <li class="mb-2"><span class="font-semibold">Testing Coverage</span>
-                        <ul class="list-disc pl-5 mt-2 mb-4">
-                            <li>Property-based testing for core functions</li>
-                            <li>Pure function verification</li>
-                            <li>State transition testing</li>
-                            <li>Effect isolation testing</li>
-                        </ul>
-                    </li>
-                    <li><span class="font-semibold">Code Safety</span>
-                        <ul class="list-disc pl-5 mt-2">
-                            <li>Functional error handling with Either type</li>
-                            <li>No try/catch outside effect system</li>
-                            <li>Pure function error propagation</li>
-                            <li>Browser-native security patterns only</li>
-                        </ul>
-                    </li>
-                </ol>
-
-                <h2 class="text-2xl font-bold mb-4">Compliance Status</h2>
-                <ol class="list-decimal pl-5 mb-6">
-                    <li class="mb-4">
-                        <p class="font-semibold">Core Architecture: ✓ Compliant</p>
-                        <ul class="list-disc pl-5 mt-2">
-                            <li>Zero external dependencies maintained</li>
-                            <li>Pure functional programming throughout</li>
-                            <li>Browser-native capabilities only</li>
-                        </ul>
-                    </li>
-                    <li class="mb-4">
-                        <p class="font-semibold">Development Standards: ✓ Compliant</p>
-                        <ul class="list-disc pl-5 mt-2">
-                            <li>Functions-only implementation</li>
-                            <li>Functional composition patterns</li>
-                            <li>Immutable state management</li>
-                            <li>Side effect isolation</li>
-                        </ul>
-                    </li>
-                    <li class="mb-4">
-                        <p class="font-semibold">Type System: ✓ Compliant</p>
-                        <ul class="list-disc pl-5 mt-2">
-                            <li>Maybe, Either, Result types implemented</li>
-                            <li>Pure functional type operations</li>
-                            <li>No JavaScript objects for types</li>
-                        </ul>
-                    </li>
-                    <li class="mb-4">
-                        <p class="font-semibold">Testing Requirements: ✓ Compliant</p>
-                        <ul class="list-disc pl-5 mt-2">
-                            <li>Property-based testing implemented</li>
-                            <li>Pure function verification</li>
-                            <li>Effect isolation testing</li>
-                        </ul>
-                    </li>
-                    <li class="mb-4">
-                        <p class="font-semibold">Security Requirements: ✓ Compliant</p>
-                        <ul class="list-disc pl-5 mt-2">
-                            <li>Functional input validation</li>
-                            <li>Either type error handling</li>
-                            <li>No direct DOM manipulation</li>
-                        </ul>
-                    </li>
-                </ol>
-
-                <h2 class="text-2xl font-bold mb-4">Recommendations</h2>
-                <ol class="list-decimal pl-5 mb-6">
-                    <li class="mb-4">
-                        <p class="font-semibold">Continue enforcing:</p>
-                        <ul class="list-disc pl-5 mt-2">
-                            <li>Pure functional patterns</li>
-                            <li>Zero external dependencies</li>
-                            <li>Immutable state management</li>
-                            <li>Effect system isolation</li>
-                        </ul>
-                    </li>
-                    <li class="mb-4">
-                        <p class="font-semibold">Monitor for:</p>
-                        <ul class="list-disc pl-5 mt-2">
-                            <li>Object-oriented patterns</li>
-                            <li>Mutable state usage</li>
-                            <li>Unconstrained side effects</li>
-                            <li>External dependency introduction</li>
-                        </ul>
-                    </li>
-                </ol>
-
-                <h2 class="text-2xl font-bold mb-4">Pre-Release Tasks</h2>
-                <h3 class="text-xl font-semibold mb-2">Critical Issues</h3>
-                <ol class="list-decimal pl-5 mb-6">
-                    <li class="mb-4">
-                        <p class="font-semibold">HTTP System Refactoring ✓</p>
-                        <ul class="list-disc pl-5 mt-2">
-                            <li>[x] Convert RequestType to functional type</li>
-                            <li>[x] Convert ResponseType to functional type</li>
-                            <li>[x] Convert CacheType to pure functional type</li>
-                            <li>[x] Add functional interceptor system</li>
-                            <li>[ ] Implement pure functional request queue</li>
-                            <li>[ ] Add property-based tests for HTTP operations</li>
-                        </ul>
-                    </li>
-                    <li class="mb-4">
-                        <p class="font-semibold">Lifecycle Management</p>
-                        <ul class="list-disc pl-5 mt-2">
-                            <li>[ ] Replace mutable update queue with persistent queue</li>
-                            <li>[ ] Implement pure functional state transitions</li>
-                            <li>[ ] Strengthen error boundary type safety</li>
-                            <li>[ ] Add property tests for lifecycle operations</li>
-                        </ul>
-                    </li>
-                    <li class="mb-4">
-                        <p class="font-semibold">Directory Structure</p>
-                        <ul class="list-disc pl-5 mt-2">
-                            <li>[ ] Move /effects to /src/systems/effects</li>
-                            <li>[ ] Consolidate scattered effect files</li>
-                            <li>[ ] Update import paths across codebase</li>
-                            <li>[ ] Verify directory structure matches documentation</li>
-                        </ul>
-                    </li>
-                    <li class="mb-4">
-                        <p class="font-semibold">Testing Coverage</p>
-                        <ul class="list-disc pl-5 mt-2">
-                            <li>[ ] Add property tests for HTTP system</li>
-                            <li>[ ] Add property tests for lifecycle system</li>
-                            <li>[ ] Add property tests for type transformations</li>
-                            <li>[ ] Verify test coverage meets requirements</li>
-                        </ul>
-                    </li>
-                    <li class="mb-4">
-                        <p class="font-semibold">Documentation</p>
-                        <ul class="list-disc pl-5 mt-2">
-                            <li>[ ] Add type system usage guide</li>
-                            <li>[ ] Document function composition patterns</li>
-                            <li>[ ] Add effect handling examples</li>
-                            <li>[ ] Include OOP to FP migration guide</li>
-                        </ul>
-                    </li>
-                </ol>
-                <p class="mb-4">All tasks must be completed while maintaining:</p>
-                <ul class="list-disc pl-5 mb-6">
-                    <li>Pure functional programming paradigm</li>
-                    <li>Zero external dependencies</li>
-                    <li>Browser-native capabilities only</li>
-                    <li>Immutable state management</li>
-                    <li>Isolated side effects</li>
-                </ul>
-                <p class="text-sm text-gray-500">Last Updated: 2025-01-31</p>
-
-                <h2 class="text-2xl font-bold mb-4">Critical Alignment Requirements</h2>
-                <ol class="list-decimal pl-5 mb-6">
-                    <li class="mb-4">
-                        <p class="font-semibold">Core Architecture:</p>
-                        <ul class="list-disc pl-5 mt-2">
-                            <li>Enforce functional programming paradigm</li>
-                            <li>Standardize functional type system usage</li>
-                            <li>Maintain immutable state patterns</li>
-                        </ul>
-                    </li>
-                    <li class="mb-4">
-                        <p class="font-semibold">Build System:</p>
-                        <ul class="list-disc pl-5 mt-2">
-                            <li>Browser-native bundling only</li>
-                            <li>No external build tools</li>
-                            <li>Functional development workflow</li>
-                        </ul>
-                    </li>
-                    <li class="mb-4">
-                        <p class="font-semibold">Version Control:</p>
-                        <ul class="list-disc pl-5 mt-2">
-                            <li>Atomic commits with functional changes only</li>
-                            <li>Clear functional documentation</li>
-                            <li>Standardized changelog format</li>
-                        </ul>
-                    </li>
-                    <li class="mb-4">
-                        <p class="font-semibold">Documentation:</p>
-                        <ul class="list-disc pl-5 mt-2">
-                            <li>Functional pattern documentation</li>
-                            <li>Clear type signatures</li>
-                            <li>Effect system documentation</li>
-                        </ul>
-                    </li>
-                </ol>
-
-                <h2 class="text-2xl font-bold mb-4">Compliance Requirements</h2>
-                <ol class="list-decimal pl-5 mb-6">
-                    <li class="mb-4">
-                        <p class="font-semibold">Framework Supremacy:</p>
-                        <ul class="list-disc pl-5 mt-2">
-                            <li>Remove all references to other JavaScript frameworks</li>
-                            <li>Eliminate any non-functional patterns</li>
-                            <li>Maintain functional architecture</li>
-                        </ul>
-                    </li>
-                    <li class="mb-4">
-                        <p class="font-semibold">Core Patterns:</p>
-                        <ul class="list-disc pl-5 mt-2">
-                            <li>Enforce Maybe, Either, Result types</li>
-                            <li>Maintain functional composition</li>
-                            <li>Document state transitions</li>
-                        </ul>
-                    </li>
-                    <li class="mb-4">
-                        <p class="font-semibold">Testing Requirements:</p>
-                        <ul class="list-disc pl-5 mt-2">
-                            <li>Property-based testing for core functions</li>
-                            <li>Function verification</li>
-                            <li>Effect isolation testing</li>
-                        </ul>
-                    </li>
-                </ol>
+            <div class="flex justify-between mt-12 pt-6 border-t border-gray-200">
+                <a href="/base/getting-started-guide.html" class="inline-flex items-center px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300 transition">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+                    </svg>
+                    Prev: Getting Started
+                </a>
+                <a href="/base/api-reference.html" class="inline-flex items-center px-4 py-2 bg-primary text-white rounded-md hover:bg-blue-600 transition">
+                    Next: API Reference
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                    </svg>
+                </a>
             </div>
-        </main>
+        </div>
     </div>
-    <footer id="footer-placeholder" class="bg-white border-t border-gray-200 py-6">
-    </footer>
-    <script src="/assets/main.js"></script>
 </body>
-</html> 
+</html>

@@ -20,311 +20,61 @@
                 }
             }
         }
-        document.addEventListener('DOMContentLoaded', (event) => {
-            document.querySelectorAll('pre code').forEach((el) => {
-                hljs.highlightElement(el);
-            });
-        });
     </script>
+    <script src="/assets/main.js" defer></script>
 </head>
 <body class="bg-gray-50 text-gray-900 min-h-screen">
-    <div class="flex">
-        <!-- Sidebar -->
-        <aside id="sidebar-placeholder" class="w-64 bg-white border-r border-gray-200 h-screen sticky top-0 overflow-y-auto flex-shrink-0">
-        </aside>
+    <div id="page-content">
+        <div class="flex items-center space-x-2 text-sm text-gray-500 mb-8">
+            <a href="/index.html" class="hover:text-primary">Home</a>
+            <span>/</span>
+            <a href="#" class="hover:text-primary">API Reference</a>
+            <span>/</span>
+            <span class="text-gray-900">Store</span>
+        </div>
 
-        <!-- Main content -->
-        <main class="flex-1 overflow-y-auto">
-            <header id="header-placeholder" class="border-b border-gray-200 bg-white sticky top-0 z-10">
-            </header>
+        <h1 class="text-3xl font-bold mb-6">API: State Management (Store)</h1>
+        
+        <div class="prose prose-blue max-w-none">
+            <p class="lead text-xl text-gray-600 mb-8">
+                The store is the object that holds your application's state. See the <a href="/systems/state.html" class="text-primary hover:underline">guide on state management</a> for more details.
+            </p>
 
-            <div class="p-8 max-w-5xl mx-auto">
-                <div class="flex items-center space-x-2 text-sm text-gray-500 mb-8">
-                    <a href="../index.html" class="hover:text-primary">Home</a>
-                    <span>/</span>
-                    <a href="maybe.html" class="hover:text-primary">API</a>
-                    <span>/</span>
-                    <span class="text-gray-700">Store</span>
-                </div>
-
-                <h1 class="text-4xl font-bold mb-6">Store API</h1>
-                <p class="text-lg text-gray-600 mb-8">The Store API provides a pure functional, immutable state management solution, fully compliant with the <a href="../base/architecture-overview.html" class="text-primary hover:underline">FlexNet JSX Framework's core principles</a>.</p>
-
-                <div class="prose prose-blue max-w-none">
-                    <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2">Overview</h2>
-                    <p class="mb-4">The <code>Store</code> is a container for your application's state, built on a foundation of pure functional programming. It guarantees that state is always predictable and traceable.</p>
-                    <ul class="list-disc pl-6 mb-6 space-y-2">
-                        <li><strong>Immutable State</strong>: State is never changed directly. All updates produce a new state.</li>
-                        <li><strong>Pure Reducers</strong>: State transitions are managed by pure functions called reducers.</li>
-                        <li><strong>Predictable Flow</strong>: State changes are centralized and occur in a strict, one-way data flow.</li>
-                        <li><strong>Type-Safe by Design</strong>: Leverages the framework's core types like <a href="../base/api-reference.html" class="text-primary hover:underline"><code>Maybe</code></a>, <a href="../base/api-reference.html" class="text-primary hover:underline"><code>Either</code></a>, and <a href="../base/api-reference.html" class="text-primary hover:underline"><code>Result</code></a> for robust state modeling.</li>
-                    </ul>
-
-                    <div class="bg-blue-50 border-l-4 border-primary p-4 rounded-md mb-6">
-                        <h4 class="font-semibold">Core Concepts</h4>
-                        <ul class="list-disc pl-6 mt-2">
-                            <li><strong>State</strong>: An immutable data structure representing the condition of your app.</li>
-                            <li><strong>Action</strong>: A plain object describing a requested change to the state.</li>
-                            <li><strong>Reducer</strong>: A pure function that takes the current state and an action, then returns the next state.</li>
-                            <li><strong>Dispatch</strong>: The function used to send an action to the reducer.</li>
-                            <li><strong>Subscriber</strong>: A function that is called whenever the state changes.</li>
-                        </ul>
-                    </div>
-
-                    <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2">Creating a Store</h2>
-                    <p class="mb-4">A Store is created with the <code>createStore</code> function, which requires a reducer and an initial state.</p>
-
-                    <pre class="bg-gray-800 text-white p-4 rounded-lg mb-6"><code class="language-javascript">import { createStore } from './src/systems/state/functions.js';
-import { pipe } from './src/core/functions/composition.js';
-
-// 1. Define actions
-const Action = {
-  Increment: 'INCREMENT',
-  Decrement: 'DECREMENT'
-};
-
-// 2. Define a reducer: state => action => newState
-const counterReducer = state => action => {
-    switch (action.type) {
-        case Action.Increment:
-            return state + 1;
-        case Action.Decrement:
-            return state - 1;
-        default:
-            return state;
-    }
-};
-
-// 3. Create a store with the reducer and initial state
-const counterStore = createStore(counterReducer, 0);</code></pre>
-
-                    <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2">Reading State</h2>
-                    <p class="mb-4">The current state can be retrieved at any time using <code>getState()</code>.</p>
-
-                    <pre class="bg-gray-800 text-white p-4 rounded-lg mb-6"><code class="language-javascript">// Get the current state
-const count = counterStore.getState();
-console.log(count); // 0</code></pre>
-
-                    <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2">Dispatching Actions</h2>
-                    <p class="mb-4">To change the state, you must dispatch an action. This is the only way to trigger a state update.</p>
-
-                    <pre class="bg-gray-800 text-white p-4 rounded-lg mb-6"><code class="language-javascript">// Dispatch an action to increment the counter
-counterStore.dispatch({ type: Action.Increment });
-console.log(counterStore.getState()); // 1
-
-// Dispatch another action
-counterStore.dispatch({ type: Action.Increment });
-console.log(counterStore.getState()); // 2
-
-// Dispatch an action to decrement
-counterStore.dispatch({ type: Action.Decrement });
-console.log(counterStore.getState()); // 1</code></pre>
-
-                    <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2">Subscribing to Changes</h2>
-                    <p class="mb-4">You can listen for state changes using <code>subscribe()</code>. It takes a callback that executes whenever the state is updated and returns a function to unsubscribe.</p>
-
-                    <pre class="bg-gray-800 text-white p-4 rounded-lg mb-6"><code class="language-javascript">// Subscribe to state changes
-const unsubscribe = counterStore.subscribe(() => {
-  const newState = counterStore.getState();
-  console.log('State changed:', newState);
-  // This is where you would trigger a re-render of your UI
-});
-
-// Dispatching an action will now trigger the subscriber
-counterStore.dispatch({ type: Action.Increment }); // Logs: "State changed: 2"
-
-// To stop listening, call the returned function
-unsubscribe();
-
-counterStore.dispatch({ type: Action.Decrement }); // No log, because we unsubscribed</code></pre>
-
-                    <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2">Advanced Usage: Type-Safe State</h2>
-                    <p class="mb-4">A key strength of FlexNet JSX is integrating the core type system into state management. This example uses <a href="../base/api-reference.html" class="text-primary hover:underline"><code>Maybe</code></a> to model an optional user session.</p>
-
-                    <pre class="bg-gray-800 text-white p-4 rounded-lg mb-6"><code class="language-javascript">import { createStore } from './src/systems/state/functions.js';
-import { Maybe } from './src/core/types/maybe.js';
-
-const UserAction = {
-  Login: 'LOGIN',
-  Logout: 'LOGOUT',
-  UpdateAge: 'UPDATE_AGE'
-};
-
-const userReducer = maybeUser => action => {
-    switch (action.type) {
-        case UserAction.Login:
-            // The payload is the user object
-            return Maybe.Just(action.payload);
-        case UserAction.Logout:
-            return Maybe.Nothing();
-        case UserAction.UpdateAge:
-            // Use .map to safely update the user if it exists
-            return maybeUser.map(user => ({
-                ...user,
-                age: user.age + 1
-            }));
-        default:
-            return maybeUser;
-    }
-};
-
-// The initial state is Nothing, as no user is logged in
-const userStore = createStore(userReducer, Maybe.Nothing());
-
-// Dispatch login action
-userStore.dispatch({
-    type: UserAction.Login,
-    payload: { name: 'Jane Doe', age: 30 }
-});
-
-// getState() now returns a Maybe.Just
-userStore.getState().map(user => console.log(user.name)); // "Jane Doe"
-
-// Dispatch logout action
-userStore.dispatch({ type: UserAction.Logout });
-
-// getState() now returns Maybe.Nothing
-console.log(userStore.getState().isNothing()); // true</code></pre>
-
-                    <h2 class="text-2xl font-semibold mb-4 mt-8 border-b pb-2">Store API Reference</h2>
-
-                    <h3 class="text-xl font-medium mt-6 mb-3">createStore</h3>
-                    <div class="bg-white border border-gray-200 rounded-lg mb-6">
-                        <div class="border-b border-gray-200 px-4 py-3 bg-gray-50">
-                            <h4 class="font-semibold">Signature</h4>
-                        </div>
-                        <div class="p-4">
-                            <pre class="bg-gray-800 text-white p-4 rounded-lg"><code class="language-typescript">function createStore<S, A>(reducer: (state: S) => (action: A) => S, initialState: S): Store<S, A>;</code></pre>
-                        </div>
-                    </div>
-
-                    <div class="bg-white border border-gray-200 rounded-lg mb-6">
-                        <div class="border-b border-gray-200 px-4 py-3 bg-gray-50">
-                            <h4 class="font-semibold">Parameters</h4>
-                        </div>
-                        <div class="p-4">
-                            <table class="min-w-full">
-                                <thead>
-                                    <tr>
-                                        <th class="text-left font-semibold">Name</th>
-                                        <th class="text-left font-semibold">Type</th>
-                                        <th class="text-left font-semibold">Description</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td class="py-2 pr-4 align-top"><code>reducer</code></td>
-                                        <td class="py-2 pr-4 align-top"><code>(state: S) => (action: A) => S</code></td>
-                                        <td class="py-2 align-top">A pure, curried function that returns the next state, given the current state and an action.</td>
-                                    </tr>
-                                    <tr>
-                                        <td class="py-2 pr-4 align-top"><code>initialState</code></td>
-                                        <td class="py-2 pr-4 align-top"><code>S</code></td>
-                                        <td class="py-2 align-top">The initial state of the store.</td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-
-                    <div class="bg-white border border-gray-200 rounded-lg mb-6">
-                        <div class="border-b border-gray-200 px-4 py-3 bg-gray-50">
-                            <h4 class="font-semibold">Returns</h4>
-                        </div>
-                        <div class="p-4">
-                            <p>A new <code>Store</code> instance with three methods: <code>getState</code>, <code>dispatch</code>, and <code>subscribe</code>.</p>
-                        </div>
-                    </div>
-
-                    <h3 class="text-xl font-medium mt-6 mb-3">Store Methods</h3>
-                    
-                    <div class="bg-white border border-gray-200 rounded-lg mb-6">
-                        <div class="border-b border-gray-200 px-4 py-3 bg-gray-50">
-                            <h4 class="font-semibold">getState()</h4>
-                        </div>
-                        <div class="p-4">
-                            <p class="mb-2">Returns the current state of the store.</p>
-                            <pre class="bg-gray-800 text-white p-3 rounded-lg"><code class="language-typescript">function getState(): S;</code></pre>
-                        </div>
-                    </div>
-
-                    <div class="bg-white border border-gray-200 rounded-lg mb-6">
-                        <div class="border-b border-gray-200 px-4 py-3 bg-gray-50">
-                            <h4 class="font-semibold">dispatch(action)</h4>
-                        </div>
-                        <div class="p-4">
-                            <p class="mb-2">Dispatches an action to the reducer, triggering a state update.</p>
-                            <pre class="bg-gray-800 text-white p-3 rounded-lg"><code class="language-typescript">function dispatch(action: A): void;</code></pre>
-                        </div>
-                    </div>
-
-                    <div class="bg-white border border-gray-200 rounded-lg mb-6">
-                        <div class="border-b border-gray-200 px-4 py-3 bg-gray-50">
-                            <h4 class="font-semibold">subscribe(subscriber)</h4>
-                        </div>
-                        <div class="p-4">
-                            <p class="mb-2">Adds a listener that will be called after every dispatch.</p>
-                            <pre class="bg-gray-800 text-white p-3 rounded-lg"><code class="language-typescript">function subscribe(subscriber: () => void): () => void;</code></pre>
-                            <p class="mt-2">Returns an unsubscribe function that can be called to remove the subscription.</p>
-                        </div>
-                    </div>
-
-                    <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded-md mt-8">
-                        <h4 class="font-semibold flex items-center">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-yellow-500" viewBox="0 0 20 20" fill="currentColor">
-                                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2h-1V9z" clip-rule="evenodd" />
-                            </svg>
-                            Framework Compliance
-                        </h4>
-                        <ul class="list-disc pl-6 mt-2">
-                            <li><strong>Pure Functions Only</strong>: Reducers must be pure. Given the same state and action, they must always return the same new state.</li>
-                            <li><strong>Immutability</strong>: Never mutate the state object or its fields. Always return a new object.</li>
-                            <li><strong>No Side Effects</strong>: Reducers must not have side effects (e.g., API calls, timeouts). Side effects belong in the <a href="../base/api-reference.html" class="text-primary hover:underline">Effect System</a>.</li>
-                            <li><strong>Functional Composition</strong>: Use <a href="../base/api-reference.html" class="text-primary hover:underline"><code>compose</code> and <code>pipe</code></a> to build more complex reducers or state transformations.</li>
-                        </ul>
-                    </div>
-                </div>
-
-                <div class="mt-12 border-t border-gray-200 pt-8">
-                    <h2 class="text-2xl font-semibold mb-4">Related Documentation</h2>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <a href="../base/api-reference.html" class="block p-4 border border-gray-200 rounded-lg hover:border-primary hover:shadow-md transition">
-                            <h3 class="font-semibold text-lg mb-2">State System API</h3>
-                            <p class="text-gray-600">Learn about FlexNet's overall state management functions in the main API Reference.</p>
-                        </a>
-                        <a href="../base/api-reference.html" class="block p-4 border border-gray-200 rounded-lg hover:border-primary hover:shadow-md transition">
-                            <h3 class="font-semibold text-lg mb-2">Type System</h3>
-                            <p class="text-gray-600">Understand how the type system (Maybe, Either, Result) is essential for robust state.</p>
-                        </a>
-                        <a href="../base/getting-started-guide.html" class="block p-4 border border-gray-200 rounded-lg hover:border-primary hover:shadow-md transition">
-                            <h3 class="font-semibold text-lg mb-2">Counter Example</h3>
-                            <p class="text-gray-600">See a complete example of using the Store API in a simple application.</p>
-                        </a>
-                        <a href="../base/api-reference.html" class="block p-4 border border-gray-200 rounded-lg hover:border-primary hover:shadow-md transition">
-                            <h3 class="font-semibold text-lg mb-2">Effects System</h3>
-                            <p class="text-gray-600">Learn how to handle side effects like API calls in relation to state changes.</p>
-                        </a>
-                    </div>
-                </div>
+            <div class="api-item border-t border-gray-200 pt-6 mt-8">
+                <h3 class="text-xl font-mono font-semibold"><code>createStore(reducer, initialState, effects = [])</code></h3>
+                <p class="mt-2 mb-4">Creates the central state store for the application.</p>
+                <ul class="mb-4">
+                    <li><strong><code>reducer</code></strong>: The main reducer function.</li>
+                    <li><strong><code>initialState</code></strong>: The starting state of the application.</li>
+                    <li><strong><code>effects</code></strong>: An optional array of effect functions (middleware).</li>
+                </ul>
             </div>
-        </main>
+            
+            <div class="api-item border-t border-gray-200 pt-6 mt-8">
+                <h3 class="text-xl font-mono font-semibold"><code>store.getState()</code></h3>
+                <p class="mt-2 mb-4">Returns the current state tree of your application.</p>
+            </div>
+            
+            <div class="api-item border-t border-gray-200 pt-6 mt-8">
+                <h3 class="text-xl font-mono font-semibold"><code>store.dispatch(action)</code></h3>
+                <p class="mt-2 mb-4">Dispatches an action. This is the only way to trigger a state change.</p>
+            </div>
+            
+            <div class="api-item border-t border-gray-200 pt-6 mt-8">
+                <h3 class="text-xl font-mono font-semibold"><code>store.subscribe(listener)</code></h3>
+                <p class="mt-2 mb-4">Adds a change listener that will be called whenever an action is dispatched. Returns an <code>unsubscribe</code> function.</p>
+            </div>
+
+            <div class="flex justify-between mt-12 pt-6 border-t border-gray-200">
+                <a href="/api/result.html" class="inline-flex items-center px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300 transition">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+                    </svg>
+                    Prev: Result API
+                </a>
+                <span></span>
+            </div>
+        </div>
     </div>
-
-    <footer id="footer-placeholder" class="bg-white border-t border-gray-200 py-6">
-    </footer>
-
-    <script>
-        // Simple client-side search functionality
-        const searchInput = document.querySelector('input[placeholder="Search documentation..."]');
-        searchInput.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter') {
-                const query = searchInput.value.toLowerCase();
-                // Implement search functionality
-                console.log('Searching for:', query);
-                // This would typically use a search index or API
-            }
-        });
-    </script>
-    <script src="../assets/main.js"></script>
 </body>
-</html> 
+</html>
