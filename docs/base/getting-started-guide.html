@@ -25,108 +25,236 @@
 </head>
 <body class="bg-gray-50 text-gray-900 min-h-screen">
     <div id="page-content">
-        <div class="flex items-center space-x-2 text-sm text-gray-500 mb-8">
-            <a href="/index.html" class="hover:text-primary">Home</a>
-            <span>/</span>
-            <a href="#" class="hover:text-primary">Base Documentation</a>
-            <span>/</span>
-            <span class="text-gray-900">Getting Started</span>
+<main class="container mx-auto px-4 py-8">
+    <h1 class="text-4xl font-bold text-primary mb-4">Getting Started with FlexNet JSX</h1>
+    <p class="text-gray-600 mb-8">Version: 1.0.0 (Released 2025-01-31)</p>
+
+    <section class="mb-12">
+        <h2 class="text-3xl font-semibold text-secondary border-b-2 border-secondary pb-2 mb-6">Project Setup</h2>
+        
+        <div class="mb-8">
+            <h3 class="text-2xl font-semibold text-dark mb-4">Directory Structure</h3>
+            <p class="text-gray-700 mb-4">Create a new project directory with the following structure:</p>
+            <pre><code class="language-bash">my-project/
+├── src/
+│   ├── core/                  # Core JSX functionality
+│   │   ├── runtime/          # JSX runtime
+│   │   │   ├── jsx.js
+│   │   │   └── transform.js
+│   │   ├── types/           # Type system
+│   │   │   ├── maybe.js
+│   │   │   ├── either.js
+│   │   │   └── result.js
+│   │   └── functions/       # Core functions
+│   │       ├── composition.js
+│   │       └── transforms.js
+│   │
+│   ├── systems/             # Framework systems
+│   │   ├── render/         # Rendering
+│   │   ├── state/         # State management
+│   │   ├── effects/       # Side effects
+│   │   └── events/        # Event handling
+│   │
+│   ├── features/           # Your app features
+│   │   └── counter/       # Example feature
+│   │       ├── functions.js
+│   │       └── index.js
+│   │
+│   └── utils/              # Utilities
+│       ├── array.js
+│       └── function.js
+│
+├── public/                  # Static assets
+│   └── index.html
+│
+└── tests/                  # Test files
+    └── features/
+        └── counter/
+            └── counter.test.js</code></pre>
         </div>
 
-        <h1 class="text-3xl font-bold mb-6">Getting Started with FlexNet JSX</h1>
-        
-        <div class="prose prose-blue max-w-none">
-            <p class="lead text-xl text-gray-600 mb-8">
-                Welcome to the getting started guide. This tutorial will walk you through setting up a project and building your first FlexNet JSX application.
-            </p>
-
-            <h2 class="text-2xl font-bold mt-8 mb-4">1. Project Setup</h2>
-            <p class="mb-4">
-                The easiest way to start is by cloning one of our starter projects. For this guide, we'll use the minimal starter.
-            </p>
-            <pre class="bg-gray-800 text-white p-4 rounded-md mb-6 overflow-x-auto"><code class="language-bash"># Clone the minimal starter project
-git clone https://github.com/flexnet/starter-project-minimal.git flexnet-tutorial
-
-# Change into the new directory
-cd flexnet-tutorial
-</code></pre>
-            <p class="mt-4 mb-4">
-                The project contains a basic file structure:
-            </p>
-            <pre class="bg-gray-800 text-white p-4 rounded-md mb-6 overflow-x-auto"><code class="language-bash">.
-├── index.html
-└── src/
-    ├── core/
-    ├── systems/
-    └── index.js
-</code></pre>
-
-            <h2 class="text-2xl font-bold mt-8 mb-4">2. Running the Development Server</h2>
-            <p class="mb-4">
-                FlexNet JSX uses native JavaScript modules, so you need to serve your files from a local web server. A simple way to do this is with Python's built-in server.
-            </p>
-            <pre class="bg-gray-800 text-white p-4 rounded-md mb-6 overflow-x-auto"><code class="language-bash"># If you have Python 3 installed
-python -m http.server 3000
-</code></pre>
-            <p class="mt-4 mb-4">
-                Now, you can open <a href="http://localhost:3000" target="_blank" class="text-primary hover:underline">http://localhost:3000</a> in your browser. You should see a blank page.
-            </p>
-
-            <h2 class="text-2xl font-bold mt-8 mb-4">3. Building Your First Component</h2>
-            <p class="mb-4">
-                Let's create our first component. Open the main application file at <code>src/index.js</code> and replace its contents with the following:
-            </p>
-            <pre class="bg-gray-800 text-white p-4 rounded-md mb-6 overflow-x-auto"><code class="language-javascript">import { createElement, render } from './systems/render/functions.js';
-
-// A component is just a function that returns a UI description
-const App = () => {
-    return createElement(
-        'div',
-        { style: 'padding: 20px; font-family: sans-serif;' },
-        createElement('h1', { style: 'color: #3b82f6;' }, 'Hello, FlexNet!'),
-        createElement('p', null, 'Your first application is running.')
-    );
-};
-
-// Find the root DOM element
-const rootElement = document.getElementById('root');
-
-// Render our App component into the root element
-render(createElement(App), rootElement);
-</code></pre>
-            <p class="mt-4 mb-4">
-                Make sure your <code>index.html</code> has a root element and includes the script:
-            </p>
-            <pre class="bg-gray-800 text-white p-4 rounded-md mb-6 overflow-x-auto"><code class="language-html">&lt;!-- index.html --&gt;
+        <div class="mb-8">
+            <h3 class="text-2xl font-semibold text-dark mb-4">Initial Setup</h3>
+            <ol class="list-decimal list-inside space-y-6 text-gray-700">
+                <li>
+                    <p class="mb-2">Create your <code>public/index.html</code>:</p>
+                    <pre><code class="language-html">&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+    &lt;title&gt;FlexNet JSX Project&lt;/title&gt;
+&lt;/head&gt;
 &lt;body&gt;
     &lt;div id="root"&gt;&lt;/div&gt;
-    &lt;script type="module" src="./src/index.js"&gt;&lt;/script&gt;
+    &lt;script type="module" src="../src/core/runtime/jsx.js"&gt;&lt;/script&gt;
+    &lt;script type="module" src="../src/features/counter/index.js"&gt;&lt;/script&gt;
 &lt;/body&gt;
-</code></pre>
-            <p class="mt-4 mb-4">
-                Save your changes and refresh your browser. You should now see your "Hello, FlexNet!" message.
-            </p>
+&lt;/html&gt;</code></pre>
+                </li>
+                <li>
+                    <p class="mb-2">Create your first feature (Counter Example):</p>
+                    <pre><code class="language-javascript">// src/features/counter/functions.js
+import { Maybe } from '../../core/types/maybe.js';
+import { compose } from '../../core/functions/composition.js';
 
-            <h2 class="text-2xl font-bold mt-8 mb-4">Next Steps</h2>
-            <p class="mb-4">
-                Congratulations, you've built your first FlexNet JSX application! From here, you can explore the core concepts to learn how to add interactivity and manage state.
-            </p>
-            <ul class="list-disc pl-6 space-y-2">
-                <li><a href="/guides/core-concepts.html" class="text-primary hover:underline">Learn the Core Concepts</a></li>
-                <li><a href="/guides/quickstart.html" class="text-primary hover:underline">Build an Interactive Counter</a></li>
-                <li><a href="/base/api-reference.html" class="text-primary hover:underline">Explore the API Reference</a></li>
-            </ul>
+export const increment = n =&gt; n + 1;
+export const decrement = n =&gt; n - 1;
+export const updateCount = (count, operation) =&gt;
+  Maybe.fromNullable(count)
+    .map(operation)
+    .getOrElse(0);
 
-            <div class="flex justify-between mt-12 pt-6 border-t border-gray-200">
-                <span></span>
-                <a href="/base/consistency-analysis.html" class="inline-flex items-center px-4 py-2 bg-primary text-white rounded-md hover:bg-blue-600 transition">
-                    Next: Consistency Analysis
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-                    </svg>
-                </a>
+// src/features/counter/index.js
+import { jsx } from '../../core/runtime/jsx.js';
+import { increment, decrement, updateCount } from './functions.js';
+
+const Counter = () =&gt; {
+  let count = 0;
+  
+  return jsx('div', null, [
+    jsx('button', { onClick: () =&gt; count = updateCount(count, decrement) }, '-'),
+    jsx('span', null, count),
+    jsx('button', { onClick: () =&gt; count = updateCount(count, increment) }, '+')
+  ]);
+};
+
+export default Counter;</code></pre>
+                </li>
+            </ol>
+        </div>
+    </section>
+
+    <section class="mb-12">
+        <h2 class="text-3xl font-semibold text-secondary border-b-2 border-secondary pb-2 mb-6">Core Concepts</h2>
+        <div class="grid md:grid-cols-2 gap-8">
+            <div class="p-6 bg-white rounded-lg shadow-md">
+                <h3 class="text-2xl font-semibold text-dark mb-4">1. Pure Functions</h3>
+                <ul class="list-disc list-inside space-y-2 text-gray-700">
+                    <li>All operations should be pure functions</li>
+                    <li>Use composition for complex operations</li>
+                    <li>Avoid side effects outside effect system</li>
+                </ul>
+            </div>
+            <div class="p-6 bg-white rounded-lg shadow-md">
+                <h3 class="text-2xl font-semibold text-dark mb-4">2. Type Safety</h3>
+                <ul class="list-disc list-inside space-y-2 text-gray-700">
+                    <li>Use <code>Maybe</code> for optional values</li>
+                    <li>Use <code>Either</code> for error handling</li>
+                    <li>Use <code>Result</code> for operation outcomes</li>
+                </ul>
+            </div>
+            <div class="p-6 bg-white rounded-lg shadow-md">
+                <h3 class="text-2xl font-semibold text-dark mb-4">3. State Management</h3>
+                <ul class="list-disc list-inside space-y-2 text-gray-700">
+                    <li>Immutable state updates</li>
+                    <li>Pure state transitions</li>
+                    <li>State isolation through closures</li>
+                </ul>
+            </div>
+            <div class="p-6 bg-white rounded-lg shadow-md">
+                <h3 class="text-2xl font-semibold text-dark mb-4">4. Effect Handling</h3>
+                <ul class="list-disc list-inside space-y-2 text-gray-700">
+                    <li>Isolate side effects</li>
+                    <li>Use effect system for async operations</li>
+                    <li>Clean up effects properly</li>
+                </ul>
             </div>
         </div>
+    </section>
+
+    <section class="mb-12">
+        <h2 class="text-3xl font-semibold text-secondary border-b-2 border-secondary pb-2 mb-6">Development Workflow</h2>
+        <div class="grid md:grid-cols-3 gap-8">
+            <div class="p-6 bg-white rounded-lg shadow-md">
+                <h3 class="text-2xl font-semibold text-dark mb-4">1. Feature Development</h3>
+                <ul class="list-disc list-inside space-y-2 text-gray-700">
+                    <li>Create feature directory in <code>src/features/</code></li>
+                    <li>Implement pure functions in <code>functions.js</code></li>
+                    <li>Create feature component in <code>index.js</code></li>
+                    <li>Add tests in parallel</li>
+                </ul>
+            </div>
+            <div class="p-6 bg-white rounded-lg shadow-md">
+                <h3 class="text-2xl font-semibold text-dark mb-4">2. Testing</h3>
+                <ul class="list-disc list-inside space-y-2 text-gray-700">
+                    <li>Write tests in adjacent test directory</li>
+                    <li>Use property-based testing</li>
+                    <li>Test pure functions independently</li>
+                    <li>Test effects in isolation</li>
+                </ul>
+            </div>
+            <div class="p-6 bg-white rounded-lg shadow-md">
+                <h3 class="text-2xl font-semibold text-dark mb-4">3. Documentation</h3>
+                <ul class="list-disc list-inside space-y-2 text-gray-700">
+                    <li>Document function signatures</li>
+                    <li>Specify type information</li>
+                    <li>Include usage examples</li>
+                    <li>Document effects</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <section class="mb-12">
+        <h2 class="text-3xl font-semibold text-secondary border-b-2 border-secondary pb-2 mb-6">Best Practices</h2>
+        <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+            <div class="p-6 bg-white rounded-lg shadow-md">
+                <h3 class="text-2xl font-semibold text-dark mb-4">1. File Organization</h3>
+                <ul class="list-disc list-inside space-y-2 text-gray-700">
+                    <li>Keep related files together</li>
+                    <li>Use clear, descriptive names</li>
+                    <li>Follow directory structure</li>
+                    <li>Maintain separation of concerns</li>
+                </ul>
+            </div>
+            <div class="p-6 bg-white rounded-lg shadow-md">
+                <h3 class="text-2xl font-semibold text-dark mb-4">2. Code Style</h3>
+                <ul class="list-disc list-inside space-y-2 text-gray-700">
+                    <li>Write pure functions</li>
+                    <li>Use functional composition</li>
+                    <li>Maintain immutability</li>
+                    <li>Document types clearly</li>
+                </ul>
+            </div>
+            <div class="p-6 bg-white rounded-lg shadow-md">
+                <h3 class="text-2xl font-semibold text-dark mb-4">3. Testing</h3>
+                <ul class="list-disc list-inside space-y-2 text-gray-700">
+                    <li>Test pure functions</li>
+                    <li>Test effect isolation</li>
+                    <li>Use property-based tests</li>
+                    <li>Maintain test coverage</li>
+                </ul>
+            </div>
+            <div class="p-6 bg-white rounded-lg shadow-md">
+                <h3 class="text-2xl font-semibold text-dark mb-4">4. Performance</h3>
+                <ul class="list-disc list-inside space-y-2 text-gray-700">
+                    <li>Optimize render functions</li>
+                    <li>Minimize state updates</li>
+                    <li>Handle effects efficiently</li>
+                    <li>Monitor performance</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <section class="mb-12">
+        <h2 class="text-3xl font-semibold text-secondary border-b-2 border-secondary pb-2 mb-6">Next Steps</h2>
+        <ol class="list-decimal list-inside space-y-2 text-gray-700 text-lg">
+            <li>Explore the examples in <code>/examples</code></li>
+            <li>Read the API documentation</li>
+            <li>Study the architecture overview</li>
+            <li>Join the community</li>
+        </ol>
+    </section>
+
+    <footer class="text-center text-gray-600 mt-12">
+        <p>For more detailed information, refer to:</p>
+        <ul class="flex justify-center space-x-4 mt-2">
+            <li><a href="#" class="text-primary hover:underline">API Reference</a></li>
+            <li><a href="#" class="text-primary hover:underline">Architecture Overview</a></li>
+            <li><a href="#" class="text-primary hover:underline">Security Practices Guide</a></li>
+        </ul>
+    </footer>
+</main>
     </div>
 </body>
 </html>
