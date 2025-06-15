@@ -25,105 +25,221 @@
 </head>
 <body class="bg-gray-50 text-gray-900 min-h-screen">
     <div id="page-content">
-        <div class="flex items-center space-x-2 text-sm text-gray-500 mb-8">
-            <a href="/index.html" class="hover:text-primary">Home</a>
-            <span>/</span>
-            <a href="#" class="hover:text-primary">Base Documentation</a>
-            <span>/</span>
-            <span class="text-gray-900">Architecture</span>
-        </div>
+<main class="container mx-auto px-4 py-8">
+    <h1 class="text-4xl font-bold text-primary mb-4">FlexNet JSX Architecture Overview</h1>
+    <p class="text-gray-600 mb-8">Version: 1.0.0 (Released 2025-01-31)</p>
 
-        <h1 class="text-3xl font-bold mb-6">Architecture Overview</h1>
+    <!-- Project Structure -->
+    <section class="mb-12">
+        <h2 class="text-3xl font-semibold text-secondary border-b-2 border-secondary pb-2 mb-6">Project Structure</h2>
+        <div class="p-6 bg-white rounded-lg shadow-md">
+            <h3 class="text-2xl font-semibold text-dark mb-4">Directory Organization</h3>
+            <pre><code class="language-bash">JSX/
+├── src/
+│   ├── core/                  # Core JSX engine
+│   │   ├── build/           # Build system
+│   │   ├── runtime/         # Runtime implementation
+│   │   ├── types/          # Type system
+│   │   └── functions/      # Core functions
+│   │
+│   ├── systems/              # System implementations
+│   │   ├── render/          # Rendering system
+│   │   ├── state/          # State management
+│   │   ├── effects/        # Effect handling
+│   │   └── events/         # Event system
+│   │
+│   └── utils/               # Utility functions
+│
+├── __tests__/               # Test suite
+│   ├── core/              # Core tests
+│   ├── systems/           # System tests
+│   └── features/          # Feature tests
+│
+├── examples/                # Example code
+│   ├── basic/            # Basic examples
+│   └── advanced/         # Advanced examples
+│
+└── docs/                   # Documentation
+    ├── ARCHITECTUREOVERVIEW.md
+    ├── api-reference.md
+    └── getting-started-guide.md</code></pre>
+        </div>
+    </section>
+
+    <!-- Core Operating Schema -->
+    <section class="mb-12">
+        <h2 class="text-3xl font-semibold text-secondary border-b-2 border-secondary pb-2 mb-6">Core Operating Schema</h2>
         
-        <div class="prose prose-blue max-w-none">
-            <p class="lead text-xl text-gray-600 mb-8">
-                FlexNet JSX is architected as a collection of modular, interoperable systems built on a purely functional core. This design emphasizes predictability, testability, and a clear separation of concerns.
-            </p>
-
-            <div class="text-center my-8">
-                <img src="https://i.imgur.com/your-diagram-url.png" alt="FlexNet Architecture Diagram" class="mx-auto rounded-lg shadow-md border">
-                <p class="text-sm text-gray-500 mt-2">High-level view of the framework's systems.</p>
-            </div>
-
-            <h2 class="text-2xl font-bold mt-8 mb-4">The Core</h2>
-            <p class="mb-4">
-                At the center of the framework is a set of core functional principles and utilities.
-            </p>
-            <ul class="list-disc pl-6 space-y-2 mb-6">
-                <li><strong>Pure Functions:</strong> Utilities like <code>pipe</code>, <code>compose</code>, and <code>curry</code> for building logic.</li>
-                <li><strong>Functional Types:</strong> The <code>Maybe</code>, <code>Either</code>, and <code>Result</code> types for explicit handling of uncertainty and errors.</li>
-                <li><strong>Immutability:</strong> All systems are designed to work with immutable data structures.</li>
-            </ul>
-
-            <h2 class="text-2xl font-bold mt-8 mb-4">The Systems</h2>
-            <p class="mb-4">
-                The core principles are used to build several distinct but interconnected systems, each with a specific responsibility.
-            </p>
-            <h3 class="text-xl font-semibold mt-6 mb-3">1. State System</h3>
-            <p class="mb-4">
-                This system provides the tools for managing application state, following the Redux pattern.
-            </p>
-            <ul class="list-disc pl-6 space-y-2 mb-6">
-                <li><code>createStore</code>: Creates the state container.</li>
-                <li><code>dispatch</code>: Sends actions to update the state.</li>
-                <li><code>getState</code>: Retrieves the current state.</li>
-                <li><code>subscribe</code>: Listens for state changes.</li>
-            </ul>
-
-            <h3 class="text-xl font-semibold mt-6 mb-3">2. Render System</h3>
-            <p class="mb-4">
-                This system is responsible for rendering the UI and keeping it in sync with the application state.
-            </p>
-            <ul class="list-disc pl-6 space-y-2 mb-6">
-                <li><code>createElement</code>: Creates virtual DOM nodes that describe the UI.</li>
-                <li><code>render</code>: Takes a virtual DOM tree and applies it to the actual DOM using an efficient diffing algorithm.</li>
-            </ul>
-
-            <h3 class="text-xl font-semibold mt-6 mb-3">3. Effect System</h3>
-            <p class="mb-4">
-                This system handles side effects, such as asynchronous operations. It acts as middleware for the state system.
-            </p>
-            <ul class="list-disc pl-6 space-y-2 mb-6">
-                <li>Effects are functions that listen for specific actions.</li>
-                <li>They can perform tasks like fetching API data.</li>
-                <li>They dispatch new actions with the results of their tasks.</li>
-            </ul>
-
-            <h3 class="text-xl font-semibold mt-6 mb-3">4. Event System</h3>
-            <p class="mb-4">
-                This system attaches and manages DOM event listeners (e.g., <code>onClick</code>, <code>onChange</code>) in a declarative way as part of the rendering process.
-            </p>
-
-            <h2 class="text-2xl font-bold mt-8 mb-4">Core Operating Schema</h2>
-            <p class="mb-4">
-                These systems work together in a predictable cycle:
-            </p>
-            <ol class="list-decimal pl-6 space-y-3">
-                <li>The <strong>Render System</strong> creates the initial UI based on the initial state from the <strong>State System</strong>.</li>
-                <li>A user interacts with the UI, which triggers an event handler from the <strong>Event System</strong>.</li>
-                <li>The event handler dispatches an action.</li>
-                <li>If the action is for a side effect, the <strong>Effect System</strong> handles it and may dispatch another action later.</li>
-                <li>The action is received by the <strong>State System</strong>'s store, which passes it to a pure reducer function.</li>
-                <li>The reducer calculates the new, immutable state.</li>
-                <li>The store notifies all subscribers (typically the UI's top-level render function) of the change.</li>
-                <li>The <strong>Render System</strong> is called again with the new state, and it efficiently updates the DOM to match. The cycle repeats.</li>
-            </ol>
-            
-            <div class="flex justify-between mt-12 pt-6 border-t border-gray-200">
-                <a href="/base/security-practices.html" class="inline-flex items-center px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300 transition">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
-                    </svg>
-                    Prev: Security
-                </a>
-                <a href="/base/http-system.html" class="inline-flex items-center px-4 py-2 bg-primary text-white rounded-md hover:bg-blue-600 transition">
-                    Next: HTTP System
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-                    </svg>
-                </a>
+        <div class="mb-8 p-6 bg-white rounded-lg shadow-md">
+            <h3 class="text-2xl font-semibold text-dark mb-4">Functional Architecture Principles</h3>
+            <div class="grid md:grid-cols-2 gap-8">
+                <div>
+                    <h4 class="text-xl font-semibold text-dark mb-2">1. Pure Function First</h4>
+                    <ul class="list-disc list-inside space-y-2 text-gray-700">
+                        <li>All operations are pure functions</li>
+                        <li>No side effects in core logic</li>
+                        <li>Explicit data flow</li>
+                        <li>Functional composition for complex operations</li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-xl font-semibold text-dark mb-2">2. Type System</h4>
+                    <ul class="list-disc list-inside space-y-2 text-gray-700">
+                        <li>Maybe: Optional value handling</li>
+                        <li>Either: Error handling</li>
+                        <li>Result: Operation outcomes</li>
+                        <li>Task: Async operations</li>
+                        <li>Reader: Environment handling</li>
+                        <li>StateT: Pure state transitions</li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-xl font-semibold text-dark mb-2">3. Effect System</h4>
+                    <ul class="list-disc list-inside space-y-2 text-gray-700">
+                        <li>Isolated side effects</li>
+                        <li>Pure effect composition</li>
+                        <li>Effect cleanup through functions</li>
+                        <li>Explicit effect dependencies</li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-xl font-semibold text-dark mb-2">4. State Management</h4>
+                    <ul class="list-disc list-inside space-y-2 text-gray-700">
+                        <li>Immutable state transitions</li>
+                        <li>Pure state functions</li>
+                        <li>Functional state updates</li>
+                        <li>No global state</li>
+                        <li>State isolation through closures</li>
+                    </ul>
+                </div>
             </div>
         </div>
+
+        <div class="mb-8 p-6 bg-white rounded-lg shadow-md">
+            <h3 class="text-2xl font-semibold text-dark mb-4">System Components</h3>
+            <ul class="list-disc list-inside space-y-4 text-gray-700">
+                <li><strong>Core Runtime (<code>/src/core/runtime/</code>)</strong>: JSX transformation, Virtual DOM implementation, Reconciliation engine, Event delegation.</li>
+                <li><strong>Type System (<code>/src/core/types/</code>)</strong>: Functional type implementations, Type composition utilities, Type validation functions, Type conversion helpers.</li>
+                <li><strong>Core Functions (<code>/src/core/functions/</code>)</strong>: Function composition utilities, Data transformation helpers, Pure utility functions, Functional combinators.</li>
+                <li><strong>Rendering System (<code>/src/systems/render/</code>)</strong>: Pure render functions, DOM diffing algorithm, Batch updates, Layout calculation.</li>
+                <li><strong>State System (<code>/src/systems/state/</code>)</strong>: State management functions, State transitions, State composition, State synchronization.</li>
+                <li><strong>Effect System (<code>/src/systems/effects/</code>)</strong>: Effect scheduling, Effect composition, Cleanup functions, Resource management.</li>
+                <li><strong>Event System (<code>/src/systems/events/</code>)</strong>: Event handling, Event composition, Event delegation, Event filtering.</li>
+            </ul>
+        </div>
+
+        <div class="mb-8 p-6 bg-white rounded-lg shadow-md">
+            <h3 class="text-2xl font-semibold text-dark mb-4">Feature Components</h3>
+             <ul class="list-disc list-inside space-y-4 text-gray-700">
+                <li><strong>Router (<code>/src/features/router/</code>)</strong>: Pure routing functions, Route matching, Navigation handling, Guard implementation.</li>
+                <li><strong>Forms (<code>/src/features/forms/</code>)</strong>: Form state management, Validation functions, Field composition, Form submission.</li>
+                <li><strong>Validation (<code>/src/features/validation/</code>)</strong>: Data validation, Schema validation, Type checking, Error reporting.</li>
+                <li><strong>Animation (<code>/src/features/animation/</code>)</strong>: Animation functions, Transition handling, Timing functions, Frame calculation.</li>
+            </ul>
+        </div>
+        
+        <div class="mb-8 p-6 bg-white rounded-lg shadow-md">
+            <h3 class="text-2xl font-semibold text-dark mb-4">Security Implementation</h3>
+            <div class="grid md:grid-cols-2 gap-8">
+                <div>
+                    <h4 class="text-xl font-semibold text-dark mb-2">1. Core Security (<code>/src/security/</code>)</h4>
+                    <ul class="list-disc list-inside space-y-2 text-gray-700">
+                        <li>XSS prevention</li>
+                        <li>CSP implementation</li>
+                        <li>Input sanitization</li>
+                        <li>Output encoding</li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-xl font-semibold text-dark mb-2">2. Security Functions</h4>
+                    <ul class="list-disc list-inside space-y-2 text-gray-700">
+                        <li>Validation functions</li>
+                        <li>Sanitization utilities</li>
+                        <li>Security checks</li>
+                        <li>Audit helpers</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Development Standards -->
+    <section class="mb-12">
+        <h2 class="text-3xl font-semibold text-secondary border-b-2 border-secondary pb-2 mb-6">Development Standards</h2>
+        <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+            <div class="p-6 bg-white rounded-lg shadow-md">
+                <h3 class="text-xl font-semibold text-dark mb-2">1. File Organization</h3>
+                <ul class="list-disc list-inside space-y-2 text-gray-700">
+                    <li><code>functions.js</code> for pure functions</li>
+                    <li>Clear module boundaries</li>
+                    <li>Explicit dependencies</li>
+                    <li>Logical grouping</li>
+                </ul>
+            </div>
+            <div class="p-6 bg-white rounded-lg shadow-md">
+                <h3 class="text-xl font-semibold text-dark mb-2">2. Code Structure</h3>
+                <ul class="list-disc list-inside space-y-2 text-gray-700">
+                    <li>Pure function definitions</li>
+                    <li>Type signatures</li>
+                    <li>Function composition</li>
+                    <li>No side effects</li>
+                </ul>
+            </div>
+            <div class="p-6 bg-white rounded-lg shadow-md">
+                <h3 class="text-xl font-semibold text-dark mb-2">3. Testing Approach</h3>
+                <ul class="list-disc list-inside space-y-2 text-gray-700">
+                    <li>Unit tests for pure functions</li>
+                    <li>Integration tests for systems</li>
+                    <li>Property-based testing</li>
+                    <li>Effect isolation in tests</li>
+                </ul>
+            </div>
+            <div class="p-6 bg-white rounded-lg shadow-md">
+                <h3 class="text-xl font-semibold text-dark mb-2">4. Documentation</h3>
+                <ul class="list-disc list-inside space-y-2 text-gray-700">
+                    <li>Clear function signatures</li>
+                    <li>Type documentation</li>
+                    <li>Effect documentation</li>
+                    <li>Example usage</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- Performance Considerations -->
+    <section class="mb-12">
+        <h2 class="text-3xl font-semibold text-secondary border-b-2 border-secondary pb-2 mb-6">Performance Considerations</h2>
+        <div class="grid md:grid-cols-3 gap-8">
+            <div class="p-6 bg-white rounded-lg shadow-md">
+                <h3 class="text-xl font-semibold text-dark mb-2">1. Render Optimization</h3>
+                <ul class="list-disc list-inside space-y-2 text-gray-700">
+                    <li>Pure render functions</li>
+                    <li>Efficient diffing</li>
+                    <li>Batch updates</li>
+                    <li>Memory management</li>
+                </ul>
+            </div>
+            <div class="p-6 bg-white rounded-lg shadow-md">
+                <h3 class="text-xl font-semibold text-dark mb-2">2. State Efficiency</h3>
+                <ul class="list-disc list-inside space-y-2 text-gray-700">
+                    <li>Immutable updates</li>
+                    <li>State composition</li>
+                    <li>Minimal re-renders</li>
+                    <li>Memory-efficient representation</li>
+                </ul>
+            </div>
+            <div class="p-6 bg-white rounded-lg shadow-md">
+                <h3 class="text-xl font-semibold text-dark mb-2">3. Effect Management</h3>
+                <ul class="list-disc list-inside space-y-2 text-gray-700">
+                    <li>Effect scheduling</li>
+                    <li>Resource cleanup</li>
+                    <li>Memory leaks prevention</li>
+                    <li>Performance monitoring</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+</main>
     </div>
 </body>
 </html>
