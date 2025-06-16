@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FlexNet Framework Documentation</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/atom-one-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#3b82f6',
+                        secondary: '#6366f1',
+                        dark: '#1e293b',
+                        light: '#f8fafc'
+                    }
+                }
+            }
+        }
+        hljs.highlightAll();
+    </script>
+    <script src="/assets/main.js" defer></script>
+</head>
+<body class="bg-gray-50 text-gray-900 min-h-screen">
+    <div id="page-content">
+        <main class="container mx-auto px-4 py-8">
+            <h1 class="text-4xl font-bold text-primary mb-4">API Reference</h1>
+            <p class="text-gray-600 mb-8">This section provides a comprehensive overview of the FlexNet framework's public API, organized into the following categories:</p>
+            <ul class="list-disc list-inside space-y-2">
+                <li><strong>Core Types</strong>: Maybe, Either, Result</li>
+                <li><strong>Core Functions</strong>: Composition, Transforms</li>
+                <li><strong>System APIs</strong>: Render, State, Effects, Event System</li>
+                <li><strong>Feature APIs</strong>: Router, Form Validation</li>
+                <li><strong>Security Functions</strong>: XSS Prevention, Input Validation</li>
+                <li><strong>Utility Functions</strong>: Array Operations, Function Operations</li>
+            </ul>
+            <p class="text-gray-600">For detailed documentation and code examples, explore the sections listed above.</p>
+        </main>
+    </div>
+</body>
+</html>

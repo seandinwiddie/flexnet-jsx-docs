@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FlexNet Framework Documentation</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/atom-one-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#3b82f6',
+                        secondary: '#6366f1',
+                        dark: '#1e293b',
+                        light: '#f8fafc'
+                    }
+                }
+            }
+        }
+        hljs.highlightAll();
+    </script>
+    <script src="/assets/main.js" defer></script>
+</head>
+<body class="bg-gray-50 text-gray-900 min-h-screen">
+    <div id="page-content">
+        <main class="container mx-auto px-4 py-8">
+            <h1 class="text-4xl font-bold text-primary mb-4">Architecture Overview</h1>
+            <p class="text-gray-600 mb-8">This section provides a high-level overview of the FlexNet framework's architecture, summarizing its core structure, principles, and standards.</p>
+            <ul class="list-disc list-inside space-y-2">
+                <li><strong>Project Structure</strong>: Directory layout for core engine, systems, utilities, tests, and examples.</li>
+                <li><strong>Core Operating Schema</strong>: Principles such as Pure Function First, Type System, Effect System, and State Management.</li>
+                <li><strong>System & Feature Components</strong>: Core runtime, type system, core functions, rendering, state, effects, events, router, forms, validation, and animation.</li>
+                <li><strong>Security Implementation</strong>: Core security measures and utility functions for sanitization and validation.</li>
+                <li><strong>Development Standards</strong>: Guidelines for file organization, code structure, testing methodologies, and documentation.</li>
+                <li><strong>Performance Considerations</strong>: Optimizations for rendering, state management, and effect handling.</li>
+            </ul>
+        </main>
+    </div>
+</body>
+</html>

@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FlexNet Framework Documentation</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/atom-one-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#3b82f6',
+                        secondary: '#6366f1',
+                        dark: '#1e293b',
+                        light: '#f8fafc'
+                    }
+                }
+            }
+        }
+        hljs.highlightAll();
+    </script>
+    <script src="/assets/main.js" defer></script>
+</head>
+<body class="bg-gray-50 text-gray-900 min-h-screen">
+    <div id="page-content">
+        <main class="container mx-auto px-4 py-8">
+            <h1 class="text-4xl font-bold text-primary mb-4">Technical Standards</h1>
+            <section class="mb-12">
+                <h2 class="text-3xl font-semibold text-secondary border-b-2 border-secondary pb-2 mb-6">Technical Standards</h2>
+                <div class="p-6 bg-white rounded-lg shadow-md">
+                    <h3 class="text-2xl font-semibold text-dark mb-4">Core Implementation Patterns</h3>
+                    <div class="grid md:grid-cols-2 gap-8">
+                        <div>
+                            <h4 class="text-lg font-semibold text-dark mb-2">Functional Composition</h4>
+                            <ul class="list-disc list-inside text-gray-700">
+                                <li>All operations use compose/pipe patterns</li>
+                                <li>Pure function composition for all features</li>
+                                <li>Curry implementation for partial application</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h4 class="text-lg font-semibold text-dark mb-2">Type System</h4>
+                            <ul class="list-disc list-inside text-gray-700">
+                                <li>Maybe for optional values</li>
+                                <li>Either for error handling</li>
+                                <li>Result for operation outcomes</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h4 class="text-lg font-semibold text-dark mb-2">State Management</h4>
+                            <ul class="list-disc list-inside text-gray-700">
+                                <li>Immutable state transitions only</li>
+                                <li>No JavaScript objects for state</li>
+                                <li>Pure functional state updates</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h4 class="text-lg font-semibold text-dark mb-2">Effect System</h4>
+                            <ul class="list-disc list-inside text-gray-700">
+                                <li>Isolated side effects in effect system</li>
+                                <li>Pure effect cleanup functions</li>
+                                <li>Explicit effect dependencies</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h4 class="text-lg font-semibold text-dark mb-2">Testing Coverage</h4>
+                            <ul class="list-disc list-inside text-gray-700">
+                                <li>Property-based testing for core functions</li>
+                                <li>Pure function verification</li>
+                                <li>State transition testing</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h4 class="text-lg font-semibold text-dark mb-2">Code Safety</h4>
+                            <ul class="list-disc list-inside text-gray-700">
+                                <li>Functional error handling with Either</li>
+                                <li>No try/catch outside effect system</li>
+                                <li>Browser-native security patterns only</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+</body>
+</html>

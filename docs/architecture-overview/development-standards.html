@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FlexNet Framework Documentation</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/atom-one-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#3b82f6',
+                        secondary: '#6366f1',
+                        dark: '#1e293b',
+                        light: '#f8fafc'
+                    }
+                }
+            }
+        }
+        hljs.highlightAll();
+    </script>
+    <script src="/assets/main.js" defer></script>
+</head>
+<body class="bg-gray-50 text-gray-900 min-h-screen">
+    <div id="page-content">
+        <main class="container mx-auto px-4 py-8">
+            <h1 class="text-4xl font-bold text-primary mb-4">Development Standards</h1>
+            <section class="mb-12">
+                <h2 class="text-3xl font-semibold text-secondary border-b-2 border-secondary pb-2 mb-6">Development Standards</h2>
+                <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+                    <div class="p-6 bg-white rounded-lg shadow-md">
+                        <h3 class="text-xl font-semibold text-dark mb-2">1. File Organization</h3>
+                        <ul class="list-disc list-inside space-y-2 text-gray-700">
+                            <li><code>functions.js</code> for pure functions</li>
+                            <li>Clear module boundaries</li>
+                            <li>Explicit dependencies</li>
+                            <li>Logical grouping</li>
+                        </ul>
+                    </div>
+                    <div class="p-6 bg-white rounded-lg shadow-md">
+                        <h3 class="text-xl font-semibold text-dark mb-2">2. Code Structure</h3>
+                        <ul class="list-disc list-inside space-y-2 text-gray-700">
+                            <li>Pure function definitions</li>
+                            <li>Type signatures</li>
+                            <li>Function composition</li>
+                            <li>No side effects</li>
+                        </ul>
+                    </div>
+                    <div class="p-6 bg-white rounded-lg shadow-md">
+                        <h3 class="text-xl font-semibold text-dark mb-2">3. Testing Approach</h3>
+                        <ul class="list-disc list-inside space-y-2 text-gray-700">
+                            <li>Unit tests for pure functions</li>
+                            <li>Integration tests for systems</li>
+                            <li>Property-based testing</li>
+                            <li>Effect isolation in tests</li>
+                        </ul>
+                    </div>
+                    <div class="p-6 bg-white rounded-lg shadow-md">
+                        <h3 class="text-xl font-semibold text-dark mb-2">4. Documentation</h3>
+                        <ul class="list-disc list-inside space-y-2 text-gray-700">
+                            <li>Clear function signatures</li>
+                            <li>Type documentation</li>
+                            <li>Effect documentation</li>
+                            <li>Example usage</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+</body>
+</html> 

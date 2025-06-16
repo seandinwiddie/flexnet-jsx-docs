@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FlexNet Framework Documentation</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/atom-one-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#3b82f6',
+                        secondary: '#6366f1',
+                        dark: '#1e293b',
+                        light: '#f8fafc'
+                    }
+                }
+            }
+        }
+        hljs.highlightAll();
+    </script>
+    <script src="/assets/main.js" defer></script>
+</head>
+<body class="bg-gray-50 text-gray-900 min-h-screen">
+    <div id="page-content">
+        <main class="container mx-auto px-4 py-8">
+            <h1 class="text-4xl font-bold text-primary mb-4">HTTP System</h1>
+            <p class="text-gray-600 mb-8">This section outlines the FlexNet HTTP System, providing a functional API for making HTTP requests with zero external dependencies.</p>
+            <ul class="list-disc list-inside space-y-2">
+                <li><strong>Overview</strong>: Functional implementation with immutable state, effect isolation, and zero dependencies.</li>
+                <li><strong>Core Types</strong>: Request, Response, Cache, Interceptor types with strict functional definitions.</li>
+                <li><strong>HTTP Client API</strong>: Client creation, making GET/POST/PUT/DELETE requests, using interceptors, and cache operations.</li>
+                <li><strong>Type Verification</strong>: Strict verification of request, response, cache, and interceptor types.</li>
+                <li><strong>Error Handling</strong>: All operations return an Either type for proper error management.</li>
+                <li><strong>Effect Isolation</strong>: Side effects are fully isolated within the effect system.</li>
+            </ul>
+        </main>
+    </div>
+</body>
+</html>

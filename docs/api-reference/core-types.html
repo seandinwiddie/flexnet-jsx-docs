@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FlexNet Framework Documentation</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/atom-one-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#3b82f6',
+                        secondary: '#6366f1',
+                        dark: '#1e293b',
+                        light: '#f8fafc'
+                    }
+                }
+            }
+        }
+        hljs.highlightAll();
+    </script>
+    <script src="/assets/main.js" defer></script>
+</head>
+<body class="bg-gray-50 text-gray-900 min-h-screen">
+    <div id="page-content">
+        <main class="container mx-auto px-4 py-8">
+            <h1 class="text-4xl font-bold text-primary mb-4">Core Types</h1>
+            <section class="mb-12">
+                <h2 class="text-3xl font-semibold text-secondary border-b-2 border-secondary pb-2 mb-6">Core Types</h2>
+
+                <div class="mb-8 p-6 bg-white rounded-lg shadow-md">
+                    <h3 class="text-2xl font-semibold text-dark mb-4">Maybe Type</h3>
+                    <pre><code class="language-javascript">// src/core/types/maybe.js
+const Maybe = {
+    Just: value => ({ type: 'Just', value }),
+    Nothing: () => ({ type: 'Nothing' }),
+    fromNullable: value => value != null ? Maybe.Just(value) : Maybe.Nothing(),
+    map: fn => maybe => 
+        maybe.type === 'Just' ? Maybe.Just(fn(maybe.value)) : Maybe.Nothing(),
+    chain: fn => maybe =>
+        maybe.type === 'Just' ? fn(maybe.value) : Maybe.Nothing(),
+    getOrElse: defaultValue => maybe =>
+        maybe.type === 'Just' ? maybe.value : defaultValue
+};</code></pre>
+                </div>
+
+                <div class="mb-8 p-6 bg-white rounded-lg shadow-md">
+                    <h3 class="text-2xl font-semibold text-dark mb-4">Either Type</h3>
+                    <pre><code class="language-javascript">// src/core/types/either.js
+const Either = {
+    Left: value => ({ type: 'Left', value }),
+    Right: value => ({ type: 'Right', value }),
+    fromNullable: value => value != null ? Either.Right(value) : Either.Left('Value is null'),
+    map: fn => either =>
+        either.type === 'Right' ? Either.Right(fn(either.value)) : either,
+    chain: fn => either =>
+        either.type === 'Right' ? fn(either.value) : either,
+    fold: (leftFn, rightFn) => either =>
+        either.type === 'Right' ? rightFn(either.value) : leftFn(either.value)
+};</code></pre>
+                </div>
+
+                <div class="mb-8 p-6 bg-white rounded-lg shadow-md">
+                    <h3 class="text-2xl font-semibold text-dark mb-4">Result Type</h3>
+                    <pre><code class="language-javascript">// src/core/types/result.js
+const Result = {
+    Ok: value => ({ type: 'Ok', value }),
+    Error: error => ({ type: 'Error', error }),
+    fromTry: fn => {
+        try {
+            return Result.Ok(fn());
+        } catch (e) {
+            return Result.Error(e);
+        }
+    },
+    map: fn => result =>
+        result.type === 'Ok' ? Result.Ok(fn(result.value)) : result,
+    chain: fn => result =>
+        result.type === 'Ok' ? fn(result.value) : result
+};</code></pre>
+                </div>
+            </section>
+        </main>
+    </div>
+</body>
+</html> 

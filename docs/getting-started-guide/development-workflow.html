@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FlexNet Framework Documentation</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/atom-one-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#3b82f6',
+                        secondary: '#6366f1',
+                        dark: '#1e293b',
+                        light: '#f8fafc'
+                    }
+                }
+            }
+        }
+        hljs.highlightAll();
+    </script>
+    <script src="/assets/main.js" defer></script>
+</head>
+<body class="bg-gray-50 text-gray-900 min-h-screen">
+    <div id="page-content">
+        <main class="container mx-auto px-4 py-8">
+            <h1 class="text-4xl font-bold text-primary mb-4">Development Workflow</h1>
+            <section class="mb-12">
+                <h2 class="text-3xl font-semibold text-secondary border-b-2 border-secondary pb-2 mb-6">Development Workflow</h2>
+                <div class="grid md:grid-cols-3 gap-8">
+                    <div class="p-6 bg-white rounded-lg shadow-md">
+                        <h3 class="text-2xl font-semibold text-dark mb-4">1. Feature Development</h3>
+                        <ul class="list-disc list-inside space-y-2 text-gray-700">
+                            <li>Create feature directory in <code>src/features/</code></li>
+                            <li>Implement pure functions in <code>functions.js</code></li>
+                            <li>Create feature component in <code>index.js</code></li>
+                            <li>Add tests in parallel</li>
+                        </ul>
+                    </div>
+                    <div class="p-6 bg-white rounded-lg shadow-md">
+                        <h3 class="text-2xl font-semibold text-dark mb-4">2. Testing</h3>
+                        <ul class="list-disc list-inside space-y-2 text-gray-700">
+                            <li>Write tests in adjacent test directory</li>
+                            <li>Use property-based testing</li>
+                            <li>Test pure functions independently</li>
+                            <li>Test effects in isolation</li>
+                        </ul>
+                    </div>
+                    <div class="p-6 bg-white rounded-lg shadow-md">
+                        <h3 class="text-2xl font-semibold text-dark mb-4">3. Documentation</h3>
+                        <ul class="list-disc list-inside space-y-2 text-gray-700">
+                            <li>Document function signatures</li>
+                            <li>Specify type information</li>
+                            <li>Include usage examples</li>
+                            <li>Document effects</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+</body>
+</html>

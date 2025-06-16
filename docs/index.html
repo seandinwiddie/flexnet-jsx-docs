@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FlexNet JSX Framework Documentation</title>
+    <title>FlexNet Framework Documentation</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/atom-one-dark.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
@@ -28,7 +28,7 @@
     <div id="page-content">
         <!-- Hero section -->
         <div class="py-20 text-center bg-gradient-to-r from-primary to-secondary text-white rounded-lg mb-12">
-            <h1 class="text-5xl font-bold mb-4 text-shadow">FlexNet JSX Framework</h1>
+            <h1 class="text-5xl font-bold mb-4 text-shadow">FlexNet Framework</h1>
             <p class="text-xl mb-8">A functional JavaScript implementation for building modern web applications</p>
             <div class="flex justify-center space-x-4">
                 <a href="base/getting-started-guide.html" class="px-8 py-4 bg-white text-primary rounded-md hover:bg-gray-100 transition font-semibold">Get Started</a>
@@ -44,7 +44,7 @@
                 </div>
                 <div>
                     <h3 class="text-lg font-semibold mb-2">Pure Functional</h3>
-                    <p class="text-gray-600">Build applications with pure functions, immutable state, and functional composition. <a href="base/architecture-overview.html" class="text-primary hover:underline">Learn more.</a></p>
+                    <p class="text-gray-600">Build applications with pure functions, immutable state, and functional composition. <a href="base/architecture-overview.html#functional-architecture-principles" class="text-primary hover:underline">Learn more.</a></p>
                 </div>
             </div>
             <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-100 flex items-start">
@@ -53,7 +53,7 @@
                 </div>
                 <div>
                     <h3 class="text-lg font-semibold mb-2">Zero Dependencies</h3>
-                    <p class="text-gray-600">FlexNet has no external dependencies and uses browser native implementation.</p>
+                    <p class="text-gray-600">FlexNet has no external dependencies and uses browser native implementation. See the <a href="base/consistency-analysis.html#core-architecture-compliance" class="text-primary hover:underline">Consistency Analysis</a>.</p>
                 </div>
             </div>
             <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-100 flex items-start">
@@ -71,7 +71,7 @@
                 </div>
                 <div>
                     <h3 class="text-lg font-semibold mb-2">Security First</h3>
-                    <p class="text-gray-600">Built with security in mind, including XSS prevention and input validation. <a href="base/security-practices.html" class="text-primary hover:underline">Read the guide.</a></p>
+                    <p class="text-gray-600">Built with security in mind, including XSS prevention and input validation. <a href="base/security-practices.html#xss-prevention" class="text-primary hover:underline">Read the guide.</a></p>
                 </div>
             </div>
         </div>
@@ -79,84 +79,10 @@
         <!-- Quick start section -->
         <div class="mb-12">
             <h2 class="text-2xl font-bold mb-4">Quick Start</h2>
-            <p class="mb-4">Add FlexNet JSX to your project with these simple steps:</p>
-            <div class="bg-gray-900 rounded-lg mb-4 overflow-hidden relative">
-                <button class="absolute top-2 right-2 bg-gray-700 hover:bg-gray-600 text-white text-xs font-bold py-1 px-2 rounded">Copy</button>
-                <pre class="bg-gray-800 text-white p-4 overflow-x-auto"><code class="language-html">&lt;script type="module" src="path/to/jsx/src/index.js"&gt;&lt;/script&gt;</code></pre>
-            </div>
-            <p class="mb-4">Or use one of our starter projects:</p>
-            <div class="bg-gray-900 rounded-lg mb-4 overflow-hidden relative">
-                <button class="absolute top-2 right-2 bg-gray-700 hover:bg-gray-600 text-white text-xs font-bold py-1 px-2 rounded">Copy</button>
-                <pre class="bg-gray-800 text-white p-4 overflow-x-auto"><code class="language-bash"># Clone the starter project
-cd starter-project
-python -m http.server 3000
-# Open http://localhost:3000</code></pre>
-            </div>
+            <p class="mb-4">To get started, please see the <a href="base/getting-started-guide.html" class="text-primary hover:underline">Getting Started Guide</a> for detailed instructions on how to set up your project.</p>
             <a href="base/getting-started-guide.html" class="text-primary hover:underline">Learn More →</a>
         </div>
 
-        <!-- Example section -->
-        <div class="mb-12">
-            <h2 class="text-2xl font-bold mb-4">Basic Counter Example</h2>
-            <div class="bg-gray-900 rounded-lg mb-4 overflow-hidden relative">
-                <button class="absolute top-2 right-2 bg-gray-700 hover:bg-gray-600 text-white text-xs font-bold py-1 px-2 rounded">Copy</button>
-                <pre class="bg-gray-800 text-white p-4 overflow-x-auto"><code class="language-javascript">import { createElement, render } from './src/systems/render/functions.js';
-import { createStore } from './src/systems/state/functions.js';
-
-// Reducer for state management
-const counterReducer = (state = 0, action) => {
-    switch (action.type) {
-        case 'INCREMENT': return state + 1;
-        case 'DECREMENT': return state - 1;
-        default: return state;
-    }
-};
-
-// Create a store with the reducer and initial state
-const store = createStore(counterReducer, 0);
-
-// Counter component
-const Counter = ({ count }) =>
-  createElement('div', null,
-    createElement('h1', null, `Count: ${count}`),
-    createElement('button', { onClick: () => store.dispatch({ type: 'DECREMENT' }) }, '-'),
-    createElement('button', { onClick: () => store.dispatch({ type: 'INCREMENT' }) }, '+')
-  );
-
-// Main component to render
-const App = () => createElement(Counter, { count: store.getState() });
-
-// Subscribe to store updates and re-render
-const rootElement = document.getElementById('root');
-store.subscribe(() => render(App(), rootElement));
-
-// Initial render
-render(App(), rootElement);</code></pre>
-            </div>
-            <a href="base/getting-started-guide.html" class="text-primary hover:underline">See More Examples →</a>
-        </div>
-
-        <!-- Starter projects section -->
-        <div class="mb-12">
-            <h2 class="text-2xl font-bold mb-4">Starter Projects</h2>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-100">
-                    <h3 class="text-lg font-semibold mb-2">Full-Featured Starter</h3>
-                    <p class="text-gray-600 mb-4">A comprehensive implementation demonstrating all framework features.</p>
-                    <a href="../starter-project/README.md" class="text-primary hover:underline">View Project →</a>
-                </div>
-                <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-100">
-                    <h3 class="text-lg font-semibold mb-2">Minimal Starter</h3>
-                    <p class="text-gray-600 mb-4">A lightweight implementation focusing on core concepts.</p>
-                    <a href="../starter-project-minimal/README.md" class="text-primary hover:underline">View Project →</a>
-                </div>
-                <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-100">
-                    <h3 class="text-lg font-semibold mb-2">Website Example</h3>
-                    <p class="text-gray-600 mb-4">A complete website built with FlexNet JSX.</p>
-                    <a href="../starter-project-website/README.md" class="text-primary hover:underline">View Project →</a>
-                </div>
-            </div>
-        </div>
     </div>
 </body>
 </html>

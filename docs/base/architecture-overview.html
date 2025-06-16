@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Architecture Overview - FlexNet JSX Framework</title>
+    <title>Architecture Overview - FlexNet Framework</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/atom-one-dark.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
@@ -26,7 +26,7 @@
 <body class="bg-gray-50 text-gray-900 min-h-screen">
     <div id="page-content">
 <main class="container mx-auto px-4 py-8">
-    <h1 class="text-4xl font-bold text-primary mb-4">FlexNet JSX Architecture Overview</h1>
+    <h1 class="text-4xl font-bold text-primary mb-4">FlexNet Architecture Overview</h1>
     <p class="text-gray-600 mb-8">Version: 1.0.0 (Released 2025-01-31)</p>
 
     <!-- Project Structure -->
@@ -34,9 +34,9 @@
         <h2 class="text-3xl font-semibold text-secondary border-b-2 border-secondary pb-2 mb-6">Project Structure</h2>
         <div class="p-6 bg-white rounded-lg shadow-md">
             <h3 class="text-2xl font-semibold text-dark mb-4">Directory Organization</h3>
-            <pre><code class="language-bash">JSX/
+            <pre><code class="language-bash">FlexNet/
 ├── src/
-│   ├── core/                  # Core JSX engine
+│   ├── core/                  # Core FlexNet engine
 │   │   ├── build/           # Build system
 │   │   ├── runtime/         # Runtime implementation
 │   │   ├── types/          # Type system
@@ -71,7 +71,7 @@
         <h2 class="text-3xl font-semibold text-secondary border-b-2 border-secondary pb-2 mb-6">Core Operating Schema</h2>
         
         <div class="mb-8 p-6 bg-white rounded-lg shadow-md">
-            <h3 class="text-2xl font-semibold text-dark mb-4">Functional Architecture Principles</h3>
+            <h3 id="functional-architecture-principles" class="text-2xl font-semibold text-dark mb-4">Functional Architecture Principles</h3>
             <div class="grid md:grid-cols-2 gap-8">
                 <div>
                     <h4 class="text-xl font-semibold text-dark mb-2">1. Pure Function First</h4>
@@ -118,7 +118,7 @@
         <div class="mb-8 p-6 bg-white rounded-lg shadow-md">
             <h3 class="text-2xl font-semibold text-dark mb-4">System Components</h3>
             <ul class="list-disc list-inside space-y-4 text-gray-700">
-                <li><strong>Core Runtime (<code>/src/core/runtime/</code>)</strong>: JSX transformation, Virtual DOM implementation, Reconciliation engine, Event delegation.</li>
+                <li><strong>Core Runtime (<code>/src/core/runtime/</code>)</strong>: </li>
                 <li><strong>Type System (<code>/src/core/types/</code>)</strong>: Functional type implementations, Type composition utilities, Type validation functions, Type conversion helpers.</li>
                 <li><strong>Core Functions (<code>/src/core/functions/</code>)</strong>: Function composition utilities, Data transformation helpers, Pure utility functions, Functional combinators.</li>
                 <li><strong>Rendering System (<code>/src/systems/render/</code>)</strong>: Pure render functions, DOM diffing algorithm, Batch updates, Layout calculation.</li>

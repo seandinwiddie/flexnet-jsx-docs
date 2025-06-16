@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FlexNet Framework Documentation</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/atom-one-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#3b82f6',
+                        secondary: '#6366f1',
+                        dark: '#1e293b',
+                        light: '#f8fafc'
+                    }
+                }
+            }
+        }
+        hljs.highlightAll();
+    </script>
+    <script src="/assets/main.js" defer></script>
+</head>
+<body class="bg-gray-50 text-gray-900 min-h-screen">
+    <div id="page-content">
+        <main class="container mx-auto px-4 py-8">
+            <h1 class="text-4xl font-bold text-primary mb-4">Core Concepts</h1>
+            <section class="mb-12">
+                <h2 class="text-3xl font-semibold text-secondary border-b-2 border-secondary pb-2 mb-6">Core Concepts</h2>
+                <div class="grid md:grid-cols-2 gap-8">
+                    <div class="p-6 bg-white rounded-lg shadow-md">
+                        <h3 class="text-2xl font-semibold text-dark mb-4">1. Pure Functions</h3>
+                        <ul class="list-disc list-inside space-y-2 text-gray-700">
+                            <li>All operations should be pure functions</li>
+                            <li>Use composition for complex operations</li>
+                            <li>Avoid side effects outside effect system</li>
+                        </ul>
+                    </div>
+                    <div class="p-6 bg-white rounded-lg shadow-md">
+                        <h3 class="text-2xl font-semibold text-dark mb-4">2. Type Safety</h3>
+                        <ul class="list-disc list-inside space-y-2 text-gray-700">
+                            <li>Use <code>Maybe</code> for optional values</li>
+                            <li>Use <code>Either</code> for error handling</li>
+                            <li>Use <code>Result</code> for operation outcomes</li>
+                        </ul>
+                    </div>
+                    <div class="p-6 bg-white rounded-lg shadow-md">
+                        <h3 class="text-2xl font-semibold text-dark mb-4">3. State Management</h3>
+                        <ul class="list-disc list-inside space-y-2 text-gray-700">
+                            <li>Immutable state updates</li>
+                            <li>Pure state transitions</li>
+                            <li>State isolation through closures</li>
+                        </ul>
+                    </div>
+                    <div class="p-6 bg-white rounded-lg shadow-md">
+                        <h3 class="text-2xl font-semibold text-dark mb-4">4. Effect Handling</h3>
+                        <ul class="list-disc list-inside space-y-2 text-gray-700">
+                            <li>Isolate side effects</li>
+                            <li>Use effect system for async operations</li>
+                            <li>Clean up effects properly</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+</body>
+</html>

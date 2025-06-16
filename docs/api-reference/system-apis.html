@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FlexNet Framework Documentation</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/atom-one-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#3b82f6',
+                        secondary: '#6366f1',
+                        dark: '#1e293b',
+                        light: '#f8fafc'
+                    }
+                }
+            }
+        }
+        hljs.highlightAll();
+    </script>
+    <script src="/assets/main.js" defer></script>
+</head>
+<body class="bg-gray-50 text-gray-900 min-h-screen">
+    <div id="page-content">
+        <main class="container mx-auto px-4 py-8">
+            <h1 class="text-4xl font-bold text-primary mb-4">System APIs</h1>
+            <section class="mb-12">
+                <h2 class="text-3xl font-semibold text-secondary border-b-2 border-secondary pb-2 mb-6">System APIs</h2>
+
+                <div class="mb-8 p-6 bg-white rounded-lg shadow-md">
+                    <h3 class="text-2xl font-semibold text-dark mb-4">Render System</h3>
+                    <pre><code class="language-javascript">// src/systems/render/functions.js
+const createElement = (type, props, ...children) => ({
+    type,
+    props: { ...props, children: children.flat() }
+});
+
+const render = (element, container) =>
+    pipe(
+        createVirtualDOM,
+        reconcile(container.firstChild),
+        patch(container)
+    )(element);</code></pre>
+                </div>
+
+                <div class="mb-8 p-6 bg-white rounded-lg shadow-md">
+                    <h3 class="text-2xl font-semibold text-dark mb-4">State System</h3>
+                    <pre><code class="language-javascript">// src/systems/state/functions.js
+const createStore = (reducer, initialState) => {
+    const subscribers = new Set();
+    let state = initialState;
+
+    return {
+        getState: () => state,
+        dispatch: action =>
+            pipe(
+                reducer(state),
+                newState => { state = newState; },
+                () => subscribers.forEach(fn => fn())
+            )(action),
+        subscribe: fn => {
+            subscribers.add(fn);
+            return () => subscribers.delete(fn);
+        }
+    };
+};</code></pre>
+                </div>
+
+                <div class="mb-8 p-6 bg-white rounded-lg shadow-md">
+                    <h3 class="text-2xl font-semibold text-dark mb-4">Effect System</h3>
+                    <pre><code class="language-javascript">// src/systems/effects/functions.js
+const Effect = {
+    of: value => ({ type: 'Effect', run: () => value }),
+    map: fn => effect =>
+        Effect.of(() => fn(effect.run())),
+    chain: fn => effect =>
+        Effect.of(() => fn(effect.run()).run()),
+    run: effect => effect.run()
+};</code></pre>
+                </div>
+
+                <div class="mb-8 p-6 bg-white rounded-lg shadow-md">
+                    <h3 class="text-2xl font-semibold text-dark mb-4">Event System</h3>
+                    <pre><code class="language-javascript">// src/systems/events/functions.js
+const createEventBus = () => {
+    const subscribers = new Map();
+    
+    return {
+        emit: (event, data) =>
+            Maybe.fromNullable(subscribers.get(event))
+                .map(subs => subs.forEach(fn => fn(data))),
+        on: (event, callback) => {
+            const subs = subscribers.get(event) || new Set();
+            subs.add(callback);
+            subscribers.set(event, subs);
+            return () => subs.delete(callback);
+        }
+    };
+};</code></pre>
+                </div>
+            </section>
+        </main>
+    </div>
+</body>
+</html> 

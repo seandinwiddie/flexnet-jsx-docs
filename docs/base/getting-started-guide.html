@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Getting Started Guide - FlexNet JSX Framework</title>
+    <title>Getting Started Guide - FlexNet Framework</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/atom-one-dark.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
@@ -26,7 +26,7 @@
 <body class="bg-gray-50 text-gray-900 min-h-screen">
     <div id="page-content">
 <main class="container mx-auto px-4 py-8">
-    <h1 class="text-4xl font-bold text-primary mb-4">Getting Started with FlexNet JSX</h1>
+    <h1 class="text-4xl font-bold text-primary mb-4">Getting Started with FlexNet</h1>
     <p class="text-gray-600 mb-8">Version: 1.0.0 (Released 2025-01-31)</p>
 
     <section class="mb-12">
@@ -37,9 +37,9 @@
             <p class="text-gray-700 mb-4">Create a new project directory with the following structure:</p>
             <pre><code class="language-bash">my-project/
 ├── src/
-│   ├── core/                  # Core JSX functionality
-│   │   ├── runtime/          # JSX runtime
-│   │   │   ├── jsx.js
+│   ├── core/                  # Core FlexNet functionality
+│   │   ├── runtime/          # FlexNet runtime
+│   │   │   ├── flexnet.js
 │   │   │   └── transform.js
 │   │   ├── types/           # Type system
 │   │   │   ├── maybe.js
@@ -81,11 +81,11 @@
                     <pre><code class="language-html">&lt;!DOCTYPE html&gt;
 &lt;html&gt;
 &lt;head&gt;
-    &lt;title&gt;FlexNet JSX Project&lt;/title&gt;
+    &lt;title&gt;FlexNet Project&lt;/title&gt;
 &lt;/head&gt;
 &lt;body&gt;
     &lt;div id="root"&gt;&lt;/div&gt;
-    &lt;script type="module" src="../src/core/runtime/jsx.js"&gt;&lt;/script&gt;
+    &lt;script type="module" src="../src/core/runtime/flexnet.js"&gt;&lt;/script&gt;
     &lt;script type="module" src="../src/features/counter/index.js"&gt;&lt;/script&gt;
 &lt;/body&gt;
 &lt;/html&gt;</code></pre>
@@ -104,16 +104,16 @@ export const updateCount = (count, operation) =&gt;
     .getOrElse(0);
 
 // src/features/counter/index.js
-import { jsx } from '../../core/runtime/jsx.js';
+import { flexnet } from '../../core/runtime/flexnet.js';
 import { increment, decrement, updateCount } from './functions.js';
 
 const Counter = () =&gt; {
   let count = 0;
   
-  return jsx('div', null, [
-    jsx('button', { onClick: () =&gt; count = updateCount(count, decrement) }, '-'),
-    jsx('span', null, count),
-    jsx('button', { onClick: () =&gt; count = updateCount(count, increment) }, '+')
+  return flexnet('div', null, [
+    flexnet('button', { onClick: () =&gt; count = updateCount(count, decrement) }, '-'),
+    flexnet('span', null, count),
+    flexnet('button', { onClick: () =&gt; count = updateCount(count, increment) }, '+')
   ]);
 };
 
@@ -239,10 +239,8 @@ export default Counter;</code></pre>
     <section class="mb-12">
         <h2 class="text-3xl font-semibold text-secondary border-b-2 border-secondary pb-2 mb-6">Next Steps</h2>
         <ol class="list-decimal list-inside space-y-2 text-gray-700 text-lg">
-            <li>Explore the examples in <code>/examples</code></li>
             <li>Read the API documentation</li>
             <li>Study the architecture overview</li>
-            <li>Join the community</li>
         </ol>
     </section>
 
