@@ -85,6 +85,26 @@ document.addEventListener('DOMContentLoaded', () => {
                     sidebarOverlay.classList.add('hidden');
                 });
             }
+
+            // Breadcrumbs generation
+            const breadcrumbsContainer = document.getElementById('breadcrumbs');
+            if (breadcrumbsContainer) {
+                const pathSegments = window.location.pathname.split('/').filter(Boolean);
+                let html = '<a href="/" class="text-gray-600 hover:underline">Home</a>';
+                let cumulativePath = '';
+                pathSegments.forEach((seg, idx) => {
+                    cumulativePath += '/' + seg;
+                    const name = seg.replace('.html', '').replace(/-/g, ' ');
+                    const displayName = name.charAt(0).toUpperCase() + name.slice(1);
+                    html += ' <span class="mx-2">/</span> ';
+                    if (idx === pathSegments.length - 1) {
+                        html += `<span>${displayName}</span>`;
+                    } else {
+                        html += `<a href="${cumulativePath}" class="text-gray-600 hover:underline">${displayName}</a>`;
+                    }
+                });
+                breadcrumbsContainer.innerHTML = html;
+            }
         });
     });
 

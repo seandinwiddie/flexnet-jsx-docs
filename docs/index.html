@@ -83,6 +83,66 @@
             <a href="base/getting-started-guide.html" class="text-primary hover:underline">Learn More →</a>
         </div>
 
+        <!-- FlexNet Framework overview section -->
+        <div class="mb-12">
+            <h2 class="text-2xl font-bold mb-4">FlexNet Framework Overview</h2>
+            
+            <div class="p-6 bg-white rounded-lg shadow-sm border border-gray-100 mb-6">
+                <h3 class="text-xl font-semibold text-dark mb-4">Core Philosophy</h3>
+                <p class="text-gray-700 mb-4">FlexNet is a JavaScript framework built entirely on <strong>functional programming principles</strong>. Its primary goal is to create predictable, secure, and maintainable web applications by enforcing a strict set of architectural patterns.</p>
+                <p class="text-gray-700 font-semibold mb-2">The key tenets are:</p>
+                <ul class="list-disc list-inside space-y-2 text-gray-700">
+                    <li><strong>Purity and Immutability</strong>: The framework is centered around <strong>pure functions</strong>. All application logic and state transitions are handled by functions that do not have side effects. State is immutable, meaning it cannot be changed in place; instead, new state is created through pure functions.</li>
+                    <li><strong>Explicit Side Effects</strong>: All interactions with the outside world (like HTTP requests, DOM manipulation, or local storage) are considered side effects. These are strictly isolated and managed by a dedicated <strong>Effect System</strong>, ensuring the core application logic remains pure and predictable.</li>
+                    <li><strong>Type Safety</strong>: FlexNet provides a robust, built-in type system to handle common programming scenarios gracefully without throwing exceptions. The primary types are:
+                        <ul class="list-disc list-inside ml-6 space-y-1 text-gray-700">
+                            <li><code>Maybe</code>: For handling optional values that might be missing.</li>
+                            <li><code>Either</code>: For functions that can result in one of two outcomes, typically for error handling (e.g., <code>Left(error)</code> or <code>Right(success)</code>).</li>
+                            <li><code>Result</code>: For representing the outcome of an operation that could fail.</li>
+                        </ul>
+                    </li>
+                    <li><strong>Zero External Dependencies</strong>: The framework is designed to be self-contained, with no reliance on third-party libraries.</li>
+                </ul>
+            </div>
+
+            <div class="p-6 bg-white rounded-lg shadow-sm border border-gray-100 mb-6">
+                <h3 class="text-xl font-semibold text-dark mb-4">Architecture</h3>
+                <p class="text-gray-700 mb-4">The framework's architecture is clearly defined to separate concerns and enforce its core principles.</p>
+                <ul class="list-disc list-inside space-y-2 text-gray-700">
+                    <li><strong>Core Operating Schema</strong>: This is the blueprint for the framework, defining its functional architecture. It mandates a "Pure Function First" approach and lays out the structure for the type system, state management, and effect handling.</li>
+                    <li><strong>Project Structure</strong>: A standardized directory layout separates the:
+                        <ul class="list-disc list-inside ml-6 space-y-1 text-gray-700">
+                            <li><code>core</code>: Contains the runtime, type system, and fundamental utility functions (like composition and transforms).</li>
+                            <li><code>systems</code>: Manages core functionalities like rendering, state, events, and effects.</li>
+                            <li><code>features</code>: Reusable, application-level components such as routing, forms, and validation.</li>
+                            <li><code>security</code>: Provides functions for sanitization, validation, and XSS prevention.</li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+            
+            <div class="p-6 bg-white rounded-lg shadow-sm border border-gray-100 mb-6">
+                <h3 class="text-xl font-semibold text-dark mb-4">Key Systems and Features</h3>
+                <ul class="list-disc list-inside space-y-2 text-gray-700">
+                    <li><strong>State Management</strong>: State is managed through pure functions and isolated within closures, avoiding global state entirely.</li>
+                    <li><strong>Rendering System</strong>: The rendering engine uses pure functions to calculate DOM changes, perform batch updates, and manage layout.</li>
+                    <li><strong>HTTP System</strong>: A prime example of FlexNet's principles in action, the HTTP client is a self-contained, functional API for making requests. It uses the <code>Either</code> type for error handling and isolates all network activity within the Effect System.</li>
+                    <li><strong>Security</strong>: Security is a first-class concern. The framework includes built-in practices for XSS prevention, secure state management through immutability, safe error handling, and memory-state security.</li>
+                </ul>
+            </div>
+
+            <div class="p-6 bg-white rounded-lg shadow-sm border border-gray-100 mb-6">
+                <h3 class="text-xl font-semibold text-dark mb-4">Development and Consistency</h3>
+                <p class="text-gray-700 mb-4">FlexNet places a strong emphasis on maintaining high standards and consistency throughout the codebase.</p>
+                <ul class="list-disc list-inside space-y-2 text-gray-700">
+                    <li><strong>Development Standards</strong>: There are strict guidelines for file organization, code structure, testing methodologies, and documentation.</li>
+                    <li><strong>Consistency Analysis</strong>: The project includes tooling and processes to continuously analyze the codebase for adherence to its architectural and technical standards, ensuring that principles like immutability and purity are enforced.</li>
+                </ul>
+            </div>
+            <p class="text-gray-600">In summary, the FlexNet Framework is a highly-principled environment for building web applications with a strong focus on functional purity, security, and long-term maintainability. It achieves this through a carefully designed architecture that isolates side effects and manages state in a predictable, immutable way.</p>
+        </div>
+
+
     </div>
 </body>
 </html>
