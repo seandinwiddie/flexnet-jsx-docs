@@ -8,7 +8,15 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/atom-one-dark.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
     <script>
+        // Set theme on page load to avoid FOUC
+        if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+        }
+
         tailwind.config = {
+            darkMode: 'class', // Enable class-based dark mode
             theme: {
                 extend: {
                     colors: {
@@ -24,15 +32,15 @@
     </script>
     <script src="/assets/main.js" defer></script>
 </head>
-<body class="bg-gray-50 text-gray-900 min-h-screen">
+<body class="bg-gray-50 text-gray-900 min-h-screen dark:bg-slate-900 dark:text-gray-100">
     <div id="page-content">
         <main class="container mx-auto px-4 py-8">
             <h1 class="text-4xl font-bold text-primary mb-4">Core Functions</h1>
             <section class="mb-12">
                 <h2 class="text-3xl font-semibold text-secondary border-b-2 border-secondary pb-2 mb-6">Core Functions</h2>
 
-                <div class="mb-8 p-6 bg-white rounded-lg shadow-md">
-                    <h3 class="text-2xl font-semibold text-dark mb-4">Composition</h3>
+                <div class="mb-8 p-6 bg-white rounded-lg shadow-md dark:bg-slate-800 dark:border dark:border-slate-700">
+                    <h3 class="text-2xl font-semibold text-dark dark:text-white mb-4">Composition</h3>
                     <pre><code class="language-javascript">// src/core/functions/composition.js
 const compose = (...fns) => x => fns.reduceRight((y, f) => f(y), x);
 const pipe = (...fns) => x => fns.reduce((y, f) => f(y), x);
@@ -40,8 +48,8 @@ const curry = fn => (...args) =>
     args.length >= fn.length ? fn(...args) : curry(fn.bind(null, ...args));</code></pre>
                 </div>
 
-                <div class="mb-8 p-6 bg-white rounded-lg shadow-md">
-                    <h3 class="text-2xl font-semibold text-dark mb-4">Transforms</h3>
+                <div class="mb-8 p-6 bg-white rounded-lg shadow-md dark:bg-slate-800 dark:border dark:border-slate-700">
+                    <h3 class="text-2xl font-semibold text-dark dark:text-white mb-4">Transforms</h3>
                     <pre><code class="language-javascript">// src/core/functions/transforms.js
 const map = fn => array => array.map(fn);
 const filter = predicate => array => array.filter(predicate);

@@ -8,7 +8,15 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/atom-one-dark.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
     <script>
+        // Set theme on page load to avoid FOUC
+        if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+        }
+
         tailwind.config = {
+            darkMode: 'class', // Enable class-based dark mode
             theme: {
                 extend: {
                     colors: {
@@ -24,20 +32,20 @@
     </script>
     <script src="/assets/main.js" defer></script>
 </head>
-<body class="bg-gray-50 text-gray-900 min-h-screen">
+<body class="bg-gray-50 text-gray-900 min-h-screen dark:bg-slate-900 dark:text-gray-100">
     <div id="page-content">
         <main class="container mx-auto px-4 py-8">
             <h1 class="text-4xl font-bold text-primary mb-4">API Reference</h1>
-            <p class="text-gray-600 mb-8">This section provides a comprehensive overview of the FlexNet framework's public API, organized into the following categories:</p>
-            <ul class="list-disc list-inside space-y-2">
-                <li><strong><a href="core-types.html">Core Types</a></strong>: Maybe, Either, Result</li>
-                <li><strong><a href="core-functions.html">Core Functions</a></strong>: Composition, Transforms</li>
-                <li><strong><a href="system-apis.html">System APIs</a></strong>: Render, State, Effects, Event System</li>
-                <li><strong><a href="feature-apis.html">Feature APIs</a></strong>: Router, Form Validation</li>
-                <li><strong><a href="security-functions.html">Security Functions</a></strong>: XSS Prevention, Input Validation</li>
-                <li><strong><a href="utility-functions.html">Utility Functions</a></strong>: Array Operations, Function Operations</li>
+            <p class="text-gray-600 dark:text-gray-300 mb-8">This section provides a comprehensive overview of the FlexNet framework's public API, organized into the following categories:</p>
+            <ul class="list-disc list-inside space-y-2 dark:text-gray-300">
+                <li><strong><a href="core-types.html" class="dark:text-white">Core Types</a></strong>: Maybe, Either, Result</li>
+                <li><strong><a href="core-functions.html" class="dark:text-white">Core Functions</a></strong>: Composition, Transforms</li>
+                <li><strong><a href="system-apis.html" class="dark:text-white">System APIs</a></strong>: Render, State, Effects, Event System</li>
+                <li><strong><a href="feature-apis.html" class="dark:text-white">Feature APIs</a></strong>: Router, Form Validation</li>
+                <li><strong><a href="security-functions.html" class="dark:text-white">Security Functions</a></strong>: XSS Prevention, Input Validation</li>
+                <li><strong><a href="utility-functions.html" class="dark:text-white">Utility Functions</a></strong>: Array Operations, Function Operations</li>
             </ul>
-            <p class="text-gray-600">For detailed documentation and code examples, explore the sections listed above.</p>
+            <p class="text-gray-600 dark:text-gray-300">For detailed documentation and code examples, explore the sections listed above.</p>
         </main>
     </div>
 </body>

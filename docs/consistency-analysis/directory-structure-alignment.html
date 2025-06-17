@@ -8,7 +8,15 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/atom-one-dark.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
     <script>
+        // Set theme on page load to avoid FOUC
+        if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+        }
+
         tailwind.config = {
+            darkMode: 'class', // Enable class-based dark mode
             theme: {
                 extend: {
                     colors: {
@@ -24,14 +32,14 @@
     </script>
     <script src="/assets/main.js" defer></script>
 </head>
-<body class="bg-gray-50 text-gray-900 min-h-screen">
+<body class="bg-gray-50 text-gray-900 min-h-screen dark:bg-slate-900 dark:text-gray-100">
     <div id="page-content">
         <main class="container mx-auto px-4 py-8">
             <h1 class="text-4xl font-bold text-primary mb-4">Directory Structure Alignment</h1>
             <section class="mb-12">
                 <h2 class="text-3xl font-semibold text-secondary border-b-2 border-secondary pb-2 mb-6">Directory Structure Alignment</h2>
-                <div class="p-6 bg-white rounded-lg shadow-md mb-8">
-                    <h3 class="text-2xl font-semibold text-dark mb-4">New Standard Structure</h3>
+                <div class="p-6 bg-white rounded-lg shadow-md mb-8 dark:bg-slate-800 dark:border dark:border-slate-700">
+                    <h3 class="text-2xl font-semibold text-dark dark:text-white mb-4">New Standard Structure</h3>
                     <pre><code class="language-bash">FlexNet/
 ├── src/
 │   ├── core/                  # Core FlexNet engine
@@ -91,9 +99,9 @@
     └── guides/</code></pre>
                 </div>
                 <div class="grid md:grid-cols-2 lg:grid-cols-2 gap-8 mb-8">
-                    <div class="p-6 bg-white rounded-lg shadow-md">
-                        <h3 class="text-xl font-semibold text-dark mb-2">1. Key Organizational Principles</h3>
-                        <ul class="list-disc list-inside space-y-2 text-gray-700">
+                    <div class="p-6 bg-white rounded-lg shadow-md dark:bg-slate-800 dark:border dark:border-slate-700">
+                        <h3 class="text-xl font-semibold text-dark dark:text-white mb-2">1. Key Organizational Principles</h3>
+                        <ul class="list-disc list-inside space-y-2 text-gray-700 dark:text-gray-300">
                             <li>Core Engine Isolation</li>
                             <li>System Organization</li>
                             <li>Feature Management</li>
@@ -104,9 +112,9 @@
                             <li>Documentation</li>
                         </ul>
                     </div>
-                    <div class="p-6 bg-white rounded-lg shadow-md">
-                        <h3 class="text-xl font-semibold text-dark mb-2">2. Implementation Guidelines</h3>
-                        <ul class="list-disc list-inside space-y-2 text-gray-700">
+                    <div class="p-6 bg-white rounded-lg shadow-md dark:bg-slate-800 dark:border dark:border-slate-700">
+                        <h3 class="text-xl font-semibold text-dark dark:text-white mb-2">2. Implementation Guidelines</h3>
+                        <ul class="list-disc list-inside space-y-2 text-gray-700 dark:text-gray-300">
                             <li>Use kebab-case for files</li>
                             <li><code>functions.js</code> for functions</li>
                             <li>Clear, descriptive names</li>
@@ -117,18 +125,18 @@
                             <li>Test files mirror source</li>
                         </ul>
                     </div>
-                    <div class="p-6 bg-white rounded-lg shadow-md">
-                        <h3 class="text-xl font-semibold text-dark mb-2">3. Migration Strategy</h3>
-                        <ul class="list-disc list-inside space-y-2 text-gray-700">
+                    <div class="p-6 bg-white rounded-lg shadow-md dark:bg-slate-800 dark:border dark:border-slate-700">
+                        <h3 class="text-xl font-semibold text-dark dark:text-white mb-2">3. Migration Strategy</h3>
+                        <ul class="list-disc list-inside space-y-2 text-gray-700 dark:text-gray-300">
                             <li>Move core files first</li>
                             <li>Migrate one system at a time</li>
                             <li>Move features individually</li>
                             <li>Update all docs</li>
                         </ul>
                     </div>
-                    <div class="p-6 bg-white rounded-lg shadow-md">
-                         <h3 class="text-xl font-semibold text-dark mb-2">4. Implementation Standards</h3>
-                        <ul class="list-disc list-inside space-y-2 text-gray-700">
+                    <div class="p-6 bg-white rounded-lg shadow-md dark:bg-slate-800 dark:border dark:border-slate-700">
+                         <h3 class="text-xl font-semibold text-dark dark:text-white mb-2">4. Implementation Standards</h3>
+                        <ul class="list-disc list-inside space-y-2 text-gray-700 dark:text-gray-300">
                             <li>Mandatory use of Maybe, Either, Result</li>
                             <li>Functional type definitions only</li>
                             <li>Functional state transitions only</li>

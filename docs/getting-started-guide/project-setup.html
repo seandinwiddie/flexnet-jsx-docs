@@ -8,7 +8,15 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/atom-one-dark.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
     <script>
+        // Set dark mode preference
+        if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+        }
+
         tailwind.config = {
+            darkMode: 'class',
             theme: {
                 extend: {
                     colors: {
@@ -24,17 +32,17 @@
     </script>
     <script src="/assets/main.js" defer></script>
 </head>
-<body class="bg-gray-50 text-gray-900 min-h-screen">
+<body class="bg-gray-50 text-gray-900 min-h-screen dark:bg-slate-900 dark:text-white">
     <div id="page-content">
         <main class="container mx-auto px-4 py-8">
-            <h1 class="text-4xl font-bold text-primary mb-4">Project Setup</h1>
+            <h1 class="text-4xl font-bold text-primary mb-4 dark:text-blue-400">Project Setup</h1>
             <section class="mb-12">
-                <h2 class="text-3xl font-semibold text-secondary border-b-2 border-secondary pb-2 mb-6">Project Setup</h2>
+                <h2 class="text-3xl font-semibold text-secondary border-b-2 border-secondary pb-2 mb-6 dark:text-indigo-400 dark:border-indigo-400">Project Setup</h2>
                 
-                <div class="mb-8">
-                    <h3 class="text-2xl font-semibold text-dark mb-4">Directory Structure</h3>
-                    <p class="text-gray-700 mb-4">Create a new project directory with the following structure:</p>
-                    <pre><code class="language-bash">my-project/
+                <div class="mb-8 p-6 bg-white rounded-lg shadow-md dark:bg-slate-800">
+                    <h3 class="text-2xl font-semibold text-dark dark:text-light mb-4">Directory Structure</h3>
+                    <p class="text-gray-700 dark:text-gray-300 mb-4">Create a new project directory with the following structure:</p>
+                    <pre class="bg-gray-100 dark:bg-gray-900 rounded-lg"><code class="language-bash">my-project/
 ├── src/
 │   ├── core/                  # Core FlexNet functionality
 │   │   ├── runtime/          # FlexNet runtime
@@ -72,12 +80,12 @@
             └── counter.test.js</code></pre>
                 </div>
 
-                <div class="mb-8">
-                    <h3 class="text-2xl font-semibold text-dark mb-4">Initial Setup</h3>
-                    <ol class="list-decimal list-inside space-y-6 text-gray-700">
+                <div class="mb-8 p-6 bg-white rounded-lg shadow-md dark:bg-slate-800">
+                    <h3 class="text-2xl font-semibold text-dark dark:text-light mb-4">Initial Setup</h3>
+                    <ol class="list-decimal list-inside space-y-6 text-gray-700 dark:text-gray-300">
                         <li>
                             <p class="mb-2">Create your <code>public/index.html</code>:</p>
-                            <pre><code class="language-html">&lt;!DOCTYPE html&gt;
+                            <pre class="bg-gray-100 dark:bg-gray-900 rounded-lg"><code class="language-html">&lt;!DOCTYPE html&gt;
 &lt;html&gt;
 &lt;head&gt;
     &lt;title&gt;FlexNet Project&lt;/title&gt;
@@ -91,7 +99,7 @@
                         </li>
                         <li>
                             <p class="mb-2">Create your first feature (Counter Example):</p>
-                            <pre><code class="language-javascript">// src/features/counter/functions.js
+                            <pre class="bg-gray-100 dark:bg-gray-900 rounded-lg"><code class="language-javascript">// src/features/counter/functions.js
 import { Maybe } from '../../core/types/maybe.js';
 import { compose } from '../../core/functions/composition.js';
 

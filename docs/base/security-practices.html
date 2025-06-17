@@ -8,7 +8,15 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/atom-one-dark.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
     <script>
+        // Set dark mode preference
+        if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+        }
+
         tailwind.config = {
+            darkMode: 'class',
             theme: {
                 extend: {
                     colors: {
@@ -23,18 +31,18 @@
     </script>
     <script src="/assets/main.js" defer></script>
 </head>
-<body class="bg-gray-50 text-gray-900 min-h-screen">
+<body class="bg-gray-50 text-gray-900 min-h-screen dark:bg-slate-900 dark:text-white">
     <div id="page-content">
 <main class="container mx-auto px-4 py-8">
-    <h1 class="text-4xl font-bold text-primary mb-4">FlexNet Security Best Practices</h1>
+    <h1 class="text-4xl font-bold text-primary mb-4 dark:text-blue-400">FlexNet Security Best Practices</h1>
 
     <!-- XSS Prevention -->
     <section class="mb-12">
-        <h2 id="xss-prevention" class="text-3xl font-semibold text-secondary border-b-2 border-secondary pb-2 mb-6">XSS Prevention</h2>
+        <h2 id="xss-prevention" class="text-3xl font-semibold text-secondary border-b-2 border-secondary pb-2 mb-6 dark:text-indigo-400 dark:border-indigo-400">XSS Prevention</h2>
         <div class="space-y-8">
-            <div class="p-6 bg-white rounded-lg shadow-md">
-                <h3 class="text-2xl font-semibold text-dark mb-4">Content Handling</h3>
-                <pre><code class="language-javascript">const escape = str => compose(
+            <div class="p-6 bg-white rounded-lg shadow-md dark:bg-slate-800">
+                <h3 class="text-2xl font-semibold text-dark dark:text-light mb-4">Content Handling</h3>
+                <pre class="bg-gray-100 dark:bg-gray-900 rounded-lg"><code class="language-javascript">const escape = str => compose(
     String,
     s => s.replace(/&/g, '&amp;')
          .replace(/</g, '&lt;')
@@ -52,9 +60,9 @@ const validateInput = compose(
     }
 );</code></pre>
             </div>
-            <div class="p-6 bg-white rounded-lg shadow-md">
-                <h3 class="text-2xl font-semibold text-dark mb-4">DOM Interaction</h3>
-                <pre><code class="language-javascript">// Safe createElement implementation
+            <div class="p-6 bg-white rounded-lg shadow-md dark:bg-slate-800">
+                <h3 class="text-2xl font-semibold text-dark dark:text-light mb-4">DOM Interaction</h3>
+                <pre class="bg-gray-100 dark:bg-gray-900 rounded-lg"><code class="language-javascript">// Safe createElement implementation
 const createElement = (type, props, ...children) => {
     // Validate type
     if (typeof type !== 'string' && typeof type !== 'function') {
@@ -79,9 +87,9 @@ const createElement = (type, props, ...children) => {
     return Either.Right({ type, props: safeProps, children });
 };</code></pre>
             </div>
-            <div class="p-6 bg-white rounded-lg shadow-md">
-                <h3 class="text-2xl font-semibold text-dark mb-4">URL Validation</h3>
-                <pre><code class="language-javascript">const urlValidator = {
+            <div class="p-6 bg-white rounded-lg shadow-md dark:bg-slate-800">
+                <h3 class="text-2xl font-semibold text-dark dark:text-light mb-4">URL Validation</h3>
+                <pre class="bg-gray-100 dark:bg-gray-900 rounded-lg"><code class="language-javascript">const urlValidator = {
     // Whitelist of allowed protocols
     allowedProtocols: ['https:', 'data:image/'],
 
@@ -103,11 +111,11 @@ const createElement = (type, props, ...children) => {
 
     <!-- State Management Security -->
     <section class="mb-12">
-        <h2 class="text-3xl font-semibold text-secondary border-b-2 border-secondary pb-2 mb-6">State Management Security</h2>
+        <h2 class="text-3xl font-semibold text-secondary border-b-2 border-secondary pb-2 mb-6 dark:text-indigo-400 dark:border-indigo-400">State Management Security</h2>
         <div class="grid md:grid-cols-2 gap-8">
-            <div class="p-6 bg-white rounded-lg shadow-md">
-                <h3 class="text-2xl font-semibold text-dark mb-4">Immutable State Updates</h3>
-                <pre><code class="language-javascript">const secureState = {
+            <div class="p-6 bg-white rounded-lg shadow-md dark:bg-slate-800">
+                <h3 class="text-2xl font-semibold text-dark dark:text-light mb-4">Immutable State Updates</h3>
+                <pre class="bg-gray-100 dark:bg-gray-900 rounded-lg"><code class="language-javascript">const secureState = {
     update: (state, updater) => {
         const newState = Object.freeze({
             ...state,
@@ -126,9 +134,9 @@ const createElement = (type, props, ...children) => {
     }
 };</code></pre>
             </div>
-            <div class="p-6 bg-white rounded-lg shadow-md">
-                <h3 class="text-2xl font-semibold text-dark mb-4">Access Control</h3>
-                <pre><code class="language-javascript">const stateAccess = {
+            <div class="p-6 bg-white rounded-lg shadow-md dark:bg-slate-800">
+                <h3 class="text-2xl font-semibold text-dark dark:text-light mb-4">Access Control</h3>
+                <pre class="bg-gray-100 dark:bg-gray-900 rounded-lg"><code class="language-javascript">const stateAccess = {
     permissions: {
         READ: 'read',
         WRITE: 'write',
@@ -148,11 +156,11 @@ const createElement = (type, props, ...children) => {
 
     <!-- Error Handling -->
     <section class="mb-12">
-        <h2 class="text-3xl font-semibold text-secondary border-b-2 border-secondary pb-2 mb-6">Error Handling</h2>
+        <h2 class="text-3xl font-semibold text-secondary border-b-2 border-secondary pb-2 mb-6 dark:text-indigo-400 dark:border-indigo-400">Error Handling</h2>
         <div class="grid md:grid-cols-2 gap-8">
-            <div class="p-6 bg-white rounded-lg shadow-md">
-                <h3 class="text-2xl font-semibold text-dark mb-4">Error Boundaries</h3>
-                <pre><code class="language-javascript">const ErrorBoundary = ({ children, fallback }) => {
+            <div class="p-6 bg-white rounded-lg shadow-md dark:bg-slate-800">
+                <h3 class="text-2xl font-semibold text-dark dark:text-light mb-4">Error Boundaries</h3>
+                <pre class="bg-gray-100 dark:bg-gray-900 rounded-lg"><code class="language-javascript">const ErrorBoundary = ({ children, fallback }) => {
     const [error, setError] = useState(null);
 
     useEffect(() => {
@@ -169,9 +177,9 @@ const createElement = (type, props, ...children) => {
     return error ? fallback(error) : children;
 };</code></pre>
             </div>
-            <div class="p-6 bg-white rounded-lg shadow-md">
-                <h3 class="text-2xl font-semibold text-dark mb-4">Secure Error Logging</h3>
-                <pre><code class="language-javascript">const errorLogger = {
+            <div class="p-6 bg-white rounded-lg shadow-md dark:bg-slate-800">
+                <h3 class="text-2xl font-semibold text-dark dark:text-light mb-4">Secure Error Logging</h3>
+                <pre class="bg-gray-100 dark:bg-gray-900 rounded-lg"><code class="language-javascript">const errorLogger = {
     sensitiveKeys: ['password', 'token', 'secret'],
 
     sanitizeError: (error) => {
@@ -195,11 +203,11 @@ const createElement = (type, props, ...children) => {
 
     <!-- Memory State Security -->
     <section class="mb-12">
-        <h2 class="text-3xl font-semibold text-secondary border-b-2 border-secondary pb-2 mb-6">Memory State Security</h2>
+        <h2 class="text-3xl font-semibold text-secondary border-b-2 border-secondary pb-2 mb-6 dark:text-indigo-400 dark:border-indigo-400">Memory State Security</h2>
         <div class="grid md:grid-cols-2 gap-8">
-            <div class="p-6 bg-white rounded-lg shadow-md">
-                <h3 class="text-2xl font-semibold text-dark mb-4">Context Validation</h3>
-                <pre><code class="language-javascript">const secureContext = {
+            <div class="p-6 bg-white rounded-lg shadow-md dark:bg-slate-800">
+                <h3 class="text-2xl font-semibold text-dark dark:text-light mb-4">Context Validation</h3>
+                <pre class="bg-gray-100 dark:bg-gray-900 rounded-lg"><code class="language-javascript">const secureContext = {
     validate: (context) => {
         if (!context.activeFiles || !context.implementationState) {
             return Either.Left('Invalid context structure');
@@ -211,9 +219,9 @@ const createElement = (type, props, ...children) => {
     }
 };</code></pre>
             </div>
-            <div class="p-6 bg-white rounded-lg shadow-md">
-                <h3 class="text-2xl font-semibold text-dark mb-4">File System Security</h3>
-                <pre><code class="language-javascript">const fileSystem = {
+            <div class="p-6 bg-white rounded-lg shadow-md dark:bg-slate-800">
+                <h3 class="text-2xl font-semibold text-dark dark:text-light mb-4">File System Security</h3>
+                <pre class="bg-gray-100 dark:bg-gray-900 rounded-lg"><code class="language-javascript">const fileSystem = {
     validatePath: (path) => {
         // Prevent directory traversal
         const normalized = path.replace(/\.\./g, '');
@@ -235,10 +243,10 @@ const createElement = (type, props, ...children) => {
 
     <!-- Technical Standards Implementation -->
     <section class="mb-12">
-        <h2 class="text-3xl font-semibold text-secondary border-b-2 border-secondary pb-2 mb-6">Technical Standards Implementation</h2>
-        <div class="p-6 bg-white rounded-lg shadow-md">
-            <h3 class="text-2xl font-semibold text-dark mb-4">Script Safety</h3>
-            <pre><code class="language-javascript">const scriptSafety = {
+        <h2 class="text-3xl font-semibold text-secondary border-b-2 border-secondary pb-2 mb-6 dark:text-indigo-400 dark:border-indigo-400">Technical Standards Implementation</h2>
+        <div class="p-6 bg-white rounded-lg shadow-md dark:bg-slate-800">
+            <h3 class="text-2xl font-semibold text-dark dark:text-light mb-4">Script Safety</h3>
+            <pre class="bg-gray-100 dark:bg-gray-900 rounded-lg"><code class="language-javascript">const scriptSafety = {
     // Error trapping
     trapErrors: (fn) => (...args) => {
         try {
@@ -248,37 +256,19 @@ const createElement = (type, props, ...children) => {
         }
     },
 
-    // Variable quoting
-    quoteVariable: (value) => 
-        typeof value === 'string' ? `'${value}'` : value,
-
-    // Permission handling
-    checkPermissions: (operation) =>
-        validateAccess(operation)
-            .chain(validateFilesystem)
-            .chain(validateState),
-
-    // Cleanup procedures
-    ensureCleanup: (operation) => {
-        const cleanup = [];
-        return {
-            addCleanup: (fn) => cleanup.push(fn),
-            execute: () => {
-                try {
-                    return operation();
-                } finally {
-                    cleanup.forEach(fn => fn());
-                }
-            }
-        };
+    // Global error handling
+    registerGlobalErrorHandler: () => {
+        window.addEventListener('error', (event) => {
+            logError(event.error);
+        });
     }
 };</code></pre>
         </div>
     </section>
     
     <!-- Version Information -->
-    <footer class="text-center text-gray-600 mt-12 p-6 bg-white rounded-lg shadow-md">
-        <h2 class="text-2xl font-semibold text-dark mb-4">Version Information</h2>
+    <footer class="text-center text-gray-600 mt-12 p-6 bg-white rounded-lg shadow-md dark:bg-slate-800 dark:text-gray-300">
+        <h2 class="text-2xl font-semibold text-dark mb-4 dark:text-light">Version Information</h2>
         <ul class="list-none space-y-2">
             <li><strong>Security Version:</strong> 1.0</li>
             <li><strong>Framework Version:</strong> 1.0</li>

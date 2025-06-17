@@ -8,7 +8,15 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/atom-one-dark.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
     <script>
+        // Set dark mode preference
+        if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+        }
+
         tailwind.config = {
+            darkMode: 'class',
             theme: {
                 extend: {
                     colors: {
@@ -24,14 +32,14 @@
     </script>
     <script src="/assets/main.js" defer></script>
 </head>
-<body class="bg-gray-50 text-gray-900 min-h-screen">
+<body class="bg-gray-50 text-gray-900 min-h-screen dark:bg-slate-900 dark:text-white">
     <div id="page-content">
         <main class="container mx-auto px-4 py-8">
             <h1 class="text-4xl font-bold text-primary mb-4">Effect Isolation</h1>
             <section class="mb-12">
                 <h2 class="text-3xl font-semibold text-secondary border-b-2 border-secondary pb-2 mb-6">Effect Isolation</h2>
-                <div class="p-6 bg-white rounded-lg shadow-md">
-                    <p class="text-gray-700">All side effects (network requests, cache operations) are properly isolated in the effect system using functional composition.</p>
+                <div class="p-6 bg-white rounded-lg shadow-md dark:bg-slate-800">
+                    <p class="text-gray-700 dark:text-gray-300">All side effects (network requests, cache operations) are properly isolated in the effect system using functional composition.</p>
                 </div>
             </section>
         </main>

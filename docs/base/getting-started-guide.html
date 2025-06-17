@@ -8,7 +8,15 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/atom-one-dark.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
     <script>
+        // Set dark mode preference
+        if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+        }
+        
         tailwind.config = {
+            darkMode: 'class',
             theme: {
                 extend: {
                     colors: {
@@ -23,19 +31,19 @@
     </script>
     <script src="/assets/main.js" defer></script>
 </head>
-<body class="bg-gray-50 text-gray-900 min-h-screen">
+<body class="bg-gray-50 text-gray-900 min-h-screen dark:bg-slate-900 dark:text-white">
     <div id="page-content">
 <main class="container mx-auto px-4 py-8">
-    <h1 class="text-4xl font-bold text-primary mb-4">Getting Started with FlexNet</h1>
-    <p class="text-gray-600 mb-8">Version: 1.0.0 (Released 2025-01-31)</p>
+    <h1 class="text-4xl font-bold text-primary mb-4 dark:text-blue-400">Getting Started with FlexNet</h1>
+    <p class="text-gray-600 dark:text-gray-400 mb-8">Version: 1.0.0 (Released 2025-01-31)</p>
 
     <section class="mb-12">
-        <h2 class="text-3xl font-semibold text-secondary border-b-2 border-secondary pb-2 mb-6">Project Setup</h2>
+        <h2 class="text-3xl font-semibold text-secondary border-b-2 border-secondary pb-2 mb-6 dark:text-indigo-400 dark:border-indigo-400">Project Setup</h2>
         
         <div class="mb-8">
-            <h3 class="text-2xl font-semibold text-dark mb-4">Directory Structure</h3>
-            <p class="text-gray-700 mb-4">Create a new project directory with the following structure:</p>
-            <pre><code class="language-bash">my-project/
+            <h3 class="text-2xl font-semibold text-dark dark:text-light mb-4">Directory Structure</h3>
+            <p class="text-gray-700 dark:text-gray-300 mb-4">Create a new project directory with the following structure:</p>
+            <pre class="bg-gray-100 dark:bg-gray-900 rounded-lg"><code class="language-bash">my-project/
 ├── src/
 │   ├── core/                  # Core FlexNet functionality
 │   │   ├── runtime/          # FlexNet runtime
@@ -74,11 +82,11 @@
         </div>
 
         <div class="mb-8">
-            <h3 class="text-2xl font-semibold text-dark mb-4">Initial Setup</h3>
-            <ol class="list-decimal list-inside space-y-6 text-gray-700">
+            <h3 class="text-2xl font-semibold text-dark dark:text-light mb-4">Initial Setup</h3>
+            <ol class="list-decimal list-inside space-y-6 text-gray-700 dark:text-gray-300">
                 <li>
                     <p class="mb-2">Create your <code>public/index.html</code>:</p>
-                    <pre><code class="language-html">&lt;!DOCTYPE html&gt;
+                    <pre class="bg-gray-100 dark:bg-gray-900 rounded-lg"><code class="language-html">&lt;!DOCTYPE html&gt;
 &lt;html&gt;
 &lt;head&gt;
     &lt;title&gt;FlexNet Project&lt;/title&gt;
@@ -92,7 +100,7 @@
                 </li>
                 <li>
                     <p class="mb-2">Create your first feature (Counter Example):</p>
-                    <pre><code class="language-javascript">// src/features/counter/functions.js
+                    <pre class="bg-gray-100 dark:bg-gray-900 rounded-lg"><code class="language-javascript">// src/features/counter/functions.js
 import { Maybe } from '../../core/types/maybe.js';
 import { compose } from '../../core/functions/composition.js';
 
@@ -124,35 +132,35 @@ export default Counter;</code></pre>
     </section>
 
     <section class="mb-12">
-        <h2 class="text-3xl font-semibold text-secondary border-b-2 border-secondary pb-2 mb-6">Core Concepts</h2>
+        <h2 class="text-3xl font-semibold text-secondary border-b-2 border-secondary pb-2 mb-6 dark:text-indigo-400 dark:border-indigo-400">Core Concepts</h2>
         <div class="grid md:grid-cols-2 gap-8">
-            <div class="p-6 bg-white rounded-lg shadow-md">
-                <h3 class="text-2xl font-semibold text-dark mb-4">1. Pure Functions</h3>
-                <ul class="list-disc list-inside space-y-2 text-gray-700">
+            <div class="p-6 bg-white rounded-lg shadow-md dark:bg-slate-800">
+                <h3 class="text-2xl font-semibold text-dark dark:text-light mb-4">1. Pure Functions</h3>
+                <ul class="list-disc list-inside space-y-2 text-gray-700 dark:text-gray-300">
                     <li>All operations should be pure functions</li>
                     <li>Use composition for complex operations</li>
                     <li>Avoid side effects outside effect system</li>
                 </ul>
             </div>
-            <div class="p-6 bg-white rounded-lg shadow-md">
-                <h3 class="text-2xl font-semibold text-dark mb-4">2. Type Safety</h3>
-                <ul class="list-disc list-inside space-y-2 text-gray-700">
+            <div class="p-6 bg-white rounded-lg shadow-md dark:bg-slate-800">
+                <h3 class="text-2xl font-semibold text-dark dark:text-light mb-4">2. Type Safety</h3>
+                <ul class="list-disc list-inside space-y-2 text-gray-700 dark:text-gray-300">
                     <li>Use <code>Maybe</code> for optional values</li>
                     <li>Use <code>Either</code> for error handling</li>
                     <li>Use <code>Result</code> for operation outcomes</li>
                 </ul>
             </div>
-            <div class="p-6 bg-white rounded-lg shadow-md">
-                <h3 class="text-2xl font-semibold text-dark mb-4">3. State Management</h3>
-                <ul class="list-disc list-inside space-y-2 text-gray-700">
+            <div class="p-6 bg-white rounded-lg shadow-md dark:bg-slate-800">
+                <h3 class="text-2xl font-semibold text-dark dark:text-light mb-4">3. State Management</h3>
+                <ul class="list-disc list-inside space-y-2 text-gray-700 dark:text-gray-300">
                     <li>Immutable state updates</li>
                     <li>Pure state transitions</li>
                     <li>State isolation through closures</li>
                 </ul>
             </div>
-            <div class="p-6 bg-white rounded-lg shadow-md">
-                <h3 class="text-2xl font-semibold text-dark mb-4">4. Effect Handling</h3>
-                <ul class="list-disc list-inside space-y-2 text-gray-700">
+            <div class="p-6 bg-white rounded-lg shadow-md dark:bg-slate-800">
+                <h3 class="text-2xl font-semibold text-dark dark:text-light mb-4">4. Effect Handling</h3>
+                <ul class="list-disc list-inside space-y-2 text-gray-700 dark:text-gray-300">
                     <li>Isolate side effects</li>
                     <li>Use effect system for async operations</li>
                     <li>Clean up effects properly</li>
@@ -162,29 +170,29 @@ export default Counter;</code></pre>
     </section>
 
     <section class="mb-12">
-        <h2 class="text-3xl font-semibold text-secondary border-b-2 border-secondary pb-2 mb-6">Development Workflow</h2>
+        <h2 class="text-3xl font-semibold text-secondary border-b-2 border-secondary pb-2 mb-6 dark:text-indigo-400 dark:border-indigo-400">Development Workflow</h2>
         <div class="grid md:grid-cols-3 gap-8">
-            <div class="p-6 bg-white rounded-lg shadow-md">
-                <h3 class="text-2xl font-semibold text-dark mb-4">1. Feature Development</h3>
-                <ul class="list-disc list-inside space-y-2 text-gray-700">
+            <div class="p-6 bg-white rounded-lg shadow-md dark:bg-slate-800">
+                <h3 class="text-2xl font-semibold text-dark dark:text-light mb-4">1. Feature Development</h3>
+                <ul class="list-disc list-inside space-y-2 text-gray-700 dark:text-gray-300">
                     <li>Create feature directory in <code>src/features/</code></li>
                     <li>Implement pure functions in <code>functions.js</code></li>
                     <li>Create feature component in <code>index.js</code></li>
                     <li>Add tests in parallel</li>
                 </ul>
             </div>
-            <div class="p-6 bg-white rounded-lg shadow-md">
-                <h3 class="text-2xl font-semibold text-dark mb-4">2. Testing</h3>
-                <ul class="list-disc list-inside space-y-2 text-gray-700">
+            <div class="p-6 bg-white rounded-lg shadow-md dark:bg-slate-800">
+                <h3 class="text-2xl font-semibold text-dark dark:text-light mb-4">2. Testing</h3>
+                <ul class="list-disc list-inside space-y-2 text-gray-700 dark:text-gray-300">
                     <li>Write tests in adjacent test directory</li>
                     <li>Use property-based testing</li>
                     <li>Test pure functions independently</li>
                     <li>Test effects in isolation</li>
                 </ul>
             </div>
-            <div class="p-6 bg-white rounded-lg shadow-md">
-                <h3 class="text-2xl font-semibold text-dark mb-4">3. Documentation</h3>
-                <ul class="list-disc list-inside space-y-2 text-gray-700">
+            <div class="p-6 bg-white rounded-lg shadow-md dark:bg-slate-800">
+                <h3 class="text-2xl font-semibold text-dark dark:text-light mb-4">3. Documentation</h3>
+                <ul class="list-disc list-inside space-y-2 text-gray-700 dark:text-gray-300">
                     <li>Document function signatures</li>
                     <li>Specify type information</li>
                     <li>Include usage examples</li>
@@ -195,38 +203,38 @@ export default Counter;</code></pre>
     </section>
 
     <section class="mb-12">
-        <h2 class="text-3xl font-semibold text-secondary border-b-2 border-secondary pb-2 mb-6">Best Practices</h2>
+        <h2 class="text-3xl font-semibold text-secondary border-b-2 border-secondary pb-2 mb-6 dark:text-indigo-400 dark:border-indigo-400">Best Practices</h2>
         <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-            <div class="p-6 bg-white rounded-lg shadow-md">
-                <h3 class="text-2xl font-semibold text-dark mb-4">1. File Organization</h3>
-                <ul class="list-disc list-inside space-y-2 text-gray-700">
+            <div class="p-6 bg-white rounded-lg shadow-md dark:bg-slate-800">
+                <h3 class="text-2xl font-semibold text-dark dark:text-light mb-4">1. File Organization</h3>
+                <ul class="list-disc list-inside space-y-2 text-gray-700 dark:text-gray-300">
                     <li>Keep related files together</li>
                     <li>Use clear, descriptive names</li>
                     <li>Follow directory structure</li>
                     <li>Maintain separation of concerns</li>
                 </ul>
             </div>
-            <div class="p-6 bg-white rounded-lg shadow-md">
-                <h3 class="text-2xl font-semibold text-dark mb-4">2. Code Style</h3>
-                <ul class="list-disc list-inside space-y-2 text-gray-700">
+            <div class="p-6 bg-white rounded-lg shadow-md dark:bg-slate-800">
+                <h3 class="text-2xl font-semibold text-dark dark:text-light mb-4">2. Code Style</h3>
+                <ul class="list-disc list-inside space-y-2 text-gray-700 dark:text-gray-300">
                     <li>Write pure functions</li>
                     <li>Use functional composition</li>
                     <li>Maintain immutability</li>
                     <li>Document types clearly</li>
                 </ul>
             </div>
-            <div class="p-6 bg-white rounded-lg shadow-md">
-                <h3 class="text-2xl font-semibold text-dark mb-4">3. Testing</h3>
-                <ul class="list-disc list-inside space-y-2 text-gray-700">
+            <div class="p-6 bg-white rounded-lg shadow-md dark:bg-slate-800">
+                <h3 class="text-2xl font-semibold text-dark dark:text-light mb-4">3. Testing</h3>
+                <ul class="list-disc list-inside space-y-2 text-gray-700 dark:text-gray-300">
                     <li>Test pure functions</li>
                     <li>Test effect isolation</li>
                     <li>Use property-based tests</li>
                     <li>Maintain test coverage</li>
                 </ul>
             </div>
-            <div class="p-6 bg-white rounded-lg shadow-md">
-                <h3 class="text-2xl font-semibold text-dark mb-4">4. Performance</h3>
-                <ul class="list-disc list-inside space-y-2 text-gray-700">
+            <div class="p-6 bg-white rounded-lg shadow-md dark:bg-slate-800">
+                <h3 class="text-2xl font-semibold text-dark dark:text-light mb-4">4. Performance</h3>
+                <ul class="list-disc list-inside space-y-2 text-gray-700 dark:text-gray-300">
                     <li>Optimize render functions</li>
                     <li>Minimize state updates</li>
                     <li>Handle effects efficiently</li>
@@ -237,14 +245,14 @@ export default Counter;</code></pre>
     </section>
 
     <section class="mb-12">
-        <h2 class="text-3xl font-semibold text-secondary border-b-2 border-secondary pb-2 mb-6">Next Steps</h2>
-        <ol class="list-decimal list-inside space-y-2 text-gray-700 text-lg">
+        <h2 class="text-3xl font-semibold text-secondary border-b-2 border-secondary pb-2 mb-6 dark:text-indigo-400 dark:border-indigo-400">Next Steps</h2>
+        <ol class="list-decimal list-inside space-y-2 text-gray-700 dark:text-gray-300 text-lg">
             <li>Read the API documentation</li>
             <li>Study the architecture overview</li>
         </ol>
     </section>
 
-    <footer class="text-center text-gray-600 mt-12">
+    <footer class="text-center text-gray-600 dark:text-gray-400 mt-12">
         <p>For more detailed information, refer to:</p>
         <ul class="flex justify-center space-x-4 mt-2">
             <li><a href="#" class="text-primary hover:underline">API Reference</a></li>

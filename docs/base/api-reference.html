@@ -8,7 +8,15 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/atom-one-dark.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
     <script>
+        // Set dark mode preference
+        if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+        }
+
         tailwind.config = {
+            darkMode: 'class',
             theme: {
                 extend: {
                     colors: {
@@ -23,19 +31,19 @@
     </script>
     <script src="/assets/main.js" defer></script>
 </head>
-<body class="bg-gray-50 text-gray-900 min-h-screen">
+<body class="bg-gray-50 text-gray-900 min-h-screen dark:bg-slate-900 dark:text-white">
     <div id="page-content">
 <main class="container mx-auto px-4 py-8">
-    <h1 class="text-4xl font-bold text-primary mb-4">FlexNet API Reference</h1>
-    <p class="text-gray-600 mb-8">Version: 1.0.0 (Released 2025-01-31)</p>
+    <h1 class="text-4xl font-bold text-primary mb-4 dark:text-blue-400">FlexNet API Reference</h1>
+    <p class="text-gray-600 dark:text-gray-400 mb-8">Version: 1.0.0 (Released 2025-01-31)</p>
 
     <!-- Core Types -->
     <section class="mb-12">
-        <h2 id="core-types" class="text-3xl font-semibold text-secondary border-b-2 border-secondary pb-2 mb-6">Core Types</h2>
+        <h2 id="core-types" class="text-3xl font-semibold text-secondary border-b-2 border-secondary pb-2 mb-6 dark:text-indigo-400 dark:border-indigo-400">Core Types</h2>
         
-        <div class="mb-8 p-6 bg-white rounded-lg shadow-md">
-            <h3 class="text-2xl font-semibold text-dark mb-4">Maybe Type</h3>
-            <pre><code class="language-javascript">// src/core/types/maybe.js
+        <div class="mb-8 p-6 bg-white rounded-lg shadow-md dark:bg-slate-800">
+            <h3 class="text-2xl font-semibold text-dark dark:text-light mb-4">Maybe Type</h3>
+            <pre class="bg-gray-100 dark:bg-gray-900 rounded-lg"><code class="language-javascript">// src/core/types/maybe.js
 const Maybe = {
     Just: value => ({ type: 'Just', value }),
     Nothing: () => ({ type: 'Nothing' }),
@@ -49,9 +57,9 @@ const Maybe = {
 };</code></pre>
         </div>
 
-        <div class="mb-8 p-6 bg-white rounded-lg shadow-md">
-            <h3 class="text-2xl font-semibold text-dark mb-4">Either Type</h3>
-            <pre><code class="language-javascript">// src/core/types/either.js
+        <div class="mb-8 p-6 bg-white rounded-lg shadow-md dark:bg-slate-800">
+            <h3 class="text-2xl font-semibold text-dark dark:text-light mb-4">Either Type</h3>
+            <pre class="bg-gray-100 dark:bg-gray-900 rounded-lg"><code class="language-javascript">// src/core/types/either.js
 const Either = {
     Left: value => ({ type: 'Left', value }),
     Right: value => ({ type: 'Right', value }),
@@ -65,9 +73,9 @@ const Either = {
 };</code></pre>
         </div>
 
-        <div class="mb-8 p-6 bg-white rounded-lg shadow-md">
-            <h3 class="text-2xl font-semibold text-dark mb-4">Result Type</h3>
-            <pre><code class="language-javascript">// src/core/types/result.js
+        <div class="mb-8 p-6 bg-white rounded-lg shadow-md dark:bg-slate-800">
+            <h3 class="text-2xl font-semibold text-dark dark:text-light mb-4">Result Type</h3>
+            <pre class="bg-gray-100 dark:bg-gray-900 rounded-lg"><code class="language-javascript">// src/core/types/result.js
 const Result = {
     Ok: value => ({ type: 'Ok', value }),
     Error: error => ({ type: 'Error', error }),
@@ -88,20 +96,20 @@ const Result = {
 
     <!-- Core Functions -->
     <section class="mb-12">
-        <h2 class="text-3xl font-semibold text-secondary border-b-2 border-secondary pb-2 mb-6">Core Functions</h2>
+        <h2 class="text-3xl font-semibold text-secondary border-b-2 border-secondary pb-2 mb-6 dark:text-indigo-400 dark:border-indigo-400">Core Functions</h2>
         
-        <div class="mb-8 p-6 bg-white rounded-lg shadow-md">
-            <h3 class="text-2xl font-semibold text-dark mb-4">Composition</h3>
-            <pre><code class="language-javascript">// src/core/functions/composition.js
+        <div class="mb-8 p-6 bg-white rounded-lg shadow-md dark:bg-slate-800">
+            <h3 class="text-2xl font-semibold text-dark dark:text-light mb-4">Composition</h3>
+            <pre class="bg-gray-100 dark:bg-gray-900 rounded-lg"><code class="language-javascript">// src/core/functions/composition.js
 const compose = (...fns) => x => fns.reduceRight((y, f) => f(y), x);
 const pipe = (...fns) => x => fns.reduce((y, f) => f(y), x);
 const curry = fn => (...args) =>
     args.length >= fn.length ? fn(...args) : curry(fn.bind(null, ...args));</code></pre>
         </div>
 
-        <div class="mb-8 p-6 bg-white rounded-lg shadow-md">
-            <h3 class="text-2xl font-semibold text-dark mb-4">Transforms</h3>
-            <pre><code class="language-javascript">// src/core/functions/transforms.js
+        <div class="mb-8 p-6 bg-white rounded-lg shadow-md dark:bg-slate-800">
+            <h3 class="text-2xl font-semibold text-dark dark:text-light mb-4">Transforms</h3>
+            <pre class="bg-gray-100 dark:bg-gray-900 rounded-lg"><code class="language-javascript">// src/core/functions/transforms.js
 const map = fn => array => array.map(fn);
 const filter = predicate => array => array.filter(predicate);
 const reduce = (fn, initial) => array => array.reduce(fn, initial);</code></pre>
@@ -110,11 +118,11 @@ const reduce = (fn, initial) => array => array.reduce(fn, initial);</code></pre>
 
     <!-- System APIs -->
     <section class="mb-12">
-        <h2 class="text-3xl font-semibold text-secondary border-b-2 border-secondary pb-2 mb-6">System APIs</h2>
+        <h2 class="text-3xl font-semibold text-secondary border-b-2 border-secondary pb-2 mb-6 dark:text-indigo-400 dark:border-indigo-400">System APIs</h2>
         
-        <div class="mb-8 p-6 bg-white rounded-lg shadow-md">
-            <h3 id="render-system" class="text-2xl font-semibold text-dark mb-4">Render System</h3>
-            <pre><code class="language-javascript">// src/systems/render/functions.js
+        <div class="mb-8 p-6 bg-white rounded-lg shadow-md dark:bg-slate-800">
+            <h3 id="render-system" class="text-2xl font-semibold text-dark dark:text-light mb-4">Render System</h3>
+            <pre class="bg-gray-100 dark:bg-gray-900 rounded-lg"><code class="language-javascript">// src/systems/render/functions.js
 const createElement = (type, props, ...children) => ({
     type,
     props: { ...props, children: children.flat() }
@@ -128,9 +136,9 @@ const render = (element, container) =>
     )(element);</code></pre>
         </div>
 
-        <div class="mb-8 p-6 bg-white rounded-lg shadow-md">
-            <h3 id="state-system" class="text-2xl font-semibold text-dark mb-4">State System</h3>
-            <pre><code class="language-javascript">// src/systems/state/functions.js
+        <div class="mb-8 p-6 bg-white rounded-lg shadow-md dark:bg-slate-800">
+            <h3 id="state-system" class="text-2xl font-semibold text-dark dark:text-light mb-4">State System</h3>
+            <pre class="bg-gray-100 dark:bg-gray-900 rounded-lg"><code class="language-javascript">// src/systems/state/functions.js
 const createStore = (reducer, initialState) => {
     const subscribers = new Set();
     let state = initialState;
@@ -151,9 +159,9 @@ const createStore = (reducer, initialState) => {
 };</code></pre>
         </div>
 
-        <div class="mb-8 p-6 bg-white rounded-lg shadow-md">
-            <h3 class="text-2xl font-semibold text-dark mb-4">Effect System</h3>
-            <pre><code class="language-javascript">// src/systems/effects/functions.js
+        <div class="mb-8 p-6 bg-white rounded-lg shadow-md dark:bg-slate-800">
+            <h3 class="text-2xl font-semibold text-dark dark:text-light mb-4">Effect System</h3>
+            <pre class="bg-gray-100 dark:bg-gray-900 rounded-lg"><code class="language-javascript">// src/systems/effects/functions.js
 const Effect = {
     of: value => ({ type: 'Effect', run: () => value }),
     map: fn => effect =>
@@ -164,9 +172,9 @@ const Effect = {
 };</code></pre>
         </div>
 
-        <div class="mb-8 p-6 bg-white rounded-lg shadow-md">
-            <h3 class="text-2xl font-semibold text-dark mb-4">Event System</h3>
-            <pre><code class="language-javascript">// src/systems/events/functions.js
+        <div class="mb-8 p-6 bg-white rounded-lg shadow-md dark:bg-slate-800">
+            <h3 class="text-2xl font-semibold text-dark dark:text-light mb-4">Event System</h3>
+            <pre class="bg-gray-100 dark:bg-gray-900 rounded-lg"><code class="language-javascript">// src/systems/events/functions.js
 const createEventBus = () => {
     const subscribers = new Map();
     
@@ -187,11 +195,11 @@ const createEventBus = () => {
     
     <!-- Feature APIs -->
     <section class="mb-12">
-        <h2 class="text-3xl font-semibold text-secondary border-b-2 border-secondary pb-2 mb-6">Feature APIs</h2>
+        <h2 class="text-3xl font-semibold text-secondary border-b-2 border-secondary pb-2 mb-6 dark:text-indigo-400 dark:border-indigo-400">Feature APIs</h2>
         
-        <div class="mb-8 p-6 bg-white rounded-lg shadow-md">
-            <h3 class="text-2xl font-semibold text-dark mb-4">Router</h3>
-            <pre><code class="language-javascript">// src/features/router/functions.js
+        <div class="mb-8 p-6 bg-white rounded-lg shadow-md dark:bg-slate-800">
+            <h3 class="text-2xl font-semibold text-dark dark:text-light mb-4">Router</h3>
+            <pre class="bg-gray-100 dark:bg-gray-900 rounded-lg"><code class="language-javascript">// src/features/router/functions.js
 const createRouter = (routes) => {
     const matchRoute = path =>
         pipe(
@@ -210,9 +218,9 @@ const createRouter = (routes) => {
 };</code></pre>
         </div>
         
-        <div class="mb-8 p-6 bg-white rounded-lg shadow-md">
-            <h3 class="text-2xl font-semibold text-dark mb-4">Form Validation</h3>
-            <pre><code class="language-javascript">// src/features/validation/functions.js
+        <div class="mb-8 p-6 bg-white rounded-lg shadow-md dark:bg-slate-800">
+            <h3 class="text-2xl font-semibold text-dark dark:text-light mb-4">Form Validation</h3>
+            <pre class="bg-gray-100 dark:bg-gray-900 rounded-lg"><code class="language-javascript">// src/features/validation/functions.js
 const validate = schema => data =>
     pipe(
         Object.entries,
@@ -228,11 +236,11 @@ const validate = schema => data =>
 
     <!-- Security Functions -->
     <section class="mb-12">
-        <h2 class="text-3xl font-semibold text-secondary border-b-2 border-secondary pb-2 mb-6">Security Functions</h2>
+        <h2 class="text-3xl font-semibold text-secondary border-b-2 border-secondary pb-2 mb-6 dark:text-indigo-400 dark:border-indigo-400">Security Functions</h2>
         
-        <div class="mb-8 p-6 bg-white rounded-lg shadow-md">
-            <h3 class="text-2xl font-semibold text-dark mb-4">XSS Prevention</h3>
-            <pre><code class="language-javascript">// src/security/functions.js
+        <div class="mb-8 p-6 bg-white rounded-lg shadow-md dark:bg-slate-800">
+            <h3 class="text-2xl font-semibold text-dark dark:text-light mb-4">XSS Prevention</h3>
+            <pre class="bg-gray-100 dark:bg-gray-900 rounded-lg"><code class="language-javascript">// src/security/functions.js
 const sanitize = input =>
     Either.fromNullable(input)
         .map(str => str.replace(/[<>&]/g, ''))
@@ -250,42 +258,28 @@ const validateInput = predicate => input =>
 
     <!-- Utility Functions -->
     <section class="mb-12">
-        <h2 class="text-3xl font-semibold text-secondary border-b-2 border-secondary pb-2 mb-6">Utility Functions</h2>
+        <h2 class="text-3xl font-semibold text-secondary border-b-2 border-secondary pb-2 mb-6 dark:text-indigo-400 dark:border-indigo-400">Utility Functions</h2>
         
-        <div class="mb-8 p-6 bg-white rounded-lg shadow-md">
-            <h3 class="text-2xl font-semibold text-dark mb-4">Array Operations</h3>
-            <pre><code class="language-javascript">// src/utils/array.js
-const head = array =>
-    Maybe.fromNullable(array[0]);
-
-const tail = array =>
-    array.length > 1 ? Maybe.Just(array.slice(1)) : Maybe.Nothing();
-
-const find = predicate => array =>
-    Maybe.fromNullable(array.find(predicate));</code></pre>
+        <div class="mb-8 p-6 bg-white rounded-lg shadow-md dark:bg-slate-800">
+            <h3 class="text-2xl font-semibold text-dark dark:text-light mb-4">Array Utilities</h3>
+            <pre class="bg-gray-100 dark:bg-gray-900 rounded-lg"><code class="language-javascript">// src/utils/array.js
+const head = arr => arr[0];
+const tail = arr => arr.slice(1);
+const last = arr => arr[arr.length - 1];</code></pre>
         </div>
 
-        <div class="mb-8 p-6 bg-white rounded-lg shadow-md">
-            <h3 class="text-2xl font-semibold text-dark mb-4">Function Operations</h3>
-            <pre><code class="language-javascript">// src/utils/function.js
-const memoize = fn => {
-    const cache = new Map();
-    return (...args) => {
-        const key = JSON.stringify(args);
-        return cache.has(key)
-            ? cache.get(key)
-            : pipe(
-                fn,
-                result => (cache.set(key, result), result)
-              )(...args);
-    };
-};</code></pre>
+        <div class="mb-8 p-6 bg-white rounded-lg shadow-md dark:bg-slate-800">
+            <h3 class="text-2xl font-semibold text-dark dark:text-light mb-4">String Utilities</h3>
+            <pre class="bg-gray-100 dark:bg-gray-900 rounded-lg"><code class="language-javascript">// src/utils/string.js
+const capitalize = str => str.charAt(0).toUpperCase() + str.slice(1);
+const truncate = (length, str) =>
+    str.length > length ? str.slice(0, length) + '...' : str;</code></pre>
         </div>
     </section>
 
     <!-- Version Information -->
-    <footer class="text-center text-gray-600 mt-12 p-6 bg-white rounded-lg shadow-md">
-        <h2 class="text-2xl font-semibold text-dark mb-4">Version Information</h2>
+    <footer class="text-center text-gray-600 mt-12 p-6 bg-white rounded-lg shadow-md dark:bg-slate-800 dark:text-gray-300">
+        <h2 class="text-2xl font-semibold text-dark mb-4 dark:text-light">Version Information</h2>
         <ul class="list-none space-y-2">
             <li><strong>API Version:</strong> 1.0</li>
             <li><strong>Last Updated:</strong> 2025-01-26</li>

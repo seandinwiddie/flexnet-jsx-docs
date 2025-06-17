@@ -8,7 +8,15 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/atom-one-dark.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
     <script>
+        // Set theme on page load to avoid FOUC
+        if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+        }
+
         tailwind.config = {
+            darkMode: 'class', // Enable class-based dark mode
             theme: {
                 extend: {
                     colors: {
@@ -24,17 +32,17 @@
     </script>
     <script src="/assets/main.js" defer></script>
 </head>
-<body class="bg-gray-50 text-gray-900 min-h-screen">
+<body class="bg-gray-50 text-gray-900 min-h-screen dark:bg-slate-900 dark:text-gray-100">
     <div id="page-content">
         <div class="mb-8">
-            <h2 class="text-2xl font-semibold mb-4 flex items-center">
+            <h2 class="text-2xl font-semibold mb-4 flex items-center dark:text-white">
                 <span class="bg-primary text-white rounded-full w-8 h-8 flex items-center justify-center mr-2">3</span>
                 Implementing <a href="../../base/api-reference.html#core-functions" class="text-secondary hover:underline">Core Functions</a>
             </h2>
             <div class="pl-10">
-                <p class="mb-4">Create essential functional programming utilities:</p>
+                <p class="mb-4 dark:text-gray-300">Create essential functional programming utilities:</p>
                 
-                <h3 class="text-lg font-semibold mb-2">Create core/functions/composition.js:</h3>
+                <h3 class="text-lg font-semibold mb-2 dark:text-white">Create core/functions/composition.js:</h3>
                 <pre><code class="language-javascript">// Functional composition utilities
 export const pipe = (...fns) => x => fns.reduce((y, f) => f(y), x);
 
@@ -43,7 +51,7 @@ export const compose = (...fns) => x => fns.reduceRight((y, f) => f(y), x);
 export const curry = fn => (...args) =>
     args.length >= fn.length ? fn(...args) : curry(fn.bind(null, ...args));</code></pre>
                 
-                <h3 class="text-lg font-semibold mb-2 mt-4">Create core/functions/transforms.js:</h3>
+                <h3 class="text-lg font-semibold mb-2 mt-4 dark:text-white">Create core/functions/transforms.js:</h3>
                 <pre><code class="language-javascript">// Data transformation utilities
 export const map = (fn) => (array) => array.map(fn);
 

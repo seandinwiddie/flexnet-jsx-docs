@@ -55,6 +55,21 @@ document.addEventListener('DOMContentLoaded', () => {
                 hljs.highlightAll();
             }
 
+            // Theme Switcher Logic
+            const themeToggleButton = document.getElementById('theme-toggle');
+            if(themeToggleButton) {
+                themeToggleButton.addEventListener('click', function() {
+                  const html = document.documentElement;
+                  html.classList.toggle('dark');
+                  
+                  if (html.classList.contains('dark')) {
+                    localStorage.setItem('theme', 'dark');
+                  } else {
+                    localStorage.setItem('theme', 'light');
+                  }
+                });
+            }
+
             // Initialize any scripts that depend on the loaded content here
             // For example, activating sidebar links
             const currentPath = window.location.pathname;
@@ -63,6 +78,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 // Check if the link's href is a substring of the current path
                 if (currentPath.endsWith(link.getAttribute('href'))) {
                     link.classList.add('bg-blue-500', 'text-white');
+                    link.classList.remove('dark:text-gray-300'); // Ensure active link text is white
                 }
             });
 
@@ -90,17 +106,17 @@ document.addEventListener('DOMContentLoaded', () => {
             const breadcrumbsContainer = document.getElementById('breadcrumbs');
             if (breadcrumbsContainer) {
                 const pathSegments = window.location.pathname.split('/').filter(Boolean);
-                let html = '<a href="/" class="text-gray-600 hover:underline">Home</a>';
+                let html = '<a href="/" class="text-gray-600 dark:text-gray-400 hover:underline">Home</a>';
                 let cumulativePath = '';
                 pathSegments.forEach((seg, idx) => {
                     cumulativePath += '/' + seg;
                     const name = seg.replace('.html', '').replace(/-/g, ' ');
                     const displayName = name.charAt(0).toUpperCase() + name.slice(1);
-                    html += ' <span class="mx-2">/</span> ';
+                    html += ' <span class="mx-2 text-gray-500 dark:text-gray-400">/</span> ';
                     if (idx === pathSegments.length - 1) {
-                        html += `<span>${displayName}</span>`;
+                         html += `<span class="text-gray-800 dark:text-gray-200">${displayName}</span>`;
                     } else {
-                        html += `<a href="${cumulativePath}" class="text-gray-600 hover:underline">${displayName}</a>`;
+                        html += `<a href="${cumulativePath}" class="text-gray-600 dark:text-gray-400 hover:underline">${displayName}</a>`;
                     }
                 });
                 breadcrumbsContainer.innerHTML = html;

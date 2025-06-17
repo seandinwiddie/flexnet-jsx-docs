@@ -8,7 +8,15 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/atom-one-dark.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
     <script>
+        // Set theme on page load to avoid FOUC
+        if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+        }
+
         tailwind.config = {
+            darkMode: 'class', // Enable class-based dark mode
             theme: {
                 extend: {
                     colors: {
@@ -24,24 +32,24 @@
     </script>
     <script src="/assets/main.js" defer></script>
 </head>
-<body class="bg-gray-50 text-gray-900 min-h-screen">
+<body class="bg-gray-50 text-gray-900 min-h-screen dark:bg-slate-900 dark:text-gray-100">
     <div id="page-content">
         <div class="mb-8">
-            <h2 class="text-2xl font-semibold mb-4 flex items-center">
+            <h2 class="text-2xl font-semibold mb-4 flex items-center dark:text-white">
                 <span class="bg-primary text-white rounded-full w-8 h-8 flex items-center justify-center mr-2">4</span>
                 Setting Up the Runtime
             </h2>
             <div class="pl-10">
-                <p class="mb-4">Implement the core FlexNet runtime. This includes a factory function and a transform to bootstrap the application.</p>
+                <p class="mb-4 dark:text-gray-300">Implement the core FlexNet runtime. This includes a factory function and a transform to bootstrap the application.</p>
                 
-                <h3 class="text-lg font-semibold mb-2">Create core/runtime/factory.js:</h3>
+                <h3 class="text-lg font-semibold mb-2 dark:text-white">Create core/runtime/factory.js:</h3>
                 <pre><code class="language-javascript">// FlexNet factory
 export const createElement = (type, props, ...children) => ({
     type,
     props: { ...props, children: children.flat() }
 });</code></pre>
                 
-                <h3 class="text-lg font-semibold mb-2 mt-4">Create core/runtime/transform.js:</h3>
+                <h3 class="text-lg font-semibold mb-2 mt-4 dark:text-white">Create core/runtime/transform.js:</h3>
                 <pre><code class="language-javascript">// FlexNet transform runtime
 import { render } from '../../systems/render/functions.js';
 import { App } from '../../features/counter/index.js';

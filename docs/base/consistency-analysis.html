@@ -8,7 +8,15 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/atom-one-dark.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
     <script>
+        // Set dark mode preference
+        if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+        }
+
         tailwind.config = {
+            darkMode: 'class',
             theme: {
                 extend: {
                     colors: {
@@ -23,26 +31,26 @@
     </script>
     <script src="/assets/main.js" defer></script>
 </head>
-<body class="bg-gray-50 text-gray-900 min-h-screen">
+<body class="bg-gray-50 text-gray-900 min-h-screen dark:bg-slate-900 dark:text-white">
     <div id="page-content">
 <main class="container mx-auto px-4 py-8">
-    <h1 class="text-4xl font-bold text-primary mb-4">FlexNet Framework Consistency Analysis</h1>
+    <h1 class="text-4xl font-bold text-primary mb-4 dark:text-blue-400">FlexNet Framework Consistency Analysis</h1>
 
     <!-- Version Status -->
     <section class="mb-12">
-        <h2 class="text-3xl font-semibold text-secondary border-b-2 border-secondary pb-2 mb-6">Version Status</h2>
-        <div class="p-6 bg-white rounded-lg shadow-md">
-            <p class="text-gray-700 mb-2"><strong>Current Framework Version:</strong> 1.0.0 (Released 2025-01-31)</p>
-            <p class="text-gray-700">This document reflects the current state of framework consistency and compliance with the mandatory FlexNet Framework rules. The framework maintains strict adherence to functional programming principles, with zero external dependencies.</p>
+        <h2 class="text-3xl font-semibold text-secondary border-b-2 border-secondary pb-2 mb-6 dark:text-indigo-400 dark:border-indigo-400">Version Status</h2>
+        <div class="p-6 bg-white rounded-lg shadow-md dark:bg-slate-800">
+            <p class="text-gray-700 dark:text-gray-300 mb-2"><strong>Current Framework Version:</strong> 1.0.0 (Released 2025-01-31)</p>
+            <p class="text-gray-700 dark:text-gray-300">This document reflects the current state of framework consistency and compliance with the mandatory FlexNet Framework rules. The framework maintains strict adherence to functional programming principles, with zero external dependencies.</p>
         </div>
     </section>
 
     <!-- Directory Structure Alignment -->
     <section class="mb-12">
-        <h2 class="text-3xl font-semibold text-secondary border-b-2 border-secondary pb-2 mb-6">Directory Structure Alignment</h2>
-        <div class="p-6 bg-white rounded-lg shadow-md mb-8">
-            <h3 class="text-2xl font-semibold text-dark mb-4">New Standard Structure</h3>
-            <pre><code class="language-bash">FlexNet/
+        <h2 class="text-3xl font-semibold text-secondary border-b-2 border-secondary pb-2 mb-6 dark:text-indigo-400 dark:border-indigo-400">Directory Structure Alignment</h2>
+        <div class="p-6 bg-white rounded-lg shadow-md dark:bg-slate-800 mb-8">
+            <h3 class="text-2xl font-semibold text-dark dark:text-light mb-4">New Standard Structure</h3>
+            <pre class="bg-gray-100 dark:bg-gray-900 rounded-lg"><code class="language-bash">FlexNet/
 ├── src/
 │   ├── core/                  # Core FlexNet engine
 │   │   ├── runtime/          # Core runtime implementation
@@ -102,9 +110,9 @@
         </div>
 
         <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8 mb-8">
-            <div class="p-6 bg-white rounded-lg shadow-md">
-                <h3 class="text-xl font-semibold text-dark mb-2">1. Key Organizational Principles</h3>
-                <ul class="list-disc list-inside space-y-2 text-gray-700">
+            <div class="p-6 bg-white rounded-lg shadow-md dark:bg-slate-800">
+                <h3 class="text-xl font-semibold text-dark dark:text-light mb-2">1. Key Organizational Principles</h3>
+                <ul class="list-disc list-inside space-y-2 text-gray-700 dark:text-gray-300">
                     <li>Core Engine Isolation</li>
                     <li>System Organization</li>
                     <li>Feature Management</li>
@@ -115,9 +123,9 @@
                     <li>Documentation</li>
                 </ul>
             </div>
-            <div class="p-6 bg-white rounded-lg shadow-md">
-                <h3 class="text-xl font-semibold text-dark mb-2">2. Implementation Guidelines</h3>
-                <ul class="list-disc list-inside space-y-2 text-gray-700">
+            <div class="p-6 bg-white rounded-lg shadow-md dark:bg-slate-800">
+                <h3 class="text-xl font-semibold text-dark dark:text-light mb-2">2. Implementation Guidelines</h3>
+                <ul class="list-disc list-inside space-y-2 text-gray-700 dark:text-gray-300">
                     <li>Use kebab-case for files</li>
                     <li>`functions.js` for functions</li>
                     <li>Clear, descriptive names</li>
@@ -128,18 +136,18 @@
                     <li>Test files mirror source</li>
                 </ul>
             </div>
-            <div class="p-6 bg-white rounded-lg shadow-md">
-                <h3 class="text-xl font-semibold text-dark mb-2">3. Migration Strategy</h3>
-                <ul class="list-disc list-inside space-y-2 text-gray-700">
+            <div class="p-6 bg-white rounded-lg shadow-md dark:bg-slate-800">
+                <h3 class="text-xl font-semibold text-dark dark:text-light mb-2">3. Migration Strategy</h3>
+                <ul class="list-disc list-inside space-y-2 text-gray-700 dark:text-gray-300">
                     <li>Move core files first</li>
                     <li>Migrate one system at a time</li>
                     <li>Move features individually</li>
                     <li>Update all docs</li>
                 </ul>
             </div>
-            <div class="p-6 bg-white rounded-lg shadow-md">
-                 <h3 class="text-xl font-semibold text-dark mb-2">4. Implementation Standards</h3>
-                <ul class="list-disc list-inside space-y-2 text-gray-700">
+            <div class="p-6 bg-white rounded-lg shadow-md dark:bg-slate-800">
+                 <h3 class="text-xl font-semibold text-dark dark:text-light mb-2">4. Implementation Standards</h3>
+                <ul class="list-disc list-inside space-y-2 text-gray-700 dark:text-gray-300">
                     <li>Mandatory use of Maybe, Either, Result</li>
                     <li>Functional type definitions only</li>
                     <li>Functional state transitions only</li>
@@ -152,53 +160,53 @@
 
     <!-- Technical Standards -->
     <section class="mb-12">
-        <h2 class="text-3xl font-semibold text-secondary border-b-2 border-secondary pb-2 mb-6">Technical Standards</h2>
-        <div class="p-6 bg-white rounded-lg shadow-md">
-            <h3 class="text-2xl font-semibold text-dark mb-4">Core Implementation Patterns</h3>
+        <h2 class="text-3xl font-semibold text-secondary border-b-2 border-secondary pb-2 mb-6 dark:text-indigo-400 dark:border-indigo-400">Technical Standards</h2>
+        <div class="p-6 bg-white rounded-lg shadow-md dark:bg-slate-800">
+            <h3 class="text-2xl font-semibold text-dark dark:text-light mb-4">Core Implementation Patterns</h3>
             <div class="grid md:grid-cols-2 gap-8">
                 <div>
-                    <h4 class="text-lg font-semibold text-dark mb-2">Functional Composition</h4>
-                    <ul class="list-disc list-inside text-gray-700">
+                    <h4 class="text-lg font-semibold text-dark dark:text-light mb-2">Functional Composition</h4>
+                    <ul class="list-disc list-inside text-gray-700 dark:text-gray-300">
                         <li>All operations use compose/pipe patterns</li>
                         <li>Pure function composition for all features</li>
                         <li>Curry implementation for partial application</li>
                     </ul>
                 </div>
                 <div>
-                    <h4 class="text-lg font-semibold text-dark mb-2">Type System</h4>
-                    <ul class="list-disc list-inside text-gray-700">
+                    <h4 class="text-lg font-semibold text-dark dark:text-light mb-2">Type System</h4>
+                    <ul class="list-disc list-inside text-gray-700 dark:text-gray-300">
                         <li>Maybe for optional values</li>
                         <li>Either for error handling</li>
                         <li>Result for operation outcomes</li>
                     </ul>
                 </div>
                 <div>
-                    <h4 class="text-lg font-semibold text-dark mb-2">State Management</h4>
-                    <ul class="list-disc list-inside text-gray-700">
+                    <h4 class="text-lg font-semibold text-dark dark:text-light mb-2">State Management</h4>
+                    <ul class="list-disc list-inside text-gray-700 dark:text-gray-300">
                         <li>Immutable state transitions only</li>
                         <li>No JavaScript objects for state</li>
                         <li>Pure functional state updates</li>
                     </ul>
                 </div>
                 <div>
-                    <h4 class="text-lg font-semibold text-dark mb-2">Effect System</h4>
-                    <ul class="list-disc list-inside text-gray-700">
+                    <h4 class="text-lg font-semibold text-dark dark:text-light mb-2">Effect System</h4>
+                    <ul class="list-disc list-inside text-gray-700 dark:text-gray-300">
                         <li>Isolated side effects in effect system</li>
                         <li>Pure effect cleanup functions</li>
                         <li>Explicit effect dependencies</li>
                     </ul>
                 </div>
                  <div>
-                    <h4 class="text-lg font-semibold text-dark mb-2">Testing Coverage</h4>
-                    <ul class="list-disc list-inside text-gray-700">
+                    <h4 class="text-lg font-semibold text-dark dark:text-light mb-2">Testing Coverage</h4>
+                    <ul class="list-disc list-inside text-gray-700 dark:text-gray-300">
                         <li>Property-based testing for core functions</li>
                         <li>Pure function verification</li>
                         <li>State transition testing</li>
                     </ul>
                 </div>
                  <div>
-                    <h4 class="text-lg font-semibold text-dark mb-2">Code Safety</h4>
-                    <ul class="list-disc list-inside text-gray-700">
+                    <h4 class="text-lg font-semibold text-dark dark:text-light mb-2">Code Safety</h4>
+                    <ul class="list-disc list-inside text-gray-700 dark:text-gray-300">
                         <li>Functional error handling with Either</li>
                         <li>No try/catch outside effect system</li>
                         <li>Browser-native security patterns only</li>
@@ -210,39 +218,39 @@
 
     <!-- Compliance Status -->
     <section class="mb-12">
-        <h2 class="text-3xl font-semibold text-secondary border-b-2 border-secondary pb-2 mb-6">Compliance Status</h2>
+        <h2 class="text-3xl font-semibold text-secondary border-b-2 border-secondary pb-2 mb-6 dark:text-indigo-400 dark:border-indigo-400">Compliance Status</h2>
         <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            <div class="p-6 bg-white rounded-lg shadow-md">
-                <h3 id="core-architecture-compliance" class="text-xl font-semibold text-dark mb-2">Core Architecture: <span class="text-green-500">✓ Compliant</span></h3>
-                <ul class="list-disc list-inside text-gray-700">
+            <div class="p-6 bg-white rounded-lg shadow-md dark:bg-slate-800">
+                <h3 id="core-architecture-compliance" class="text-xl font-semibold text-dark dark:text-light mb-2">Core Architecture: <span class="text-green-500">✓ Compliant</span></h3>
+                <ul class="list-disc list-inside text-gray-700 dark:text-gray-300">
                     <li>Zero external dependencies</li>
                     <li>Pure functional programming</li>
                 </ul>
             </div>
-            <div class="p-6 bg-white rounded-lg shadow-md">
-                <h3 class="text-xl font-semibold text-dark mb-2">Dev Standards: <span class="text-green-500">✓ Compliant</span></h3>
-                 <ul class="list-disc list-inside text-gray-700">
+            <div class="p-6 bg-white rounded-lg shadow-md dark:bg-slate-800">
+                <h3 class="text-xl font-semibold text-dark dark:text-light mb-2">Dev Standards: <span class="text-green-500">✓ Compliant</span></h3>
+                 <ul class="list-disc list-inside text-gray-700 dark:text-gray-300">
                     <li>Functions-only implementation</li>
                     <li>Immutable state management</li>
                 </ul>
             </div>
-            <div class="p-6 bg-white rounded-lg shadow-md">
-                <h3 class="text-xl font-semibold text-dark mb-2">Type System: <span class="text-green-500">✓ Compliant</span></h3>
-                 <ul class="list-disc list-inside text-gray-700">
+            <div class="p-6 bg-white rounded-lg shadow-md dark:bg-slate-800">
+                <h3 class="text-xl font-semibold text-dark dark:text-light mb-2">Type System: <span class="text-green-500">✓ Compliant</span></h3>
+                 <ul class="list-disc list-inside text-gray-700 dark:text-gray-300">
                     <li>Maybe, Either, Result types used</li>
                     <li>Pure functional type operations</li>
                 </ul>
             </div>
-            <div class="p-6 bg-white rounded-lg shadow-md">
-                <h3 class="text-xl font-semibold text-dark mb-2">Testing: <span class="text-green-500">✓ Compliant</span></h3>
-                 <ul class="list-disc list-inside text-gray-700">
+            <div class="p-6 bg-white rounded-lg shadow-md dark:bg-slate-800">
+                <h3 class="text-xl font-semibold text-dark dark:text-light mb-2">Testing: <span class="text-green-500">✓ Compliant</span></h3>
+                 <ul class="list-disc list-inside text-gray-700 dark:text-gray-300">
                     <li>Property-based testing</li>
                     <li>Effect isolation testing</li>
                 </ul>
             </div>
-            <div class="p-6 bg-white rounded-lg shadow-md">
-                <h3 class="text-xl font-semibold text-dark mb-2">Security: <span class="text-green-500">✓ Compliant</span></h3>
-                 <ul class="list-disc list-inside text-gray-700">
+            <div class="p-6 bg-white rounded-lg shadow-md dark:bg-slate-800">
+                <h3 class="text-xl font-semibold text-dark dark:text-light mb-2">Security: <span class="text-green-500">✓ Compliant</span></h3>
+                 <ul class="list-disc list-inside text-gray-700 dark:text-gray-300">
                     <li>Functional input validation</li>
                     <li>No direct DOM manipulation</li>
                 </ul>
@@ -253,25 +261,25 @@
     <!-- Recommendations and Pre-Release Tasks -->
     <section class="mb-12">
         <div class="grid md:grid-cols-2 gap-8">
-            <div class="p-6 bg-white rounded-lg shadow-md">
-                <h2 class="text-2xl font-semibold text-dark mb-4">Recommendations</h2>
-                <h4 class="font-semibold text-dark">Continue enforcing:</h4>
-                <ul class="list-disc list-inside text-gray-700 mb-4">
+            <div class="p-6 bg-white rounded-lg shadow-md dark:bg-slate-800">
+                <h2 class="text-2xl font-semibold text-dark dark:text-light mb-4">Recommendations</h2>
+                <h4 class="font-semibold text-dark dark:text-light">Continue enforcing:</h4>
+                <ul class="list-disc list-inside text-gray-700 dark:text-gray-300 mb-4">
                     <li>Pure functional patterns</li>
                     <li>Zero external dependencies</li>
                     <li>Immutable state management</li>
                 </ul>
-                <h4 class="font-semibold text-dark">Monitor for:</h4>
-                <ul class="list-disc list-inside text-gray-700">
+                <h4 class="font-semibold text-dark dark:text-light">Monitor for:</h4>
+                <ul class="list-disc list-inside text-gray-700 dark:text-gray-300">
                     <li>Object-oriented patterns</li>
                     <li>Mutable state usage</li>
                     <li>External dependency introduction</li>
                 </ul>
             </div>
 
-            <div class="p-6 bg-white rounded-lg shadow-md">
-                <h2 class="text-2xl font-semibold text-dark mb-4">Pre-Release Tasks</h2>
-                <ul class="space-y-3 text-gray-700">
+            <div class="p-6 bg-white rounded-lg shadow-md dark:bg-slate-800">
+                <h2 class="text-2xl font-semibold text-dark dark:text-light mb-4">Pre-Release Tasks</h2>
+                <ul class="space-y-3 text-gray-700 dark:text-gray-300">
                     <li><strong>1. HTTP System Refactoring: <span class="text-green-500">✓</span></strong>
                         <ul class="list-disc list-inside pl-4">
                             <li>[x] Convert RequestType to functional type</li>
@@ -299,33 +307,33 @@
 
     <!-- Critical Alignment Requirements -->
     <section class="mb-12">
-         <h2 class="text-3xl font-semibold text-secondary border-b-2 border-secondary pb-2 mb-6">Critical Alignment Requirements</h2>
+         <h2 class="text-3xl font-semibold text-secondary border-b-2 border-secondary pb-2 mb-6 dark:text-indigo-400 dark:border-indigo-400">Critical Alignment Requirements</h2>
          <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-            <div class="p-6 bg-white rounded-lg shadow-md">
-                <h3 class="text-xl font-semibold text-dark mb-2">Core Architecture</h3>
-                <ul class="list-disc list-inside text-gray-700">
+            <div class="p-6 bg-white rounded-lg shadow-md dark:bg-slate-800">
+                <h3 class="text-xl font-semibold text-dark dark:text-light mb-2">Core Architecture</h3>
+                <ul class="list-disc list-inside text-gray-700 dark:text-gray-300">
                     <li>Enforce functional programming</li>
                     <li>Standardize type system usage</li>
                     <li>Maintain immutable state patterns</li>
                 </ul>
             </div>
-            <div class="p-6 bg-white rounded-lg shadow-md">
-                <h3 class="text-xl font-semibold text-dark mb-2">Build System</h3>
-                <ul class="list-disc list-inside text-gray-700">
+            <div class="p-6 bg-white rounded-lg shadow-md dark:bg-slate-800">
+                <h3 class="text-xl font-semibold text-dark dark:text-light mb-2">Build System</h3>
+                <ul class="list-disc list-inside text-gray-700 dark:text-gray-300">
                     <li>Browser-native bundling only</li>
                     <li>No external build tools</li>
                 </ul>
             </div>
-             <div class="p-6 bg-white rounded-lg shadow-md">
-                <h3 class="text-xl font-semibold text-dark mb-2">Version Control</h3>
-                <ul class="list-disc list-inside text-gray-700">
+             <div class="p-6 bg-white rounded-lg shadow-md dark:bg-slate-800">
+                <h3 class="text-xl font-semibold text-dark dark:text-light mb-2">Version Control</h3>
+                <ul class="list-disc list-inside text-gray-700 dark:text-gray-300">
                     <li>Atomic commits with functional changes</li>
                     <li>Standardized changelog format</li>
                 </ul>
             </div>
-             <div class="p-6 bg-white rounded-lg shadow-md">
-                <h3 class="text-xl font-semibold text-dark mb-2">Documentation</h3>
-                <ul class="list-disc list-inside text-gray-700">
+             <div class="p-6 bg-white rounded-lg shadow-md dark:bg-slate-800">
+                <h3 class="text-xl font-semibold text-dark dark:text-light mb-2">Documentation</h3>
+                <ul class="list-disc list-inside text-gray-700 dark:text-gray-300">
                     <li>Functional pattern documentation</li>
                     <li>Clear type signatures</li>
                 </ul>
@@ -335,35 +343,35 @@
 
     <!-- Recommendations -->
     <section class="mb-12">
-        <h2 class="text-3xl font-semibold text-secondary border-b-2 border-secondary pb-2 mb-6">Recommendations</h2>
+        <h2 class="text-3xl font-semibold text-secondary border-b-2 border-secondary pb-2 mb-6 dark:text-indigo-400 dark:border-indigo-400">Recommendations</h2>
         <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-            <div class="p-6 bg-white rounded-lg shadow-md">
-                <h3 class="text-xl font-semibold text-dark mb-2">1. Version Control</h3>
-                <ul class="list-disc list-inside space-y-2 text-gray-700">
+            <div class="p-6 bg-white rounded-lg shadow-md dark:bg-slate-800">
+                <h3 class="text-xl font-semibold text-dark dark:text-light mb-2">1. Version Control</h3>
+                <ul class="list-disc list-inside space-y-2 text-gray-700 dark:text-gray-300">
                     <li>Implement semantic versioning</li>
                     <li>Automated version synchronization</li>
                     <li>Standardized date formats</li>
                 </ul>
             </div>
-            <div class="p-6 bg-white rounded-lg shadow-md">
-                <h3 class="text-xl font-semibold text-dark mb-2">2. Architecture</h3>
-                <ul class="list-disc list-inside space-y-2 text-gray-700">
+            <div class="p-6 bg-white rounded-lg shadow-md dark:bg-slate-800">
+                <h3 class="text-xl font-semibold text-dark dark:text-light mb-2">2. Architecture</h3>
+                <ul class="list-disc list-inside space-y-2 text-gray-700 dark:text-gray-300">
                     <li>Enforce functional paradigm</li>
                     <li>Remove all object-oriented patterns</li>
                     <li>Standardize functional type system</li>
                 </ul>
             </div>
-            <div class="p-6 bg-white rounded-lg shadow-md">
-                <h3 class="text-xl font-semibold text-dark mb-2">3. Documentation</h3>
-                <ul class="list-disc list-inside space-y-2 text-gray-700">
+            <div class="p-6 bg-white rounded-lg shadow-md dark:bg-slate-800">
+                <h3 class="text-xl font-semibold text-dark dark:text-light mb-2">3. Documentation</h3>
+                <ul class="list-disc list-inside space-y-2 text-gray-700 dark:text-gray-300">
                     <li>Create centralized functional architecture guide</li>
                     <li>Implement documentation validation</li>
                     <li>Document all functional patterns</li>
                 </ul>
             </div>
-            <div class="p-6 bg-white rounded-lg shadow-md">
-                <h3 class="text-xl font-semibold text-dark mb-2">4. Implementation</h3>
-                <ul class="list-disc list-inside space-y-2 text-gray-700">
+            <div class="p-6 bg-white rounded-lg shadow-md dark:bg-slate-800">
+                <h3 class="text-xl font-semibold text-dark dark:text-light mb-2">4. Implementation</h3>
+                <ul class="list-disc list-inside space-y-2 text-gray-700 dark:text-gray-300">
                     <li>Standardize functional type implementations</li>
                     <li>Unify functional state management</li>
                     <li>Document effect system patterns</li>
@@ -374,27 +382,27 @@
 
     <!-- Compliance Requirements -->
     <section class="mb-12">
-        <h2 class="text-3xl font-semibold text-secondary border-b-2 border-secondary pb-2 mb-6">Compliance Requirements</h2>
+        <h2 class="text-3xl font-semibold text-secondary border-b-2 border-secondary pb-2 mb-6 dark:text-indigo-400 dark:border-indigo-400">Compliance Requirements</h2>
         <div class="grid md:grid-cols-3 gap-8">
-            <div class="p-6 bg-white rounded-lg shadow-md">
-                <h3 class="text-xl font-semibold text-dark mb-2">1. Framework Supremacy</h3>
-                <ul class="list-disc list-inside space-y-2 text-gray-700">
+            <div class="p-6 bg-white rounded-lg shadow-md dark:bg-slate-800">
+                <h3 class="text-xl font-semibold text-dark dark:text-light mb-2">1. Framework Supremacy</h3>
+                <ul class="list-disc list-inside space-y-2 text-gray-700 dark:text-gray-300">
                     <li>Remove all references to other JavaScript frameworks</li>
                     <li>Eliminate any non-functional patterns</li>
                     <li>Maintain functional architecture</li>
                 </ul>
             </div>
-            <div class="p-6 bg-white rounded-lg shadow-md">
-                <h3 class="text-xl font-semibold text-dark mb-2">2. Core Patterns</h3>
-                <ul class="list-disc list-inside space-y-2 text-gray-700">
+            <div class="p-6 bg-white rounded-lg shadow-md dark:bg-slate-800">
+                <h3 class="text-xl font-semibold text-dark dark:text-light mb-2">2. Core Patterns</h3>
+                <ul class="list-disc list-inside space-y-2 text-gray-700 dark:text-gray-300">
                     <li>Enforce Maybe, Either, Result types</li>
                     <li>Maintain functional composition</li>
                     <li>Document state transitions</li>
                 </ul>
             </div>
-            <div class="p-6 bg-white rounded-lg shadow-md">
-                <h3 class="text-xl font-semibold text-dark mb-2">3. Testing Requirements</h3>
-                <ul class="list-disc list-inside space-y-2 text-gray-700">
+            <div class="p-6 bg-white rounded-lg shadow-md dark:bg-slate-800">
+                <h3 class="text-xl font-semibold text-dark dark:text-light mb-2">3. Testing Requirements</h3>
+                <ul class="list-disc list-inside space-y-2 text-gray-700 dark:text-gray-300">
                     <li>Property-based testing for core functions</li>
                     <li>Function verification</li>
                     <li>Effect isolation testing</li>

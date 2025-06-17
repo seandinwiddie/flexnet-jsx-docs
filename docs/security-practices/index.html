@@ -8,7 +8,15 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/atom-one-dark.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
     <script>
+        // Set theme on page load to avoid FOUC
+        if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+        }
+
         tailwind.config = {
+            darkMode: 'class', // Enable class-based dark mode
             theme: {
                 extend: {
                     colors: {
@@ -24,17 +32,17 @@
     </script>
     <script src="/assets/main.js" defer></script>
 </head>
-<body class="bg-gray-50 text-gray-900 min-h-screen">
+<body class="bg-gray-50 text-gray-900 min-h-screen dark:bg-slate-900 dark:text-gray-100">
     <div id="page-content">
         <main class="container mx-auto px-4 py-8">
             <h1 class="text-4xl font-bold text-primary mb-4">Security Best Practices</h1>
-            <p class="text-gray-600 mb-8">This section outlines the FlexNet Framework's security best practices, covering preventive measures, secure state management, error handling, and adherence to technical standards.</p>
-            <ul class="list-disc list-inside space-y-2">
-                <li><strong><a href="xss-prevention.html">XSS Prevention</a></strong>: Content sanitization, safe DOM interactions, and URL validation.</li>
-                <li><strong><a href="state-management-security.html">State Management Security</a></strong>: Immutable state updates and access control validations.</li>
-                <li><strong><a href="error-handling.html">Error Handling</a></strong>: Implementation of error boundaries and secure error logging.</li>
-                <li><strong><a href="memory-state-security.html">Memory State Security</a></strong>: Context validation and file system path and permission checks.</li>
-                <li><strong><a href="technical-standards-implementation.html">Technical Standards Implementation</a></strong>: Script safety measures including error trapping, variable quoting, and cleanup procedures.</li>
+            <p class="text-gray-600 dark:text-gray-300 mb-8">This section outlines the FlexNet Framework's security best practices, covering preventive measures, secure state management, error handling, and adherence to technical standards.</p>
+            <ul class="list-disc list-inside space-y-2 dark:text-gray-300">
+                <li><strong><a href="xss-prevention.html" class="dark:text-white">XSS Prevention</a></strong>: Content sanitization, safe DOM interactions, and URL validation.</li>
+                <li><strong><a href="state-management-security.html" class="dark:text-white">State Management Security</a></strong>: Immutable state updates and access control validations.</li>
+                <li><strong><a href="error-handling.html" class="dark:text-white">Error Handling</a></strong>: Implementation of error boundaries and secure error logging.</li>
+                <li><strong><a href="memory-state-security.html" class="dark:text-white">Memory State Security</a></strong>: Context validation and file system path and permission checks.</li>
+                <li><strong><a href="technical-standards-implementation.html" class="dark:text-white">Technical Standards Implementation</a></strong>: Script safety measures including error trapping, variable quoting, and cleanup procedures.</li>
                 <li><strong>Version Information</strong>: Security version, framework version, and last updated date.</li>
             </ul>
         </main>

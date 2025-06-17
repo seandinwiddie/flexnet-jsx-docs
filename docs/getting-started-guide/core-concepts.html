@@ -8,7 +8,15 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/atom-one-dark.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
     <script>
+        // Set dark mode preference
+        if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+        }
+
         tailwind.config = {
+            darkMode: 'class',
             theme: {
                 extend: {
                     colors: {
@@ -24,40 +32,40 @@
     </script>
     <script src="/assets/main.js" defer></script>
 </head>
-<body class="bg-gray-50 text-gray-900 min-h-screen">
+<body class="bg-gray-50 text-gray-900 min-h-screen dark:bg-slate-900 dark:text-white">
     <div id="page-content">
         <main class="container mx-auto px-4 py-8">
-            <h1 class="text-4xl font-bold text-primary mb-4">Core Concepts</h1>
+            <h1 class="text-4xl font-bold text-primary mb-4 dark:text-blue-400">Core Concepts</h1>
             <section class="mb-12">
-                <h2 class="text-3xl font-semibold text-secondary border-b-2 border-secondary pb-2 mb-6">Core Concepts</h2>
+                <h2 class="text-3xl font-semibold text-secondary border-b-2 border-secondary pb-2 mb-6 dark:text-indigo-400 dark:border-indigo-400">Core Concepts</h2>
                 <div class="grid md:grid-cols-2 gap-8">
-                    <div class="p-6 bg-white rounded-lg shadow-md">
-                        <h3 class="text-2xl font-semibold text-dark mb-4">1. Pure Functions</h3>
-                        <ul class="list-disc list-inside space-y-2 text-gray-700">
+                    <div class="p-6 bg-white rounded-lg shadow-md dark:bg-slate-800">
+                        <h3 class="text-2xl font-semibold text-dark dark:text-light mb-4">1. Pure Functions</h3>
+                        <ul class="list-disc list-inside space-y-2 text-gray-700 dark:text-gray-300">
                             <li>All operations should be pure functions</li>
                             <li>Use composition for complex operations</li>
                             <li>Avoid side effects outside effect system</li>
                         </ul>
                     </div>
-                    <div class="p-6 bg-white rounded-lg shadow-md">
-                        <h3 class="text-2xl font-semibold text-dark mb-4">2. Type Safety</h3>
-                        <ul class="list-disc list-inside space-y-2 text-gray-700">
+                    <div class="p-6 bg-white rounded-lg shadow-md dark:bg-slate-800">
+                        <h3 class="text-2xl font-semibold text-dark dark:text-light mb-4">2. Type Safety</h3>
+                        <ul class="list-disc list-inside space-y-2 text-gray-700 dark:text-gray-300">
                             <li>Use <code>Maybe</code> for optional values</li>
                             <li>Use <code>Either</code> for error handling</li>
                             <li>Use <code>Result</code> for operation outcomes</li>
                         </ul>
                     </div>
-                    <div class="p-6 bg-white rounded-lg shadow-md">
-                        <h3 class="text-2xl font-semibold text-dark mb-4">3. State Management</h3>
-                        <ul class="list-disc list-inside space-y-2 text-gray-700">
+                    <div class="p-6 bg-white rounded-lg shadow-md dark:bg-slate-800">
+                        <h3 class="text-2xl font-semibold text-dark dark:text-light mb-4">3. State Management</h3>
+                        <ul class="list-disc list-inside space-y-2 text-gray-700 dark:text-gray-300">
                             <li>Immutable state updates</li>
                             <li>Pure state transitions</li>
                             <li>State isolation through closures</li>
                         </ul>
                     </div>
-                    <div class="p-6 bg-white rounded-lg shadow-md">
-                        <h3 class="text-2xl font-semibold text-dark mb-4">4. Effect Handling</h3>
-                        <ul class="list-disc list-inside space-y-2 text-gray-700">
+                    <div class="p-6 bg-white rounded-lg shadow-md dark:bg-slate-800">
+                        <h3 class="text-2xl font-semibold text-dark dark:text-light mb-4">4. Effect Handling</h3>
+                        <ul class="list-disc list-inside space-y-2 text-gray-700 dark:text-gray-300">
                             <li>Isolate side effects</li>
                             <li>Use effect system for async operations</li>
                             <li>Clean up effects properly</li>

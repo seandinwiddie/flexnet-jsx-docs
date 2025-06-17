@@ -8,7 +8,15 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/atom-one-dark.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
     <script>
+        // Set theme on page load to avoid FOUC
+        if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+        }
+
         tailwind.config = {
+            darkMode: 'class', // Enable class-based dark mode
             theme: {
                 extend: {
                     colors: {
@@ -24,22 +32,22 @@
     </script>
     <script src="/assets/main.js" defer></script>
 </head>
-<body class="bg-gray-50 text-gray-900 min-h-screen">
+<body class="bg-gray-50 text-gray-900 min-h-screen dark:bg-slate-900 dark:text-gray-100">
     <div id="page-content">
         <main class="container mx-auto px-4 py-8">
             <h1 class="text-4xl font-bold text-primary mb-4">Consistency Analysis</h1>
-            <p class="text-gray-600 mb-8">This section reviews the FlexNet framework's consistency against defined standards and best practices across structure, implementation, and compliance.</p>
-            <ul class="list-disc list-inside space-y-2">
+            <p class="text-gray-600 dark:text-gray-300 mb-8">This section reviews the FlexNet framework's consistency against defined standards and best practices across structure, implementation, and compliance.</p>
+            <ul class="list-disc list-inside space-y-2 dark:text-gray-300">
                 <li><strong>Version Status</strong>: Current framework version and strict adherence to functional programming with no external dependencies.</li>
-                <li><strong><a href="directory-structure-alignment.html">Directory Structure Alignment</a></strong>: Standardized layout and organizational principles for core engine, systems, features, security, and documentation.</li>
+                <li><strong><a href="directory-structure-alignment.html" class="dark:text-white">Directory Structure Alignment</a></strong>: Standardized layout and organizational principles for core engine, systems, features, security, and documentation.</li>
                 <li><strong>Implementation Guidelines</strong>: File naming conventions, module boundaries, descriptive naming, type signatures, side effect rules, and test mirroring.</li>
                 <li><strong>Migration Strategy</strong>: Phased plan for migrating core files, systems, features, and updating documentation.</li>
                 <li><strong>Implementation Standards</strong>: Mandatory use of Maybe, Either, Result types, pure functional definitions, state transitions, and effect composition.</li>
-                <li><strong><a href="technical-standards.html">Technical Standards</a></strong>: Core patterns for functional composition, type system usage, immutable state management, effect system, testing coverage, and code safety.</li>
-                <li><strong><a href="compliance-status.html">Compliance Status</a></strong>: Metrics showing compliance across architecture, development standards, type system, testing, and security.</li>
-                <li><strong><a href="recommendations.html">Recommendations & Pre-Release Tasks</a></strong>: Continued enforcement of functional patterns, monitoring for regressions, and pending refactoring tasks before release.</li>
-                <li><strong><a href="critical-alignment-requirements.html">Critical Alignment Requirements</a></strong>: Essential requirements for architecture enforcement, build system standards, version control, and documentation practices.</li>
-                <li><strong><a href="compliance-requirements.html">Compliance Requirements</a></strong>: Final requirements for framework supremacy, core pattern enforcement, and comprehensive testing protocols.</li>
+                <li><strong><a href="technical-standards.html" class="dark:text-white">Technical Standards</a></strong>: Core patterns for functional composition, type system usage, immutable state management, effect system, testing coverage, and code safety.</li>
+                <li><strong><a href="compliance-status.html" class="dark:text-white">Compliance Status</a></strong>: Metrics showing compliance across architecture, development standards, type system, testing, and security.</li>
+                <li><strong><a href="recommendations.html" class="dark:text-white">Recommendations & Pre-Release Tasks</a></strong>: Continued enforcement of functional patterns, monitoring for regressions, and pending refactoring tasks before release.</li>
+                <li><strong><a href="critical-alignment-requirements.html" class="dark:text-white">Critical Alignment Requirements</a></strong>: Essential requirements for architecture enforcement, build system standards, version control, and documentation practices.</li>
+                <li><strong><a href="compliance-requirements.html" class="dark:text-white">Compliance Requirements</a></strong>: Final requirements for framework supremacy, core pattern enforcement, and comprehensive testing protocols.</li>
             </ul>
         </main>
     </div>

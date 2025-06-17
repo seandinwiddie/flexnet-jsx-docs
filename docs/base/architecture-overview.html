@@ -8,7 +8,15 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/atom-one-dark.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
     <script>
+        // Set dark mode preference
+        if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+        }
+
         tailwind.config = {
+            darkMode: 'class',
             theme: {
                 extend: {
                     colors: {
@@ -23,18 +31,18 @@
     </script>
     <script src="/assets/main.js" defer></script>
 </head>
-<body class="bg-gray-50 text-gray-900 min-h-screen">
+<body class="bg-gray-50 text-gray-900 min-h-screen dark:bg-slate-900 dark:text-white">
     <div id="page-content">
 <main class="container mx-auto px-4 py-8">
-    <h1 class="text-4xl font-bold text-primary mb-4">FlexNet Architecture Overview</h1>
-    <p class="text-gray-600 mb-8">Version: 1.0.0 (Released 2025-01-31)</p>
+    <h1 class="text-4xl font-bold text-primary mb-4 dark:text-blue-400">FlexNet Architecture Overview</h1>
+    <p class="text-gray-600 dark:text-gray-400 mb-8">Version: 1.0.0 (Released 2025-01-31)</p>
 
     <!-- Project Structure -->
     <section class="mb-12">
-        <h2 class="text-3xl font-semibold text-secondary border-b-2 border-secondary pb-2 mb-6">Project Structure</h2>
-        <div class="p-6 bg-white rounded-lg shadow-md">
-            <h3 class="text-2xl font-semibold text-dark mb-4">Directory Organization</h3>
-            <pre><code class="language-bash">FlexNet/
+        <h2 class="text-3xl font-semibold text-secondary border-b-2 border-secondary pb-2 mb-6 dark:text-indigo-400 dark:border-indigo-400">Project Structure</h2>
+        <div class="p-6 bg-white rounded-lg shadow-md dark:bg-slate-800">
+            <h3 class="text-2xl font-semibold text-dark dark:text-light mb-4">Directory Organization</h3>
+            <pre class="bg-gray-100 dark:bg-gray-900 rounded-lg"><code class="language-bash">FlexNet/
 ├── src/
 │   ├── core/                  # Core FlexNet engine
 │   │   ├── build/           # Build system
@@ -68,14 +76,14 @@
 
     <!-- Core Operating Schema -->
     <section class="mb-12">
-        <h2 class="text-3xl font-semibold text-secondary border-b-2 border-secondary pb-2 mb-6">Core Operating Schema</h2>
+        <h2 class="text-3xl font-semibold text-secondary border-b-2 border-secondary pb-2 mb-6 dark:text-indigo-400 dark:border-indigo-400">Core Operating Schema</h2>
         
-        <div class="mb-8 p-6 bg-white rounded-lg shadow-md">
-            <h3 id="functional-architecture-principles" class="text-2xl font-semibold text-dark mb-4">Functional Architecture Principles</h3>
+        <div class="mb-8 p-6 bg-white rounded-lg shadow-md dark:bg-slate-800">
+            <h3 id="functional-architecture-principles" class="text-2xl font-semibold text-dark dark:text-light mb-4">Functional Architecture Principles</h3>
             <div class="grid md:grid-cols-2 gap-8">
                 <div>
-                    <h4 class="text-xl font-semibold text-dark mb-2">1. Pure Function First</h4>
-                    <ul class="list-disc list-inside space-y-2 text-gray-700">
+                    <h4 class="text-xl font-semibold text-dark dark:text-light mb-2">1. Pure Function First</h4>
+                    <ul class="list-disc list-inside space-y-2 text-gray-700 dark:text-gray-300">
                         <li>All operations are pure functions</li>
                         <li>No side effects in core logic</li>
                         <li>Explicit data flow</li>
@@ -83,8 +91,8 @@
                     </ul>
                 </div>
                 <div>
-                    <h4 class="text-xl font-semibold text-dark mb-2">2. Type System</h4>
-                    <ul class="list-disc list-inside space-y-2 text-gray-700">
+                    <h4 class="text-xl font-semibold text-dark dark:text-light mb-2">2. Type System</h4>
+                    <ul class="list-disc list-inside space-y-2 text-gray-700 dark:text-gray-300">
                         <li>Maybe: Optional value handling</li>
                         <li>Either: Error handling</li>
                         <li>Result: Operation outcomes</li>
@@ -94,8 +102,8 @@
                     </ul>
                 </div>
                 <div>
-                    <h4 class="text-xl font-semibold text-dark mb-2">3. Effect System</h4>
-                    <ul class="list-disc list-inside space-y-2 text-gray-700">
+                    <h4 class="text-xl font-semibold text-dark dark:text-light mb-2">3. Effect System</h4>
+                    <ul class="list-disc list-inside space-y-2 text-gray-700 dark:text-gray-300">
                         <li>Isolated side effects</li>
                         <li>Pure effect composition</li>
                         <li>Effect cleanup through functions</li>
@@ -103,8 +111,8 @@
                     </ul>
                 </div>
                 <div>
-                    <h4 class="text-xl font-semibold text-dark mb-2">4. State Management</h4>
-                    <ul class="list-disc list-inside space-y-2 text-gray-700">
+                    <h4 class="text-xl font-semibold text-dark dark:text-light mb-2">4. State Management</h4>
+                    <ul class="list-disc list-inside space-y-2 text-gray-700 dark:text-gray-300">
                         <li>Immutable state transitions</li>
                         <li>Pure state functions</li>
                         <li>Functional state updates</li>
@@ -115,9 +123,9 @@
             </div>
         </div>
 
-        <div class="mb-8 p-6 bg-white rounded-lg shadow-md">
-            <h3 class="text-2xl font-semibold text-dark mb-4">System Components</h3>
-            <ul class="list-disc list-inside space-y-4 text-gray-700">
+        <div class="mb-8 p-6 bg-white rounded-lg shadow-md dark:bg-slate-800">
+            <h3 class="text-2xl font-semibold text-dark dark:text-light mb-4">System Components</h3>
+            <ul class="list-disc list-inside space-y-4 text-gray-700 dark:text-gray-300">
                 <li><strong>Core Runtime (<code>/src/core/runtime/</code>)</strong>: </li>
                 <li><strong>Type System (<code>/src/core/types/</code>)</strong>: Functional type implementations, Type composition utilities, Type validation functions, Type conversion helpers.</li>
                 <li><strong>Core Functions (<code>/src/core/functions/</code>)</strong>: Function composition utilities, Data transformation helpers, Pure utility functions, Functional combinators.</li>
@@ -128,9 +136,9 @@
             </ul>
         </div>
 
-        <div class="mb-8 p-6 bg-white rounded-lg shadow-md">
-            <h3 class="text-2xl font-semibold text-dark mb-4">Feature Components</h3>
-             <ul class="list-disc list-inside space-y-4 text-gray-700">
+        <div class="mb-8 p-6 bg-white rounded-lg shadow-md dark:bg-slate-800">
+            <h3 class="text-2xl font-semibold text-dark dark:text-light mb-4">Feature Components</h3>
+             <ul class="list-disc list-inside space-y-4 text-gray-700 dark:text-gray-300">
                 <li><strong>Router (<code>/src/features/router/</code>)</strong>: Pure routing functions, Route matching, Navigation handling, Guard implementation.</li>
                 <li><strong>Forms (<code>/src/features/forms/</code>)</strong>: Form state management, Validation functions, Field composition, Form submission.</li>
                 <li><strong>Validation (<code>/src/features/validation/</code>)</strong>: Data validation, Schema validation, Type checking, Error reporting.</li>
@@ -138,12 +146,12 @@
             </ul>
         </div>
         
-        <div class="mb-8 p-6 bg-white rounded-lg shadow-md">
-            <h3 class="text-2xl font-semibold text-dark mb-4">Security Implementation</h3>
+        <div class="mb-8 p-6 bg-white rounded-lg shadow-md dark:bg-slate-800">
+            <h3 class="text-2xl font-semibold text-dark dark:text-light mb-4">Security Implementation</h3>
             <div class="grid md:grid-cols-2 gap-8">
                 <div>
-                    <h4 class="text-xl font-semibold text-dark mb-2">1. Core Security (<code>/src/security/</code>)</h4>
-                    <ul class="list-disc list-inside space-y-2 text-gray-700">
+                    <h4 class="text-xl font-semibold text-dark dark:text-light mb-2">1. Core Security (<code>/src/security/</code>)</h4>
+                    <ul class="list-disc list-inside space-y-2 text-gray-700 dark:text-gray-300">
                         <li>XSS prevention</li>
                         <li>CSP implementation</li>
                         <li>Input sanitization</li>
@@ -151,8 +159,8 @@
                     </ul>
                 </div>
                 <div>
-                    <h4 class="text-xl font-semibold text-dark mb-2">2. Security Functions</h4>
-                    <ul class="list-disc list-inside space-y-2 text-gray-700">
+                    <h4 class="text-xl font-semibold text-dark dark:text-light mb-2">2. Security Functions</h4>
+                    <ul class="list-disc list-inside space-y-2 text-gray-700 dark:text-gray-300">
                         <li>Validation functions</li>
                         <li>Sanitization utilities</li>
                         <li>Security checks</li>
@@ -165,38 +173,38 @@
 
     <!-- Development Standards -->
     <section class="mb-12">
-        <h2 class="text-3xl font-semibold text-secondary border-b-2 border-secondary pb-2 mb-6">Development Standards</h2>
+        <h2 class="text-3xl font-semibold text-secondary border-b-2 border-secondary pb-2 mb-6 dark:text-indigo-400 dark:border-indigo-400">Development Standards</h2>
         <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-            <div class="p-6 bg-white rounded-lg shadow-md">
-                <h3 class="text-xl font-semibold text-dark mb-2">1. File Organization</h3>
-                <ul class="list-disc list-inside space-y-2 text-gray-700">
+            <div class="p-6 bg-white rounded-lg shadow-md dark:bg-slate-800">
+                <h3 class="text-xl font-semibold text-dark dark:text-light mb-2">1. File Organization</h3>
+                <ul class="list-disc list-inside space-y-2 text-gray-700 dark:text-gray-300">
                     <li><code>functions.js</code> for pure functions</li>
                     <li>Clear module boundaries</li>
                     <li>Explicit dependencies</li>
                     <li>Logical grouping</li>
                 </ul>
             </div>
-            <div class="p-6 bg-white rounded-lg shadow-md">
-                <h3 class="text-xl font-semibold text-dark mb-2">2. Code Structure</h3>
-                <ul class="list-disc list-inside space-y-2 text-gray-700">
+            <div class="p-6 bg-white rounded-lg shadow-md dark:bg-slate-800">
+                <h3 class="text-xl font-semibold text-dark dark:text-light mb-2">2. Code Structure</h3>
+                <ul class="list-disc list-inside space-y-2 text-gray-700 dark:text-gray-300">
                     <li>Pure function definitions</li>
                     <li>Type signatures</li>
                     <li>Function composition</li>
                     <li>No side effects</li>
                 </ul>
             </div>
-            <div class="p-6 bg-white rounded-lg shadow-md">
-                <h3 class="text-xl font-semibold text-dark mb-2">3. Testing Approach</h3>
-                <ul class="list-disc list-inside space-y-2 text-gray-700">
+            <div class="p-6 bg-white rounded-lg shadow-md dark:bg-slate-800">
+                <h3 class="text-xl font-semibold text-dark dark:text-light mb-2">3. Testing Approach</h3>
+                <ul class="list-disc list-inside space-y-2 text-gray-700 dark:text-gray-300">
                     <li>Unit tests for pure functions</li>
                     <li>Integration tests for systems</li>
                     <li>Property-based testing</li>
                     <li>Effect isolation in tests</li>
                 </ul>
             </div>
-            <div class="p-6 bg-white rounded-lg shadow-md">
-                <h3 class="text-xl font-semibold text-dark mb-2">4. Documentation</h3>
-                <ul class="list-disc list-inside space-y-2 text-gray-700">
+            <div class="p-6 bg-white rounded-lg shadow-md dark:bg-slate-800">
+                <h3 class="text-xl font-semibold text-dark dark:text-light mb-2">4. Documentation</h3>
+                <ul class="list-disc list-inside space-y-2 text-gray-700 dark:text-gray-300">
                     <li>Clear function signatures</li>
                     <li>Type documentation</li>
                     <li>Effect documentation</li>
@@ -208,29 +216,29 @@
 
     <!-- Performance Considerations -->
     <section class="mb-12">
-        <h2 class="text-3xl font-semibold text-secondary border-b-2 border-secondary pb-2 mb-6">Performance Considerations</h2>
+        <h2 class="text-3xl font-semibold text-secondary border-b-2 border-secondary pb-2 mb-6 dark:text-indigo-400 dark:border-indigo-400">Performance Considerations</h2>
         <div class="grid md:grid-cols-3 gap-8">
-            <div class="p-6 bg-white rounded-lg shadow-md">
-                <h3 class="text-xl font-semibold text-dark mb-2">1. Render Optimization</h3>
-                <ul class="list-disc list-inside space-y-2 text-gray-700">
+            <div class="p-6 bg-white rounded-lg shadow-md dark:bg-slate-800">
+                <h3 class="text-xl font-semibold text-dark dark:text-light mb-2">1. Render Optimization</h3>
+                <ul class="list-disc list-inside space-y-2 text-gray-700 dark:text-gray-300">
                     <li>Pure render functions</li>
                     <li>Efficient diffing</li>
                     <li>Batch updates</li>
                     <li>Memory management</li>
                 </ul>
             </div>
-            <div class="p-6 bg-white rounded-lg shadow-md">
-                <h3 class="text-xl font-semibold text-dark mb-2">2. State Efficiency</h3>
-                <ul class="list-disc list-inside space-y-2 text-gray-700">
+            <div class="p-6 bg-white rounded-lg shadow-md dark:bg-slate-800">
+                <h3 class="text-xl font-semibold text-dark dark:text-light mb-2">2. State Efficiency</h3>
+                <ul class="list-disc list-inside space-y-2 text-gray-700 dark:text-gray-300">
                     <li>Immutable updates</li>
                     <li>State composition</li>
                     <li>Minimal re-renders</li>
                     <li>Memory-efficient representation</li>
                 </ul>
             </div>
-            <div class="p-6 bg-white rounded-lg shadow-md">
-                <h3 class="text-xl font-semibold text-dark mb-2">3. Effect Management</h3>
-                <ul class="list-disc list-inside space-y-2 text-gray-700">
+            <div class="p-6 bg-white rounded-lg shadow-md dark:bg-slate-800">
+                <h3 class="text-xl font-semibold text-dark dark:text-light mb-2">3. Effect Management</h3>
+                <ul class="list-disc list-inside space-y-2 text-gray-700 dark:text-gray-300">
                     <li>Effect scheduling</li>
                     <li>Resource cleanup</li>
                     <li>Memory leaks prevention</li>

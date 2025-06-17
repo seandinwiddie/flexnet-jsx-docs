@@ -8,7 +8,15 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/atom-one-dark.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
     <script>
+        // Set theme on page load to avoid FOUC
+        if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+        }
+
         tailwind.config = {
+            darkMode: 'class', // Enable class-based dark mode
             theme: {
                 extend: {
                     colors: {
@@ -24,16 +32,16 @@
     </script>
     <script src="/assets/main.js" defer></script>
 </head>
-<body class="bg-gray-50 text-gray-900 min-h-screen">
+<body class="bg-gray-50 text-gray-900 min-h-screen dark:bg-slate-900 dark:text-gray-100">
     <div id="page-content">
         <main class="container mx-auto px-4 py-8">
-            <h1 class="text-4xl font-bold text-primary mb-4">Core Types</h1>
+            <h1 class="text-4xl font-bold text-primary mb-4 dark:text-blue-400">Core Types</h1>
             <section class="mb-12">
-                <h2 class="text-3xl font-semibold text-secondary border-b-2 border-secondary pb-2 mb-6">Core Types</h2>
+                <h2 class="text-3xl font-semibold text-secondary border-b-2 border-secondary pb-2 mb-6 dark:text-indigo-400 dark:border-indigo-400">Core Types</h2>
 
-                <div class="mb-8 p-6 bg-white rounded-lg shadow-md">
-                    <h3 class="text-2xl font-semibold text-dark mb-4">Maybe Type</h3>
-                    <pre><code class="language-javascript">// src/core/types/maybe.js
+                <div class="mb-8 p-6 bg-white rounded-lg shadow-md dark:bg-slate-800 dark:border dark:border-slate-700">
+                    <h3 class="text-2xl font-semibold text-dark dark:text-white mb-4">Maybe Type</h3>
+                    <pre class="bg-gray-100 dark:bg-gray-900 rounded-lg"><code class="language-javascript">// src/core/types/maybe.js
 const Maybe = {
     Just: value => ({ type: 'Just', value }),
     Nothing: () => ({ type: 'Nothing' }),
@@ -47,9 +55,9 @@ const Maybe = {
 };</code></pre>
                 </div>
 
-                <div class="mb-8 p-6 bg-white rounded-lg shadow-md">
-                    <h3 class="text-2xl font-semibold text-dark mb-4">Either Type</h3>
-                    <pre><code class="language-javascript">// src/core/types/either.js
+                <div class="mb-8 p-6 bg-white rounded-lg shadow-md dark:bg-slate-800 dark:border dark:border-slate-700">
+                    <h3 class="text-2xl font-semibold text-dark dark:text-white mb-4">Either Type</h3>
+                    <pre class="bg-gray-100 dark:bg-gray-900 rounded-lg"><code class="language-javascript">// src/core/types/either.js
 const Either = {
     Left: value => ({ type: 'Left', value }),
     Right: value => ({ type: 'Right', value }),
@@ -63,9 +71,9 @@ const Either = {
 };</code></pre>
                 </div>
 
-                <div class="mb-8 p-6 bg-white rounded-lg shadow-md">
-                    <h3 class="text-2xl font-semibold text-dark mb-4">Result Type</h3>
-                    <pre><code class="language-javascript">// src/core/types/result.js
+                <div class="mb-8 p-6 bg-white rounded-lg shadow-md dark:bg-slate-800 dark:border dark:border-slate-700">
+                    <h3 class="text-2xl font-semibold text-dark dark:text-white mb-4">Result Type</h3>
+                    <pre class="bg-gray-100 dark:bg-gray-900 rounded-lg"><code class="language-javascript">// src/core/types/result.js
 const Result = {
     Ok: value => ({ type: 'Ok', value }),
     Error: error => ({ type: 'Error', error }),

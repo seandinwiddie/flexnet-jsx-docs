@@ -8,7 +8,15 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/atom-one-dark.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
     <script>
+        // Set theme on page load to avoid FOUC
+        if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+        }
+
         tailwind.config = {
+            darkMode: 'class', // Enable class-based dark mode
             theme: {
                 extend: {
                     colors: {
@@ -24,38 +32,38 @@
     </script>
     <script src="/assets/main.js" defer></script>
 </head>
-<body class="bg-gray-50 text-gray-900 min-h-screen">
+<body class="bg-gray-50 text-gray-900 min-h-screen dark:bg-slate-900 dark:text-gray-100">
     <div id="page-content">
         <main class="container mx-auto px-4 py-8">
             <h1 class="text-4xl font-bold text-primary mb-4">Critical Alignment Requirements</h1>
             <section class="mb-12">
                 <h2 class="text-3xl font-semibold text-secondary border-b-2 border-secondary pb-2 mb-6">Critical Alignment Requirements</h2>
                 <div class="grid md:grid-cols-2 lg:grid-cols-2 gap-8">
-                    <div class="p-6 bg-white rounded-lg shadow-md">
-                        <h3 class="text-xl font-semibold text-dark mb-2">Core Architecture</h3>
-                        <ul class="list-disc list-inside text-gray-700">
+                    <div class="p-6 bg-white rounded-lg shadow-md dark:bg-slate-800 dark:border dark:border-slate-700">
+                        <h3 class="text-xl font-semibold text-dark dark:text-white mb-2">Core Architecture</h3>
+                        <ul class="list-disc list-inside text-gray-700 dark:text-gray-300">
                             <li>Enforce functional programming</li>
                             <li>Standardize type system usage</li>
                             <li>Maintain immutable state patterns</li>
                         </ul>
                     </div>
-                    <div class="p-6 bg-white rounded-lg shadow-md">
-                        <h3 class="text-xl font-semibold text-dark mb-2">Build System</h3>
-                        <ul class="list-disc list-inside text-gray-700">
+                    <div class="p-6 bg-white rounded-lg shadow-md dark:bg-slate-800 dark:border dark:border-slate-700">
+                        <h3 class="text-xl font-semibold text-dark dark:text-white mb-2">Build System</h3>
+                        <ul class="list-disc list-inside text-gray-700 dark:text-gray-300">
                             <li>Browser-native bundling only</li>
                             <li>No external build tools</li>
                         </ul>
                     </div>
-                    <div class="p-6 bg-white rounded-lg shadow-md">
-                        <h3 class="text-xl font-semibold text-dark mb-2">Version Control</h3>
-                        <ul class="list-disc list-inside text-gray-700">
+                    <div class="p-6 bg-white rounded-lg shadow-md dark:bg-slate-800 dark:border dark:border-slate-700">
+                        <h3 class="text-xl font-semibold text-dark dark:text-white mb-2">Version Control</h3>
+                        <ul class="list-disc list-inside text-gray-700 dark:text-gray-300">
                             <li>Atomic commits with functional changes</li>
                             <li>Standardized changelog format</li>
                         </ul>
                     </div>
-                    <div class="p-6 bg-white rounded-lg shadow-md">
-                        <h3 class="text-xl font-semibold text-dark mb-2">Documentation</h3>
-                        <ul class="list-disc list-inside text-gray-700">
+                    <div class="p-6 bg-white rounded-lg shadow-md dark:bg-slate-800 dark:border dark:border-slate-700">
+                        <h3 class="text-xl font-semibold text-dark dark:text-white mb-2">Documentation</h3>
+                        <ul class="list-disc list-inside text-gray-700 dark:text-gray-300">
                             <li>Functional pattern documentation</li>
                             <li>Clear type signatures</li>
                         </ul>

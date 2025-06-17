@@ -8,7 +8,15 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/atom-one-dark.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
     <script>
+        // Set dark mode preference
+        if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+        }
+
         tailwind.config = {
+            darkMode: 'class',
             theme: {
                 extend: {
                     colors: {
@@ -24,18 +32,18 @@
     </script>
     <script src="/assets/main.js" defer></script>
 </head>
-<body class="bg-gray-50 text-gray-900 min-h-screen">
+<body class="bg-gray-50 text-gray-900 min-h-screen dark:bg-slate-900 dark:text-white">
     <div id="page-content">
 
 
         <div class="mb-12">
-            <h2 class="text-2xl font-bold mb-4">Main.js</h2>
+            <h2 class="text-2xl font-bold mb-4 dark:text-white">Main.js</h2>
             <p class="mb-4">
                 <a href="https://github.com/OGH3X/local-jsx/blob/main/public/main.js" target="_blank" class="text-primary hover:underline">View on GitHub</a>
             </p>
-            <div class="bg-gray-900 rounded-lg mb-4 overflow-hidden relative">
+            <div class="bg-gray-900 rounded-lg mb-4 overflow-hidden relative dark:bg-slate-800">
                 <button class="absolute top-2 right-2 bg-gray-700 hover:bg-gray-600 text-white text-xs font-bold py-1 px-2 rounded">Copy</button>
-                <pre class="bg-gray-800 text-white p-4 overflow-x-auto"><code class="language-javascript">
+                <pre class="bg-gray-100 dark:bg-gray-900 rounded-lg text-white p-4 overflow-x-auto"><code class="language-javascript">
 // FlexNet Styling Utilities and Functional Runtime
 (function() {
     // Pure DOM selectors

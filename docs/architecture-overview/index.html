@@ -8,7 +8,15 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/atom-one-dark.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
     <script>
+        // Set dark mode preference
+        if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+        }
+
         tailwind.config = {
+            darkMode: 'class',
             theme: {
                 extend: {
                     colors: {
@@ -24,18 +32,18 @@
     </script>
     <script src="/assets/main.js" defer></script>
 </head>
-<body class="bg-gray-50 text-gray-900 min-h-screen">
+<body class="bg-gray-50 text-gray-900 min-h-screen dark:bg-slate-900 dark:text-white">
     <div id="page-content">
         <main class="container mx-auto px-4 py-8">
             <h1 class="text-4xl font-bold text-primary mb-4">Architecture Overview</h1>
-            <p class="text-gray-600 mb-8">This section provides a high-level overview of the FlexNet framework's architecture, summarizing its core structure, principles, and standards.</p>
+            <p class="text-gray-600 dark:text-gray-400 mb-8">This section provides a high-level overview of the FlexNet framework's architecture, summarizing its core structure, principles, and standards.</p>
             <ul class="list-disc list-inside space-y-2">
-                <li><strong><a href="project-structure.html">Project Structure</a></strong>: Directory layout for core engine, systems, utilities, tests, and examples.</li>
-                <li><strong><a href="core-operating-schema.html">Core Operating Schema</a></strong>: Principles such as Pure Function First, Type System, Effect System, and State Management.</li>
+                <li><strong><a href="project-structure.html" class="text-primary hover:underline">Project Structure</a></strong>: Directory layout for core engine, systems, utilities, tests, and examples.</li>
+                <li><strong><a href="core-operating-schema.html" class="text-primary hover:underline">Core Operating Schema</a></strong>: Principles such as Pure Function First, Type System, Effect System, and State Management.</li>
                 <li><strong>System & Feature Components</strong>: Core runtime, type system, core functions, rendering, state, effects, events, router, forms, validation, and animation.</li>
                 <li><strong>Security Implementation</strong>: Core security measures and utility functions for sanitization and validation.</li>
-                <li><strong><a href="development-standards.html">Development Standards</a></strong>: Guidelines for file organization, code structure, testing methodologies, and documentation.</li>
-                <li><strong><a href="performance-considerations.html">Performance Considerations</a></strong>: Optimizations for rendering, state management, and effect handling.</li>
+                <li><strong><a href="development-standards.html" class="text-primary hover:underline">Development Standards</a></strong>: Guidelines for file organization, code structure, testing methodologies, and documentation.</li>
+                <li><strong><a href="performance-considerations.html" class="text-primary hover:underline">Performance Considerations</a></strong>: Optimizations for rendering, state management, and effect handling.</li>
             </ul>
         </main>
     </div>
