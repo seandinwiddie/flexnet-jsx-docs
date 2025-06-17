@@ -1,0 +1,1 @@
+const BASE_PATH = '/flexnet-jsx-docs'; 

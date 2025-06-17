@@ -9,7 +9,7 @@ document.addEventListener('DOMContentLoaded', () => {
     document.body.innerHTML = ''; // Clear the body
 
     const loadLayout = () => {
-        return fetch('/templates/layout.html')
+        return fetch(`${BASE_PATH}/templates/layout.html`)
             .then(response => {
                 if (!response.ok) throw new Error('Layout template not found');
                 return response.text();
@@ -44,9 +44,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     loadLayout().then(() => {
         Promise.all([
-            loadComponent('sidebar-placeholder', '/templates/sidebar.html'),
-            loadComponent('header-placeholder', '/templates/header.html'),
-            loadComponent('footer-placeholder', '/templates/footer.html')
+            loadComponent('sidebar-placeholder', `${BASE_PATH}/templates/sidebar.html`),
+            loadComponent('header-placeholder', `${BASE_PATH}/templates/header.html`),
+            loadComponent('footer-placeholder', `${BASE_PATH}/templates/footer.html`)
         ]).then(() => {
             console.log('All components loaded.');
             
