@@ -50,6 +50,12 @@ document.addEventListener('DOMContentLoaded', () => {
         ]).then(() => {
             console.log('All components loaded.');
             
+            // Set logo source dynamically
+            const logoImage = document.getElementById('logo-image');
+            if (logoImage) {
+                logoImage.src = `${BASE_PATH}/flexnet.png`;
+            }
+
             // Re-run highlight.js after content is loaded
             if (window.hljs) {
                 hljs.highlightAll();
