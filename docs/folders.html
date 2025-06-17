@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FlexNet Framework Documentation</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/atom-one-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#3b82f6',
+                        secondary: '#6366f1',
+                        dark: '#1e293b',
+                        light: '#f8fafc'
+                    }
+                }
+            }
+        }
+        hljs.highlightAll();
+    </script>
+    <script src="/assets/main.js" defer></script>
+</head>
+<body class="bg-gray-50 text-gray-900 min-h-screen">
+    <div id="page-content">
+
+        <pre><code class="language-bash">
+my-flexnet-project/
+│
+├── core/                  # Core FlexNet engine functionality
+│   ├── build/           # Build system
+│   ├── runtime/          # Core FlexNet runtime implementation
+│   │   ├── flexnet.js
+│   │   └── transform.js
+│   ├── types/           # Core type system
+│   │   ├── maybe.js
+│   │   ├── either.js
+│   │   └── result.js
+│   └── functions/       # Core functions
+│       ├── composition.js
+│       └── transforms.js
+│
+├── systems/              # System implementations
+│   ├── render/          # Rendering system
+│   │   ├── functions.js
+│   │   └── vdom.js
+│   ├── state/           # State management
+│   │   ├── functions.js
+│   │   └── store.js
+│   ├── effects/         # Effect handling
+│   │   ├── functions.js
+│   │   └── scheduler.js
+│   └── events/          # Event system
+│       ├── functions.js
+│       └── emitter.js
+│
+├── features/           # App features implementations
+│   ├── sample/       # Sample feature
+│   │   ├── functions.js
+│   │   └── index.js
+│   ├── router/
+│   ├── forms/
+│   ├── validation/
+│   └── animation/
+│
+├── security/            # Security features
+│   ├── functions.js
+│   ├── csp.js
+│   └── xss.js
+│
+├── utils/               # Utility functions
+│    ├── array.js
+│    ├── string.js
+│    └── function.js
+│
+├── index.html
+│
+└── tests/                  # Test suite
+    ├── features/          # Feature tests
+    │   └── sample/
+    │       └── sample.test.js
+    ├── core/              # Core tests
+    └── systems/           # System tests
+        </code></pre>
+    </div>
+</body>
+</html>
