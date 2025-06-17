@@ -70,6 +70,105 @@ document.addEventListener('DOMContentLoaded', () => {
                 });
             }
 
+            // Sidebar Accordion
+            const sidebarNav = document.querySelector('#sidebar-placeholder nav');
+            if (sidebarNav) {
+                const sections = [];
+                sidebarNav.querySelectorAll('h3').forEach(h3 => {
+                    // Find a 'ul' that is a sibling of h3, but not necessarily the direct next one.
+                    let potentialUl = h3.nextElementSibling;
+                    while(potentialUl && potentialUl.tagName !== 'UL') {
+                        potentialUl = potentialUl.nextElementSibling;
+                    }
+                    
+                    if (potentialUl) {
+                        sections.push({ header: h3, content: potentialUl });
+                    }
+                });
+
+                let activeSection = null;
+                const currentPath = window.location.pathname;
+
+                sections.forEach(section => {
+                    const links = section.content.querySelectorAll('a');
+                    let isGroupActive = false;
+                    links.forEach(link => {
+                        const linkHref = link.getAttribute('href');
+                        // Exact match or if the current path is a sub-path of the link
+                        if (currentPath === linkHref || (linkHref.endsWith('/') && currentPath.startsWith(linkHref))) {
+                            isGroupActive = true;
+                        }
+                    });
+
+                    const headerLink = section.header.querySelector('a');
+                    if(headerLink) {
+                        const linkHref = headerLink.getAttribute('href');
+                        if (currentPath === linkHref || (linkHref.endsWith('/') && currentPath.startsWith(linkHref))) {
+                            isGroupActive = true;
+                        }
+                    }
+
+                    if (isGroupActive) {
+                        activeSection = section;
+                    }
+                });
+
+                sections.forEach(section => {
+                    section.header.style.cursor = 'pointer';
+                    const parentLi = section.header.closest('li');
+                    const isNested = parentLi && parentLi.closest('ul');
+
+                    if (section !== activeSection) {
+                        section.content.classList.add('hidden');
+                    } else {
+                        // if active section is nested, make sure its parent is also open
+                        if (isNested) {
+                            const parentUl = section.header.closest('ul:not(.hidden)');
+                            if (parentUl) {
+                                // This means the parent is already supposed to be open.
+                            }
+                        }
+                    }
+                     // Ensure parent of active section is open
+                    if (activeSection && section.content.contains(activeSection.header)) {
+                        section.content.classList.remove('hidden');
+                    }
+
+
+                    section.header.addEventListener('click', (e) => {
+                        if (e.target.tagName !== 'A') {
+                            e.preventDefault();
+                        }
+                        
+                        const isHidden = section.content.classList.contains('hidden');
+
+                        // This is a simple toggle, not an accordion. To make it an accordion:
+                        sections.forEach(s => {
+                            if (s !== section) {
+                                // do not close parent of a nested section when toggling child
+                                if (!s.content.contains(section.header)) {
+                                    s.content.classList.add('hidden');
+                                }
+                            }
+                        });
+                        
+                        section.content.classList.toggle('hidden');
+                    });
+                });
+                
+                // Ensure parent of active section is open
+                if (activeSection) {
+                    activeSection.content.classList.remove('hidden');
+                    const parentUl = activeSection.header.closest('ul');
+                    if(parentUl) {
+                       const parentSection = sections.find(s => s.content === parentUl);
+                       if(parentSection) {
+                           parentSection.content.classList.remove('hidden');
+                       }
+                    }
+                }
+            }
+
             // Initialize any scripts that depend on the loaded content here
             // For example, activating sidebar links
             const currentPath = window.location.pathname;
