@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FlexNet Framework Documentation</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/atom-one-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#3b82f6',
+                        secondary: '#6366f1',
+                        dark: '#1e293b',
+                        light: '#f8fafc'
+                    }
+                }
+            }
+        }
+        hljs.highlightAll();
+    </script>
+    <script src="/assets/main.js" defer></script>
+</head>
+<body class="bg-gray-50 text-gray-900 min-h-screen">
+    <div id="page-content">
+        <div class="mb-8">
+            <h2 class="text-2xl font-semibold mb-4 flex items-center">
+                <span class="bg-primary text-white rounded-full w-8 h-8 flex items-center justify-center mr-2">1</span>
+                Initialize Project
+            </h2>
+            <div class="pl-10">
+                <p class="mb-4">First, create a new directory for your project and set up the basic folder structure:</p>
+                <pre><code class="language-bash">mkdir my-flexnet-project
+cd my-flexnet-project
+mkdir -p core/runtime core/types core/functions
+mkdir -p systems/render systems/state systems/effects systems/events
+mkdir -p features/counter security utils
+mkdir -p tests/features/counter</code></pre>
+                
+                <p class="mt-4 mb-2">Create an index.html file in the root directory:</p>
+                <pre><code class="language-html">&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+&lt;head&gt;
+    &lt;meta charset="UTF-8"&gt;
+    &lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;
+    &lt;title&gt;FlexNet Project&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;div id="app"&gt;&lt;/div&gt;
+    &lt;script type="module" src="core/runtime/transform.js"&gt;&lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

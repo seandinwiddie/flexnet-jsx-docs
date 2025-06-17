@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FlexNet Framework Documentation</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/atom-one-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#3b82f6',
+                        secondary: '#6366f1',
+                        dark: '#1e293b',
+                        light: '#f8fafc'
+                    }
+                }
+            }
+        }
+        hljs.highlightAll();
+    </script>
+    <script src="/assets/main.js" defer></script>
+</head>
+<body class="bg-gray-50 text-gray-900 min-h-screen">
+    <div id="page-content">
+        <div class="mb-8">
+            <h2 class="text-2xl font-semibold mb-4 flex items-center">
+                <span class="bg-primary text-white rounded-full w-8 h-8 flex items-center justify-center mr-2">5</span>
+                Implementing <a href="../../base/api-reference.html#system-apis" class="text-secondary hover:underline">Core Systems</a>
+            </h2>
+            <div class="pl-10">
+                <p class="mb-4">Set up the essential systems for your application:</p>
+                
+                <h3 class="text-lg font-semibold mb-2">Create systems/render/functions.js:</h3>
+                <pre><code class="language-javascript">// Pure rendering functions
+export const render = (component, container) => {
+  const vNode = component();
+
+  const createDOMNode = (node) => {
+    if (typeof node === 'string' || typeof node === 'number') {
+      return document.createTextNode(String(node));
+    }
+
+    if (typeof node.type === 'function') {
+        const propsWithChildren = { ...node.props, children: node.props.children || [] };
+        return createDOMNode(node.type(propsWithChildren));
+    }
+    
+    const element = document.createElement(node.type);
+    
+    Object.entries(node.props || []).forEach(([key, value]) => {
+      if (key.startsWith('on') && typeof value === 'function') {
+        element.addEventListener(key.substring(2).toLowerCase(), value);
+      } else if (key !== 'children') {
+        element.setAttribute(key, value);
+      }
+    });
+
+    (node.props.children || []).forEach(child => {
+      element.appendChild(createDOMNode(child));
+    });
+
+    return element;
+  };
+
+  container.innerHTML = '';
+  container.appendChild(createDOMNode(vNode));
+};</code></pre>
+                
+                <h3 class="text-lg font-semibold mb-2 mt-4">Create systems/state/store.js:</h3>
+                <pre><code class="language-javascript">// Immutable state management
+import { pipe } from '../../core/functions/composition.js';
+
+export const createStore = (reducer, initialState) => {
+    const subscribers = new Set();
+    let state = initialState;
+
+    return {
+        getState: () => state,
+        dispatch: action => {
+            state = reducer(state, action);
+            subscribers.forEach(fn => fn());
+        },
+        subscribe: fn => {
+            subscribers.add(fn);
+            return () => subscribers.delete(fn);
+        }
+    };
+};</code></pre>
+                
+                <h3 class="text-lg font-semibold mb-2 mt-4">Create systems/effects/functions.js:</h3>
+                <pre><code class="language-javascript">// Isolated effect handling
+import { Result } from '../../core/types/result.js';
+
+export const Effect = {
+    of: value => ({ type: 'Effect', run: () => value }),
+    map: fn => effect =>
+        Effect.of(() => fn(effect.run())),
+    chain: fn => effect =>
+        Effect.of(() => fn(effect.run()).run()),
+    run: effect => effect.run()
+};
+
+export const runEffect = (effect) => {
+  try {
+    const result = Effect.run(effect);
+    return Result.Ok(result);
+  } catch (error) {
+    return Result.Error(error);
+  }
+};</code></pre>
+                
+                <h3 class="text-lg font-semibold mb-2 mt-4">Create systems/events/functions.js:</h3>
+                <pre><code class="language-javascript">// Event system management
+import { Maybe } from '../../core/types/maybe.js';
+
+export const createEventBus = () => {
+    const subscribers = new Map();
+    
+    return {
+        emit: (event, data) =>
+            Maybe.fromNullable(subscribers.get(event))
+                .map(subs => subs.forEach(fn => fn(data))),
+        on: (event, callback) => {
+            const subs = subscribers.get(event) || new Set();
+            subs.add(callback);
+            subscribers.set(event, subs);
+            return () => subs.delete(callback);
+        }
+    };
+};</code></pre>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

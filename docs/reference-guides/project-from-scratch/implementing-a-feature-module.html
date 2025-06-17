@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FlexNet Framework Documentation</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/atom-one-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#3b82f6',
+                        secondary: '#6366f1',
+                        dark: '#1e293b',
+                        light: '#f8fafc'
+                    }
+                }
+            }
+        }
+        hljs.highlightAll();
+    </script>
+    <script src="/assets/main.js" defer></script>
+</head>
+<body class="bg-gray-50 text-gray-900 min-h-screen">
+    <div id="page-content">
+        <div class="mb-8">
+            <h2 class="text-2xl font-semibold mb-4 flex items-center">
+                <span class="bg-primary text-white rounded-full w-8 h-8 flex items-center justify-center mr-2">8</span>
+                Implementing a Feature Module
+            </h2>
+            <div class="pl-10">
+                <p class="mb-4">Create a simple counter feature to demonstrate how to build features in FlexNet:</p>
+                
+                <h3 class="text-lg font-semibold mb-2">Create features/counter/functions.js:</h3>
+                <pre><code class="language-javascript">// features/counter/functions.js
+import { createStore } from '../../systems/state/store.js';
+
+// Action Types
+const INCREMENT = 'INCREMENT';
+const DECREMENT = 'DECREMENT';
+
+// Action Creators
+export const increment = () => ({ type: INCREMENT });
+export const decrement = () => ({ type: DECREMENT });
+
+// Reducer
+const counterReducer = (state = { count: 0 }, action) => {
+  switch (action.type) {
+    case INCREMENT:
+      return { ...state, count: state.count + 1 };
+    case DECREMENT:
+      return { ...state, count: state.count - 1 };
+    default:
+      return state;
+  }
+};
+
+// Store
+export const counterStore = createStore(counterReducer, { count: 0 });</code></pre>
+                
+                <h3 class="text-lg font-semibold mb-2 mt-4">Create features/counter/index.js:</h3>
+                <pre><code class="language-javascript">// features/counter/index.js
+import { createElement } from '../../core/runtime/factory.js';
+import { render } from '../../systems/render/functions.js';
+import { counterStore, increment, decrement } from './functions.js';
+
+const App = () => {
+  const state = counterStore.getState();
+  
+  const handleIncrement = () => {
+    counterStore.dispatch(increment());
+  };
+  
+  const handleDecrement = () => {
+    counterStore.dispatch(decrement());
+  };
+  
+  return createElement('div', { class: 'app' },
+    createElement('h1', {}, 'FlexNet Application'),
+    createElement('div', { class: 'counter' },
+      createElement('h2', {}, `Count: ${state.count}`),
+      createElement('div', { class: 'controls' },
+        createElement('button', { onClick: handleIncrement }, 'Increment'),
+        createElement('button', { onClick: handleDecrement }, 'Decrement')
+      )
+    )
+  );
+};
+
+const appContainer = document.getElementById('app');
+
+// Subscribe to store updates to trigger re-renders
+counterStore.subscribe(() => {
+    render(App, appContainer);
+});
+
+// Initial render
+render(App, appContainer);
+
+export { App };</code></pre>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

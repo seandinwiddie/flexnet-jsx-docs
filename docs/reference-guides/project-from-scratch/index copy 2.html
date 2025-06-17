@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FlexNet Framework Documentation</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/atom-one-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#3b82f6',
+                        secondary: '#6366f1',
+                        dark: '#1e293b',
+                        light: '#f8fafc'
+                    }
+                }
+            }
+        }
+        hljs.highlightAll();
+    </script>
+    <script src="/assets/main.js" defer></script>
+</head>
+<body class="bg-gray-50 text-gray-900 min-h-screen">
+    <div id="page-content">
+        <h1 class="text-3xl font-bold mb-6 text-center mt-8">Building a FlexNet Project From Scratch</h1>
+        
+        <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-100 mb-8">
+            <p class="text-gray-700 mb-4">This guide will walk you through the process of creating a FlexNet project from scratch, following the framework's principles of functional programming, immutability, and type safety.</p>
+        </div>
+
+        <!-- Step 1 -->
+        <div class="mb-8">
+            <h2 class="text-2xl font-semibold mb-4 flex items-center">
+                <span class="bg-primary text-white rounded-full w-8 h-8 flex items-center justify-center mr-2">1</span>
+                Initialize Project
+            </h2>
+            <div class="pl-10">
+                <p class="mb-4">First, create a new directory for your project and set up the basic folder structure:</p>
+                <pre><code class="language-bash">mkdir my-flexnet-project
+cd my-flexnet-project
+mkdir -p core/runtime core/types core/functions
+mkdir -p systems/render systems/state systems/effects systems/events
+mkdir -p features/counter security utils
+mkdir -p tests/features/counter</code></pre>
+                
+                <p class="mt-4 mb-2">Create an index.html file in the root directory:</p>
+                <pre><code class="language-html">&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+&lt;head&gt;
+    &lt;meta charset="UTF-8"&gt;
+    &lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;
+    &lt;title&gt;FlexNet Project&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;div id="app"&gt;&lt;/div&gt;
+    &lt;script type="module" src="core/runtime/transform.js"&gt;&lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+            </div>
+        </div>
+
+        <!-- Step 2 -->
+        <div class="mb-8">
+            <h2 class="text-2xl font-semibold mb-4 flex items-center">
+                <span class="bg-primary text-white rounded-full w-8 h-8 flex items-center justify-center mr-2">2</span>
+                Implementing Core Types
+            </h2>
+            <div class="pl-10">
+                <p class="mb-4">The core types are fundamental to FlexNet's approach to functional programming. Start by implementing the basic type system:</p>
+                
+                <h3 class="text-lg font-semibold mb-2">Create core/types/maybe.js:</h3>
+                <pre><code class="language-javascript">// core/types/maybe.js
+export const Maybe = {
+    Just: value => ({ type: 'Just', value }),
+    Nothing: () => ({ type: 'Nothing' }),
+    fromNullable: value => value != null ? Maybe.Just(value) : Maybe.Nothing(),
+    map: fn => maybe => 
+        maybe.type === 'Just' ? Maybe.Just(fn(maybe.value)) : Maybe.Nothing(),
+    chain: fn => maybe =>
+        maybe.type === 'Just' ? fn(maybe.value) : Maybe.Nothing(),
+    getOrElse: defaultValue => maybe =>
+        maybe.type === 'Just' ? maybe.value : defaultValue
+};</code></pre>
+                
+                <h3 class="text-lg font-semibold mb-2 mt-4">Create core/types/either.js:</h3>
+                <pre><code class="language-javascript">// core/types/either.js
+export const Either = {
+    Left: value => ({ type: 'Left', value }),
+    Right: value => ({ type: 'Right', value }),
+    fromNullable: value => value != null ? Either.Right(value) : Either.Left('Value is null'),
+    map: fn => either =>
+        either.type === 'Right' ? Either.Right(fn(either.value)) : either,
+    chain: fn => either =>
+        either.type === 'Right' ? fn(either.value) : either,
+    fold: (leftFn, rightFn) => either =>
+        either.type === 'Right' ? rightFn(either.value) : leftFn(either.value)
+};</code></pre>
+                
+                <h3 class="text-lg font-semibold mb-2 mt-4">Create core/types/result.js:</h3>
+                <pre><code class="language-javascript">// core/types/result.js
+export const Result = {
+    Ok: value => ({ type: 'Ok', value }),
+    Error: error => ({ type: 'Error', error }),
+    fromTry: fn => {
+        try {
+            return Result.Ok(fn());
+        } catch (e) {
+            return Result.Error(e);
+        }
+    },
+    map: fn => result =>
+        result.type === 'Ok' ? Result.Ok(fn(result.value)) : result,
+    chain: fn => result =>
+        result.type === 'Ok' ? fn(result.value) : result
+};</code></pre>
+            </div>
+        </div>
+        
+        <!-- Step 3 -->
+        <div class="mb-8">
+            <h2 class="text-2xl font-semibold mb-4 flex items-center">
+                <span class="bg-primary text-white rounded-full w-8 h-8 flex items-center justify-center mr-2">3</span>
+                Implementing Core Functions
+            </h2>
+            <div class="pl-10">
+                <p class="mb-4">Create essential functional programming utilities:</p>
+                
+                <h3 class="text-lg font-semibold mb-2">Create core/functions/composition.js:</h3>
+                <pre><code class="language-javascript">// Functional composition utilities
+export const pipe = (...fns) => (x) => 
+  fns.reduce((acc, fn) => fn(acc), x);
+
+export const compose = (...fns) => (x) =>
+  fns.reduceRight((acc, fn) => fn(acc), x);
+
+export const curry = (fn) => {
+  const arity = fn.length;
+  return function curried(...args) {
+    if (args.length >= arity) {
+      return fn(...args);
+    }
+    return (...moreArgs) => curried(...args, ...moreArgs);
+  };
+};</code></pre>
+                
+                <h3 class="text-lg font-semibold mb-2 mt-4">Create core/functions/transforms.js:</h3>
+                <pre><code class="language-javascript">// Data transformation utilities
+export const map = (fn) => (array) => array.map(fn);
+
+export const filter = (predicate) => (array) => array.filter(predicate);
+
+export const reduce = (reducer, initial) => (array) => 
+  array.reduce(reducer, initial);</code></pre>
+            </div>
+        </div>
+        
+        <!-- Step 4 -->
+        <div class="mb-8">
+            <h2 class="text-2xl font-semibold mb-4 flex items-center">
+                <span class="bg-primary text-white rounded-full w-8 h-8 flex items-center justify-center mr-2">4</span>
+                Setting Up the Runtime
+            </h2>
+            <div class="pl-10">
+                <p class="mb-4">Implement the core FlexNet runtime:</p>
+                
+                <h3 class="text-lg font-semibold mb-2">Create core/runtime/flexnet.js:</h3>
+                <pre><code class="language-javascript">// FlexNet runtime implementation
+export const createElement = (type, props, ...children) => ({
+    type,
+    props: { ...props, children: children.flat() }
+});</code></pre>
+                
+                <h3 class="text-lg font-semibold mb-2 mt-4">Create core/runtime/transform.js:</h3>
+                <pre><code class="language-javascript">// Transform runtime implementation
+import { render } from '../../systems/render/functions.js';
+import { App } from '../../features/counter/index.js';
+
+// Bootstrap application
+document.addEventListener('DOMContentLoaded', () => {
+  console.log('FlexNet runtime initialized');
+  const appContainer = document.getElementById('app');
+  render(App, appContainer);
+});</code></pre>
+            </div>
+        </div>
+        
+        <!-- Step 5 -->
+        <div class="mb-8">
+            <h2 class="text-2xl font-semibold mb-4 flex items-center">
+                <span class="bg-primary text-white rounded-full w-8 h-8 flex items-center justify-center mr-2">5</span>
+                Implementing Core Systems
+            </h2>
+            <div class="pl-10">
+                <p class="mb-4">Set up the essential systems for your application:</p>
+                
+                <h3 class="text-lg font-semibold mb-2">Create systems/render/functions.js:</h3>
+                <pre><code class="language-javascript">// Pure rendering functions
+export const render = (component, container) => {
+  let vNode = component();
+
+  const createDOMNode = (node) => {
+    if (typeof node === 'string' || typeof node === 'number') {
+      return document.createTextNode(String(node));
+    }
+
+    if (typeof node.type === 'function') {
+      return createDOMNode(node.type(node.props));
+    }
+    
+    const element = document.createElement(node.type);
+    
+    Object.entries(node.props || {}).forEach(([key, value]) => {
+      if (key.startsWith('on') && typeof value === 'function') {
+        element.addEventListener(key.substring(2).toLowerCase(), value);
+      } else if (key !== 'children') {
+        element.setAttribute(key, value);
+      }
+    });
+
+    (node.props.children || []).forEach(child => {
+      element.appendChild(createDOMNode(child));
+    });
+
+    return element;
+  };
+  
+  const update = () => {
+    const newVNode = component();
+    // In a real app, you would diff the old and new vNode and patch the DOM.
+    // For this guide, we'll just re-render everything.
+    container.innerHTML = '';
+    container.appendChild(createDOMNode(newVNode));
+    vNode = newVNode;
+  };
+
+  // Expose the update function globally for this simple example
+  window._rerender = update;
+
+  // Initial render
+  update();
+};</code></pre>
+                
+                <h3 class="text-lg font-semibold mb-2 mt-4">Create systems/state/store.js:</h3>
+                <pre><code class="language-javascript">// Immutable state management
+import { pipe } from '../../core/functions/composition.js';
+
+export const createStore = (reducer, initialState) => {
+    const subscribers = new Set();
+    let state = initialState;
+
+    return {
+        getState: () => state,
+        dispatch: action => {
+            state = reducer(state, action);
+            subscribers.forEach(fn => fn());
+        },
+        subscribe: fn => {
+            subscribers.add(fn);
+            return () => subscribers.delete(fn);
+        }
+    };
+};</code></pre>
+                
+                <h3 class="text-lg font-semibold mb-2 mt-4">Create systems/effects/functions.js:</h3>
+                <pre><code class="language-javascript">// Isolated effect handling
+import { Result } from '../../core/types/result.js';
+
+export const Effect = {
+    of: value => ({ type: 'Effect', run: () => value }),
+    map: fn => effect =>
+        Effect.of(() => fn(effect.run())),
+    chain: fn => effect =>
+        Effect.of(() => fn(effect.run()).run()),
+    run: effect => effect.run()
+};
+
+export const runEffect = (effect) => {
+  try {
+    const result = Effect.run(effect);
+    return Result.Ok(result);
+  } catch (error) {
+    return Result.Error(error);
+  }
+};</code></pre>
+                
+                <h3 class="text-lg font-semibold mb-2 mt-4">Create systems/events/functions.js:</h3>
+                <pre><code class="language-javascript">// Event system management
+import { Maybe } from '../../core/types/maybe.js';
+
+export const createEventBus = () => {
+    const subscribers = new Map();
+    
+    return {
+        emit: (event, data) =>
+            Maybe.fromNullable(subscribers.get(event))
+                .map(subs => subs.forEach(fn => fn(data))),
+        on: (event, callback) => {
+            const subs = subscribers.get(event) || new Set();
+            subs.add(callback);
+            subscribers.set(event, subs);
+            return () => subs.delete(callback);
+        }
+    };
+};</code></pre>
+            </div>
+        </div>
+        
+        <!-- Step 6 -->
+        <div class="mb-8">
+            <h2 class="text-2xl font-semibold mb-4 flex items-center">
+                <span class="bg-primary text-white rounded-full w-8 h-8 flex items-center justify-center mr-2">6</span>
+                Implementing Security Functions
+            </h2>
+            <div class="pl-10">
+                <p class="mb-4">Set up security functions to ensure your application is protected from common vulnerabilities:</p>
+                
+                <h3 class="text-lg font-semibold mb-2">Create security/functions.js:</h3>
+                <pre><code class="language-javascript">// Core security functions
+import { compose } from '../core/functions/composition.js';
+import { Either } from '../core/types/either.js';
+
+export const escape = str => compose(
+    String,
+    s => s.replace(/&/g, '&amp;')
+         .replace(/</g, '&lt;')
+         .replace(/>/g, '&gt;')
+         .replace(/"/g, '&quot;')
+         .replace(/'/g, '&#039;')
+)(str);
+
+export const validateInput = compose(
+    input => {
+        const escaped = escape(input);
+        return escaped.length === input.length
+            ? Either.Right(input)
+            : Either.Left('Invalid characters detected');
+    }
+);
+
+// This is a simplified example. A real implementation would be more robust.
+export const sanitizeProps = (props) => {
+  const safeProps = { ...props };
+  
+  Object.keys(safeProps).forEach(key => {
+    // Prevent script injection in event handlers
+    if (key.startsWith('on') && typeof safeProps[key] === 'string') {
+      delete safeProps[key];
+    }
+    // Escape string values
+    if (typeof safeProps[key] === 'string') {
+        safeProps[key] = escape(safeProps[key]);
+    }
+  });
+  
+  return safeProps;
+};</code></pre>
+            </div>
+        </div>
+        
+        <!-- Step 7 -->
+        <div class="mb-8">
+            <h2 class="text-2xl font-semibold mb-4 flex items-center">
+                <span class="bg-primary text-white rounded-full w-8 h-8 flex items-center justify-center mr-2">7</span>
+                Creating Utility Functions
+            </h2>
+            <div class="pl-10">
+                <p class="mb-4">Implement common utility functions:</p>
+                
+                <h3 class="text-lg font-semibold mb-2">Create utils/array.js:</h3>
+                <pre><code class="language-javascript">// Array utility functions
+import { Maybe } from '../core/types/maybe.js';
+
+export const head = array =>
+    Maybe.fromNullable(array[0]);
+
+export const tail = array =>
+    array.length > 1 ? Maybe.Just(array.slice(1)) : Maybe.Nothing();
+
+export const find = predicate => array =>
+    Maybe.fromNullable(array.find(predicate));</code></pre>
+            </div>
+        </div>
+        
+        <!-- Step 8 -->
+        <div class="mb-8">
+            <h2 class="text-2xl font-semibold mb-4 flex items-center">
+                <span class="bg-primary text-white rounded-full w-8 h-8 flex items-center justify-center mr-2">8</span>
+                Implementing a Feature Module
+            </h2>
+            <div class="pl-10">
+                <p class="mb-4">Create a simple counter feature to demonstrate how to build features in FlexNet:</p>
+                
+                <h3 class="text-lg font-semibold mb-2">Create features/counter/functions.js:</h3>
+                <pre><code class="language-javascript">// features/counter/functions.js
+import { createStore } from '../../systems/state/store.js';
+
+// Action Types
+const INCREMENT = 'INCREMENT';
+const DECREMENT = 'DECREMENT';
+
+// Action Creators
+export const increment = () => ({ type: INCREMENT });
+export const decrement = () => ({ type: DECREMENT });
+
+// Reducer
+const counterReducer = (state = { count: 0 }, action) => {
+  switch (action.type) {
+    case INCREMENT:
+      return { ...state, count: state.count + 1 };
+    case DECREMENT:
+      return { ...state, count: state.count - 1 };
+    default:
+      return state;
+  }
+};
+
+// Store
+export const counterStore = createStore(counterReducer, { count: 0 });</code></pre>
+                
+                <h3 class="text-lg font-semibold mb-2 mt-4">Create features/counter/index.js:</h3>
+                <pre><code class="language-javascript">// features/counter/index.js
+import { createElement } from '../../core/runtime/flexnet.js';
+import { counterStore, increment, decrement } from './functions.js';
+
+// Subscribe to store updates to trigger re-renders
+counterStore.subscribe(() => {
+  // In a real application, this would be handled by a more sophisticated system
+  if (window._rerender) {
+    window._rerender();
+  }
+});
+
+export const App = () => {
+  const state = counterStore.getState();
+  
+  const handleIncrement = () => {
+    counterStore.dispatch(increment());
+  };
+  
+  const handleDecrement = () => {
+    counterStore.dispatch(decrement());
+  };
+  
+  return createElement('div', { class: 'app' },
+    createElement('h1', {}, 'FlexNet Application'),
+    createElement('div', { class: 'counter' },
+      createElement('h2', {}, `Count: ${state.count}`),
+      createElement('div', { class: 'controls' },
+        createElement('button', { onClick: handleIncrement }, 'Increment'),
+        createElement('button', { onClick: handleDecrement }, 'Decrement')
+      )
+    )
+  );
+};</code></pre>
+            </div>
+        </div>
+        
+        <!-- Step 9 -->
+        <div class="mb-8">
+            <h2 class="text-2xl font-semibold mb-4 flex items-center">
+                <span class="bg-primary text-white rounded-full w-8 h-8 flex items-center justify-center mr-2">9</span>
+                Setting Up Tests
+            </h2>
+            <div class="pl-10">
+                <p class="mb-4">Create basic tests for your feature:</p>
+                
+                <h3 class="text-lg font-semibold mb-2">Create tests/features/counter/counter.test.js:</h3>
+                <pre><code class="language-javascript">// tests/features/counter/counter.test.js
+import { increment, decrement } from '../../../features/counter/functions.js';
+import { createStore } from '../../../systems/state/store.js';
+
+// A standalone reducer for testing purposes
+const counterReducer = (state = { count: 0 }, action) => {
+  switch (action.type) {
+    case 'INCREMENT':
+      return { ...state, count: state.count + 1 };
+    case 'DECREMENT':
+      return { ...state, count: state.count - 1 };
+    default:
+      return state;
+  }
+};
+
+const testIncrement = () => {
+  const store = createStore(counterReducer, { count: 5 });
+  store.dispatch(increment());
+  const result = store.getState();
+  
+  console.assert(result.count === 6, 'Increment should add 1 to count');
+};
+
+const testDecrement = () => {
+  const store = createStore(counterReducer, { count: 5 });
+  store.dispatch(decrement());
+  const result = store.getState();
+  
+  console.assert(result.count === 4, 'Decrement should subtract 1 from count');
+};
+
+const testImmutability = () => {
+  const initialState = { count: 5 };
+  const store = createStore(counterReducer, initialState);
+  store.dispatch(increment());
+  
+  console.assert(initialState.count === 5, 'Original state should not be modified');
+};
+
+
+// Run tests
+console.log('Running counter tests...');
+testIncrement();
+testDecrement();
+testImmutability();
+console.log('All counter tests completed');</code></pre>
+            </div>
+        </div>
+        
+        <!-- Step 10 -->
+        <div class="mb-8">
+            <h2 class="text-2xl font-semibold mb-4 flex items-center">
+                <span class="bg-primary text-white rounded-full w-8 h-8 flex items-center justify-center mr-2">10</span>
+                Running Your FlexNet Application
+            </h2>
+            <div class="pl-10">
+                <p class="mb-4">To run your FlexNet application, you need to serve the `public` directory. A simple way to do this is with a Python server. Navigate to your project's root directory (`my-flexnet-project`) and run:</p>
+                
+                <pre><code class="language-python"># Python 3 server
+# Save as server.py and run with: python3 -m http.server --directory public 8000
+# Then open http://localhost:8000 in your browser.
+import http.server
+import socketserver
+
+PORT = 8000
+DIRECTORY = "public"
+
+class Handler(http.server.SimpleHTTPRequestHandler):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, directory=DIRECTORY, **kwargs)
+
+with socketserver.TCPServer(("", PORT), Handler) as httpd:
+    print(f"Serving at http://localhost:{PORT}")
+    httpd.serve_forever()</code></pre>
+                 <p class="mt-4">Alternatively, you can run this one-liner from your terminal in the project root:</p>
+                 <pre><code class="language-bash">python3 -m http.server 8000 --directory public</code></pre>
+                <p class="mt-4">Open `http://localhost:8000` in your browser. You should see the counter application. Verify that the increment and decrement buttons work as expected. Because of our `subscribe` call, the component will re-render whenever the state changes.</p>
+            </div>
+        </div>
+        
+        <!-- Step 11 -->
+        <div class="mb-8 bg-white p-6 rounded-lg shadow-sm border border-gray-100">
+            <h2 class="text-xl font-semibold mb-4">Next Steps</h2>
+            <p class="mb-4">Now that you have a basic FlexNet project up and running, you can expand it by:</p>
+            <ul class="list-disc ml-6 space-y-2">
+                <li>Improving the rendering system to use a virtual DOM diffing algorithm instead of a full re-render.</li>
+                <li>Implementing an HTTP system using the `Either` type for error handling.</li>
+                <li>Creating more complex features and components.</li>
+                <li>Setting up proper error boundaries.</li>
+                <li>Adding more comprehensive testing, such as property-based testing.</li>
+            </ul>
+            <p class="mt-4">Refer to the <a href="/docs/api-reference/index.html" class="text-primary hover:underline">API Reference</a> and <a href="/docs/architecture-overview/index.html" class="text-primary hover:underline">Architecture Overview</a> for more detailed information about FlexNet's capabilities.</p>
+        </div>
+
+    </div>
+</body>
+</html>
