@@ -1,252 +1,266 @@
+// === Single File Architecture for FlexNet JSX Docs ===
+
 document.addEventListener('DOMContentLoaded', () => {
-    // Find the page-specific content
-    const pageContentElement = document.getElementById('page-content');
-    if (!pageContentElement) {
-        console.error('Page content container (#page-content) not found.');
-        return;
-    }
-    const pageContent = pageContentElement.innerHTML;
-    document.body.innerHTML = ''; // Clear the body
+    // This file combines logic from main.js and base-path.js, and refactors it
+    // according to the principles in the project's markdown documentation.
 
-    const loadLayout = () => {
-        return fetch(`${BASE_PATH}/templates/layout.html`)
-            .then(response => {
-                if (!response.ok) throw new Error('Layout template not found');
-                return response.text();
-            })
-            .then(html => {
-                document.body.innerHTML = html;
-                const contentPlaceholder = document.getElementById('content-placeholder');
-                if (contentPlaceholder) {
-                    contentPlaceholder.innerHTML = pageContent;
+    const init = () => {
+        // --- Core Types (from api-reference.md, adapted for fluent API) ---
+        const Maybe = {
+            Just: value => ({
+                map: fn => Maybe.Just(fn(value)),
+                chain: fn => fn(value),
+                getOrElse: () => value,
+            }),
+            Nothing: () => ({
+                map: () => Maybe.Nothing(),
+                chain: () => Maybe.Nothing(),
+                getOrElse: defaultValue => defaultValue,
+            }),
+            fromNullable: value => (value !== null && value !== undefined) ? Maybe.Just(value) : Maybe.Nothing(),
+        };
+
+        const Result = {
+            Ok: value => ({
+                map: fn => Result.Ok(fn(value)),
+                chain: fn => fn(value),
+                fold: (_, successFn) => successFn(value),
+                isOk: true,
+            }),
+            Error: error => ({
+                map: () => Result.Error(error),
+                chain: () => Result.Error(error),
+                fold: (errorFn, _) => errorFn(error),
+                isOk: false,
+            }),
+            fromTry: fn => {
+                try {
+                    return Result.Ok(fn());
+                } catch (e) {
+                    return Result.Error(e);
                 }
+            },
+        };
+
+        // --- Core Functions (from api-reference.md) ---
+        const compose = (...fns) => x => fns.reduceRight((y, f) => f(y), x);
+        const pipe = (...fns) => x => fns.reduce((y, f) => f(y), x);
+
+        // --- Security Functions (from security-practices.md) ---
+        const escapeHTML = str => compose(
+            String,
+            s => s.replace(/&/g, '&amp;')
+                 .replace(/</g, '&lt;')
+                 .replace(/>/g, '&gt;')
+                 .replace(/"/g, '&quot;')
+                 .replace(/'/g, '&#039;')
+        )(str);
+
+        // --- Application-specific Pure Functions ---
+        const getBasePath = () => {
+            const hostname = window.location.hostname;
+            if (hostname.includes('github.io')) {
+                const path = window.location.pathname.split('/')[1];
+                return `/${path}`;
+            }
+            return '';
+        };
+
+        // --- Effectful Functions (Side Effects Wrapper) ---
+        const query = selector => Maybe.fromNullable(document.querySelector(selector));
+        const queryAll = selector => Array.from(document.querySelectorAll(selector));
+        const setHtml = html => element => Maybe.fromNullable(element).map(el => {
+            el.innerHTML = html;
+            return el;
+        });
+        const addListener = event => handler => element => {
+            element.addEventListener(event, handler);
+            return element;
+        };
+        const fetchResource = async (url) => {
+            try {
+                const response = await fetch(url);
+                if (!response.ok) return Result.Error(new Error(`Request failed for ${url}: ${response.statusText}`));
+                return Result.Ok(await response.text());
+            } catch (e) {
+                return Result.Error(e);
+            }
+        };
+        
+        // --- UI Initialization Functions ---
+        const loadComponent = async (placeholderId, url) => {
+            const result = await fetchResource(url);
+            result.fold(
+                error => console.warn(`Error loading component ${url}:`, error),
+                html => Maybe.fromNullable(document.querySelector(`#${placeholderId}`)).map(el => el.innerHTML = html)
+            );
+        };
+
+        const setupLogo = (basePath) => {
+            query('#logo-image').map(img => {
+                img.src = `${basePath}/flexnet.png`;
             });
-    };
+        };
 
-    const loadComponent = (id, url) => {
-        return fetch(url)
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error(`Failed to load ${url}: ${response.statusText}`);
-                }
-                return response.text();
-            })
-            .then(html => {
-                const placeholder = document.getElementById(id);
-                if (placeholder) {
-                    placeholder.innerHTML = html;
-                } else {
-                    console.warn(`Placeholder with id '${id}' not found.`);
-                }
-            })
-            .catch(error => console.error(`Error loading component ${url}:`, error));
-    };
-
-    loadLayout().then(() => {
-        Promise.all([
-            loadComponent('sidebar-placeholder', `${BASE_PATH}/templates/sidebar.html`),
-            loadComponent('header-placeholder', `${BASE_PATH}/templates/header.html`),
-            loadComponent('footer-placeholder', `${BASE_PATH}/templates/footer.html`)
-        ]).then(() => {
-            console.log('All components loaded.');
-            
-            // Set logo source dynamically
-            const logoImage = document.getElementById('logo-image');
-            if (logoImage) {
-                logoImage.src = `${BASE_PATH}/flexnet.png`;
-            }
-
-            // Re-run highlight.js after content is loaded
+        const setupSyntaxHighlighting = () => {
             if (window.hljs) {
-                hljs.highlightAll();
+                window.hljs.highlightAll();
             }
+        };
+        
+        const setupThemeSwitcher = () => {
+            query('#theme-toggle').map(addListener('click')(() => {
+                const html = document.documentElement;
+                html.classList.toggle('dark');
+                localStorage.setItem('theme', html.classList.contains('dark') ? 'dark' : 'light');
+            }));
+        };
 
-            // Theme Switcher Logic
-            const themeToggleButton = document.getElementById('theme-toggle');
-            if(themeToggleButton) {
-                themeToggleButton.addEventListener('click', function() {
-                  const html = document.documentElement;
-                  html.classList.toggle('dark');
-                  
-                  if (html.classList.contains('dark')) {
-                    localStorage.setItem('theme', 'dark');
-                  } else {
-                    localStorage.setItem('theme', 'light');
-                  }
-                });
-            }
-
-            // Sidebar Accordion
-            const sidebarNav = document.querySelector('#sidebar-placeholder nav');
-            if (sidebarNav) {
-                const sections = [];
-                sidebarNav.querySelectorAll('h3').forEach(h3 => {
-                    // Find a 'ul' that is a sibling of h3, but not necessarily the direct next one.
-                    let potentialUl = h3.nextElementSibling;
-                    while(potentialUl && potentialUl.tagName !== 'UL') {
-                        potentialUl = potentialUl.nextElementSibling;
-                    }
-                    
-                    if (potentialUl) {
-                        sections.push({ header: h3, content: potentialUl });
-                    }
-                });
-
-                let activeSection = null;
+        const setupSidebarAccordion = () => {
+            query('#sidebar-placeholder nav').map(sidebarNav => {
+                const sections = queryAll('h3', sidebarNav)
+                    .map(h3 => ({ header: h3, content: h3.nextElementSibling }))
+                    .filter(section => section.content && section.content.tagName === 'UL');
+        
                 const currentPath = window.location.pathname;
-
-                sections.forEach(section => {
-                    const links = section.content.querySelectorAll('a');
-                    let isGroupActive = false;
-                    links.forEach(link => {
-                        const linkHref = link.getAttribute('href');
-                        // Exact match or if the current path is a sub-path of the link
-                        if (currentPath === linkHref || (linkHref.endsWith('/') && currentPath.startsWith(linkHref))) {
-                            isGroupActive = true;
-                        }
-                    });
-
-                    const headerLink = section.header.querySelector('a');
-                    if(headerLink) {
-                        const linkHref = headerLink.getAttribute('href');
-                        if (currentPath === linkHref || (linkHref.endsWith('/') && currentPath.startsWith(linkHref))) {
-                            isGroupActive = true;
+        
+                const getActiveSection = () => {
+                    for (const section of sections) {
+                        const links = Array.from(section.content.querySelectorAll('a'));
+                        links.push(section.header.querySelector('a'));
+        
+                        if (links.some(link => link && currentPath.endsWith(link.getAttribute('href')))) {
+                             return section;
                         }
                     }
-
-                    if (isGroupActive) {
-                        activeSection = section;
-                    }
-                });
-
+                    return null;
+                };
+        
+                const activeSection = getActiveSection();
+        
                 sections.forEach(section => {
+                    const isSectionActive = section === activeSection;
+                    const contentIsHidden = !isSectionActive;
+                    section.content.classList.toggle('hidden', contentIsHidden);
+        
                     section.header.style.cursor = 'pointer';
-                    const parentLi = section.header.closest('li');
-                    const isNested = parentLi && parentLi.closest('ul');
-
-                    if (section !== activeSection) {
-                        section.content.classList.add('hidden');
-                    } else {
-                        // if active section is nested, make sure its parent is also open
-                        if (isNested) {
-                            const parentUl = section.header.closest('ul:not(.hidden)');
-                            if (parentUl) {
-                                // This means the parent is already supposed to be open.
-                            }
-                        }
-                    }
-                     // Ensure parent of active section is open
-                    if (activeSection && section.content.contains(activeSection.header)) {
-                        section.content.classList.remove('hidden');
-                    }
-
-
-                    section.header.addEventListener('click', (e) => {
-                        if (e.target.tagName !== 'A') {
-                            e.preventDefault();
-                        }
+                    addListener('click')(e => {
+                        if (e.target.tagName !== 'A') e.preventDefault();
                         
                         const isHidden = section.content.classList.contains('hidden');
-
-                        // This is a simple toggle, not an accordion. To make it an accordion:
-                        sections.forEach(s => {
-                            if (s !== section) {
-                                // do not close parent of a nested section when toggling child
-                                if (!s.content.contains(section.header)) {
+                        if(isHidden) { // If it's hidden, we want to show it and hide others
+                            sections.forEach(s => {
+                                if (s !== section) {
                                     s.content.classList.add('hidden');
                                 }
-                            }
-                        });
-                        
-                        section.content.classList.toggle('hidden');
-                    });
+                            });
+                            section.content.classList.remove('hidden');
+                        } else { // If it's visible, just hide it
+                            section.content.classList.add('hidden');
+                        }
+                    })(section.header);
                 });
-                
-                // Ensure parent of active section is open
-                if (activeSection) {
-                    activeSection.content.classList.remove('hidden');
-                    const parentUl = activeSection.header.closest('ul');
-                    if(parentUl) {
-                       const parentSection = sections.find(s => s.content === parentUl);
-                       if(parentSection) {
-                           parentSection.content.classList.remove('hidden');
-                       }
-                    }
-                }
-            }
+            });
+        };
 
-            // Initialize any scripts that depend on the loaded content here
-            // For example, activating sidebar links
+        const setupSidebarActiveLink = () => {
             const currentPath = window.location.pathname;
-            const sidebarLinks = document.querySelectorAll('#sidebar-placeholder a');
-            sidebarLinks.forEach(link => {
-                // Check if the link's href is a substring of the current path
+            queryAll('#sidebar-placeholder a').forEach(link => {
                 if (currentPath.endsWith(link.getAttribute('href'))) {
                     link.classList.add('bg-blue-500', 'text-white');
-                    link.classList.remove('dark:text-gray-300'); // Ensure active link text is white
+                    link.classList.remove('dark:text-gray-300');
                 }
             });
+        };
 
-            const sidebar = document.getElementById('sidebar-placeholder');
-            const sidebarToggle = document.getElementById('sidebar-toggle');
-            const sidebarOverlay = document.getElementById('sidebar-overlay');
+        const setupMobileSidebar = () => {
+            const sidebar = query('#sidebar-placeholder');
+            const overlay = query('#sidebar-overlay');
+        
+            const closeSidebar = () => {
+                sidebar.map(s => s.classList.add('-translate-x-full'));
+                overlay.map(o => o.classList.add('hidden'));
+            };
+        
+            const openSidebar = () => {
+                sidebar.map(s => s.classList.remove('-translate-x-full'));
+                overlay.map(o => o.classList.remove('hidden'));
+            };
+        
+            query('#sidebar-toggle').map(addListener('click')(openSidebar));
+            overlay.map(addListener('click')(closeSidebar));
+        };
 
-            if (sidebarToggle) {
-                sidebarToggle.addEventListener('click', () => {
-                    sidebar.classList.remove('-translate-x-full');
-                    sidebar.classList.add('translate-x-0');
-                    sidebarOverlay.classList.remove('hidden');
-                });
-            }
-
-            if (sidebarOverlay) {
-                sidebarOverlay.addEventListener('click', () => {
-                    sidebar.classList.remove('translate-x-0');
-                    sidebar.classList.add('-translate-x-full');
-                    sidebarOverlay.classList.add('hidden');
-                });
-            }
-
-            // Breadcrumbs generation
-            const breadcrumbsContainer = document.getElementById('breadcrumbs');
-            if (breadcrumbsContainer) {
+        const setupBreadcrumbs = () => {
+            query('#breadcrumbs').map(container => {
                 const pathSegments = window.location.pathname.split('/').filter(Boolean);
-                let html = '<a href="/" class="text-gray-600 dark:text-gray-400 hover:underline">Home</a>';
-                let cumulativePath = '';
-                pathSegments.forEach((seg, idx) => {
-                    cumulativePath += '/' + seg;
+                const homeLink = `<a href="/" class="text-gray-600 dark:text-gray-400 hover:underline">Home</a>`;
+                
+                const breadcrumbLinks = pathSegments.map((seg, idx) => {
+                    const cumulativePath = `/${pathSegments.slice(0, idx + 1).join('/')}`;
                     const name = seg.replace('.html', '').replace(/-/g, ' ');
-                    const displayName = name.charAt(0).toUpperCase() + name.slice(1);
-                    html += ' <span class="mx-2 text-gray-500 dark:text-gray-400">/</span> ';
+                    const displayName = escapeHTML(name.charAt(0).toUpperCase() + name.slice(1));
+        
                     if (idx === pathSegments.length - 1) {
-                         html += `<span class="text-gray-800 dark:text-gray-200">${displayName}</span>`;
-                    } else {
-                        html += `<a href="${cumulativePath}" class="text-gray-600 dark:text-gray-400 hover:underline">${displayName}</a>`;
+                        return `<span class="text-gray-800 dark:text-gray-200">${displayName}</span>`;
                     }
+                    return `<a href="${cumulativePath}" class="text-gray-600 dark:text-gray-400 hover:underline">${displayName}</a>`;
                 });
-                breadcrumbsContainer.innerHTML = html;
-            }
-        });
-    });
-
-    //
-    // copy button on code blocks
-    //
-    const codeBlocks = document.querySelectorAll('.bg-gray-900');
-
-    codeBlocks.forEach(block => {
-        const button = block.querySelector('button');
-        const pre = block.querySelector('pre');
-        if (button && pre) {
-            button.addEventListener('click', () => {
-                const code = pre.innerText;
-                navigator.clipboard.writeText(code).then(() => {
-                    button.innerText = 'Copied!';
-                    setTimeout(() => {
-                        button.innerText = 'Copy';
-                    }, 2000);
-                });
+        
+                container.innerHTML = [homeLink, ...breadcrumbLinks].join(' <span class="mx-2 text-gray-500 dark:text-gray-400">/</span> ');
             });
-        }
-    });
+        };
+        
+        const setupCopyButtons = () => {
+            queryAll('pre').forEach(pre => {
+                const parent = pre.parentElement;
+                const button = parent ? parent.querySelector('button') : null;
+                if (button) {
+                    addListener('click')(() => {
+                        navigator.clipboard.writeText(pre.innerText).then(() => {
+                            button.innerText = 'Copied!';
+                            setTimeout(() => { button.innerText = 'Copy'; }, 2000);
+                        });
+                    })(button);
+                }
+            });
+        };
+
+        // --- Main Application Logic ---
+        const main = async () => {
+            const pageContent = query('#page-content').map(el => el.innerHTML).getOrElse('');
+            document.body.innerHTML = '';
+            
+            const basePath = getBasePath();
+            const layoutResult = await fetchResource(`${basePath}/templates/layout.html`);
+
+            layoutResult.fold(
+                error => console.error("Failed to load layout:", error),
+                async (layoutHtml) => {
+                    document.body.innerHTML = layoutHtml;
+                    Maybe.fromNullable(document.querySelector('#content-placeholder')).map(el => el.innerHTML = pageContent);
+
+                    await Promise.all([
+                        loadComponent('sidebar-placeholder', `${basePath}/templates/sidebar.html`),
+                        loadComponent('header-placeholder', `${basePath}/templates/header.html`),
+                        loadComponent('footer-placeholder', `${basePath}/templates/footer.html`)
+                    ]);
+                    
+                    // Initialize all UI components after the main layout and components are loaded.
+                    setupLogo(basePath);
+                    setupSyntaxHighlighting();
+                    setupThemeSwitcher();
+                    setupSidebarAccordion();
+                    setupSidebarActiveLink();
+                    setupMobileSidebar();
+                    setupBreadcrumbs();
+                    setupCopyButtons();
+                }
+            );
+        };
+
+        main().catch(console.error);
+    };
+    
+    init();
 });
