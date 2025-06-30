@@ -6,6 +6,7 @@
     <title>FlexNet Framework Documentation</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/atom-one-dark.min.css">
+    <link rel="stylesheet" href="../../src/styles/components.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
     <script>
         // Set theme on page load to avoid FOUC
@@ -14,7 +15,6 @@
         } else {
             document.documentElement.classList.remove('dark');
         }
-
         tailwind.config = {
             darkMode: 'class', // Enable class-based dark mode
             theme: {
@@ -30,13 +30,12 @@
         }
         hljs.highlightAll();
     </script>
-    \
-
-
-    <script src="../../assets/main.js" defer></script>
 </head>
-<body class="bg-gray-50 text-gray-900 min-h-screen dark:bg-slate-900 dark:text-gray-100">
-    <div id="page-content">
+<body class="bg-gray-100 dark:bg-slate-900">
+    <div id="root">
+        <!-- The layout will be injected here -->
+    </div>
+    <div id="page-content" style="display: none;">
         <div class="mb-8">
             <h2 class="text-2xl font-semibold mb-4 flex items-center dark:text-white">
                 <span class="bg-primary text-white rounded-full w-8 h-8 flex items-center justify-center mr-2">5</span>
@@ -49,12 +48,10 @@
                 <pre><code class="language-javascript">// Pure rendering functions
 export const render = (component, container) => {
   const vNode = component();
-
   const createDOMNode = (node) => {
     if (typeof node === 'string' || typeof node === 'number') {
       return document.createTextNode(String(node));
     }
-
     if (typeof node.type === 'function') {
         const propsWithChildren = { ...node.props, children: node.props.children || [] };
         return createDOMNode(node.type(propsWithChildren));
@@ -69,14 +66,11 @@ export const render = (component, container) => {
         element.setAttribute(key, value);
       }
     });
-
     (node.props.children || []).forEach(child => {
       element.appendChild(createDOMNode(child));
     });
-
     return element;
   };
-
   container.innerHTML = '';
   container.appendChild(createDOMNode(vNode));
 };</code></pre>
@@ -84,11 +78,9 @@ export const render = (component, container) => {
                 <h3 class="text-lg font-semibold mb-2 mt-4 dark:text-white">Create systems/state/store.js:</h3>
                 <pre><code class="language-javascript">// Immutable state management
 import { pipe } from '../../core/functions/composition.js';
-
 export const createStore = (reducer, initialState) => {
     const subscribers = new Set();
     let state = initialState;
-
     return {
         getState: () => state,
         dispatch: action => {
@@ -105,7 +97,6 @@ export const createStore = (reducer, initialState) => {
                 <h3 class="text-lg font-semibold mb-2 mt-4 dark:text-white">Create systems/effects/functions.js:</h3>
                 <pre><code class="language-javascript">// Isolated effect handling
 import { Result } from '../../core/types/result.js';
-
 export const Effect = {
     of: value => ({ type: 'Effect', run: () => value }),
     map: fn => effect =>
@@ -114,7 +105,6 @@ export const Effect = {
         Effect.of(() => fn(effect.run()).run()),
     run: effect => effect.run()
 };
-
 export const runEffect = (effect) => {
   try {
     const result = Effect.run(effect);
@@ -127,7 +117,6 @@ export const runEffect = (effect) => {
                 <h3 class="text-lg font-semibold mb-2 mt-4 dark:text-white">Create systems/events/functions.js:</h3>
                 <pre><code class="language-javascript">// Event system management
 import { Maybe } from '../../core/types/maybe.js';
-
 export const createEventBus = () => {
     const subscribers = new Map();
     
@@ -146,5 +135,6 @@ export const createEventBus = () => {
             </div>
         </div>
     </div>
+    <script type="module" src="../../src/main.js"></script>
 </body>
 </html>

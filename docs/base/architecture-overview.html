@@ -6,6 +6,7 @@
     <title>Architecture Overview - FlexNet Framework</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/atom-one-dark.min.css">
+    <link rel="stylesheet" href="../src/styles/components.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
     <script>
         // Set dark mode preference
@@ -14,7 +15,6 @@
         } else {
             document.documentElement.classList.remove('dark');
         }
-
         tailwind.config = {
             darkMode: 'class',
             theme: {
@@ -29,17 +29,12 @@
             }
         }
     </script>
-    \
-
-
-    <script src="../assets/main.js" defer></script>
 </head>
 <body class="bg-gray-50 text-gray-900 min-h-screen dark:bg-slate-900 dark:text-white">
-    <div id="page-content">
+    <div id="page-content" style="display: none;">
 <main class="container mx-auto px-4 py-8">
     <h1 class="text-4xl font-bold text-primary mb-4 dark:text-blue-400">FlexNet Architecture Overview</h1>
     <p class="text-gray-600 dark:text-gray-400 mb-8">Version: 1.0.0 (Released 2025-01-31)</p>
-
     <!-- Project Structure -->
     <section class="mb-12">
         <h2 class="text-3xl font-semibold text-secondary border-b-2 border-secondary pb-2 mb-6 dark:text-indigo-400 dark:border-indigo-400">Project Structure</h2>
@@ -76,7 +71,6 @@
     └── getting-started-guide.md</code></pre>
         </div>
     </section>
-
     <!-- Core Operating Schema -->
     <section class="mb-12">
         <h2 class="text-3xl font-semibold text-secondary border-b-2 border-secondary pb-2 mb-6 dark:text-indigo-400 dark:border-indigo-400">Core Operating Schema</h2>
@@ -125,7 +119,6 @@
                 </div>
             </div>
         </div>
-
         <div class="mb-8 p-6 bg-white rounded-lg shadow-md dark:bg-slate-800">
             <h3 class="text-2xl font-semibold text-dark dark:text-light mb-4">System Components</h3>
             <ul class="list-disc list-inside space-y-4 text-gray-700 dark:text-gray-300">
@@ -138,7 +131,6 @@
                 <li><strong>Event System (<code>/src/systems/events/</code>)</strong>: Event handling, Event composition, Event delegation, Event filtering.</li>
             </ul>
         </div>
-
         <div class="mb-8 p-6 bg-white rounded-lg shadow-md dark:bg-slate-800">
             <h3 class="text-2xl font-semibold text-dark dark:text-light mb-4">Feature Components</h3>
              <ul class="list-disc list-inside space-y-4 text-gray-700 dark:text-gray-300">
@@ -173,7 +165,6 @@
             </div>
         </div>
     </section>
-
     <!-- Development Standards -->
     <section class="mb-12">
         <h2 class="text-3xl font-semibold text-secondary border-b-2 border-secondary pb-2 mb-6 dark:text-indigo-400 dark:border-indigo-400">Development Standards</h2>
@@ -216,7 +207,6 @@
             </div>
         </div>
     </section>
-
     <!-- Performance Considerations -->
     <section class="mb-12">
         <h2 class="text-3xl font-semibold text-secondary border-b-2 border-secondary pb-2 mb-6 dark:text-indigo-400 dark:border-indigo-400">Performance Considerations</h2>
@@ -252,5 +242,6 @@
     </section>
 </main>
     </div>
+    <script type="module" src="../src/main.js"></script>
 </body>
 </html>

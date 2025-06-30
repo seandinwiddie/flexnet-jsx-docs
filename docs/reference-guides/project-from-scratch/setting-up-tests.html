@@ -6,6 +6,7 @@
     <title>FlexNet Framework Documentation</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/atom-one-dark.min.css">
+    <link rel="stylesheet" href="../../src/styles/components.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
     <script>
         // Set theme on page load to avoid FOUC
@@ -14,7 +15,6 @@
         } else {
             document.documentElement.classList.remove('dark');
         }
-
         tailwind.config = {
             darkMode: 'class', // Enable class-based dark mode
             theme: {
@@ -30,13 +30,12 @@
         }
         hljs.highlightAll();
     </script>
-    \
-
-
-    <script src="../../assets/main.js" defer></script>
 </head>
-<body class="bg-gray-50 text-gray-900 min-h-screen dark:bg-slate-900 dark:text-gray-100">
-    <div id="page-content">
+<body class="bg-gray-100 dark:bg-slate-900">
+    <div id="root">
+        <!-- The layout will be injected here -->
+    </div>
+    <div id="page-content" style="display: none;">
         <div class="mb-8">
             <h2 class="text-2xl font-semibold mb-4 flex items-center dark:text-white">
                 <span class="bg-primary text-white rounded-full w-8 h-8 flex items-center justify-center mr-2">9</span>
@@ -49,7 +48,6 @@
                 <pre><code class="language-javascript">// tests/features/counter/counter.test.js
 import { increment, decrement, counterReducer } from '../../../features/counter/functions.js';
 import { createStore } from '../../../systems/state/store.js';
-
 const testIncrement = () => {
   const store = createStore(counterReducer, { count: 5 });
   store.dispatch(increment());
@@ -57,7 +55,6 @@ const testIncrement = () => {
   
   console.assert(result.count === 6, 'Increment should add 1 to count');
 };
-
 const testDecrement = () => {
   const store = createStore(counterReducer, { count: 5 });
   store.dispatch(decrement());
@@ -65,7 +62,6 @@ const testDecrement = () => {
   
   console.assert(result.count === 4, 'Decrement should subtract 1 from count');
 };
-
 const testImmutability = () => {
   const initialState = { count: 5 };
   const store = createStore(counterReducer, initialState);
@@ -73,7 +69,6 @@ const testImmutability = () => {
   
   console.assert(initialState.count === 5, 'Original state should not be modified');
 };
-
 // Run tests
 console.log('Running counter tests...');
 testIncrement();
@@ -83,5 +78,6 @@ console.log('All counter tests completed');</code></pre>
             </div>
         </div>
     </div>
+    <script type="module" src="../../src/main.js"></script>
 </body>
 </html>

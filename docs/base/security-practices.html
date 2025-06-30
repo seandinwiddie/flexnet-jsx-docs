@@ -6,6 +6,7 @@
     <title>Security Practices - FlexNet Framework</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/atom-one-dark.min.css">
+    <link rel="stylesheet" href="../src/styles/components.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
     <script>
         // Set dark mode preference
@@ -14,7 +15,6 @@
         } else {
             document.documentElement.classList.remove('dark');
         }
-
         tailwind.config = {
             darkMode: 'class',
             theme: {
@@ -29,16 +29,11 @@
             }
         }
     </script>
-    \
-
-
-    <script src="../assets/main.js" defer></script>
 </head>
 <body class="bg-gray-50 text-gray-900 min-h-screen dark:bg-slate-900 dark:text-white">
-    <div id="page-content">
+    <div id="page-content" style="display: none;">
 <main class="container mx-auto px-4 py-8">
     <h1 class="text-4xl font-bold text-primary mb-4 dark:text-blue-400">FlexNet Security Best Practices</h1>
-
     <!-- XSS Prevention -->
     <section class="mb-12">
         <h2 id="xss-prevention" class="text-3xl font-semibold text-secondary border-b-2 border-secondary pb-2 mb-6 dark:text-indigo-400 dark:border-indigo-400">XSS Prevention</h2>
@@ -53,7 +48,6 @@
          .replace(/"/g, '&quot;')
          .replace(/'/g, '&#039;')
 )(str);
-
 const validateInput = compose(
     input => {
         const escaped = escape(input);
@@ -71,7 +65,6 @@ const createElement = (type, props, ...children) => {
     if (typeof type !== 'string' && typeof type !== 'function') {
         return Either.Left('Invalid element type');
     }
-
     // Sanitize props
     const safeProps = Object.entries(props || {}).reduce((acc, [key, value]) => {
         // Prevent script injection in event handlers
@@ -86,7 +79,6 @@ const createElement = (type, props, ...children) => {
         }
         return acc;
     }, {});
-
     return Either.Right({ type, props: safeProps, children });
 };</code></pre>
             </div>
@@ -95,7 +87,6 @@ const createElement = (type, props, ...children) => {
                 <pre class="bg-gray-100 dark:bg-gray-900 rounded-lg"><code class="language-javascript">const urlValidator = {
     // Whitelist of allowed protocols
     allowedProtocols: ['https:', 'data:image/'],
-
     validate: (url) => {
         try {
             const parsed = new URL(url);
@@ -111,7 +102,6 @@ const createElement = (type, props, ...children) => {
             </div>
         </div>
     </section>
-
     <!-- State Management Security -->
     <section class="mb-12">
         <h2 class="text-3xl font-semibold text-secondary border-b-2 border-secondary pb-2 mb-6 dark:text-indigo-400 dark:border-indigo-400">State Management Security</h2>
@@ -128,7 +118,6 @@ const createElement = (type, props, ...children) => {
         });
         return validateStateIntegrity(newState);
     },
-
     validateStateIntegrity: (state) => {
         const currentHash = generateStateHash(state);
         return currentHash === state.hash
@@ -145,7 +134,6 @@ const createElement = (type, props, ...children) => {
         WRITE: 'write',
         ADMIN: 'admin'
     },
-
     validateAccess: (state, operation, permission) => {
         const userPermissions = getCurrentUserPermissions();
         return userPermissions.includes(permission)
@@ -156,7 +144,6 @@ const createElement = (type, props, ...children) => {
             </div>
         </div>
     </section>
-
     <!-- Error Handling -->
     <section class="mb-12">
         <h2 class="text-3xl font-semibold text-secondary border-b-2 border-secondary pb-2 mb-6 dark:text-indigo-400 dark:border-indigo-400">Error Handling</h2>
@@ -165,18 +152,15 @@ const createElement = (type, props, ...children) => {
                 <h3 class="text-2xl font-semibold text-dark dark:text-light mb-4">Error Boundaries</h3>
                 <pre class="bg-gray-100 dark:bg-gray-900 rounded-lg"><code class="language-javascript">const ErrorBoundary = ({ children, fallback }) => {
     const [error, setError] = useState(null);
-
     useEffect(() => {
         const handleError = (event) => {
             event.preventDefault();
             setError(event.error);
             logError(event.error);
         };
-
         window.addEventListener('error', handleError);
         return () => window.removeEventListener('error', handleError);
     }, []);
-
     return error ? fallback(error) : children;
 };</code></pre>
             </div>
@@ -184,7 +168,6 @@ const createElement = (type, props, ...children) => {
                 <h3 class="text-2xl font-semibold text-dark dark:text-light mb-4">Secure Error Logging</h3>
                 <pre class="bg-gray-100 dark:bg-gray-900 rounded-lg"><code class="language-javascript">const errorLogger = {
     sensitiveKeys: ['password', 'token', 'secret'],
-
     sanitizeError: (error) => {
         const sanitized = { ...error };
         sensitiveKeys.forEach(key => {
@@ -194,7 +177,6 @@ const createElement = (type, props, ...children) => {
         });
         return sanitized;
     },
-
     logError: (error) => {
         const sanitizedError = sanitizeError(error);
         console.error('Secure Error:', sanitizedError);
@@ -203,7 +185,6 @@ const createElement = (type, props, ...children) => {
             </div>
         </div>
     </section>
-
     <!-- Memory State Security -->
     <section class="mb-12">
         <h2 class="text-3xl font-semibold text-secondary border-b-2 border-secondary pb-2 mb-6 dark:text-indigo-400 dark:border-indigo-400">Memory State Security</h2>
@@ -215,7 +196,6 @@ const createElement = (type, props, ...children) => {
         if (!context.activeFiles || !context.implementationState) {
             return Either.Left('Invalid context structure');
         }
-
         return validateFilePaths(context.activeFiles)
             .chain(validateImplementation)
             .chain(validateStateIntegrity);
@@ -232,7 +212,6 @@ const createElement = (type, props, ...children) => {
             ? Either.Right(path)
             : Either.Left('Invalid path');
     },
-
     validatePermissions: (path) => {
         const stats = getFileStats(path);
         return stats.mode === expectedMode
@@ -243,7 +222,6 @@ const createElement = (type, props, ...children) => {
             </div>
         </div>
     </section>
-
     <!-- Technical Standards Implementation -->
     <section class="mb-12">
         <h2 class="text-3xl font-semibold text-secondary border-b-2 border-secondary pb-2 mb-6 dark:text-indigo-400 dark:border-indigo-400">Technical Standards Implementation</h2>
@@ -258,7 +236,6 @@ const createElement = (type, props, ...children) => {
             return Either.Left(error);
         }
     },
-
     // Global error handling
     registerGlobalErrorHandler: () => {
         window.addEventListener('error', (event) => {
@@ -280,5 +257,6 @@ const createElement = (type, props, ...children) => {
     </footer>
 </main>
     </div>
+    <script type="module" src="../src/main.js"></script>
 </body>
 </html>

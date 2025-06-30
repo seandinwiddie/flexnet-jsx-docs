@@ -6,6 +6,7 @@
     <title>FlexNet Framework Documentation</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/atom-one-dark.min.css">
+    <link rel="stylesheet" href="../../src/styles/components.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
     <script>
         // Set theme on page load to avoid FOUC
@@ -14,7 +15,6 @@
         } else {
             document.documentElement.classList.remove('dark');
         }
-
         tailwind.config = {
             darkMode: 'class', // Enable class-based dark mode
             theme: {
@@ -31,17 +31,17 @@
         hljs.highlightAll();
     </script>
     
-
-    <script src="../../assets/main.js" defer></script>
 </head>
-<body class="bg-gray-50 text-gray-900 min-h-screen dark:bg-slate-900 dark:text-gray-100">
-    <div id="page-content">
+<body class="bg-gray-100 dark:bg-slate-900">
+    <div id="root">
+        <!-- The layout will be injected here -->
+    </div>
+    <div id="page-content" style="display: none;">
         <h1 class="text-3xl font-bold mb-6 text-center mt-8 dark:text-white">Building a FlexNet Project From Scratch</h1>
         
         <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-100 mb-8 dark:bg-slate-800 dark:border-slate-700">
             <p class="text-gray-700 dark:text-gray-300 mb-4">This guide will walk you through the process of creating a FlexNet project from scratch, following the framework's principles of functional programming, immutability, and type safety, as detailed in the <a href="../../base/architecture-overview.html" class="text-primary hover:underline">Architecture Overview</a>.</p>
         </div>
-
         <!-- Step 1 -->
         <div class="mb-8">
             <h2 class="text-2xl font-semibold mb-4 flex items-center">
@@ -49,7 +49,6 @@
                 <a href="initialize-project.html" class="text-secondary hover:underline">Initialize Project</a>
             </h2>
         </div>
-
         <!-- Step 2 -->
         <div class="mb-8">
             <h2 class="text-2xl font-semibold mb-4 flex items-center">
@@ -57,7 +56,6 @@
                 <a href="implementing-core-types.html" class="text-secondary hover:underline">Implementing Core Types</a>
             </h2>
         </div>
-
         <!-- Step 3 -->
         <div class="mb-8">
             <h2 class="text-2xl font-semibold mb-4 flex items-center">
@@ -135,7 +133,7 @@
             </ul>
             <p class="mt-4 dark:text-gray-300">Refer to the <a href="../../base/api-reference.html" class="text-primary hover:underline">API Reference</a> and <a href="../../base/architecture-overview.html" class="text-primary hover:underline">Architecture Overview</a> for more detailed information about FlexNet's capabilities.</p>
         </div>
-
     </div>
+    <script type="module" src="../../src/main.js"></script>
 </body>
 </html>

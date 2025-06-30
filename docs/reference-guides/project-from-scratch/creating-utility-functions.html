@@ -6,6 +6,7 @@
     <title>FlexNet Framework Documentation</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/atom-one-dark.min.css">
+    <link rel="stylesheet" href="../../src/styles/components.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
     <script>
         // Set theme on page load to avoid FOUC
@@ -14,7 +15,6 @@
         } else {
             document.documentElement.classList.remove('dark');
         }
-
         tailwind.config = {
             darkMode: 'class', // Enable class-based dark mode
             theme: {
@@ -30,13 +30,12 @@
         }
         hljs.highlightAll();
     </script>
-    \
-
-
-    <script src="../../assets/main.js" defer></script>
 </head>
-<body class="bg-gray-50 text-gray-900 min-h-screen dark:bg-slate-900 dark:text-gray-100">
-    <div id="page-content">
+<body class="bg-gray-100 dark:bg-slate-900">
+    <div id="root">
+        <!-- The layout will be injected here -->
+    </div>
+    <div id="page-content" style="display: none;">
         <div class="mb-8">
             <h2 class="text-2xl font-semibold mb-4 flex items-center dark:text-white">
                 <span class="bg-primary text-white rounded-full w-8 h-8 flex items-center justify-center mr-2">7</span>
@@ -48,17 +47,15 @@
                 <h3 class="text-lg font-semibold mb-2 dark:text-white">Create utils/array.js:</h3>
                 <pre><code class="language-javascript">// Array utility functions
 import { Maybe } from '../core/types/maybe.js';
-
 export const head = array =>
     Maybe.fromNullable(array[0]);
-
 export const tail = array =>
     array.length > 1 ? Maybe.Just(array.slice(1)) : Maybe.Nothing();
-
 export const find = predicate => array =>
     Maybe.fromNullable(array.find(predicate));</code></pre>
             </div>
         </div>
     </div>
+    <script type="module" src="../../src/main.js"></script>
 </body>
 </html>

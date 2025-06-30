@@ -4,9 +4,33 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FlexNet JSX Docs</title>
-    <link href="https://unpkg.com/tailwindcss@^2/dist/tailwind.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/atom-one-dark.min.css">
+    <link rel="stylesheet" href="./src/styles/components.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
+    <script>
+        // Set theme on page load to avoid FOUC
+        if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+        }
+
+        tailwind.config = {
+            darkMode: 'class', // Enable class-based dark mode
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#3b82f6',
+                        secondary: '#6366f1',
+                        dark: '#1e293b',
+                        light: '#f8fafc'
+                    }
+                }
+            }
+        }
+        hljs.highlightAll();
+    </script>
     <style>
         .dark .hljs { background: #282c34; color: #abb2bf; }
         .dark .prose-dark pre { background-color: #282c34; }
@@ -18,9 +42,122 @@
         <!-- The layout will be injected here -->
     </div>
     <div id="page-content" style="display: none;">
-        <h1>Welcome to FlexNet JSX</h1>
-        <p>Your documentation, powered by functional programming.</p>
+        <!-- Hero section -->
+        <div class="py-20 text-center bg-gradient-to-r from-primary to-secondary text-white rounded-lg mb-12">
+            <h1 class="text-5xl font-bold mb-4 text-shadow">FlexNet Framework</h1>
+            <p class="text-xl mb-8">A functional JavaScript implementation for building modern web applications</p>
+            <div class="flex justify-center space-x-4">
+                <a href="base/getting-started-guide.html" class="px-8 py-4 bg-white text-primary rounded-md hover:bg-gray-100 transition font-semibold">Get Started</a>
+                <a href="base/api-reference.html" class="px-8 py-4 bg-transparent text-white border border-white rounded-md hover:bg-white hover:text-primary transition font-semibold">API Reference</a>
+            </div>
+        </div>
+
+        <!-- Features section -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
+            <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-100 flex items-start dark:bg-slate-800 dark:border-slate-700">
+                <div class="mr-4">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" /></svg>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold mb-2 dark:text-white">Pure Functional</h3>
+                    <p class="text-gray-600 dark:text-gray-300">Build applications with pure functions, immutable state, and functional composition. <a href="base/architecture-overview.html#functional-architecture-principles" class="text-primary hover:underline">Learn more.</a></p>
+                </div>
+            </div>
+            <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-100 flex items-start dark:bg-slate-800 dark:border-slate-700">
+                <div class="mr-4">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 9a2 2 0 012-2h2a2 2 0 012 2v.93a2 2 0 001 1.732l1 1a2 2 0 01-2 3.464l-1-1A2 2 0 0013.07 15H11a2 2 0 01-2-2v-4z" /></svg>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold mb-2 dark:text-white">Zero Dependencies</h3>
+                    <p class="text-gray-600 dark:text-gray-300">FlexNet has no external dependencies and uses browser native implementation. See the <a href="base/consistency-analysis.html#core-architecture-compliance" class="text-primary hover:underline">Consistency Analysis</a>.</p>
+                </div>
+            </div>
+            <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-100 flex items-start dark:bg-slate-800 dark:border-slate-700">
+                <div class="mr-4">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" /></svg>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold mb-2 dark:text-white">Type System</h3>
+                    <p class="text-gray-600 dark:text-gray-300">Functional type system with Maybe, Either, and Result types for better error handling. <a href="base/api-reference.html#core-types" class="text-primary hover:underline">See the API.</a></p>
+                </div>
+            </div>
+            <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-100 flex items-start dark:bg-slate-800 dark:border-slate-700">
+                <div class="mr-4">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold mb-2 dark:text-white">Security First</h3>
+                    <p class="text-gray-600 dark:text-gray-300">Built with security in mind, including XSS prevention and input validation. <a href="base/security-practices.html#xss-prevention" class="text-primary hover:underline">Read the guide.</a></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick start section -->
+        <div class="mb-12">
+            <h2 class="text-2xl font-bold mb-4 dark:text-white">Quick Start</h2>
+            <p class="mb-4 dark:text-gray-300">To get started, please see the <a href="base/getting-started-guide.html" class="text-primary hover:underline">Getting Started Guide</a> for detailed instructions on how to set up your project.</p>
+            <a href="base/getting-started-guide.html" class="text-primary hover:underline">Learn More →</a>
+        </div>
+
+        <!-- FlexNet Framework overview section -->
+        <div class="mb-12">
+            <h2 class="text-2xl font-bold mb-4 dark:text-white">FlexNet Framework Overview</h2>
+            
+            <div class="p-6 bg-white rounded-lg shadow-sm border border-gray-100 mb-6 dark:bg-slate-800 dark:border-slate-700">
+                <h3 class="text-xl font-semibold text-dark mb-4 dark:text-white">Core Philosophy</h3>
+                <p class="text-gray-700 dark:text-gray-300 mb-4">FlexNet is a JavaScript framework built entirely on <strong>functional programming principles</strong>. Its primary goal is to create predictable, secure, and maintainable web applications by enforcing a strict set of architectural patterns.</p>
+                <p class="text-gray-700 dark:text-gray-300 font-semibold mb-2">The key tenets are:</p>
+                <ul class="list-disc list-inside space-y-2 text-gray-700 dark:text-gray-300">
+                    <li><strong>Purity and Immutability</strong>: The framework is centered around <strong>pure functions</strong>. All application logic and state transitions are handled by functions that do not have side effects. State is immutable, meaning it cannot be changed in place; instead, new state is created through pure functions.</li>
+                    <li><strong>Explicit Side Effects</strong>: All interactions with the outside world (like HTTP requests, DOM manipulation, or local storage) are considered side effects. These are strictly isolated and managed by a dedicated <strong>Effect System</strong>, ensuring the core application logic remains pure and predictable.</li>
+                    <li><strong>Type Safety</strong>: FlexNet provides a robust, built-in type system to handle common programming scenarios gracefully without throwing exceptions. The primary types are:
+                        <ul class="list-disc list-inside ml-6 space-y-1 text-gray-700 dark:text-gray-300">
+                            <li><code>Maybe</code>: For handling optional values that might be missing.</li>
+                            <li><code>Either</code>: For functions that can result in one of two outcomes, typically for error handling (e.g., <code>Left(error)</code> or <code>Right(success)</code>).</li>
+                            <li><code>Result</code>: For representing the outcome of an operation that could fail.</li>
+                        </ul>
+                    </li>
+                    <li><strong>Zero External Dependencies</strong>: The framework is designed to be self-contained, with no reliance on third-party libraries.</li>
+                </ul>
+            </div>
+
+            <div class="p-6 bg-white rounded-lg shadow-sm border border-gray-100 mb-6 dark:bg-slate-800 dark:border-slate-700">
+                <h3 class="text-xl font-semibold text-dark mb-4 dark:text-white">Architecture</h3>
+                <p class="text-gray-700 dark:text-gray-300 mb-4">The framework's architecture is clearly defined to separate concerns and enforce its core principles.</p>
+                <ul class="list-disc list-inside space-y-2 text-gray-700 dark:text-gray-300">
+                    <li><strong>Core Operating Schema</strong>: This is the blueprint for the framework, defining its functional architecture. It mandates a "Pure Function First" approach and lays out the structure for the type system, state management, and effect handling.</li>
+                    <li><strong>Project Structure</strong>: A standardized directory layout separates the:
+                        <ul class="list-disc list-inside ml-6 space-y-1 text-gray-700 dark:text-gray-300">
+                            <li><code>core</code>: Contains the runtime, type system, and fundamental utility functions (like composition and transforms).</li>
+                            <li><code>systems</code>: Manages core functionalities like rendering, state, events, and effects.</li>
+                            <li><code>features</code>: Reusable, application-level components such as routing, forms, and validation.</li>
+                            <li><code>security</code>: Provides functions for sanitization, validation, and XSS prevention.</li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+            
+            <div class="p-6 bg-white rounded-lg shadow-sm border border-gray-100 mb-6 dark:bg-slate-800 dark:border-slate-700">
+                <h3 class="text-xl font-semibold text-dark mb-4 dark:text-white">Key Systems and Features</h3>
+                <ul class="list-disc list-inside space-y-2 text-gray-700 dark:text-gray-300">
+                    <li><strong>State Management</strong>: State is managed through pure functions and isolated within closures, avoiding global state entirely.</li>
+                    <li><strong>Rendering System</strong>: The rendering engine uses pure functions to calculate DOM changes, perform batch updates, and manage layout.</li>
+                    <li><strong>HTTP System</strong>: A prime example of FlexNet's principles in action, the HTTP client is a self-contained, functional API for making requests. It uses the <code>Either</code> type for error handling and isolates all network activity within the Effect System.</li>
+                    <li><strong>Security</strong>: Security is a first-class concern. The framework includes built-in practices for XSS prevention, secure state management through immutability, safe error handling, and memory-state security.</li>
+                </ul>
+            </div>
+
+            <div class="p-6 bg-white rounded-lg shadow-sm border border-gray-100 mb-6 dark:bg-slate-800 dark:border-slate-700">
+                <h3 class="text-xl font-semibold text-dark mb-4 dark:text-white">Development and Consistency</h3>
+                <p class="text-gray-700 dark:text-gray-300 mb-4">FlexNet places a strong emphasis on maintaining high standards and consistency throughout the codebase.</p>
+                <ul class="list-disc list-inside space-y-2 text-gray-700 dark:text-gray-300">
+                    <li><strong>Development Standards</strong>: There are strict guidelines for file organization, code structure, testing methodologies, and documentation.</li>
+                    <li><strong>Consistency Analysis</strong>: The project includes tooling and processes to continuously analyze the codebase for adherence to its architectural and technical standards, ensuring that principles like immutability and purity are enforced.</li>
+                </ul>
+            </div>
+            <p class="text-gray-600 dark:text-gray-300">In summary, the FlexNet Framework is a highly-principled environment for building web applications with a strong focus on functional purity, security, and long-term maintainability. It achieves this through a carefully designed architecture that isolates side effects and manages state in a predictable, immutable way.</p>
+        </div>
     </div>
-    <script src="./assets/main.js"></script>
+    <script type="module" src="./src/main.js"></script>
 </body>
 </html>

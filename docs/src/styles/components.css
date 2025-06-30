@@ -1,0 +1,39 @@
+/* FlexNet Documentation Site Component Styles */
+
+/* Logo gradient to match the deployed version */
+.logo-gradient {
+    background: linear-gradient(135deg, #3b82f6 0%, #6366f1 100%);
+    background-size: 100% 100%;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Add a subtle overlay for better logo visibility */
+.logo-gradient::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.8) 0%, rgba(99, 102, 241, 0.8) 100%);
+    z-index: 1;
+}
+
+/* Ensure logo image is above the overlay */
+.logo-gradient img {
+    position: relative;
+    z-index: 2;
+    filter: brightness(1.1) contrast(1.1);
+}
+
+/* Dark mode adjustments */
+.dark .logo-gradient {
+    background: linear-gradient(135deg, #1e40af 0%, #4338ca 100%);
+}
+
+.dark .logo-gradient::before {
+    background: linear-gradient(135deg, rgba(30, 64, 175, 0.9) 0%, rgba(67, 56, 202, 0.9) 100%);
+}
+
+/* Additional component styles can be added here */ 

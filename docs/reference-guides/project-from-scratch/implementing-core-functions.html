@@ -6,6 +6,7 @@
     <title>FlexNet Framework Documentation</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/atom-one-dark.min.css">
+    <link rel="stylesheet" href="../../src/styles/components.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
     <script>
         // Set theme on page load to avoid FOUC
@@ -14,7 +15,6 @@
         } else {
             document.documentElement.classList.remove('dark');
         }
-
         tailwind.config = {
             darkMode: 'class', // Enable class-based dark mode
             theme: {
@@ -30,13 +30,12 @@
         }
         hljs.highlightAll();
     </script>
-    \
-
-
-    <script src="../../assets/main.js" defer></script>
 </head>
-<body class="bg-gray-50 text-gray-900 min-h-screen dark:bg-slate-900 dark:text-gray-100">
-    <div id="page-content">
+<body class="bg-gray-100 dark:bg-slate-900">
+    <div id="root">
+        <!-- The layout will be injected here -->
+    </div>
+    <div id="page-content" style="display: none;">
         <div class="mb-8">
             <h2 class="text-2xl font-semibold mb-4 flex items-center dark:text-white">
                 <span class="bg-primary text-white rounded-full w-8 h-8 flex items-center justify-center mr-2">3</span>
@@ -48,22 +47,19 @@
                 <h3 class="text-lg font-semibold mb-2 dark:text-white">Create core/functions/composition.js:</h3>
                 <pre><code class="language-javascript">// Functional composition utilities
 export const pipe = (...fns) => x => fns.reduce((y, f) => f(y), x);
-
 export const compose = (...fns) => x => fns.reduceRight((y, f) => f(y), x);
-
 export const curry = fn => (...args) =>
     args.length >= fn.length ? fn(...args) : curry(fn.bind(null, ...args));</code></pre>
                 
                 <h3 class="text-lg font-semibold mb-2 mt-4 dark:text-white">Create core/functions/transforms.js:</h3>
                 <pre><code class="language-javascript">// Data transformation utilities
 export const map = (fn) => (array) => array.map(fn);
-
 export const filter = (predicate) => (array) => array.filter(predicate);
-
 export const reduce = (reducer, initial) => (array) => 
   array.reduce(reducer, initial);</code></pre>
             </div>
         </div>
     </div>
+    <script type="module" src="../../src/main.js"></script>
 </body>
 </html>

@@ -6,6 +6,7 @@
     <title>API Reference - FlexNet Framework</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/atom-one-dark.min.css">
+    <link rel="stylesheet" href="../src/styles/components.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
     <script>
         // Set dark mode preference
@@ -14,7 +15,6 @@
         } else {
             document.documentElement.classList.remove('dark');
         }
-
         tailwind.config = {
             darkMode: 'class',
             theme: {
@@ -30,15 +30,12 @@
         }
     </script>
     
-
-    <script src="../assets/main.js" defer></script>
 </head>
 <body class="bg-gray-50 text-gray-900 min-h-screen dark:bg-slate-900 dark:text-white">
-    <div id="page-content">
+    <div id="page-content" style="display: none;">
 <main class="container mx-auto px-4 py-8">
     <h1 class="text-4xl font-bold text-primary mb-4 dark:text-blue-400">FlexNet API Reference</h1>
     <p class="text-gray-600 dark:text-gray-400 mb-8">Version: 1.0.0 (Released 2025-01-31)</p>
-
     <!-- Core Types -->
     <section class="mb-12">
         <h2 id="core-types" class="text-3xl font-semibold text-secondary border-b-2 border-secondary pb-2 mb-6 dark:text-indigo-400 dark:border-indigo-400">Core Types</h2>
@@ -58,7 +55,6 @@ const Maybe = {
         maybe.type === 'Just' ? maybe.value : defaultValue
 };</code></pre>
         </div>
-
         <div class="mb-8 p-6 bg-white rounded-lg shadow-md dark:bg-slate-800">
             <h3 class="text-2xl font-semibold text-dark dark:text-light mb-4">Either Type</h3>
             <pre class="bg-gray-100 dark:bg-gray-900 rounded-lg"><code class="language-javascript">// src/core/types/either.js
@@ -74,7 +70,6 @@ const Either = {
         either.type === 'Right' ? rightFn(either.value) : leftFn(either.value)
 };</code></pre>
         </div>
-
         <div class="mb-8 p-6 bg-white rounded-lg shadow-md dark:bg-slate-800">
             <h3 class="text-2xl font-semibold text-dark dark:text-light mb-4">Result Type</h3>
             <pre class="bg-gray-100 dark:bg-gray-900 rounded-lg"><code class="language-javascript">// src/core/types/result.js
@@ -95,7 +90,6 @@ const Result = {
 };</code></pre>
         </div>
     </section>
-
     <!-- Core Functions -->
     <section class="mb-12">
         <h2 class="text-3xl font-semibold text-secondary border-b-2 border-secondary pb-2 mb-6 dark:text-indigo-400 dark:border-indigo-400">Core Functions</h2>
@@ -108,7 +102,6 @@ const pipe = (...fns) => x => fns.reduce((y, f) => f(y), x);
 const curry = fn => (...args) =>
     args.length >= fn.length ? fn(...args) : curry(fn.bind(null, ...args));</code></pre>
         </div>
-
         <div class="mb-8 p-6 bg-white rounded-lg shadow-md dark:bg-slate-800">
             <h3 class="text-2xl font-semibold text-dark dark:text-light mb-4">Transforms</h3>
             <pre class="bg-gray-100 dark:bg-gray-900 rounded-lg"><code class="language-javascript">// src/core/functions/transforms.js
@@ -117,7 +110,6 @@ const filter = predicate => array => array.filter(predicate);
 const reduce = (fn, initial) => array => array.reduce(fn, initial);</code></pre>
         </div>
     </section>
-
     <!-- System APIs -->
     <section class="mb-12">
         <h2 class="text-3xl font-semibold text-secondary border-b-2 border-secondary pb-2 mb-6 dark:text-indigo-400 dark:border-indigo-400">System APIs</h2>
@@ -129,7 +121,6 @@ const createElement = (type, props, ...children) => ({
     type,
     props: { ...props, children: children.flat() }
 });
-
 const render = (element, container) =>
     pipe(
         createVirtualDOM,
@@ -137,14 +128,12 @@ const render = (element, container) =>
         patch(container)
     )(element);</code></pre>
         </div>
-
         <div class="mb-8 p-6 bg-white rounded-lg shadow-md dark:bg-slate-800">
             <h3 id="state-system" class="text-2xl font-semibold text-dark dark:text-light mb-4">State System</h3>
             <pre class="bg-gray-100 dark:bg-gray-900 rounded-lg"><code class="language-javascript">// src/systems/state/functions.js
 const createStore = (reducer, initialState) => {
     const subscribers = new Set();
     let state = initialState;
-
     return {
         getState: () => state,
         dispatch: action =>
@@ -160,7 +149,6 @@ const createStore = (reducer, initialState) => {
     };
 };</code></pre>
         </div>
-
         <div class="mb-8 p-6 bg-white rounded-lg shadow-md dark:bg-slate-800">
             <h3 class="text-2xl font-semibold text-dark dark:text-light mb-4">Effect System</h3>
             <pre class="bg-gray-100 dark:bg-gray-900 rounded-lg"><code class="language-javascript">// src/systems/effects/functions.js
@@ -173,7 +161,6 @@ const Effect = {
     run: effect => effect.run()
 };</code></pre>
         </div>
-
         <div class="mb-8 p-6 bg-white rounded-lg shadow-md dark:bg-slate-800">
             <h3 class="text-2xl font-semibold text-dark dark:text-light mb-4">Event System</h3>
             <pre class="bg-gray-100 dark:bg-gray-900 rounded-lg"><code class="language-javascript">// src/systems/events/functions.js
@@ -210,7 +197,6 @@ const createRouter = (routes) => {
             Maybe.fromNullable,
             Maybe.map(([_, handler]) => handler)
         )(routes);
-
     return {
         navigate: path =>
             matchRoute(path)
@@ -235,7 +221,6 @@ const validate = schema => data =>
     )(schema);</code></pre>
         </div>
     </section>
-
     <!-- Security Functions -->
     <section class="mb-12">
         <h2 class="text-3xl font-semibold text-secondary border-b-2 border-secondary pb-2 mb-6 dark:text-indigo-400 dark:border-indigo-400">Security Functions</h2>
@@ -247,7 +232,6 @@ const sanitize = input =>
     Either.fromNullable(input)
         .map(str => str.replace(/[<>&]/g, ''))
         .getOrElse('');
-
 const validateInput = predicate => input =>
     Either.fromNullable(input)
         .chain(value =>
@@ -257,7 +241,6 @@ const validateInput = predicate => input =>
         );</code></pre>
         </div>
     </section>
-
     <!-- Utility Functions -->
     <section class="mb-12">
         <h2 class="text-3xl font-semibold text-secondary border-b-2 border-secondary pb-2 mb-6 dark:text-indigo-400 dark:border-indigo-400">Utility Functions</h2>
@@ -269,7 +252,6 @@ const head = arr => arr[0];
 const tail = arr => arr.slice(1);
 const last = arr => arr[arr.length - 1];</code></pre>
         </div>
-
         <div class="mb-8 p-6 bg-white rounded-lg shadow-md dark:bg-slate-800">
             <h3 class="text-2xl font-semibold text-dark dark:text-light mb-4">String Utilities</h3>
             <pre class="bg-gray-100 dark:bg-gray-900 rounded-lg"><code class="language-javascript">// src/utils/string.js
@@ -278,7 +260,6 @@ const truncate = (length, str) =>
     str.length > length ? str.slice(0, length) + '...' : str;</code></pre>
         </div>
     </section>
-
     <!-- Version Information -->
     <footer class="text-center text-gray-600 mt-12 p-6 bg-white rounded-lg shadow-md dark:bg-slate-800 dark:text-gray-300">
         <h2 class="text-2xl font-semibold text-dark mb-4 dark:text-light">Version Information</h2>
@@ -290,5 +271,6 @@ const truncate = (length, str) =>
     </footer>
 </main>
     </div>
+    <script type="module" src="../src/main.js"></script>
 </body>
 </html>

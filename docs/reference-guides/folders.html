@@ -6,6 +6,7 @@
     <title>FlexNet Framework Documentation</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/atom-one-dark.min.css">
+    <link rel="stylesheet" href="../src/styles/components.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
     <script>
         // Set theme on page load to avoid FOUC
@@ -14,7 +15,6 @@
         } else {
             document.documentElement.classList.remove('dark');
         }
-
         tailwind.config = {
             darkMode: 'class', // Enable class-based dark mode
             theme: {
@@ -30,71 +30,72 @@
         }
         hljs.highlightAll();
     </script>
-    \
-
-
-    <script src="../assets/main.js" defer></script>
 </head>
-<body class="bg-gray-50 text-gray-900 min-h-screen dark:bg-slate-900 dark:text-gray-100">
-    <div id="page-content">
-
+<body class="bg-gray-100 dark:bg-slate-900">
+    <div id="root">
+        <!-- The layout will be injected here -->
+    </div>
+    <div id="page-content" style="display: none;">
         <pre><code class="language-bash">
 my-flexnet-project/
 │
-├── core/                  # Core FlexNet engine functionality
-│   ├── runtime/          # Core FlexNet runtime implementation
-│   │   ├── factory.js
-│   │   └── transform.js
-│   ├── types/           # Core type system
-│   │   ├── maybe.js
-│   │   ├── either.js
-│   │   └── result.js
-│   └── functions/       # Core functions
-│       ├── composition.js
-│       └── transforms.js
-│
-├── systems/              # System implementations
-│   ├── render/          # Rendering system
+├── src/                   # Source code directory
+│   ├── main.js           # Application entry point
+│   ├── core/             # Core FlexNet engine functionality
+│   │   ├── runtime/      # Core FlexNet runtime implementation
+│   │   │   ├── factory.js
+│   │   │   └── transform.js
+│   │   ├── types/        # Core type system
+│   │   │   ├── maybe.js
+│   │   │   ├── either.js
+│   │   │   └── result.js
+│   │   └── functions/    # Core functions
+│   │       ├── composition.js
+│   │       └── transforms.js
+│   │
+│   ├── systems/          # System implementations
+│   │   ├── render/       # Rendering system
+│   │   │   ├── functions.js
+│   │   │   └── vdom.js
+│   │   ├── state/        # State management
+│   │   │   ├── functions.js
+│   │   │   └── store.js
+│   │   ├── effects/      # Effect handling
+│   │   │   ├── functions.js
+│   │   │   └── scheduler.js
+│   │   └── events/       # Event system
+│   │       ├── functions.js
+│   │       └── emitter.js
+│   │
+│   ├── features/         # App features implementations
+│   │   ├── sample/       # Sample feature
+│   │   │   ├── functions.js
+│   │   │   └── index.js
+│   │   ├── router/
+│   │   ├── forms/
+│   │   ├── validation/
+│   │   └── animation/
+│   │
+│   ├── security/         # Security features
 │   │   ├── functions.js
-│   │   └── vdom.js
-│   ├── state/           # State management
-│   │   ├── functions.js
-│   │   └── store.js
-│   ├── effects/         # Effect handling
-│   │   ├── functions.js
-│   │   └── scheduler.js
-│   └── events/          # Event system
-│       ├── functions.js
-│       └── emitter.js
-│
-├── features/           # App features implementations
-│   ├── sample/       # Sample feature
-│   │   ├── functions.js
-│   │   └── index.js
-│   ├── router/
-│   ├── forms/
-│   ├── validation/
-│   └── animation/
-│
-├── security/            # Security features
-│   ├── functions.js
-│   ├── csp.js
-│   └── xss.js
-│
-├── utils/               # Utility functions
-│    ├── array.js
-│    ├── string.js
-│    └── function.js
+│   │   ├── csp.js
+│   │   └── xss.js
+│   │
+│   └── utils/            # Utility functions
+│       ├── array.js
+│       ├── string.js
+│       └── function.js
 │
 ├── index.html
 │
-└── tests/                  # Test suite
-    ├── features/          # Feature tests
+└── tests/                # Test suite
+    ├── features/         # Feature tests
     │   └── sample/
     │       └── sample.test.js
-    ├── core/              # Core tests
-    └── systems/           # System tests
+    ├── core/             # Core tests
+    └── systems/          # System tests
         </code></pre>
     </div>
+    <script type="module" src="../src/main.js"></script>
 </body>
 </html>

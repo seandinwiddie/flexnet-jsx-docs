@@ -6,6 +6,7 @@
     <title>HTTP System - FlexNet Framework</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/atom-one-dark.min.css">
+    <link rel="stylesheet" href="../src/styles/components.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
     <script>
         // Set dark mode preference
@@ -14,7 +15,6 @@
         } else {
             document.documentElement.classList.remove('dark');
         }
-
         tailwind.config = {
             darkMode: 'class',
             theme: {
@@ -29,16 +29,11 @@
             }
         }
     </script>
-    \
-
-
-    <script src="../assets/main.js" defer></script>
 </head>
 <body class="bg-gray-50 text-gray-900 min-h-screen dark:bg-slate-900 dark:text-white">
-    <div id="page-content">
+    <div id="page-content" style="display: none;">
 <main class="container mx-auto px-4 py-8">
     <h1 class="text-4xl font-bold text-primary mb-4 dark:text-blue-400">FlexNet Framework - HTTP System</h1>
-
     <!-- Overview -->
     <section class="mb-12">
         <h2 class="text-3xl font-semibold text-secondary border-b-2 border-secondary pb-2 mb-6 dark:text-indigo-400 dark:border-indigo-400">Overview</h2>
@@ -52,7 +47,6 @@
             </ul>
         </div>
     </section>
-
     <!-- Core Types -->
     <section class="mb-12">
         <h2 class="text-3xl font-semibold text-secondary border-b-2 border-secondary pb-2 mb-6 dark:text-indigo-400 dark:border-indigo-400">Core Types</h2>
@@ -75,7 +69,6 @@
             </div>
         </div>
     </section>
-
     <!-- HTTP Client API -->
     <section class="mb-12">
         <h2 class="text-3xl font-semibold text-secondary border-b-2 border-secondary pb-2 mb-6 dark:text-indigo-400 dark:border-indigo-400">HTTP Client API</h2>
@@ -88,13 +81,10 @@
                 <h3 class="text-2xl font-semibold text-dark dark:text-light mb-4">Making Requests</h3>
                 <pre class="bg-gray-100 dark:bg-gray-900 rounded-lg"><code class="language-javascript">// GET request
 client.get(url)(headers)(timeout)(retry)(cache);
-
 // POST request
 client.post(url)(data)(headers)(timeout)(retry)(cache);
-
 // PUT request
 client.put(url)(data)(headers)(timeout)(retry)(cache);
-
 // DELETE request
 client.delete(url)(headers)(timeout)(retry)(cache);</code></pre>
             </div>
@@ -104,12 +94,10 @@ client.delete(url)(headers)(timeout)(retry)(cache);</code></pre>
 client.addRequestInterceptor(request => 
   Either.Right({ ...request, headers: { ...request.headers, 'X-Custom': 'value' } })
 );
-
 // Add response interceptor
 client.addResponseInterceptor(response =>
   Either.Right({ ...response, data: transformData(response.data) })
 );
-
 // Add error interceptor
 client.addErrorInterceptor(error =>
   error.status === 401 ? refreshToken().chain(() => retry(error.request)) : Either.Left(error)
@@ -119,13 +107,11 @@ client.addErrorInterceptor(error =>
                 <h3 class="text-2xl font-semibold text-dark dark:text-light mb-4">Cache Operations</h3>
                 <pre class="bg-gray-100 dark:bg-gray-900 rounded-lg"><code class="language-javascript">// Get current cache state
 const cache = client.getCache();
-
 // Clear cache
 client.clearCache();</code></pre>
             </div>
         </div>
     </section>
-
     <!-- Type Verification -->
     <section class="mb-12">
         <h2 class="text-3xl font-semibold text-secondary border-b-2 border-secondary pb-2 mb-6 dark:text-indigo-400 dark:border-indigo-400">Type Verification</h2>
@@ -139,7 +125,6 @@ client.clearCache();</code></pre>
             </ul>
         </div>
     </section>
-
     <!-- Error Handling -->
     <section class="mb-12">
         <h2 class="text-3xl font-semibold text-secondary border-b-2 border-secondary pb-2 mb-6 dark:text-indigo-400 dark:border-indigo-400">Error Handling</h2>
@@ -150,7 +135,6 @@ client.clearCache();</code></pre>
   .mapLeft(error => logError(error));</code></pre>
         </div>
     </section>
-
     <!-- Effect Isolation -->
     <section class="mb-12">
         <h2 class="text-3xl font-semibold text-secondary border-b-2 border-secondary pb-2 mb-6 dark:text-indigo-400 dark:border-indigo-400">Effect Isolation</h2>
@@ -158,8 +142,8 @@ client.clearCache();</code></pre>
             <p class="text-gray-700 dark:text-gray-300">All side effects (network requests, cache operations) are properly isolated in the effect system using functional composition.</p>
         </div>
     </section>
-
 </main>
     </div>
+    <script type="module" src="../src/main.js"></script>
 </body>
 </html>

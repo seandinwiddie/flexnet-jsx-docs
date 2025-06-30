@@ -6,6 +6,7 @@
     <title>Getting Started Guide - FlexNet Framework</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/atom-one-dark.min.css">
+    <link rel="stylesheet" href="../src/styles/components.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
     <script>
         // Set dark mode preference
@@ -29,17 +30,12 @@
             }
         }
     </script>
-    \
-
-
-    <script src="../assets/main.js" defer></script>
 </head>
 <body class="bg-gray-50 text-gray-900 min-h-screen dark:bg-slate-900 dark:text-white">
-    <div id="page-content">
+    <div id="page-content" style="display: none;">
 <main class="container mx-auto px-4 py-8">
     <h1 class="text-4xl font-bold text-primary mb-4 dark:text-blue-400">Getting Started with FlexNet</h1>
     <p class="text-gray-600 dark:text-gray-400 mb-8">Version: 1.0.0 (Released 2025-01-31)</p>
-
     <section class="mb-12">
         <h2 class="text-3xl font-semibold text-secondary border-b-2 border-secondary pb-2 mb-6 dark:text-indigo-400 dark:border-indigo-400">Project Setup</h2>
         
@@ -83,7 +79,6 @@
         └── counter/
             └── counter.test.js</code></pre>
         </div>
-
         <div class="mb-8">
             <h3 class="text-2xl font-semibold text-dark dark:text-light mb-4">Initial Setup</h3>
             <ol class="list-decimal list-inside space-y-6 text-gray-700 dark:text-gray-300">
@@ -106,18 +101,15 @@
                     <pre class="bg-gray-100 dark:bg-gray-900 rounded-lg"><code class="language-javascript">// src/features/counter/functions.js
 import { Maybe } from '../../core/types/maybe.js';
 import { compose } from '../../core/functions/composition.js';
-
 export const increment = n =&gt; n + 1;
 export const decrement = n =&gt; n - 1;
 export const updateCount = (count, operation) =&gt;
   Maybe.fromNullable(count)
     .map(operation)
     .getOrElse(0);
-
 // src/features/counter/index.js
 import { flexnet } from '../../core/runtime/flexnet.js';
 import { increment, decrement, updateCount } from './functions.js';
-
 const Counter = () =&gt; {
   let count = 0;
   
@@ -127,13 +119,11 @@ const Counter = () =&gt; {
     flexnet('button', { onClick: () =&gt; count = updateCount(count, increment) }, '+')
   ]);
 };
-
 export default Counter;</code></pre>
                 </li>
             </ol>
         </div>
     </section>
-
     <section class="mb-12">
         <h2 class="text-3xl font-semibold text-secondary border-b-2 border-secondary pb-2 mb-6 dark:text-indigo-400 dark:border-indigo-400">Core Concepts</h2>
         <div class="grid md:grid-cols-2 gap-8">
@@ -171,7 +161,6 @@ export default Counter;</code></pre>
             </div>
         </div>
     </section>
-
     <section class="mb-12">
         <h2 class="text-3xl font-semibold text-secondary border-b-2 border-secondary pb-2 mb-6 dark:text-indigo-400 dark:border-indigo-400">Development Workflow</h2>
         <div class="grid md:grid-cols-3 gap-8">
@@ -204,7 +193,6 @@ export default Counter;</code></pre>
             </div>
         </div>
     </section>
-
     <section class="mb-12">
         <h2 class="text-3xl font-semibold text-secondary border-b-2 border-secondary pb-2 mb-6 dark:text-indigo-400 dark:border-indigo-400">Best Practices</h2>
         <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
@@ -246,7 +234,6 @@ export default Counter;</code></pre>
             </div>
         </div>
     </section>
-
     <section class="mb-12">
         <h2 class="text-3xl font-semibold text-secondary border-b-2 border-secondary pb-2 mb-6 dark:text-indigo-400 dark:border-indigo-400">Next Steps</h2>
         <ol class="list-decimal list-inside space-y-2 text-gray-700 dark:text-gray-300 text-lg">
@@ -254,7 +241,6 @@ export default Counter;</code></pre>
             <li>Study the architecture overview</li>
         </ol>
     </section>
-
     <footer class="text-center text-gray-600 dark:text-gray-400 mt-12">
         <p>For more detailed information, refer to:</p>
         <ul class="flex justify-center space-x-4 mt-2">
@@ -265,5 +251,6 @@ export default Counter;</code></pre>
     </footer>
 </main>
     </div>
+    <script type="module" src="../src/main.js"></script>
 </body>
 </html>

@@ -6,6 +6,7 @@
     <title>FlexNet Framework Documentation</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/atom-one-dark.min.css">
+    <link rel="stylesheet" href="../src/styles/components.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
     <script>
         // Set theme on page load to avoid FOUC
@@ -14,7 +15,6 @@
         } else {
             document.documentElement.classList.remove('dark');
         }
-
         tailwind.config = {
             darkMode: 'class', // Enable class-based dark mode
             theme: {
@@ -31,11 +31,12 @@
         hljs.highlightAll();
     </script>
     
-
-    <script src="../assets/main.js" defer></script>
 </head>
-<body class="bg-gray-50 text-gray-900 min-h-screen dark:bg-slate-900 dark:text-gray-100">
-    <div id="page-content">
+<body class="bg-gray-100 dark:bg-slate-900">
+    <div id="root">
+        <!-- The layout will be injected here -->
+    </div>
+    <div id="page-content" style="display: none;">
         <main class="container mx-auto px-4 py-8">
             <h1 class="text-4xl font-bold text-primary mb-4">XSS Prevention</h1>
             <section class="mb-12">
@@ -51,7 +52,6 @@
          .replace(/"/g, '&quot;')
          .replace(/'/g, '&#039;')
 )(str);
-
 const validateInput = compose(
     input => {
         const escaped = escape(input);
@@ -69,7 +69,6 @@ const createElement = (type, props, ...children) => {
     if (typeof type !== 'string' && typeof type !== 'function') {
         return Either.Left('Invalid element type');
     }
-
     // Sanitize props
     const safeProps = Object.entries(props || {}).reduce((acc, [key, value]) => {
         // Prevent script injection in event handlers
@@ -84,7 +83,6 @@ const createElement = (type, props, ...children) => {
         }
         return acc;
     }, {});
-
     return Either.Right({ type, props: safeProps, children });
 };</code></pre>
                     </div>
@@ -93,7 +91,6 @@ const createElement = (type, props, ...children) => {
                         <pre><code class="language-javascript">const urlValidator = {
     // Whitelist of allowed protocols
     allowedProtocols: ['https:', 'data:image/'],
-
     validate: (url) => {
         try {
             const parsed = new URL(url);
@@ -111,5 +108,6 @@ const createElement = (type, props, ...children) => {
             </section>
         </main>
     </div>
+    <script type="module" src="../src/main.js"></script>
 </body>
 </html> 

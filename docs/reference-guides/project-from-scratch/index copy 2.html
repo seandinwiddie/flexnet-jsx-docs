@@ -6,6 +6,7 @@
     <title>FlexNet Framework Documentation</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/atom-one-dark.min.css">
+    <link rel="stylesheet" href="../../src/styles/components.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
     <script>
         tailwind.config = {
@@ -22,19 +23,14 @@
         }
         hljs.highlightAll();
     </script>
-    \
-
-
-    <script src="../../assets/main.js" defer></script>
 </head>
 <body class="bg-gray-50 text-gray-900 min-h-screen">
-    <div id="page-content">
+    <div id="page-content" style="display: none;">
         <h1 class="text-3xl font-bold mb-6 text-center mt-8">Building a FlexNet Project From Scratch</h1>
         
         <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-100 mb-8">
             <p class="text-gray-700 mb-4">This guide will walk you through the process of creating a FlexNet project from scratch, following the framework's principles of functional programming, immutability, and type safety.</p>
         </div>
-
         <!-- Step 1 -->
         <div class="mb-8">
             <h2 class="text-2xl font-semibold mb-4 flex items-center">
@@ -65,7 +61,6 @@ mkdir -p tests/features/counter</code></pre>
 &lt;/html&gt;</code></pre>
             </div>
         </div>
-
         <!-- Step 2 -->
         <div class="mb-8">
             <h2 class="text-2xl font-semibold mb-4 flex items-center">
@@ -136,10 +131,8 @@ export const Result = {
                 <pre><code class="language-javascript">// Functional composition utilities
 export const pipe = (...fns) => (x) => 
   fns.reduce((acc, fn) => fn(acc), x);
-
 export const compose = (...fns) => (x) =>
   fns.reduceRight((acc, fn) => fn(acc), x);
-
 export const curry = (fn) => {
   const arity = fn.length;
   return function curried(...args) {
@@ -153,9 +146,7 @@ export const curry = (fn) => {
                 <h3 class="text-lg font-semibold mb-2 mt-4">Create core/functions/transforms.js:</h3>
                 <pre><code class="language-javascript">// Data transformation utilities
 export const map = (fn) => (array) => array.map(fn);
-
 export const filter = (predicate) => (array) => array.filter(predicate);
-
 export const reduce = (reducer, initial) => (array) => 
   array.reduce(reducer, initial);</code></pre>
             </div>
@@ -181,7 +172,6 @@ export const createElement = (type, props, ...children) => ({
                 <pre><code class="language-javascript">// Transform runtime implementation
 import { render } from '../../systems/render/functions.js';
 import { App } from '../../features/counter/index.js';
-
 // Bootstrap application
 document.addEventListener('DOMContentLoaded', () => {
   console.log('FlexNet runtime initialized');
@@ -204,12 +194,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 <pre><code class="language-javascript">// Pure rendering functions
 export const render = (component, container) => {
   let vNode = component();
-
   const createDOMNode = (node) => {
     if (typeof node === 'string' || typeof node === 'number') {
       return document.createTextNode(String(node));
     }
-
     if (typeof node.type === 'function') {
       return createDOMNode(node.type(node.props));
     }
@@ -223,11 +211,9 @@ export const render = (component, container) => {
         element.setAttribute(key, value);
       }
     });
-
     (node.props.children || []).forEach(child => {
       element.appendChild(createDOMNode(child));
     });
-
     return element;
   };
   
@@ -239,10 +225,8 @@ export const render = (component, container) => {
     container.appendChild(createDOMNode(newVNode));
     vNode = newVNode;
   };
-
   // Expose the update function globally for this simple example
   window._rerender = update;
-
   // Initial render
   update();
 };</code></pre>
@@ -250,11 +234,9 @@ export const render = (component, container) => {
                 <h3 class="text-lg font-semibold mb-2 mt-4">Create systems/state/store.js:</h3>
                 <pre><code class="language-javascript">// Immutable state management
 import { pipe } from '../../core/functions/composition.js';
-
 export const createStore = (reducer, initialState) => {
     const subscribers = new Set();
     let state = initialState;
-
     return {
         getState: () => state,
         dispatch: action => {
@@ -271,7 +253,6 @@ export const createStore = (reducer, initialState) => {
                 <h3 class="text-lg font-semibold mb-2 mt-4">Create systems/effects/functions.js:</h3>
                 <pre><code class="language-javascript">// Isolated effect handling
 import { Result } from '../../core/types/result.js';
-
 export const Effect = {
     of: value => ({ type: 'Effect', run: () => value }),
     map: fn => effect =>
@@ -280,7 +261,6 @@ export const Effect = {
         Effect.of(() => fn(effect.run()).run()),
     run: effect => effect.run()
 };
-
 export const runEffect = (effect) => {
   try {
     const result = Effect.run(effect);
@@ -293,7 +273,6 @@ export const runEffect = (effect) => {
                 <h3 class="text-lg font-semibold mb-2 mt-4">Create systems/events/functions.js:</h3>
                 <pre><code class="language-javascript">// Event system management
 import { Maybe } from '../../core/types/maybe.js';
-
 export const createEventBus = () => {
     const subscribers = new Map();
     
@@ -325,7 +304,6 @@ export const createEventBus = () => {
                 <pre><code class="language-javascript">// Core security functions
 import { compose } from '../core/functions/composition.js';
 import { Either } from '../core/types/either.js';
-
 export const escape = str => compose(
     String,
     s => s.replace(/&/g, '&amp;')
@@ -334,7 +312,6 @@ export const escape = str => compose(
          .replace(/"/g, '&quot;')
          .replace(/'/g, '&#039;')
 )(str);
-
 export const validateInput = compose(
     input => {
         const escaped = escape(input);
@@ -343,7 +320,6 @@ export const validateInput = compose(
             : Either.Left('Invalid characters detected');
     }
 );
-
 // This is a simplified example. A real implementation would be more robust.
 export const sanitizeProps = (props) => {
   const safeProps = { ...props };
@@ -376,13 +352,10 @@ export const sanitizeProps = (props) => {
                 <h3 class="text-lg font-semibold mb-2">Create utils/array.js:</h3>
                 <pre><code class="language-javascript">// Array utility functions
 import { Maybe } from '../core/types/maybe.js';
-
 export const head = array =>
     Maybe.fromNullable(array[0]);
-
 export const tail = array =>
     array.length > 1 ? Maybe.Just(array.slice(1)) : Maybe.Nothing();
-
 export const find = predicate => array =>
     Maybe.fromNullable(array.find(predicate));</code></pre>
             </div>
@@ -400,15 +373,12 @@ export const find = predicate => array =>
                 <h3 class="text-lg font-semibold mb-2">Create features/counter/functions.js:</h3>
                 <pre><code class="language-javascript">// features/counter/functions.js
 import { createStore } from '../../systems/state/store.js';
-
 // Action Types
 const INCREMENT = 'INCREMENT';
 const DECREMENT = 'DECREMENT';
-
 // Action Creators
 export const increment = () => ({ type: INCREMENT });
 export const decrement = () => ({ type: DECREMENT });
-
 // Reducer
 const counterReducer = (state = { count: 0 }, action) => {
   switch (action.type) {
@@ -420,7 +390,6 @@ const counterReducer = (state = { count: 0 }, action) => {
       return state;
   }
 };
-
 // Store
 export const counterStore = createStore(counterReducer, { count: 0 });</code></pre>
                 
@@ -428,7 +397,6 @@ export const counterStore = createStore(counterReducer, { count: 0 });</code></p
                 <pre><code class="language-javascript">// features/counter/index.js
 import { createElement } from '../../core/runtime/flexnet.js';
 import { counterStore, increment, decrement } from './functions.js';
-
 // Subscribe to store updates to trigger re-renders
 counterStore.subscribe(() => {
   // In a real application, this would be handled by a more sophisticated system
@@ -436,7 +404,6 @@ counterStore.subscribe(() => {
     window._rerender();
   }
 });
-
 export const App = () => {
   const state = counterStore.getState();
   
@@ -475,7 +442,6 @@ export const App = () => {
                 <pre><code class="language-javascript">// tests/features/counter/counter.test.js
 import { increment, decrement } from '../../../features/counter/functions.js';
 import { createStore } from '../../../systems/state/store.js';
-
 // A standalone reducer for testing purposes
 const counterReducer = (state = { count: 0 }, action) => {
   switch (action.type) {
@@ -487,7 +453,6 @@ const counterReducer = (state = { count: 0 }, action) => {
       return state;
   }
 };
-
 const testIncrement = () => {
   const store = createStore(counterReducer, { count: 5 });
   store.dispatch(increment());
@@ -495,7 +460,6 @@ const testIncrement = () => {
   
   console.assert(result.count === 6, 'Increment should add 1 to count');
 };
-
 const testDecrement = () => {
   const store = createStore(counterReducer, { count: 5 });
   store.dispatch(decrement());
@@ -503,7 +467,6 @@ const testDecrement = () => {
   
   console.assert(result.count === 4, 'Decrement should subtract 1 from count');
 };
-
 const testImmutability = () => {
   const initialState = { count: 5 };
   const store = createStore(counterReducer, initialState);
@@ -511,8 +474,6 @@ const testImmutability = () => {
   
   console.assert(initialState.count === 5, 'Original state should not be modified');
 };
-
-
 // Run tests
 console.log('Running counter tests...');
 testIncrement();
@@ -536,14 +497,11 @@ console.log('All counter tests completed');</code></pre>
 # Then open http://localhost:8000 in your browser.
 import http.server
 import socketserver
-
 PORT = 8000
 DIRECTORY = "public"
-
 class Handler(http.server.SimpleHTTPRequestHandler):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, directory=DIRECTORY, **kwargs)
-
 with socketserver.TCPServer(("", PORT), Handler) as httpd:
     print(f"Serving at http://localhost:{PORT}")
     httpd.serve_forever()</code></pre>
@@ -566,7 +524,7 @@ with socketserver.TCPServer(("", PORT), Handler) as httpd:
             </ul>
             <p class="mt-4">Refer to the <a href="/docs/api-reference/index.html" class="text-primary hover:underline">API Reference</a> and <a href="/docs/architecture-overview/index.html" class="text-primary hover:underline">Architecture Overview</a> for more detailed information about FlexNet's capabilities.</p>
         </div>
-
     </div>
+    <script type="module" src="../../src/main.js"></script>
 </body>
 </html>
