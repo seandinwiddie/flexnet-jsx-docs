@@ -29,9 +29,9 @@ export const ImmutableMap = {
     get: (key) => (map) =>
         Maybe.fromNullable(map[key]),
     
-    // Check if key exists
+    // Check if key exists - functional alternative to hasOwnProperty
     has: (key) => (map) =>
-        Object.prototype.hasOwnProperty.call(map, key),
+        key in map && map[key] !== undefined,
     
     // Remove a key (returns new map)
     delete: (key) => (map) => {
@@ -76,11 +76,13 @@ export const ImmutableSet = {
     // Create empty set
     empty: () => Object.freeze([]),
     
-    // Create set from array
+    // Create set from array - functional deduplication
     fromArray: (array) =>
-        Result.fromTry(() =>
-            Object.freeze([...new Set(array)])
-        ),
+        Result.fromTry(() => {
+            const deduped = array.reduce((acc, item) => 
+                acc.includes(item) ? acc : [...acc, item], []);
+            return Object.freeze(deduped);
+        }),
     
     // Add element (returns new set)
     add: (element) => (set) =>
@@ -96,9 +98,13 @@ export const ImmutableSet = {
     has: (element) => (set) =>
         set.includes(element),
     
-    // Union of two sets
-    union: (otherSet) => (set) =>
-        Object.freeze([...new Set([...set, ...otherSet])]),
+    // Union of two sets - functional deduplication
+    union: (otherSet) => (set) => {
+        const combined = [...set, ...otherSet];
+        const deduped = combined.reduce((acc, item) => 
+            acc.includes(item) ? acc : [...acc, item], []);
+        return Object.freeze(deduped);
+    },
     
     // Intersection of two sets
     intersection: (otherSet) => (set) =>
@@ -108,9 +114,13 @@ export const ImmutableSet = {
     difference: (otherSet) => (set) =>
         Object.freeze(set.filter(item => !otherSet.includes(item))),
     
-    // Map over set
-    map: (fn) => (set) =>
-        Object.freeze([...new Set(set.map(fn))]),
+    // Map over set - functional deduplication
+    map: (fn) => (set) => {
+        const mapped = set.map(fn);
+        const deduped = mapped.reduce((acc, item) => 
+            acc.includes(item) ? acc : [...acc, item], []);
+        return Object.freeze(deduped);
+    },
     
     // Filter set
     filter: (predicate) => (set) =>
@@ -120,7 +130,13 @@ export const ImmutableSet = {
     size: (set) => set.length,
     
     // Convert to array
-    toArray: (set) => [...set]
+    toArray: (set) => [...set],
+    
+    // ForEach implementation for compatibility
+    forEach: (fn) => (set) => {
+        set.forEach(fn);
+        return set;
+    }
 };
 
 // ===========================================

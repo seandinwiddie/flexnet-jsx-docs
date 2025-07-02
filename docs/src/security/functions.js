@@ -23,16 +23,45 @@ export const validateInput = predicate => input =>
                 : Either.Left('Invalid input')
         );
 
+// Functional URL validation without constructors
+const isValidProtocol = (protocol) => {
+    const allowedProtocols = ['https:', 'http:', 'data:'];
+    return allowedProtocols.includes(protocol);
+};
+
+const parseURLComponents = (url) => {
+    // Simple URL parsing using string operations
+    if (typeof url !== 'string' || url.length === 0) {
+        return Either.Left('URL must be a non-empty string');
+    }
+    
+    // Check for protocol
+    const protocolMatch = url.match(/^([a-zA-Z][a-zA-Z\d+\-.]*:)/);
+    if (!protocolMatch) {
+        return Either.Left('URL must include protocol');
+    }
+    
+    const protocol = protocolMatch[1];
+    const remainingUrl = url.slice(protocol.length);
+    
+    // Basic validation for common URL patterns
+    if (protocol === 'data:' && remainingUrl.startsWith('image/')) {
+        return Either.Right({ protocol, isValid: true });
+    }
+    
+    if ((protocol === 'http:' || protocol === 'https:') && remainingUrl.startsWith('//')) {
+        return Either.Right({ protocol, isValid: true });
+    }
+    
+    return Either.Left('Invalid URL format');
+};
+
 // Sanitize URLs to prevent malicious redirects
 export const sanitizeUrl = url => {
-    const allowedProtocols = ['https:', 'http:', 'data:'];
-    try {
-        const parsed = new URL(url, window.location.origin);
-        return allowedProtocols.some(protocol => 
-            parsed.protocol === protocol)
-            ? Either.Right(url)
-            : Either.Left('Invalid protocol');
-    } catch {
-        return Either.Left('Invalid URL');
-    }
+    return parseURLComponents(url)
+        .chain(components => 
+            isValidProtocol(components.protocol)
+                ? Either.Right(url)
+                : Either.Left('Invalid protocol')
+        );
 };

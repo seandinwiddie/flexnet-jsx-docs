@@ -86,18 +86,31 @@ export const sanitizeURL = (url) => {
         return Either.Right(cleanURL);
     }
     
-    try {
-        const parsed = new URL(cleanURL, window.location.origin);
-        const protocol = parsed.protocol.toLowerCase();
+    // Functional URL parsing without constructor
+    const parseURLFunctionally = (urlString) => {
+        const protocolMatch = urlString.match(/^([a-zA-Z][a-zA-Z\d+\-.]*:)/);
+        if (!protocolMatch) {
+            return Either.Left('Invalid URL format - no protocol');
+        }
+        
+        const protocol = protocolMatch[1].toLowerCase();
         
         if (SAFE_PROTOCOLS.includes(protocol)) {
-            return Either.Right(parsed.href);
+            return Either.Right({
+                protocol,
+                href: urlString,
+                isValid: true
+            });
         } else {
             return Either.Left(`Unsafe protocol: ${protocol}`);
         }
-    } catch (error) {
-        return Either.Left('Invalid URL format');
-    }
+    };
+    
+    return parseURLFunctionally(cleanURL)
+        .fold(
+            error => Either.Left(error),
+            parsed => Either.Right(parsed.href)
+        );
 };
 
 // Check if tag is dangerous

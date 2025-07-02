@@ -186,13 +186,25 @@ const initializeApplication = () =>
 
 // Use effect system for DOM ready event
 const domReadyEffect = createAsyncEffect(() => 
-    new Promise(resolve => {
-        if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', resolve);
-        } else {
-            resolve();
-        }
-    })
+    // Use functional promise alternative
+    document.readyState === 'loading'
+        ? Either.Right(() => {
+            const listeners = [];
+            const handler = () => {
+                listeners.forEach(resolve => resolve());
+                document.removeEventListener('DOMContentLoaded', handler);
+            };
+            document.addEventListener('DOMContentLoaded', handler);
+            return {
+                then: (resolve) => {
+                    listeners.push(resolve);
+                    if (document.readyState !== 'loading') {
+                        resolve();
+                    }
+                }
+            };
+        })
+        : Either.Right(() => Promise.resolve())
 );
 
 executeEffect(domReadyEffect)
@@ -215,7 +227,7 @@ executeEffect(domReadyEffect)
 // ===========================================
 
 const initializeFlexNet = async (basePath = '.') => {
-    try {
+    return Result.fromTry(async () => {
         // Start initialization tracking
         dispatch({ type: AppActions.INIT_START });
         
@@ -244,11 +256,13 @@ const initializeFlexNet = async (basePath = '.') => {
             uiResults,
             timestamp: await executeEffect(getCurrentTimeEffect())
         };
-        
-    } catch (error) {
-        await executeEffect(logEffect(`❌ FlexNet initialization failed: ${error.message}`, 'error'));
-        throw error;
-    }
+    }).fold(
+        async (error) => {
+            await executeEffect(logEffect(`❌ FlexNet initialization failed: ${error.message || error}`, 'error'));
+            return Either.Left(error);
+        },
+        (result) => Either.Right(result)
+    );
 };
 
 // ===========================================
@@ -278,7 +292,7 @@ const createSecureButton = (text, onClick) => {
         
         return transformedButton;
     } else {
-        throw new Error(`Failed to create button: ${buttonResult.value}`);
+        return Either.Left(`Failed to create button: ${buttonResult.value}`);
     }
 };
 
@@ -314,9 +328,9 @@ const performComplexOperation = createAsyncEffect(async () => {
     // State updates
     dispatch(setLoading(true));
     
-    try {
-        // Simulate async work
-        await new Promise(resolve => setTimeout(resolve, 1000));
+    return Result.fromTry(async () => {
+        // Simulate async work using effect system
+        await executeEffect(setTimeoutEffect(() => {}, 1000));
         
         // Update state
         dispatch(setLoading(false));
@@ -328,11 +342,14 @@ const performComplexOperation = createAsyncEffect(async () => {
             timestamp,
             duration: Date.now() - timestamp
         };
-    } catch (error) {
-        dispatch(setLoading(false));
-        dispatch(addError(error));
-        throw error;
-    }
+    }).fold(
+        async (error) => {
+            dispatch(setLoading(false));
+            dispatch(addError(error));
+            return Either.Left(error);
+        },
+        (result) => Either.Right(result)
+    );
 });
 
 // ===========================================
@@ -351,12 +368,14 @@ const enableDebugMode = () => {
     console.log('Current state:', store.getState());
     
     // Subscribe to all state changes
-    store.subscribe((newState, oldState) => {
+    const subscriptionResult = store.subscribe((newState, oldState) => {
         console.group('🔄 State Change');
         console.log('Previous:', oldState);
         console.log('Current:', newState);
         console.groupEnd();
     });
+    
+    return subscriptionResult;
 };
 
 // Performance monitoring

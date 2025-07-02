@@ -5,10 +5,19 @@ const Result = {
     Ok: value => ({ type: 'Ok', value }),
     Error: error => ({ type: 'Error', error }),
     fromTry: fn => {
+        // Validate input
+        if (typeof fn !== 'function') {
+            return Result.Error('Input must be a function');
+        }
+        
+        // Execute function safely
         try {
-            return Result.Ok(fn());
+            const result = fn();
+            return Result.Ok(result);
         } catch (e) {
-            return Result.Error(e);
+            // Extract message without creating new Error objects
+            const errorMessage = e && e.message ? e.message : String(e || 'Unknown error');
+            return Result.Error(errorMessage);
         }
     },
     map: fn => result =>

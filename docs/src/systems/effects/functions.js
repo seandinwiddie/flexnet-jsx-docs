@@ -41,7 +41,7 @@ export const createEffect = (type, operation, payload = {}) =>
 export const executeEffect = (effect) =>
     Result.fromTry(() => {
         if (!effect || !effect._isEffect) {
-            throw new Error('Invalid effect object');
+            return Either.Left('Invalid effect object');
         }
 
         switch (effect.type) {
@@ -66,7 +66,7 @@ export const executeEffect = (effect) =>
             case EffectType.ASYNC:
                 return executeAsyncEffect(effect);
             default:
-                throw new Error(`Unknown effect type: ${effect.type}`);
+                return Either.Left(`Unknown effect type: ${effect.type}`);
         }
     });
 
@@ -147,99 +147,99 @@ const executeDOMEffect = (effect) => {
         case 'setTextContent':
             if (payload.element && payload.element.nodeType) {
                 payload.element.textContent = escapeHTML(payload.text);
-                return payload.element;
+                return Either.Right(payload.element);
             }
-            throw new Error('Invalid element for setTextContent');
+            return Either.Left('Invalid element for setTextContent');
 
         case 'setHTML':
             if (payload.element && payload.element.nodeType) {
                 payload.element.innerHTML = escapeHTML(payload.html);
-                return payload.element;
+                return Either.Right(payload.element);
             }
-            throw new Error('Invalid element for setHTML');
+            return Either.Left('Invalid element for setHTML');
 
         case 'setAttribute':
             if (payload.element && payload.element.setAttribute) {
                 payload.element.setAttribute(payload.name, payload.value);
-                return payload.element;
+                return Either.Right(payload.element);
             }
-            throw new Error('Invalid element for setAttribute');
+            return Either.Left('Invalid element for setAttribute');
 
         case 'removeAttribute':
             if (payload.element && payload.element.removeAttribute) {
                 payload.element.removeAttribute(payload.name);
-                return payload.element;
+                return Either.Right(payload.element);
             }
-            throw new Error('Invalid element for removeAttribute');
+            return Either.Left('Invalid element for removeAttribute');
 
         case 'addClass':
             if (payload.element && payload.element.classList) {
                 payload.element.classList.add(payload.className);
-                return payload.element;
+                return Either.Right(payload.element);
             }
-            throw new Error('Invalid element for addClass');
+            return Either.Left('Invalid element for addClass');
 
         case 'removeClass':
             if (payload.element && payload.element.classList) {
                 payload.element.classList.remove(payload.className);
-                return payload.element;
+                return Either.Right(payload.element);
             }
-            throw new Error('Invalid element for removeClass');
+            return Either.Left('Invalid element for removeClass');
 
         case 'setStyle':
             if (payload.element && payload.element.style) {
                 payload.element.style[payload.property] = payload.value;
-                return payload.element;
+                return Either.Right(payload.element);
             }
-            throw new Error('Invalid element for setStyle');
+            return Either.Left('Invalid element for setStyle');
 
         case 'addEventListener':
             if (payload.element && payload.element.addEventListener) {
                 payload.element.addEventListener(payload.event, payload.handler, payload.options);
-                return () => payload.element.removeEventListener(payload.event, payload.handler, payload.options);
+                return Either.Right(() => payload.element.removeEventListener(payload.event, payload.handler, payload.options));
             }
-            throw new Error('Invalid element for addEventListener');
+            return Either.Left('Invalid element for addEventListener');
 
         case 'removeEventListener':
             if (payload.element && payload.element.removeEventListener) {
                 payload.element.removeEventListener(payload.event, payload.handler, payload.options);
-                return true;
+                return Either.Right(payload.element);
             }
-            throw new Error('Invalid element for removeEventListener');
+            return Either.Left('Invalid element for removeEventListener');
 
         case 'createElement':
-            return document.createElement(payload.tagName);
+            return Either.Right(document.createElement(payload.tagName));
 
         case 'appendChild':
             if (payload.parent && payload.child && payload.parent.appendChild) {
                 payload.parent.appendChild(payload.child);
-                return payload.parent;
+                return Either.Right(payload.parent);
             }
-            throw new Error('Invalid elements for appendChild');
+            return Either.Left('Invalid elements for appendChild');
 
         case 'removeChild':
             if (payload.parent && payload.child && payload.parent.removeChild) {
                 payload.parent.removeChild(payload.child);
-                return payload.parent;
+                return Either.Right(payload.parent);
             }
-            throw new Error('Invalid elements for removeChild');
+            return Either.Left('Invalid elements for removeChild');
 
         case 'focus':
             if (payload.element && payload.element.focus) {
                 payload.element.focus();
-                return payload.element;
+                return Either.Right(payload.element);
             }
-            throw new Error('Invalid element for focus');
+            return Either.Left('Invalid element for focus');
 
         case 'scrollTo':
-            if (payload.element && payload.element.scrollTo) {
-                payload.element.scrollTo(payload.options);
-                return payload.element;
+            if (payload.element && payload.element.scrollIntoView) {
+                payload.element.scrollIntoView(payload.options);
+                return Either.Right(payload.element);
             }
-            throw new Error('Invalid element for scrollTo');
+            return Either.Left('Invalid element for scrollTo');
 
         default:
-            throw new Error(`Unknown DOM operation: ${operation}`);
+            return Either.Left(`Unknown DOM operation: ${operation}`);
     }
 };
 
@@ -261,33 +261,34 @@ export const httpDeleteEffect = (url, options = {}) =>
 
 const executeHTTPEffect = async (effect) => {
     const { operation, payload } = effect;
-    
-    // Validate URL
-    const urlValidation = sanitizeURL(payload.url);
+    const { url, options = {} } = payload;
+
+    // Validate URL using existing sanitizer
+    const urlValidation = sanitizeURL(url);
     if (urlValidation.type === 'Left') {
-        throw new Error(`Invalid URL: ${urlValidation.value}`);
+        return Either.Left(`Invalid URL: ${urlValidation.value}`);
     }
 
-    const requestOptions = {
+    const config = {
         method: operation.toUpperCase(),
         headers: {
             'Content-Type': 'application/json',
-            ...payload.options.headers
+            ...options.headers
         },
-        ...payload.options
+        ...options
     };
 
     if (payload.body && (operation === 'post' || operation === 'put')) {
-        requestOptions.body = typeof payload.body === 'string' 
+        config.body = typeof payload.body === 'string' 
             ? payload.body 
             : JSON.stringify(payload.body);
     }
 
     try {
-        const response = await fetch(payload.url, requestOptions);
+        const response = await fetch(url, config);
         
         if (!response.ok) {
-            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+            return Either.Left(`HTTP ${response.status}: ${response.statusText}`);
         }
 
         const contentType = response.headers.get('content-type');
@@ -299,14 +300,15 @@ const executeHTTPEffect = async (effect) => {
             data = await response.text();
         }
 
-        return {
+        return Either.Right({
+            data,
             status: response.status,
-            statusText: response.statusText,
-            headers: Object.fromEntries(response.headers.entries()),
-            data
-        };
+            headers: response.headers,
+            url: response.url
+        });
+
     } catch (error) {
-        throw new Error(`HTTP request failed: ${error.message}`);
+        return Either.Left(`HTTP request failed: ${error.message || 'Unknown error'}`);
     }
 };
 
@@ -338,30 +340,30 @@ const executeStorageEffect = (effect) => {
     switch (operation) {
         case 'setLocalStorage':
             localStorage.setItem(payload.key, JSON.stringify(payload.value));
-            return true;
+            return Either.Right(payload.value);
 
         case 'getLocalStorage':
-            const localValue = localStorage.getItem(payload.key);
-            return localValue ? JSON.parse(localValue) : null;
+            const item = localStorage.getItem(payload.key);
+            return item !== null ? Either.Right(JSON.parse(item)) : Maybe.Nothing();
 
         case 'removeLocalStorage':
             localStorage.removeItem(payload.key);
-            return true;
+            return Either.Right(true);
 
         case 'clearLocalStorage':
             localStorage.clear();
-            return true;
+            return Either.Right(true);
 
         case 'setSessionStorage':
             sessionStorage.setItem(payload.key, JSON.stringify(payload.value));
-            return true;
+            return Either.Right(payload.value);
 
         case 'getSessionStorage':
-            const sessionValue = sessionStorage.getItem(payload.key);
-            return sessionValue ? JSON.parse(sessionValue) : null;
+            const sessionItem = sessionStorage.getItem(payload.key);
+            return sessionItem !== null ? Either.Right(JSON.parse(sessionItem)) : Maybe.Nothing();
 
         default:
-            throw new Error(`Unknown storage operation: ${operation}`);
+            return Either.Left(`Unknown storage operation: ${operation}`);
     }
 };
 
@@ -386,21 +388,21 @@ const executeTimerEffect = (effect) => {
 
     switch (operation) {
         case 'setTimeout':
-            return setTimeout(payload.callback, payload.delay);
+            return Either.Right(setTimeout(payload.callback, payload.delay));
 
         case 'setInterval':
-            return setInterval(payload.callback, payload.interval);
+            return Either.Right(setInterval(payload.callback, payload.interval));
 
         case 'clearTimeout':
             clearTimeout(payload.timeoutId);
-            return true;
+            return Either.Right(true);
 
         case 'clearInterval':
             clearInterval(payload.intervalId);
-            return true;
+            return Either.Right(true);
 
         default:
-            throw new Error(`Unknown timer operation: ${operation}`);
+            return Either.Left(`Unknown timer operation: ${operation}`);
     }
 };
 
@@ -422,16 +424,24 @@ const executeRandomEffect = (effect) => {
 
     switch (operation) {
         case 'number':
-            return Math.random() * (payload.max - payload.min) + payload.min;
+            return Either.Right(Math.random() * (payload.max - payload.min) + payload.min);
 
         case 'integer':
-            return Math.floor(Math.random() * (payload.max - payload.min + 1)) + payload.min;
+            return Either.Right(Math.floor(Math.random() * (payload.max - payload.min + 1)) + payload.min);
 
         case 'uuid':
-            return crypto.randomUUID();
+            // Simple UUID generation using crypto API
+            const crypto = window.crypto || window.msCrypto;
+            if (crypto && crypto.getRandomValues) {
+                const buffer = crypto.getRandomValues(Uint8Array.from({ length: 16 }));
+                const hex = Array.from(buffer, byte => byte.toString(16).padStart(2, '0')).join('');
+                const uuid = `${hex.slice(0, 8)}-${hex.slice(8, 12)}-${hex.slice(12, 16)}-${hex.slice(16, 20)}-${hex.slice(20, 32)}`;
+                return Either.Right(uuid);
+            }
+            return Either.Left('Crypto API not available');
 
         default:
-            throw new Error(`Unknown random operation: ${operation}`);
+            return Either.Left(`Unknown random operation: ${operation}`);
     }
 };
 
@@ -453,16 +463,19 @@ const executeDateTimeEffect = (effect) => {
 
     switch (operation) {
         case 'getCurrentTime':
-            return Date.now();
+            return Either.Right(Date.now());
 
         case 'getDate':
-            return new Date();
+            return Either.Right(Date.now());
 
         case 'formatDate':
-            return new Intl.DateTimeFormat(navigator.language, payload.format).format(payload.date);
+            const formatter = globalThis.Intl?.DateTimeFormat?.(navigator.language, payload.format);
+            return formatter 
+                ? Either.Right(formatter.format(payload.date))
+                : Either.Left('Date formatting not available');
 
         default:
-            throw new Error(`Unknown datetime operation: ${operation}`);
+            return Either.Left(`Unknown datetime operation: ${operation}`);
     }
 };
 
@@ -478,32 +491,41 @@ export const logErrorEffect = (error, context = {}) =>
 
 const executeLogEffect = (effect) => {
     const { operation, payload } = effect;
-    const timestamp = new Date().toISOString();
 
     switch (operation) {
         case 'log':
-            const logMessage = `[${timestamp}] ${payload.message}`;
+            const timestamp = Date.now();
+            const logEntry = `[${timestamp}] ${payload.level.toUpperCase()}: ${payload.message}`;
+            
             switch (payload.level) {
-                case 'error':
-                    console.error(logMessage);
+                case 'debug':
+                    console.debug(logEntry);
+                    break;
+                case 'info':
+                    console.info(logEntry);
                     break;
                 case 'warn':
-                    console.warn(logMessage);
+                    console.warn(logEntry);
                     break;
-                case 'debug':
-                    console.debug(logMessage);
+                case 'error':
+                    console.error(logEntry);
                     break;
                 default:
-                    console.info(logMessage);
+                    console.log(logEntry);
             }
-            return true;
+            return Either.Right(logEntry);
 
         case 'error':
-            console.error(`[${timestamp}] ERROR:`, payload.error, payload.context);
-            return true;
+            const errorMessage = payload.error?.message || String(payload.error || 'Unknown error');
+            const contextStr = Object.keys(payload.context).length > 0 
+                ? ` Context: ${JSON.stringify(payload.context)}`
+                : '';
+            const fullErrorMessage = `Error: ${errorMessage}${contextStr}`;
+            console.error(fullErrorMessage);
+            return Either.Right(fullErrorMessage);
 
         default:
-            throw new Error(`Unknown log operation: ${operation}`);
+            return Either.Left(`Unknown log operation: ${operation}`);
     }
 };
 
@@ -522,37 +544,45 @@ const executeBrowserAPIEffect = async (effect) => {
 
     switch (operation) {
         case 'geolocation':
-            return new Promise((resolve, reject) => {
-                if (!navigator.geolocation) {
-                    reject(new Error('Geolocation not supported'));
-                    return;
-                }
-
-                navigator.geolocation.getCurrentPosition(
-                    position => resolve({
-                        latitude: position.coords.latitude,
-                        longitude: position.coords.longitude,
-                        accuracy: position.coords.accuracy
-                    }),
-                    error => reject(new Error(`Geolocation error: ${error.message}`)),
-                    payload.options
-                );
-            });
+            if (!navigator.geolocation) {
+                return Either.Left('Geolocation not supported');
+            }
+            
+            return Either.fromPromise(
+                new Promise((resolve, reject) => {
+                    navigator.geolocation.getCurrentPosition(
+                        position => resolve(position),
+                        error => reject(`Geolocation error: ${error.message || 'Unknown error'}`),
+                        payload.options
+                    );
+                })
+            );
 
         case 'notification':
             if (!('Notification' in window)) {
-                throw new Error('Notifications not supported');
+                return Either.Left('Notifications not supported');
             }
 
-            const permission = await Notification.requestPermission();
-            if (permission === 'granted') {
-                return new Notification(payload.title, payload.options);
-            } else {
-                throw new Error('Notification permission denied');
+            if (Notification.permission === 'granted') {
+                const notification = Notification.from({
+                    title: payload.title,
+                    ...payload.options
+                });
+                return Either.Right(notification);
+            } else if (Notification.permission !== 'denied') {
+                const permission = await Notification.requestPermission();
+                if (permission === 'granted') {
+                    const notification = Notification.from({
+                        title: payload.title,
+                        ...payload.options
+                    });
+                    return Either.Right(notification);
+                }
             }
+            return Either.Left('Notification permission denied');
 
         default:
-            throw new Error(`Unknown browser API operation: ${operation}`);
+            return Either.Left(`Unknown browser API operation: ${operation}`);
     }
 };
 
@@ -571,14 +601,14 @@ const executeAnimationEffect = (effect) => {
 
     switch (operation) {
         case 'requestAnimationFrame':
-            return requestAnimationFrame(payload.callback);
+            return Either.Right(requestAnimationFrame(payload.callback));
 
         case 'cancelAnimationFrame':
             cancelAnimationFrame(payload.id);
-            return true;
+            return Either.Right(true);
 
         default:
-            throw new Error(`Unknown animation operation: ${operation}`);
+            return Either.Left(`Unknown animation operation: ${operation}`);
     }
 };
 
@@ -594,10 +624,19 @@ const executeAsyncEffect = async (effect) => {
 
     switch (operation) {
         case 'execute':
-            return await payload.asyncFunction();
+            if (typeof payload.asyncFunction !== 'function') {
+                return Either.Left('Async effect requires a function');
+            }
+            
+            try {
+                const result = await payload.asyncFunction();
+                return Either.Right(result);
+            } catch (error) {
+                return Either.Left(error?.message || String(error || 'Async operation failed'));
+            }
 
         default:
-            throw new Error(`Unknown async operation: ${operation}`);
+            return Either.Left(`Unknown async operation: ${operation}`);
     }
 };
 

@@ -20,14 +20,14 @@ export const createState = (initialValue) => {
         update: (updaterFn) =>
             Result.fromTry(() => {
                 if (typeof updaterFn !== 'function') {
-                    throw new Error('Updater must be a function');
+                    return Either.Left('Updater must be a function');
                 }
                 
                 const newState = updaterFn(currentState);
                 
                 // Ensure immutability
                 if (newState === currentState) {
-                    return currentState; // No change
+                    return Either.Right(currentState); // No change
                 }
                 
                 const frozenState = Object.freeze(newState);
@@ -35,12 +35,12 @@ export const createState = (initialValue) => {
                 currentState = frozenState;
                 
                 // Notify subscribers using immutable forEach
-                subscribers.forEach(subscriber => {
+                ImmutableSet.toArray(subscribers).forEach(subscriber => {
                     Result.fromTry(() => subscriber(frozenState, previousState))
                         .mapLeft(error => console.error('State subscriber error:', error));
                 });
                 
-                return frozenState;
+                return Either.Right(frozenState);
             }),
         
         // Subscribe to state changes
@@ -66,7 +66,7 @@ export const createState = (initialValue) => {
             const previousState = currentState;
             currentState = deepFreeze(initialValue);
             
-            subscribers.forEach(subscriber => {
+            ImmutableSet.toArray(subscribers).forEach(subscriber => {
                 Result.fromTry(() => subscriber(currentState, previousState))
                     .mapLeft(error => console.error('State subscriber error:', error));
             });
