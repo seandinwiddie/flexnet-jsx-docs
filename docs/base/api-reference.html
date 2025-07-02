@@ -105,9 +105,28 @@ const curry = fn => (...args) =>
         <div class="mb-8 p-6 bg-white rounded-lg shadow-md dark:bg-slate-800">
             <h3 class="text-2xl font-semibold text-dark dark:text-light mb-4">Transforms</h3>
             <pre class="bg-gray-100 dark:bg-gray-900 rounded-lg"><code class="language-javascript">// src/core/functions/transforms.js
+// Array transforms
 const map = fn => array => array.map(fn);
 const filter = predicate => array => array.filter(predicate);
-const reduce = (fn, initial) => array => array.reduce(fn, initial);</code></pre>
+const reduce = (fn, initial) => array => array.reduce(fn, initial);
+
+// Path utilities
+const getBasePath = () => {
+    if (typeof window !== 'undefined' && window.location) {
+        const pathname = window.location.pathname;
+        return pathname.replace(/\/index\.html$/, '').replace(/\/$/, '') || '.';
+    }
+    return '.';
+};
+
+// URL transforms
+const transformUrl = (url, basePath = null) => {
+    const base = basePath || getBasePath();
+    if (url.startsWith('http://') || url.startsWith('https://')) {
+        return Either.Right(url);
+    }
+    return Either.Right(`${base}/${url}`);
+};</code></pre>
         </div>
     </section>
     <!-- System APIs -->

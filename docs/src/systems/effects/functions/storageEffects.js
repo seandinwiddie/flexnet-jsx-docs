@@ -1,40 +1,53 @@
-// === Storage Effects Module ===
-// Side effect functions for browser storage operations
+// === Storage Effects ===
+// Pure functional localStorage operations using Effect type
 
-import { createEffect } from './createEffect.js';
-import { EffectType } from './EffectType.js';
+import { Effect } from './effect.js';
+import Either from '../../../core/types/either.js';
+import Maybe from '../../../core/types/maybe.js';
 
-/**
- * Creates an effect to set a value in localStorage
- * @param {string} key - The storage key
- * @param {*} value - The value to store
- * @returns {Effect} Storage effect object
- */
-export const setLocalStorageEffect = (key, value) =>
-    createEffect(EffectType.STORAGE, 'setLocalStorage', { key, value });
+export const setLocalStorage = (key, value) =>
+    Effect.of(() => {
+        try {
+            localStorage.setItem(key, value);
+            return Either.Right({ key, value });
+        } catch (error) {
+            return Either.Left(`localStorage.setItem failed: ${error.message}`);
+        }
+    });
 
-/**
- * Creates an effect to get a value from localStorage
- * @param {string} key - The storage key to retrieve
- * @returns {Effect} Storage effect object
- */
-export const getLocalStorageEffect = (key) =>
-    createEffect(EffectType.STORAGE, 'getLocalStorage', { key });
+export const getLocalStorage = (key) =>
+    Effect.of(() => {
+        try {
+            const value = localStorage.getItem(key);
+            return Maybe.fromNullable(value);
+        } catch (error) {
+            return Maybe.Nothing();
+        }
+    });
 
-/**
- * Creates an effect to remove a value from localStorage
- * @param {string} key - The storage key to remove
- * @returns {Effect} Storage effect object
- */
-export const removeLocalStorageEffect = (key) =>
-    createEffect(EffectType.STORAGE, 'removeLocalStorage', { key });
+export const removeLocalStorage = (key) =>
+    Effect.of(() => {
+        try {
+            localStorage.removeItem(key);
+            return Either.Right(key);
+        } catch (error) {
+            return Either.Left(`localStorage.removeItem failed: ${error.message}`);
+        }
+    });
 
 /**
  * Creates an effect to clear all localStorage
  * @returns {Effect} Storage effect object
  */
 export const clearLocalStorageEffect = () =>
-    createEffect(EffectType.STORAGE, 'clearLocalStorage', {});
+    Effect.of(() => {
+        try {
+            localStorage.clear();
+            return Either.Right({});
+        } catch (error) {
+            return Either.Left(`localStorage.clear failed: ${error.message}`);
+        }
+    });
 
 /**
  * Creates an effect to set a value in sessionStorage
@@ -43,7 +56,14 @@ export const clearLocalStorageEffect = () =>
  * @returns {Effect} Storage effect object
  */
 export const setSessionStorageEffect = (key, value) =>
-    createEffect(EffectType.STORAGE, 'setSessionStorage', { key, value });
+    Effect.of(() => {
+        try {
+            sessionStorage.setItem(key, value);
+            return Either.Right({ key, value });
+        } catch (error) {
+            return Either.Left(`sessionStorage.setItem failed: ${error.message}`);
+        }
+    });
 
 /**
  * Creates an effect to get a value from sessionStorage
@@ -51,4 +71,11 @@ export const setSessionStorageEffect = (key, value) =>
  * @returns {Effect} Storage effect object
  */
 export const getSessionStorageEffect = (key) =>
-    createEffect(EffectType.STORAGE, 'getSessionStorage', { key }); 
+    Effect.of(() => {
+        try {
+            const value = sessionStorage.getItem(key);
+            return Maybe.fromNullable(value);
+        } catch (error) {
+            return Maybe.Nothing();
+        }
+    }); 

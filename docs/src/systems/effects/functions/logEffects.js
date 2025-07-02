@@ -1,23 +1,29 @@
-// === Log Effects Module ===
-// Side effect functions for logging operations
+// === Log Effects ===
+// Pure functional logging using Effect type
 
-import { createEffect } from './createEffect.js';
-import { EffectType } from './EffectType.js';
+import { Effect } from './effect.js';
 
-/**
- * Creates an effect to log a message
- * @param {string} message - The message to log
- * @param {string} level - The log level (default: 'info')
- * @returns {Effect} Log effect object
- */
-export const logEffect = (message, level = 'info') =>
-    createEffect(EffectType.LOG, 'log', { message, level });
+export const log = (message, level = 'info') =>
+    Effect.of(() => {
+        const timestamp = new Date().toISOString();
+        const logMessage = `[${timestamp}] [${level.toUpperCase()}] ${message}`;
+        
+        switch (level) {
+            case 'error':
+                console.error(logMessage);
+                break;
+            case 'warn':
+                console.warn(logMessage);
+                break;
+            case 'debug':
+                console.debug(logMessage);
+                break;
+            default:
+                console.log(logMessage);
+        }
+        
+        return logMessage;
+    });
 
-/**
- * Creates an effect to log an error
- * @param {Error|string} error - The error to log
- * @param {Object} context - Additional context (default: {})
- * @returns {Effect} Log effect object
- */
-export const logErrorEffect = (error, context = {}) =>
-    createEffect(EffectType.LOG, 'error', { error, context }); 
+export const logError = (error) =>
+    log(`Error: ${error.message || error}`, 'error'); 

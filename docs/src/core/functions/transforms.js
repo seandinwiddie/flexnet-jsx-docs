@@ -1,23 +1,16 @@
 // === Core Transform Functions ===
-// Pure functional transformation utilities
+// Pure functional transformation utilities matching documented API
 
 import { compose } from './composition.js';
 import Maybe from '../types/maybe.js';
 import Either from '../types/either.js';
 
-// Transform HTML content safely
-export const createBreadcrumbSegment = (seg, idx, pathSegments) => {
-    const cumulativePath = `/${pathSegments.slice(0, idx + 1).join('/')}`;
-    const name = seg.replace('.html', '').replace(/-/g, ' ');
-    const displayName = name.charAt(0).toUpperCase() + name.slice(1);
-    
-    return {
-        path: cumulativePath,
-        displayName,
-        isLast: idx === pathSegments.length - 1
-    };
-};
+// === Array Transforms (matching documentation) ===
+export const map = fn => array => array.map(fn);
+export const filter = predicate => array => array.filter(predicate);
+export const reduce = (fn, initial) => array => array.reduce(fn, initial);
 
+// === URL and Path Utilities ===
 /**
  * Pure function to get the base path for the application
  * @returns {string} The base path
@@ -71,3 +64,16 @@ export const transformObject = (fn, obj) =>
                 [key]: fn(o[key])
             }), {})
         );
+
+// === HTML Content Utilities ===
+export const createBreadcrumbSegment = (seg, idx, pathSegments) => {
+    const cumulativePath = `/${pathSegments.slice(0, idx + 1).join('/')}`;
+    const name = seg.replace('.html', '').replace(/-/g, ' ');
+    const displayName = name.charAt(0).toUpperCase() + name.slice(1);
+    
+    return {
+        path: cumulativePath,
+        displayName,
+        isLast: idx === pathSegments.length - 1
+    };
+};
