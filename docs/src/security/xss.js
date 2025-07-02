@@ -246,7 +246,7 @@ export const sanitizeStyle = (styles) => {
 export const safeSetHTML = curry((htmlContent, element) =>
     Result.fromTry(() => {
         if (!element || !element.nodeType) {
-            throw new Error('Invalid element');
+            return Either.Left('Invalid element');
         }
         
         // Create a temporary container for parsing
@@ -257,7 +257,7 @@ export const safeSetHTML = curry((htmlContent, element) =>
         const sanitized = sanitizeElement(temp);
         
         if (sanitized.type === 'Error') {
-            throw new Error(sanitized.error);
+            return Either.Left(sanitized.error);
         }
         
         // Clear the target element and append sanitized content
@@ -326,7 +326,7 @@ export const addNonceToElement = curry((nonce, element) =>
 export const safeSetText = curry((textContent, element) =>
     Result.fromTry(() => {
         if (!element || !element.nodeType) {
-            throw new Error('Invalid element');
+            return Either.Left('Invalid element');
         }
         
         // Use textContent to prevent HTML injection

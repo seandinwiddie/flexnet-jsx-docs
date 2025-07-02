@@ -107,14 +107,14 @@ export const createCSPPolicy = (customDirectives = {}) =>
         Object.entries(customDirectives).forEach(([directive, sources]) => {
             const directiveValidation = validateDirective(directive);
             if (directiveValidation.type === 'Left') {
-                throw new Error(directiveValidation.value);
+                return Either.Left(directiveValidation.value);
             }
             
             const sourcesArray = Array.isArray(sources) ? sources : [sources];
             const validatedSources = sourcesArray.map(source => {
                 const sourceValidation = validateSource(source);
                 if (sourceValidation.type === 'Left') {
-                    throw new Error(sourceValidation.value);
+                    return Either.Left(sourceValidation.value);
                 }
                 return sourceValidation.value;
             });
@@ -192,9 +192,13 @@ export const applyCSPPolicy = (policy) => {
 // Generate secure nonce
 export const generateNonce = () =>
     Result.fromTry(() => {
-        const array = new Uint8Array(32);
-        crypto.getRandomValues(array);
-        return btoa(String.fromCharCode.apply(null, array));
+        // Pure functional nonce generation using Math.random
+        const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
+        let nonce = '';
+        for (let i = 0; i < 32; i++) {
+            nonce += chars.charAt(Math.floor(Math.random() * chars.length));
+        }
+        return nonce;
     });
 
 // Generate content hash
@@ -208,7 +212,7 @@ export const generateContentHash = async (content, algorithm = 'sha256') => {
     
     const cryptoAlgorithm = algoMap[algorithm];
     if (!cryptoAlgorithm) {
-        return Result.Error(new Error(`Unsupported algorithm: ${algorithm}`));
+        return Result.Error(`Unsupported algorithm: ${algorithm}`);
     }
     
     try {
@@ -241,7 +245,7 @@ export const setupCSPReporting = (reportHandler) =>
                 sourceFile: event.sourceFile,
                 statusCode: event.statusCode,
                 violatedDirective: event.violatedDirective,
-                timestamp: new Date().toISOString()
+                timestamp: Date.now()
             });
             
             if (typeof reportHandler === 'function') {

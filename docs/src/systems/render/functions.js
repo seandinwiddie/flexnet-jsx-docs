@@ -22,7 +22,8 @@ import {
     getLocalStorageEffect,
     logEffect,
     setTimeoutEffect,
-    createAsyncEffect
+    createAsyncEffect,
+    createDelayEffect
 } from '../effects/functions.js';
 
 // ===========================================
@@ -313,7 +314,7 @@ export const setupSidebarAccordionEffect = () =>
                 return navResult.value;
             } else if (attempt < maxAttempts) {
                 await executeEffect(logEffect(`Navigation not found, retrying (${attempt}/${maxAttempts})`, 'info'));
-                await new Promise(resolve => setTimeout(resolve, 100));
+                await executeEffect(createDelayEffect(100));
                 return findNavigation(attempt + 1, maxAttempts);
             } else {
                 await executeEffect(logEffect('Navigation not found after retries', 'error'));

@@ -2,6 +2,7 @@
 // Main application orchestrator following FlexNet architecture principles
 
 import Maybe from './core/types/maybe.js';
+import Either from './core/types/either.js';
 import Result from './core/types/result.js';
 import { pipe } from './core/functions/composition.js';
 import { getBasePath } from './core/functions/transforms.js';
@@ -16,7 +17,10 @@ import {
     removeClassEffect,
     setStyleEffect,
     addEventListenerEffect,
-    setLocalStorageEffect
+    setLocalStorageEffect,
+    getLocalStorageEffect,
+    createDOMReadyEffect,
+    hasClassEffect
 } from './systems/effects/functions.js';
 import { setupUI } from './features/ui-setup/index.js';
 
@@ -37,7 +41,8 @@ import {
     executeEffect, 
     logEffect, 
     getCurrentTimeEffect,
-    createAsyncEffect 
+    createAsyncEffect,
+    createDelayEffect
 } from './systems/effects/functions.js';
 
 import { 
@@ -88,7 +93,7 @@ const initializeApplication = () =>
                 const errorHtml = `<div style="color: red; padding: 2rem; font-family: monospace;">
                     <h1>Critical Error</h1>
                     <p>Could not load page layout. Please check the console for more details.</p>
-                    <p><strong>Error:</strong> ${escape(error.message)}</p>
+                    <p><strong>Error:</strong> ${escape(error.message || error)}</p>
                 </div>`;
                 
                 return query('#root')
@@ -128,10 +133,8 @@ const initializeApplication = () =>
                 // Setup content using effect system
                 await setupPageContent(pageContent);
                 
-                // Delay for DOM settling, then setup UI
-                await executeEffect(createAsyncEffect(() => 
-                    new Promise(resolve => setTimeout(resolve, 100))
-                ));
+                // Delay for DOM settling using effect system
+                await executeEffect(createDelayEffect(100));
                 
                 const uiResults = await setupUI(basePath);
                 await setupThemeSystem();
@@ -160,16 +163,21 @@ const initializeApplication = () =>
                 
                 return themeToggleButton
                     .map(button => {
-                        const themeToggleHandler = () => {
+                        const themeToggleHandler = async () => {
                             const html = document.documentElement;
-                            const isDark = html.classList.contains('dark');
+                            const isDarkResult = await executeEffect(hasClassEffect(html, 'dark'));
+                            
+                            const isDark = isDarkResult.fold(
+                                () => false,  // Error case
+                                (hasClass) => hasClass
+                            );
                             
                             if (isDark) {
-                                executeEffect(removeClassEffect(html, 'dark'));
-                                executeEffect(setLocalStorageEffect('theme', 'light'));
+                                await executeEffect(removeClassEffect(html, 'dark'));
+                                await executeEffect(setLocalStorageEffect('theme', 'light'));
                             } else {
-                                executeEffect(addClassEffect(html, 'dark'));
-                                executeEffect(setLocalStorageEffect('theme', 'dark'));
+                                await executeEffect(addClassEffect(html, 'dark'));
+                                await executeEffect(setLocalStorageEffect('theme', 'dark'));
                             }
                         };
                         
@@ -185,27 +193,7 @@ const initializeApplication = () =>
         });
 
 // Use effect system for DOM ready event
-const domReadyEffect = createAsyncEffect(() => 
-    // Use functional promise alternative
-    document.readyState === 'loading'
-        ? Either.Right(() => {
-            const listeners = [];
-            const handler = () => {
-                listeners.forEach(resolve => resolve());
-                document.removeEventListener('DOMContentLoaded', handler);
-            };
-            document.addEventListener('DOMContentLoaded', handler);
-            return {
-                then: (resolve) => {
-                    listeners.push(resolve);
-                    if (document.readyState !== 'loading') {
-                        resolve();
-                    }
-                }
-            };
-        })
-        : Either.Right(() => Promise.resolve())
-);
+const domReadyEffect = createDOMReadyEffect();
 
 executeEffect(domReadyEffect)
     .then(() => initializeApplication())
@@ -219,8 +207,6 @@ executeEffect(domReadyEffect)
     .catch(error => {
         executeEffect(logEffect(`Critical error during site initialization: ${error}`, 'error'));
     });
-
-
 
 // ===========================================
 // FLEXNET FRAMEWORK INITIALIZATION
@@ -250,11 +236,14 @@ const initializeFlexNet = async (basePath = '.') => {
         
         await executeEffect(logEffect('✅ FlexNet Framework initialization complete', 'info'));
         
+        const timestampResult = await executeEffect(getCurrentTimeEffect());
+        const timestamp = timestampResult.fold(() => Date.now(), (time) => time);
+        
         return {
             success: true,
             store,
             uiResults,
-            timestamp: await executeEffect(getCurrentTimeEffect())
+            timestamp
         };
     }).fold(
         async (error) => {
@@ -323,14 +312,15 @@ const performComplexOperation = createAsyncEffect(async () => {
     await executeEffect(logEffect('Starting complex operation', 'info'));
     
     // Multiple effects in sequence
-    const timestamp = await executeEffect(getCurrentTimeEffect());
+    const timestampResult = await executeEffect(getCurrentTimeEffect());
+    const timestamp = timestampResult.fold(() => Date.now(), (time) => time);
     
     // State updates
     dispatch(setLoading(true));
     
     return Result.fromTry(async () => {
         // Simulate async work using effect system
-        await executeEffect(setTimeoutEffect(() => {}, 1000));
+        await executeEffect(createDelayEffect(1000));
         
         // Update state
         dispatch(setLoading(false));
@@ -428,10 +418,10 @@ export const FlexNet = Object.freeze({
     getPerformanceMetrics
 });
 
-// Auto-initialize when DOM is ready
-if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', () => {
-        initializeFlexNet()
+// Auto-initialize when DOM is ready using effect system
+executeEffect(createDOMReadyEffect())
+    .then(() => {
+        return initializeFlexNet()
             .then(result => {
                 console.log('🎉 FlexNet Framework ready!', result);
                 
@@ -439,24 +429,11 @@ if (document.readyState === 'loading') {
                 if (typeof window !== 'undefined') {
                     window.FlexNet = FlexNet;
                 }
-            })
-            .catch(error => {
-                console.error('💥 FlexNet Framework failed to initialize:', error);
+                return result;
             });
+    })
+    .catch(error => {
+        executeEffect(logEffect(`💥 FlexNet Framework failed to initialize: ${error}`, 'error'));
     });
-} else {
-    // DOM already loaded
-    initializeFlexNet()
-        .then(result => {
-            console.log('🎉 FlexNet Framework ready!', result);
-            
-            if (typeof window !== 'undefined') {
-                window.FlexNet = FlexNet;
-            }
-        })
-        .catch(error => {
-            console.error('💥 FlexNet Framework failed to initialize:', error);
-        });
-}
 
 export default FlexNet;

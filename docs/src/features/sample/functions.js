@@ -23,24 +23,24 @@ export const setupSampleFeature = () => {
 // Sample data transformation
 export const transformSampleData = (data) => {
     if (!data || typeof data !== 'object') {
-        return Result.Error(new Error('Invalid data provided'));
+        return Result.Error('Invalid data provided');
     }
     
     return Result.Ok({
         ...data,
         processed: true,
-        timestamp: new Date().toISOString()
+        timestamp: Date.now()
     });
 };
 
 // Sample validation function
 export const validateSampleInput = (input) => {
     if (typeof input !== 'string' || input.length === 0) {
-        return Result.Error(new Error('Input must be a non-empty string'));
+        return Result.Error('Input must be a non-empty string');
     }
     
     if (input.length > 100) {
-        return Result.Error(new Error('Input too long (max 100 characters)'));
+        return Result.Error('Input too long (max 100 characters)');
     }
     
     return Result.Ok(input.trim());

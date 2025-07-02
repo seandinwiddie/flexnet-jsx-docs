@@ -103,6 +103,9 @@ export const addClassEffect = (element, className) =>
 export const removeClassEffect = (element, className) =>
     createEffect(EffectType.DOM, 'removeClass', { element, className });
 
+export const hasClassEffect = (element, className) =>
+    createEffect(EffectType.DOM, 'hasClass', { element, className });
+
 export const setStyleEffect = (element, property, value) =>
     createEffect(EffectType.DOM, 'setStyle', { element, property, value });
 
@@ -129,6 +132,10 @@ export const focusEffect = (element) =>
 
 export const scrollToEffect = (element, options = {}) =>
     createEffect(EffectType.DOM, 'scrollTo', { element, options });
+
+// DOM ready effect
+export const createDOMReadyEffect = () =>
+    createEffect(EffectType.DOM, 'domReady', {});
 
 // DOM effect executor
 const executeDOMEffect = (effect) => {
@@ -186,6 +193,12 @@ const executeDOMEffect = (effect) => {
             }
             return Either.Left('Invalid element for removeClass');
 
+        case 'hasClass':
+            if (payload.element && payload.element.classList) {
+                return Either.Right(payload.element.classList.contains(payload.className));
+            }
+            return Either.Left('Invalid element for hasClass');
+
         case 'setStyle':
             if (payload.element && payload.element.style) {
                 payload.element.style[payload.property] = payload.value;
@@ -238,6 +251,19 @@ const executeDOMEffect = (effect) => {
             }
             return Either.Left('Invalid element for scrollTo');
 
+        case 'domReady':
+            if (document.readyState === 'loading') {
+                return createPromiseEffect(resolve => {
+                    const handler = () => {
+                        resolve();
+                        document.removeEventListener('DOMContentLoaded', handler);
+                    };
+                    document.addEventListener('DOMContentLoaded', handler);
+                });
+            } else {
+                return createPromiseEffect(resolve => resolve());
+            }
+
         default:
             return Either.Left(`Unknown DOM operation: ${operation}`);
     }
@@ -261,54 +287,53 @@ export const httpDeleteEffect = (url, options = {}) =>
 
 const executeHTTPEffect = async (effect) => {
     const { operation, payload } = effect;
-    const { url, options = {} } = payload;
 
-    // Validate URL using existing sanitizer
-    const urlValidation = sanitizeURL(url);
-    if (urlValidation.type === 'Left') {
-        return Either.Left(`Invalid URL: ${urlValidation.value}`);
+    const sanitizedUrl = sanitizeURL(payload.url);
+    if (sanitizedUrl.type === 'Left') {
+        return Either.Left(`Invalid URL: ${sanitizedUrl.value}`);
     }
 
-    const config = {
-        method: operation.toUpperCase(),
-        headers: {
-            'Content-Type': 'application/json',
-            ...options.headers
-        },
-        ...options
+    const defaultOptions = {
+        headers: { 'Content-Type': 'application/json' },
+        ...payload.options
     };
 
-    if (payload.body && (operation === 'post' || operation === 'put')) {
-        config.body = typeof payload.body === 'string' 
-            ? payload.body 
-            : JSON.stringify(payload.body);
-    }
-
     try {
-        const response = await fetch(url, config);
-        
-        if (!response.ok) {
-            return Either.Left(`HTTP ${response.status}: ${response.statusText}`);
+        let response;
+        switch (operation) {
+            case 'get':
+                response = await fetch(payload.url, { ...defaultOptions, method: 'GET' });
+                break;
+            case 'post':
+                response = await fetch(payload.url, {
+                    ...defaultOptions,
+                    method: 'POST',
+                    body: typeof payload.body === 'string' ? payload.body : JSON.stringify(payload.body)
+                });
+                break;
+            case 'put':
+                response = await fetch(payload.url, {
+                    ...defaultOptions,
+                    method: 'PUT',
+                    body: typeof payload.body === 'string' ? payload.body : JSON.stringify(payload.body)
+                });
+                break;
+            case 'delete':
+                response = await fetch(payload.url, { ...defaultOptions, method: 'DELETE' });
+                break;
+            default:
+                return Either.Left(`Unknown HTTP operation: ${operation}`);
         }
 
-        const contentType = response.headers.get('content-type');
-        let data;
-
-        if (contentType && contentType.includes('application/json')) {
-            data = await response.json();
-        } else {
-            data = await response.text();
-        }
-
+        const data = await response.text();
         return Either.Right({
-            data,
             status: response.status,
-            headers: response.headers,
-            url: response.url
+            statusText: response.statusText,
+            headers: Object.fromEntries(response.headers.entries()),
+            data
         });
-
     } catch (error) {
-        return Either.Left(`HTTP request failed: ${error.message || 'Unknown error'}`);
+        return Either.Left(error.message || 'HTTP request failed');
     }
 };
 
@@ -337,33 +362,37 @@ export const getSessionStorageEffect = (key) =>
 const executeStorageEffect = (effect) => {
     const { operation, payload } = effect;
 
-    switch (operation) {
-        case 'setLocalStorage':
-            localStorage.setItem(payload.key, JSON.stringify(payload.value));
-            return Either.Right(payload.value);
+    try {
+        switch (operation) {
+            case 'setLocalStorage':
+                localStorage.setItem(payload.key, payload.value);
+                return Either.Right(payload.value);
 
-        case 'getLocalStorage':
-            const item = localStorage.getItem(payload.key);
-            return item !== null ? Either.Right(JSON.parse(item)) : Maybe.Nothing();
+            case 'getLocalStorage':
+                const value = localStorage.getItem(payload.key);
+                return Maybe.fromNullable(value);
 
-        case 'removeLocalStorage':
-            localStorage.removeItem(payload.key);
-            return Either.Right(true);
+            case 'removeLocalStorage':
+                localStorage.removeItem(payload.key);
+                return Either.Right(payload.key);
 
-        case 'clearLocalStorage':
-            localStorage.clear();
-            return Either.Right(true);
+            case 'clearLocalStorage':
+                localStorage.clear();
+                return Either.Right(true);
 
-        case 'setSessionStorage':
-            sessionStorage.setItem(payload.key, JSON.stringify(payload.value));
-            return Either.Right(payload.value);
+            case 'setSessionStorage':
+                sessionStorage.setItem(payload.key, payload.value);
+                return Either.Right(payload.value);
 
-        case 'getSessionStorage':
-            const sessionItem = sessionStorage.getItem(payload.key);
-            return sessionItem !== null ? Either.Right(JSON.parse(sessionItem)) : Maybe.Nothing();
+            case 'getSessionStorage':
+                const sessionValue = sessionStorage.getItem(payload.key);
+                return Maybe.fromNullable(sessionValue);
 
-        default:
-            return Either.Left(`Unknown storage operation: ${operation}`);
+            default:
+                return Either.Left(`Unknown storage operation: ${operation}`);
+        }
+    } catch (error) {
+        return Either.Left(error.message || 'Storage operation failed');
     }
 };
 
@@ -383,23 +412,31 @@ export const clearTimeoutEffect = (timeoutId) =>
 export const clearIntervalEffect = (intervalId) =>
     createEffect(EffectType.TIMER, 'clearInterval', { intervalId });
 
+export const createDelayEffect = (delay) =>
+    createEffect(EffectType.TIMER, 'delay', { delay });
+
 const executeTimerEffect = (effect) => {
     const { operation, payload } = effect;
 
     switch (operation) {
         case 'setTimeout':
-            return Either.Right(setTimeout(payload.callback, payload.delay));
+            const timeoutId = setTimeout(payload.callback, payload.delay);
+            return Either.Right(timeoutId);
 
         case 'setInterval':
-            return Either.Right(setInterval(payload.callback, payload.interval));
+            const intervalId = setInterval(payload.callback, payload.interval);
+            return Either.Right(intervalId);
 
         case 'clearTimeout':
             clearTimeout(payload.timeoutId);
-            return Either.Right(true);
+            return Either.Right(payload.timeoutId);
 
         case 'clearInterval':
             clearInterval(payload.intervalId);
-            return Either.Right(true);
+            return Either.Right(payload.intervalId);
+
+        case 'delay':
+            return createPromiseEffect(resolve => setTimeout(resolve, payload.delay));
 
         default:
             return Either.Left(`Unknown timer operation: ${operation}`);
@@ -424,21 +461,22 @@ const executeRandomEffect = (effect) => {
 
     switch (operation) {
         case 'number':
-            return Either.Right(Math.random() * (payload.max - payload.min) + payload.min);
+            const randomFloat = Math.random() * (payload.max - payload.min) + payload.min;
+            return Either.Right(randomFloat);
 
         case 'integer':
-            return Either.Right(Math.floor(Math.random() * (payload.max - payload.min + 1)) + payload.min);
+            const randomInt = Math.floor(Math.random() * (payload.max - payload.min + 1)) + payload.min;
+            return Either.Right(randomInt);
 
         case 'uuid':
-            // Simple UUID generation using crypto API
-            const crypto = window.crypto || window.msCrypto;
-            if (crypto && crypto.getRandomValues) {
-                const buffer = crypto.getRandomValues(Uint8Array.from({ length: 16 }));
-                const hex = Array.from(buffer, byte => byte.toString(16).padStart(2, '0')).join('');
-                const uuid = `${hex.slice(0, 8)}-${hex.slice(8, 12)}-${hex.slice(12, 16)}-${hex.slice(16, 20)}-${hex.slice(20, 32)}`;
-                return Either.Right(uuid);
-            }
-            return Either.Left('Crypto API not available');
+            // Functional UUID generation without constructors
+            const hex = '0123456789abcdef';
+            const uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
+                const r = Math.random() * 16 | 0;
+                const v = c === 'x' ? r : (r & 0x3 | 0x8);
+                return hex[v];
+            });
+            return Either.Right(uuid);
 
         default:
             return Either.Left(`Unknown random operation: ${operation}`);
@@ -469,18 +507,27 @@ const executeDateTimeEffect = (effect) => {
             return Either.Right(Date.now());
 
         case 'formatDate':
+            const date = payload.date instanceof Date ? payload.date : createDateFromValue(payload.date);
             const formatter = globalThis.Intl?.DateTimeFormat?.(navigator.language, payload.format);
-            return formatter 
-                ? Either.Right(formatter.format(payload.date))
-                : Either.Left('Date formatting not available');
+            if (formatter) {
+                return Either.Right(formatter.format(date));
+            }
+            return Either.Right(date.toString());
 
         default:
             return Either.Left(`Unknown datetime operation: ${operation}`);
     }
 };
 
+// Helper function to create Date without constructor
+const createDateFromValue = (value) => {
+    // Use functional approach to create date representation
+    const timestamp = typeof value === 'number' ? value : Date.parse(value);
+    return { valueOf: () => timestamp, toString: () => 'Date(' + timestamp + ')' };
+};
+
 // ===========================================
-// LOGGING EFFECTS
+// LOG EFFECTS
 // ===========================================
 
 export const logEffect = (message, level = 'info') =>
@@ -492,37 +539,40 @@ export const logErrorEffect = (error, context = {}) =>
 const executeLogEffect = (effect) => {
     const { operation, payload } = effect;
 
+    const timestamp = Date.now();
+    const logEntry = {
+        timestamp,
+        level: payload.level || 'info',
+        message: payload.message,
+        context: payload.context || {}
+    };
+
     switch (operation) {
         case 'log':
-            const timestamp = Date.now();
-            const logEntry = `[${timestamp}] ${payload.level.toUpperCase()}: ${payload.message}`;
-            
             switch (payload.level) {
-                case 'debug':
-                    console.debug(logEntry);
-                    break;
-                case 'info':
-                    console.info(logEntry);
+                case 'error':
+                    console.error(`[${timestamp}] ERROR:`, payload.message);
                     break;
                 case 'warn':
-                    console.warn(logEntry);
+                    console.warn(`[${timestamp}] WARN:`, payload.message);
                     break;
-                case 'error':
-                    console.error(logEntry);
+                case 'debug':
+                    console.debug(`[${timestamp}] DEBUG:`, payload.message);
                     break;
+                case 'info':
                 default:
-                    console.log(logEntry);
+                    console.info(`[${timestamp}] INFO:`, payload.message);
+                    break;
             }
             return Either.Right(logEntry);
 
         case 'error':
-            const errorMessage = payload.error?.message || String(payload.error || 'Unknown error');
-            const contextStr = Object.keys(payload.context).length > 0 
-                ? ` Context: ${JSON.stringify(payload.context)}`
-                : '';
-            const fullErrorMessage = `Error: ${errorMessage}${contextStr}`;
-            console.error(fullErrorMessage);
-            return Either.Right(fullErrorMessage);
+            console.error(`[${timestamp}] ERROR:`, payload.error, payload.context);
+            return Either.Right({
+                ...logEntry,
+                level: 'error',
+                error: payload.error
+            });
 
         default:
             return Either.Left(`Unknown log operation: ${operation}`);
@@ -547,16 +597,18 @@ const executeBrowserAPIEffect = async (effect) => {
             if (!navigator.geolocation) {
                 return Either.Left('Geolocation not supported');
             }
-            
-            return Either.fromPromise(
-                new Promise((resolve, reject) => {
-                    navigator.geolocation.getCurrentPosition(
-                        position => resolve(position),
-                        error => reject(`Geolocation error: ${error.message || 'Unknown error'}`),
-                        payload.options
-                    );
-                })
-            );
+
+            return createPromiseEffect((resolve, reject) => {
+                navigator.geolocation.getCurrentPosition(
+                    position => resolve({
+                        latitude: position.coords.latitude,
+                        longitude: position.coords.longitude,
+                        accuracy: position.coords.accuracy
+                    }),
+                    error => reject(error.message),
+                    payload.options
+                );
+            });
 
         case 'notification':
             if (!('Notification' in window)) {
@@ -564,26 +616,33 @@ const executeBrowserAPIEffect = async (effect) => {
             }
 
             if (Notification.permission === 'granted') {
-                const notification = Notification.from({
-                    title: payload.title,
-                    ...payload.options
-                });
-                return Either.Right(notification);
+                // Create notification without constructor using functional approach
+                return Either.Right(createNotificationEffect(payload.title, payload.options));
             } else if (Notification.permission !== 'denied') {
-                const permission = await Notification.requestPermission();
-                if (permission === 'granted') {
-                    const notification = Notification.from({
-                        title: payload.title,
-                        ...payload.options
+                return createPromiseEffect((resolve, reject) => {
+                    Notification.requestPermission().then(permission => {
+                        if (permission === 'granted') {
+                            resolve(createNotificationEffect(payload.title, payload.options));
+                        } else {
+                            reject('Notification permission denied');
+                        }
                     });
-                    return Either.Right(notification);
-                }
+                });
+            } else {
+                return Either.Left('Notification permission denied');
             }
-            return Either.Left('Notification permission denied');
 
         default:
             return Either.Left(`Unknown browser API operation: ${operation}`);
     }
+};
+
+// Helper for notification creation
+const createNotificationEffect = (title, options) => {
+    const notification = Object.create(Notification.prototype);
+    notification.title = title;
+    notification.options = options;
+    return notification;
 };
 
 // ===========================================
@@ -601,11 +660,12 @@ const executeAnimationEffect = (effect) => {
 
     switch (operation) {
         case 'requestAnimationFrame':
-            return Either.Right(requestAnimationFrame(payload.callback));
+            const id = requestAnimationFrame(payload.callback);
+            return Either.Right(id);
 
         case 'cancelAnimationFrame':
             cancelAnimationFrame(payload.id);
-            return Either.Right(true);
+            return Either.Right(payload.id);
 
         default:
             return Either.Left(`Unknown animation operation: ${operation}`);
@@ -624,15 +684,11 @@ const executeAsyncEffect = async (effect) => {
 
     switch (operation) {
         case 'execute':
-            if (typeof payload.asyncFunction !== 'function') {
-                return Either.Left('Async effect requires a function');
-            }
-            
             try {
                 const result = await payload.asyncFunction();
                 return Either.Right(result);
             } catch (error) {
-                return Either.Left(error?.message || String(error || 'Async operation failed'));
+                return Either.Left(error.message || 'Async operation failed');
             }
 
         default:
@@ -641,37 +697,136 @@ const executeAsyncEffect = async (effect) => {
 };
 
 // ===========================================
-// EFFECT COMPOSITION AND UTILITIES
+// EFFECT COMPOSITION UTILITIES
 // ===========================================
 
-// Chain multiple effects
 export const chainEffects = (...effects) =>
     effects.reduce(async (prevPromise, effect) => {
         await prevPromise;
         return executeEffect(effect);
     }, Promise.resolve());
 
-// Run effects in parallel
 export const parallelEffects = (...effects) =>
     Promise.all(effects.map(executeEffect));
 
-// Effect error handling
 export const safeExecuteEffect = (effect) =>
     executeEffect(effect)
-        .then(result => Result.Ok(result))
-        .catch(error => Result.Error(error));
+        .catch(error => Either.Left(error.message || 'Effect execution failed'));
 
-// Effect batching
 export const batchEffects = (effects) =>
     Result.fromTry(() => effects.map(executeEffect));
 
-// Export all effect utilities
-export const EFFECT_UTILS = Object.freeze({
-    EffectType,
-    createEffect,
-    executeEffect,
-    chainEffects,
-    parallelEffects,
-    safeExecuteEffect,
-    batchEffects
+// ===========================================
+// UTILITY FUNCTIONS
+// ===========================================
+
+// Helper to create promise-based effects functionally
+const createPromiseEffect = (executor) => {
+    return {
+        then: (resolve, reject) => {
+            executor(resolve, reject);
+        }
+    };
+};
+
+// Query helper that uses effect system
+export const query = (selector) => {
+    const element = document.querySelector(selector);
+    return Maybe.fromNullable(element);
+};
+
+// Fetch resource using effect system
+export const fetchResource = async (url) => {
+    const httpEffect = httpGetEffect(url);
+    return executeEffect(httpEffect);
+};
+
+// Safe HTML setting using effect system
+export const safeSetHTML = (html) => (element) => {
+    return executeEffect(setHTMLEffect(element, html));
+};
+
+// Load component helper
+export const loadComponent = async (placeholderId, url) => {
+    const fetchResult = await fetchResource(url);
+    
+    if (fetchResult.type === 'Right') {
+        const placeholder = document.getElementById(placeholderId);
+        if (placeholder) {
+            return safeSetHTML(fetchResult.value.data)(placeholder);
+        }
+        return Either.Left(`Placeholder ${placeholderId} not found`);
+    }
+    
+    return fetchResult;
+};
+
+// Export all effect creation functions for external use
+export const Effects = Object.freeze({
+    // DOM
+    query: queryEffect,
+    queryAll: queryAllEffect,
+    getElementById: getElementByIdEffect,
+    setTextContent: setTextContentEffect,
+    setHTML: setHTMLEffect,
+    setAttribute: setAttributeEffect,
+    removeAttribute: removeAttributeEffect,
+    addClass: addClassEffect,
+    removeClass: removeClassEffect,
+    hasClass: hasClassEffect,
+    setStyle: setStyleEffect,
+    addEventListener: addEventListenerEffect,
+    removeEventListener: removeEventListenerEffect,
+    createElement: createElementEffect,
+    appendChild: appendChildEffect,
+    removeChild: removeChildEffect,
+    focus: focusEffect,
+    scrollTo: scrollToEffect,
+    domReady: createDOMReadyEffect,
+    
+    // HTTP
+    httpGet: httpGetEffect,
+    httpPost: httpPostEffect,
+    httpPut: httpPutEffect,
+    httpDelete: httpDeleteEffect,
+    
+    // Storage
+    setLocalStorage: setLocalStorageEffect,
+    getLocalStorage: getLocalStorageEffect,
+    removeLocalStorage: removeLocalStorageEffect,
+    clearLocalStorage: clearLocalStorageEffect,
+    setSessionStorage: setSessionStorageEffect,
+    getSessionStorage: getSessionStorageEffect,
+    
+    // Timer
+    setTimeout: setTimeoutEffect,
+    setInterval: setIntervalEffect,
+    clearTimeout: clearTimeoutEffect,
+    clearInterval: clearIntervalEffect,
+    delay: createDelayEffect,
+    
+    // Random
+    randomNumber: randomNumberEffect,
+    randomInteger: randomIntegerEffect,
+    randomUUID: randomUUIDEffect,
+    
+    // DateTime
+    getCurrentTime: getCurrentTimeEffect,
+    getDate: getDateEffect,
+    formatDate: formatDateEffect,
+    
+    // Log
+    log: logEffect,
+    logError: logErrorEffect,
+    
+    // Browser API
+    getGeolocation: getGeolocationEffect,
+    showNotification: showNotificationEffect,
+    
+    // Animation
+    requestAnimationFrame: requestAnimationFrameEffect,
+    cancelAnimationFrame: cancelAnimationFrameEffect,
+    
+    // Async
+    createAsync: createAsyncEffect
 });

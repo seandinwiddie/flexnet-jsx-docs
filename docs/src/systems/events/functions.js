@@ -147,11 +147,11 @@ export const createEventEmitter = () => {
 export const addDOMListener = curry((element, event, handler, options = {}) =>
     Result.fromTry(() => {
         if (!element || !element.addEventListener) {
-            throw new Error('Invalid element');
+            return Either.Left('Invalid element');
         }
         
         if (typeof handler !== 'function') {
-            throw new Error('Handler must be a function');
+            return Either.Left('Handler must be a function');
         }
         
         // Add event listener with options
@@ -168,7 +168,7 @@ export const addDOMListener = curry((element, event, handler, options = {}) =>
 export const removeDOMListener = curry((element, event, handler, options = {}) =>
     Result.fromTry(() => {
         if (!element || !element.removeEventListener) {
-            throw new Error('Invalid element');
+            return Either.Left('Invalid element');
         }
         
         element.removeEventListener(event, handler, options);
@@ -180,7 +180,7 @@ export const removeDOMListener = curry((element, event, handler, options = {}) =
 export const delegateEvent = curry((container, selector, event, handler) =>
     Result.fromTry(() => {
         if (!container || !container.addEventListener) {
-            throw new Error('Invalid container element');
+            return Either.Left('Invalid container element');
         }
         
         const delegatedHandler = (e) => {
@@ -367,12 +367,17 @@ const validateEventStructure = (schema, event) => {
 // Custom event creation
 export const createCustomEvent = (type, detail = {}, options = {}) =>
     Result.fromTry(() => {
-        const event = new CustomEvent(type, {
+        // Functional custom event creation
+        const eventConfig = {
             detail: Object.freeze(detail),
             bubbles: options.bubbles || false,
             cancelable: options.cancelable || false,
             composed: options.composed || false
-        });
+        };
+        
+        // Use document.createEvent for constructor-free approach
+        const event = document.createEvent('CustomEvent');
+        event.initCustomEvent(type, eventConfig.bubbles, eventConfig.cancelable, eventConfig.detail);
         
         return event;
     });
@@ -380,7 +385,7 @@ export const createCustomEvent = (type, detail = {}, options = {}) =>
 export const dispatchCustomEvent = curry((element, event) =>
     Result.fromTry(() => {
         if (!element || !element.dispatchEvent) {
-            throw new Error('Invalid element');
+            return Either.Left('Invalid element');
         }
         
         return element.dispatchEvent(event);
@@ -485,19 +490,25 @@ export const isInsideElement = curry((element, event) =>
 
 // Event cleanup utilities
 export const createEventCleanup = () => {
-    const cleanupFunctions = new Set();
+    // Functional Set alternative
+    let cleanupFunctions = [];
     
     return Object.freeze({
         add: (cleanupFn) => {
-            if (typeof cleanupFn === 'function') {
-                cleanupFunctions.add(cleanupFn);
+            if (typeof cleanupFn === 'function' && !cleanupFunctions.includes(cleanupFn)) {
+                cleanupFunctions.push(cleanupFn);
                 return true;
             }
             return false;
         },
         
         remove: (cleanupFn) => {
-            return cleanupFunctions.delete(cleanupFn);
+            const index = cleanupFunctions.indexOf(cleanupFn);
+            if (index !== -1) {
+                cleanupFunctions.splice(index, 1);
+                return true;
+            }
+            return false;
         },
         
         cleanup: () => {
@@ -511,14 +522,14 @@ export const createEventCleanup = () => {
                 }
             });
             
-            cleanupFunctions.clear();
+            cleanupFunctions = [];
             
             return errors.length > 0
                 ? Result.Error(errors)
                 : Result.Ok(true);
         },
         
-        size: () => cleanupFunctions.size
+        size: () => cleanupFunctions.length
     });
 };
 
