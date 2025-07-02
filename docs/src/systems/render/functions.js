@@ -1,369 +1,553 @@
-// === Render System Functions ===
-// UI component rendering and setup functions
+// === FlexNet Render System ===
+// Pure functional rendering with proper effect isolation
 
 import Maybe from '../../core/types/maybe.js';
+import Either from '../../core/types/either.js';
 import Result from '../../core/types/result.js';
-import { pipe } from '../../core/functions/composition.js';
+import { pipe, compose } from '../../core/functions/composition.js';
 import { find } from '../../utils/array.js';
-import { query, queryAll, addListener } from '../effects/functions.js';
+import { 
+    query, 
+    queryAll, 
+    addListener, 
+    setAttribute, 
+    addClass, 
+    removeClass, 
+    toggleClass,
+    setTextContent,
+    delay,
+    logInfo,
+    logWarn,
+    logError,
+    sequence,
+    parallel
+} from '../effects/functions.js';
 
-// Logo setup function
-export const setupLogo = (basePath) => {
-    console.log("[UI Setup] Initializing logo.");
+// Pure function to create logo setup effect
+export const createLogoSetupEffect = (basePath) => {
+    const logoSrc = `${basePath}/flexnet.png`;
     
-    const logoElement = query('#logo-image');
-    if (logoElement.type === 'Just') {
-        const img = logoElement.value;
-        const logoSrc = `${basePath}/flexnet.png`;
-        img.src = logoSrc;
-            return img;
-    } else {
-        console.warn("[UI Setup] Logo element #logo-image not found!");
-        return null;
-    }
-};
-
-// Syntax highlighting setup
-export const setupSyntaxHighlighting = () => {
-    console.log("[UI Setup] Initializing syntax highlighting.");
-    return Result.fromTry(() => {
-        if (window.hljs) {
-            window.hljs.highlightAll();
-            return 'Syntax highlighting initialized';
-        }
-        return 'hljs not available';
-    });
-};
-
-// Theme switcher setup
-export const setupThemeSwitcher = () => {
-    console.log("[UI Setup] Initializing theme switcher.");
-    
-    const themeToggle = query('#theme-toggle');
-    if (themeToggle.type === 'Just') {
-        const button = themeToggle.value;
-        addListener('click', () => {
-            const html = document.documentElement;
-            html.classList.toggle('dark');
-            localStorage.setItem('theme', html.classList.contains('dark') ? 'dark' : 'light');
-        }, button);
-        return button;
-    } else {
-        console.warn("[UI Setup] Theme toggle button #theme-toggle not found!");
-        return null;
-    }
-};
-
-// Sidebar accordion functionality
-export const setupSidebarAccordion = () => {
-    console.log("[UI Setup] Initializing sidebar accordion.");
-    
-    const trySetupAccordion = (attempt = 1, maxAttempts = 5) => {
-        const sidebarNav = document.querySelector('#sidebar-placeholder nav');
-        
-        if (!sidebarNav) {
-            console.log(`[Accordion] Attempt ${attempt}: Sidebar nav not found, retrying...`);
-            if (attempt < maxAttempts) {
-                setTimeout(() => trySetupAccordion(attempt + 1, maxAttempts), 100);
-            } else {
-                console.warn("[Accordion] Failed to find sidebar nav after", maxAttempts, "attempts");
+    return pipe(
+        () => logInfo("[UI Setup] Initializing logo."),
+        () => query('#logo-image'),
+        (logoResult) => {
+            if (logoResult.type === 'Left') {
+                return logWarn("[UI Setup] Logo element #logo-image not found!");
             }
-            return [];
+
+            return logoResult.chain(maybeElement => {
+                if (maybeElement.type === 'Just') {
+                    const element = maybeElement.value;
+                    return setAttribute('src', logoSrc)(element);
+                }
+                return logWarn("[UI Setup] Logo element #logo-image not found!");
+            });
         }
+    );
+};
+
+// Pure function to create syntax highlighting effect
+export const createSyntaxHighlightingEffect = () => {
+    return pipe(
+        () => logInfo("[UI Setup] Initializing syntax highlighting."),
+        () => Result.fromTry(() => {
+            if (typeof window !== 'undefined' && window.hljs) {
+                window.hljs.highlightAll();
+                return Either.Right('Syntax highlighting initialized');
+            }
+            return Either.Right('hljs not available');
+        })
+    );
+};
+
+// Pure function to create theme switcher effect
+export const createThemeSwitcherEffect = () => {
+    const themeToggleHandler = () => {
+        const htmlResult = query('html');
         
-        console.log("[Accordion] Found sidebar nav:", sidebarNav);
-        
-        // Find sections using the new structure with section-header class
-        const sectionHeaders = Array.from(sidebarNav.querySelectorAll('.section-header'));
-        console.log("[Accordion] Found section headers:", sectionHeaders.length);
-        
-        const sections = sectionHeaders
-            .map(header => {
-                const targetId = header.getAttribute('data-target');
-                const content = targetId ? document.getElementById(targetId) : null;
-                const icon = header.querySelector('.accordion-icon');
-                return { header, content, icon, targetId };
-            })
-            .filter(section => section.header && section.content);
-        
-        console.log("[Accordion] Valid sections found:", sections.length);
-        sections.forEach((section, index) => {
-            console.log(`[Accordion] Section ${index}:`, section.targetId);
-        });
-    
-            const currentPath = window.location.pathname;
-        console.log("[Accordion] Current path:", currentPath);
-    
-            const getActiveSection = () => {
-            // Find the section that contains the current page
-            // We'll collect all matching sections and pick the most specific one
-            const matchingSections = [];
+        if (htmlResult.type === 'Right' && htmlResult.value.type === 'Just') {
+            const htmlElement = htmlResult.value.value;
+            const isDark = htmlElement.classList.contains('dark');
             
-            for (const section of sections) {
-                    const links = Array.from(section.content.querySelectorAll('a'));
-                const headerLink = section.header.querySelector('a');
-                if (headerLink) links.push(headerLink);
+            if (isDark) {
+                removeClass('dark')(htmlElement);
+                // Storage effect should be handled separately
+                if (typeof localStorage !== 'undefined') {
+                    localStorage.setItem('theme', 'light');
+                }
+            } else {
+                addClass('dark')(htmlElement);
+                if (typeof localStorage !== 'undefined') {
+                    localStorage.setItem('theme', 'dark');
+                }
+            }
+        }
+    };
+
+    return pipe(
+        () => logInfo("[UI Setup] Initializing theme switcher."),
+        () => query('#theme-toggle'),
+        (toggleResult) => {
+            if (toggleResult.type === 'Left') {
+                return logWarn("[UI Setup] Theme toggle button #theme-toggle not found!");
+            }
+
+            return toggleResult.chain(maybeButton => {
+                if (maybeButton.type === 'Just') {
+                    const button = maybeButton.value;
+                    return addListener('click', themeToggleHandler)(button);
+                }
+                return logWarn("[UI Setup] Theme toggle button #theme-toggle not found!");
+            });
+        }
+    );
+};
+
+// Pure function to determine active section
+const determineActiveSection = (sections) => {
+    if (typeof window === 'undefined') {
+        return Either.Right(Maybe.Nothing());
+    }
+
+    const currentPath = window.location.pathname;
+    
+    const matchingSections = sections
+        .map(section => {
+            const links = Array.from(section.content.querySelectorAll('a'));
+            const headerLink = section.header.querySelector('a');
+            if (headerLink) links.push(headerLink);
+            
+            const matchingLinks = links.filter(link => {
+                if (!link) return false;
+                const href = link.getAttribute('href');
+                if (!href) return false;
                 
-                const matchingLinks = links.filter(link => {
-                    if (!link) return false;
-                    const href = link.getAttribute('href');
-                    if (!href) return false;
-                    
-                    // Check if current path matches the href
-                    const pathMatch = currentPath.endsWith(href) || 
-                                    currentPath.includes(href.replace('.html', '')) ||
-                                    (href === '/' && currentPath === '/') ||
-                                    currentPath.includes(href.replace('/', ''));
-                    
-                    return pathMatch;
+                const pathMatch = currentPath.endsWith(href) || 
+                                currentPath.includes(href.replace('.html', '')) ||
+                                (href === '/' && currentPath === '/') ||
+                                currentPath.includes(href.replace('/', ''));
+                
+                return pathMatch;
+            });
+            
+            if (matchingLinks.length > 0) {
+                const mostSpecificLink = matchingLinks.reduce((longest, current) => {
+                    const currentHref = current.getAttribute('href') || '';
+                    const longestHref = longest.getAttribute('href') || '';
+                    return currentHref.length > longestHref.length ? current : longest;
                 });
                 
-                if (matchingLinks.length > 0) {
-                    // Find the most specific matching link (longest href)
-                    const mostSpecificLink = matchingLinks.reduce((longest, current) => {
-                        const currentHref = current.getAttribute('href') || '';
-                        const longestHref = longest.getAttribute('href') || '';
-                        return currentHref.length > longestHref.length ? current : longest;
-                    });
-                    
-                    matchingSections.push({
-                        section,
-                        matchingLink: mostSpecificLink,
-                        specificity: mostSpecificLink.getAttribute('href').length
-                    });
-                    
-                    console.log(`[Accordion] Found matching section: ${section.targetId} with link: ${mostSpecificLink.getAttribute('href')}`);
-                }
-            }
-            
-            if (matchingSections.length === 0) {
-                console.log(`[Accordion] No active section found for path: ${currentPath}`);
-                return { type: 'Nothing' };
-            }
-            
-            // Pick the section with the most specific (longest) matching link
-            // If there's a tie, prefer sections with header links closer to the path
-            const mostSpecific = matchingSections.reduce((best, current) => {
-                if (current.specificity > best.specificity) {
-                    return current;
-                } else if (current.specificity === best.specificity) {
-                    // Tie-breaker: prefer sections with header links that are more specific to the current path
-                    const currentHeaderLink = current.section.header.querySelector('a');
-                    const bestHeaderLink = best.section.header.querySelector('a');
-                    
-                    if (currentHeaderLink && bestHeaderLink) {
-                        const currentHeaderHref = currentHeaderLink.getAttribute('href') || '';
-                        const bestHeaderHref = bestHeaderLink.getAttribute('href') || '';
-                        
-                        // Prefer the section whose header link is longer/more specific
-                        if (currentHeaderHref.length > bestHeaderHref.length) {
-                            console.log(`[Accordion] Tie-breaker: ${current.section.targetId} wins due to more specific header link`);
-                            return current;
-                        }
-                    }
-                    
-                    // If still tied, prefer the section that comes later (more specific subsection)
-                    console.log(`[Accordion] Tie-breaker: keeping ${best.section.targetId} (first encountered)`);
-                    return best;
-                }
-                return best;
-            });
-            
-            console.log(`[Accordion] Active section determined: ${mostSpecific.section.targetId} (specificity: ${mostSpecific.specificity})`);
-            return { type: 'Just', value: mostSpecific.section };
-            };
-    
-            const activeSection = getActiveSection();
-        console.log("[Accordion] Active section found:", activeSection.type === 'Just' ? activeSection.value.targetId : 'None');
-    
-        // Initially hide all sections except the active one
-        sections.forEach((section, index) => {
-            const isSectionActive = activeSection.type === 'Just' && activeSection.value === section;
-            
-            console.log(`[Accordion] Section ${index} (${section.targetId}): active=${isSectionActive}`);
-            
-            if (isSectionActive) {
-                section.content.classList.remove('hidden');
-                if (section.icon) section.icon.textContent = '▼';
-                console.log(`[Accordion] ✅ Showing active section: ${section.targetId}`);
-            } else {
-                section.content.classList.add('hidden');
-                if (section.icon) section.icon.textContent = '▶';
-                console.log(`[Accordion] ❌ Hiding section: ${section.targetId}`);
-            }
-    
-            section.header.style.cursor = 'pointer';
-            
-            // Add click handler using native addEventListener instead of addListener
-            section.header.addEventListener('click', e => {
-                console.log(`[Accordion] Click event on section: ${section.targetId}`);
-                console.log(`[Accordion] Click target:`, e.target);
-                console.log(`[Accordion] Target tagName:`, e.target.tagName);
-                
-                // Don't prevent default if clicking on a link
-                if (e.target.tagName === 'A') {
-                    console.log(`[Accordion] Clicked on link, not toggling accordion`);
-                    return;
-                }
-                
-                e.preventDefault();
-                console.log(`[Accordion] Processing accordion toggle for: ${section.targetId}`);
-                    
-                const isHidden = section.content.classList.contains('hidden');
-                console.log(`[Accordion] Section is currently hidden: ${isHidden}`);
-                
-                if (isHidden) {
-                    // Hide all other sections
-                    sections.forEach(s => {
-                        if (s !== section) {
-                            s.content.classList.add('hidden');
-                            if (s.icon) s.icon.textContent = '▶';
-                            console.log(`[Accordion] Hiding section: ${s.targetId}`);
-                        }
-                    });
-                    // Show this section
-                    section.content.classList.remove('hidden');
-                    if (section.icon) section.icon.textContent = '▼';
-                    console.log(`[Accordion] Showing section: ${section.targetId}`);
-                } else {
-                    // Hide this section
-                    section.content.classList.add('hidden');
-                    if (section.icon) section.icon.textContent = '▶';
-                    console.log(`[Accordion] Hiding section: ${section.targetId}`);
-                }
-            });
-        });
-        
-        console.log("[Accordion] Setup complete");
-            
-            // Setup nested sections (like Project From Scratch under Reference Guides)
-            setupNestedSections();
-            
-            return sections;
-    };
-    
-    return trySetupAccordion();
-};
-
-// Setup nested collapsible sections within main sections
-const setupNestedSections = () => {
-    console.log("[Nested Accordion] Setting up nested sections");
-    
-    const nestedHeaders = Array.from(document.querySelectorAll('.nested-section-header'));
-    const currentPath = window.location.pathname;
-    
-    nestedHeaders.forEach(header => {
-        const targetId = header.getAttribute('data-target');
-        const content = document.getElementById(targetId);
-        const icon = header.querySelector('.accordion-icon');
-        
-        if (!content || !icon) {
-            console.warn(`[Nested Accordion] Missing content or icon for header:`, header);
-            return;
-        }
-        
-        // Check if current page is within this nested section
-        const links = Array.from(content.querySelectorAll('a'));
-        const isActive = links.some(link => {
-            const href = link.getAttribute('href');
-            return href && (currentPath.endsWith(href) || currentPath.includes(href.replace('.html', '')));
-        });
-        
-        // Also check the main header link
-        const headerLink = header.querySelector('a');
-        const isHeaderActive = headerLink && currentPath.includes(headerLink.getAttribute('href'));
-        
-        if (isActive || isHeaderActive) {
-            console.log(`[Nested Accordion] Auto-expanding nested section: ${targetId}`);
-            content.classList.remove('hidden');
-            icon.textContent = '▼';
-        } else {
-            console.log(`[Nested Accordion] Keeping nested section collapsed: ${targetId}`);
-            content.classList.add('hidden');
-            icon.textContent = '▶';
-        }
-        
-        // Add click handler for toggling
-        header.addEventListener('click', (e) => {
-            // Don't prevent default if clicking on the actual link
-            if (e.target.tagName === 'A') {
-                console.log(`[Nested Accordion] Clicked on link, not toggling nested section`);
-                return;
-            }
-            
-            e.preventDefault();
-            e.stopPropagation();
-            
-            const isHidden = content.classList.contains('hidden');
-            console.log(`[Nested Accordion] Toggling nested section ${targetId}, currently hidden: ${isHidden}`);
-            
-            if (isHidden) {
-                content.classList.remove('hidden');
-                icon.textContent = '▼';
-            } else {
-                content.classList.add('hidden');
-                icon.textContent = '▶';
-            }
-        });
-    });
-    
-    console.log(`[Nested Accordion] Setup complete for ${nestedHeaders.length} nested sections`);
-};
-
-// Sidebar active link highlighting
-export const setupSidebarActiveLink = () => {
-    console.log("[UI Setup] Initializing sidebar active link.");
-    const currentPath = window.location.pathname;
-    const sidebarLinks = Array.from(document.querySelectorAll('#sidebar-placeholder a'));
-    return sidebarLinks
-        .filter(link => currentPath.endsWith(link.getAttribute('href')))
-        .map(link => {
-            link.classList.add('bg-blue-500', 'text-white');
-            link.classList.remove('dark:text-gray-300');
-            return link;
-        });
-};
-
-// Mobile sidebar functionality
-export const setupMobileSidebar = () => {
-    console.log("[UI Setup] Initializing mobile sidebar.");
-    const sidebar = query('#sidebar-placeholder');
-    const overlay = query('#sidebar-overlay');
-
-    const closeSidebar = () => {
-        pipe(sidebar, Maybe.map(s => s.classList.add('-translate-x-full')));
-        pipe(overlay, Maybe.map(o => o.classList.add('hidden')));
-    };
-
-    const openSidebar = () => {
-        pipe(sidebar, Maybe.map(s => s.classList.remove('-translate-x-full')));
-        pipe(overlay, Maybe.map(o => o.classList.remove('hidden')));
-    };
-
-    pipe(query('#sidebar-toggle'), Maybe.map(addListener('click', openSidebar)));
-    pipe(overlay, Maybe.map(addListener('click', closeSidebar)));
-    
-    return { closeSidebar, openSidebar };
-};
-
-// Copy buttons for code blocks
-export const setupCopyButtons = () => {
-    console.log("[UI Setup] Initializing copy buttons.");
-    const preElements = Array.from(document.querySelectorAll('pre'));
-    return preElements
-        .map(pre => {
-            const parent = pre.parentElement;
-            const button = parent ? parent.querySelector('button') : null;
-            if (button) {
-                addListener('click', () => {
-                    navigator.clipboard.writeText(pre.innerText).then(() => {
-                        button.innerText = 'Copied!';
-                        setTimeout(() => { button.innerText = 'Copy'; }, 2000);
-                    });
-                }, button);
-                return button;
+                return {
+                    section,
+                    matchingLink: mostSpecificLink,
+                    specificity: mostSpecificLink.getAttribute('href').length
+                };
             }
             return null;
         })
-        .filter(Boolean);
+        .filter(match => match !== null);
+
+    if (matchingSections.length === 0) {
+        return Either.Right(Maybe.Nothing());
+    }
+
+    const mostSpecific = matchingSections.reduce((best, current) => {
+        if (current.specificity > best.specificity) {
+            return current;
+        } else if (current.specificity === best.specificity) {
+            const currentHeaderLink = current.section.header.querySelector('a');
+            const bestHeaderLink = best.section.header.querySelector('a');
+            
+            if (currentHeaderLink && bestHeaderLink) {
+                const currentHeaderHref = currentHeaderLink.getAttribute('href') || '';
+                const bestHeaderHref = bestHeaderLink.getAttribute('href') || '';
+                
+                if (currentHeaderHref.length > bestHeaderHref.length) {
+                    return current;
+                }
+            }
+            return best;
+        }
+        return best;
+    });
+
+    return Either.Right(Maybe.Just(mostSpecific.section));
+};
+
+// Pure function to apply section visibility
+const applySectionVisibility = (section, isActive) => {
+    const effects = [];
+    
+    if (isActive) {
+        effects.push(removeClass('hidden')(section.content));
+        if (section.icon) {
+            effects.push(setTextContent('▼')(section.icon));
+        }
+    } else {
+        effects.push(addClass('hidden')(section.content));
+        if (section.icon) {
+            effects.push(setTextContent('▶')(section.icon));
+        }
+    }
+    
+    effects.push(setAttribute('style', 'cursor: pointer')(section.header));
+    
+    return sequence(effects);
+};
+
+// Pure function to create accordion toggle handler
+const createAccordionToggleHandler = (sections, currentSection) => (event) => {
+    // Don't prevent default if clicking on a link
+    if (event.target.tagName === 'A') {
+        return Either.Right('Link clicked, not toggling accordion');
+    }
+    
+    event.preventDefault();
+    
+    const isHidden = currentSection.content.classList.contains('hidden');
+    const effects = [];
+    
+    if (isHidden) {
+        // Hide all other sections
+        sections.forEach(section => {
+            if (section !== currentSection) {
+                effects.push(addClass('hidden')(section.content));
+                if (section.icon) {
+                    effects.push(setTextContent('▶')(section.icon));
+                }
+            }
+        });
+        
+        // Show current section
+        effects.push(removeClass('hidden')(currentSection.content));
+        if (currentSection.icon) {
+            effects.push(setTextContent('▼')(currentSection.icon));
+        }
+    } else {
+        // Hide current section
+        effects.push(addClass('hidden')(currentSection.content));
+        if (currentSection.icon) {
+            effects.push(setTextContent('▶')(currentSection.icon));
+        }
+    }
+    
+    return sequence(effects);
+};
+
+// Pure function to setup accordion sections
+const setupAccordionSections = (sections) => {
+    return pipe(
+        () => determineActiveSection(sections),
+        (activeSectionResult) => {
+            if (activeSectionResult.type === 'Left') {
+                return activeSectionResult;
+            }
+
+            const activeSection = activeSectionResult.value;
+            const effects = [];
+
+            // Apply initial visibility to all sections
+            sections.forEach(section => {
+                const isActive = activeSection.type === 'Just' && activeSection.value === section;
+                effects.push(applySectionVisibility(section, isActive));
+                
+                // Add click handler
+                const toggleHandler = createAccordionToggleHandler(sections, section);
+                effects.push(addListener('click', toggleHandler)(section.header));
+            });
+
+            return sequence(effects);
+        }
+    );
+};
+
+// Pure function to find accordion sections
+const findAccordionSections = (sidebarNav) => {
+    const sectionHeaders = Array.from(sidebarNav.querySelectorAll('.section-header'));
+    
+    const sections = sectionHeaders
+        .map(header => {
+            const targetId = header.getAttribute('data-target');
+            const content = targetId ? document.getElementById(targetId) : null;
+            const icon = header.querySelector('.accordion-icon');
+            return { header, content, icon, targetId };
+        })
+        .filter(section => section.header && section.content);
+    
+    return Either.Right(sections);
+};
+
+// Pure function to attempt accordion setup
+const attemptAccordionSetup = async (attempt = 1, maxAttempts = 5) => {
+    const sidebarNavResult = query('#sidebar-placeholder nav');
+    
+    if (sidebarNavResult.type === 'Left') {
+        if (attempt < maxAttempts) {
+            logInfo(`[Accordion] Attempt ${attempt}: Sidebar nav not found, retrying...`);
+            await delay(100);
+            return attemptAccordionSetup(attempt + 1, maxAttempts);
+        } else {
+            return logWarn(`[Accordion] Failed to find sidebar nav after ${maxAttempts} attempts`);
+        }
+    }
+
+    return sidebarNavResult.chain(maybeSidebarNav => {
+        if (maybeSidebarNav.type === 'Nothing') {
+            if (attempt < maxAttempts) {
+                return delay(100).then(() => attemptAccordionSetup(attempt + 1, maxAttempts));
+            } else {
+                return logWarn(`[Accordion] Failed to find sidebar nav after ${maxAttempts} attempts`);
+            }
+        }
+
+        const sidebarNav = maybeSidebarNav.value;
+        logInfo("[Accordion] Found sidebar nav");
+
+        return pipe(
+            () => findAccordionSections(sidebarNav),
+            (sectionsResult) => {
+                if (sectionsResult.type === 'Left') {
+                    return sectionsResult;
+                }
+
+                const sections = sectionsResult.value;
+                logInfo(`[Accordion] Found ${sections.length} valid sections`);
+
+                return pipe(
+                    () => setupAccordionSections(sections),
+                    () => setupNestedSectionsEffect(),
+                    () => {
+                        logInfo("[Accordion] Setup complete");
+                        return Either.Right(sections);
+                    }
+                );
+            }
+        );
+    });
+};
+
+// Pure function to create sidebar accordion effect
+export const createSidebarAccordionEffect = () => {
+    return pipe(
+        () => logInfo("[UI Setup] Initializing sidebar accordion."),
+        () => attemptAccordionSetup()
+    );
+};
+
+// Pure function to setup nested sections
+const setupNestedSectionsEffect = () => {
+    return pipe(
+        () => logInfo("[Nested Accordion] Setting up nested sections"),
+        () => queryAll('.nested-section-header'),
+        (headersResult) => {
+            if (headersResult.type === 'Left') {
+                return headersResult;
+            }
+
+            const headers = headersResult.value;
+            const currentPath = typeof window !== 'undefined' ? window.location.pathname : '';
+            const effects = [];
+
+            headers.forEach(header => {
+                const targetId = header.getAttribute('data-target');
+                const content = document.getElementById(targetId);
+                const icon = header.querySelector('.accordion-icon');
+                
+                if (!content || !icon) {
+                    logWarn(`[Nested Accordion] Missing content or icon for header:`, header);
+                    return;
+                }
+                
+                // Check if current page is within this nested section
+                const links = Array.from(content.querySelectorAll('a'));
+                const isActive = links.some(link => {
+                    const href = link.getAttribute('href');
+                    return href && (currentPath.endsWith(href) || currentPath.includes(href.replace('.html', '')));
+                });
+                
+                const headerLink = header.querySelector('a');
+                const isHeaderActive = headerLink && currentPath.includes(headerLink.getAttribute('href'));
+                
+                if (isActive || isHeaderActive) {
+                    logInfo(`[Nested Accordion] Auto-expanding nested section: ${targetId}`);
+                    effects.push(removeClass('hidden')(content));
+                    effects.push(setTextContent('▼')(icon));
+                } else {
+                    logInfo(`[Nested Accordion] Keeping nested section collapsed: ${targetId}`);
+                    effects.push(addClass('hidden')(content));
+                    effects.push(setTextContent('▶')(icon));
+                }
+                
+                // Add click handler for toggling
+                const nestedToggleHandler = (event) => {
+                    if (event.target.tagName === 'A') {
+                        logInfo(`[Nested Accordion] Clicked on link, not toggling nested section`);
+                        return Either.Right('Link clicked');
+                    }
+                    
+                    event.preventDefault();
+                    event.stopPropagation();
+                    
+                    const isHidden = content.classList.contains('hidden');
+                    logInfo(`[Nested Accordion] Toggling nested section ${targetId}, currently hidden: ${isHidden}`);
+                    
+                    if (isHidden) {
+                        return sequence([
+                            removeClass('hidden')(content),
+                            setTextContent('▼')(icon)
+                        ]);
+                    } else {
+                        return sequence([
+                            addClass('hidden')(content),
+                            setTextContent('▶')(icon)
+                        ]);
+                    }
+                };
+                
+                effects.push(addListener('click', nestedToggleHandler)(header));
+            });
+
+            logInfo(`[Nested Accordion] Setup complete for ${headers.length} nested sections`);
+            return sequence(effects);
+        }
+    );
+};
+
+// Pure function to create sidebar active link effect
+export const createSidebarActiveLinkEffect = () => {
+    return pipe(
+        () => logInfo("[UI Setup] Initializing sidebar active link."),
+        () => {
+            if (typeof window === 'undefined') {
+                return Either.Right([]);
+            }
+
+            const currentPath = window.location.pathname;
+            const sidebarLinks = Array.from(document.querySelectorAll('#sidebar-placeholder a'));
+            
+            const effects = sidebarLinks
+                .filter(link => currentPath.endsWith(link.getAttribute('href')))
+                .map(link => {
+                    return sequence([
+                        addClass('bg-blue-500')(link),
+                        addClass('text-white')(link),
+                        removeClass('dark:text-gray-300')(link)
+                    ]);
+                });
+
+            return sequence(effects);
+        }
+    );
+};
+
+// Pure function to create mobile sidebar effects
+export const createMobileSidebarEffect = () => {
+    return pipe(
+        () => logInfo("[UI Setup] Initializing mobile sidebar."),
+        () => {
+            const sidebarResult = query('#sidebar-placeholder');
+            const overlayResult = query('#sidebar-overlay');
+
+            if (sidebarResult.type === 'Left' || overlayResult.type === 'Left') {
+                return logWarn("[Mobile Sidebar] Required elements not found");
+            }
+
+            const closeSidebar = () => {
+                return sequence([
+                    sidebarResult.chain(maybeSidebar => 
+                        maybeSidebar.type === 'Just' ? 
+                        addClass('-translate-x-full')(maybeSidebar.value) : 
+                        Either.Right(null)
+                    ),
+                    overlayResult.chain(maybeOverlay => 
+                        maybeOverlay.type === 'Just' ? 
+                        addClass('hidden')(maybeOverlay.value) : 
+                        Either.Right(null)
+                    )
+                ]);
+            };
+
+            const openSidebar = () => {
+                return sequence([
+                    sidebarResult.chain(maybeSidebar => 
+                        maybeSidebar.type === 'Just' ? 
+                        removeClass('-translate-x-full')(maybeSidebar.value) : 
+                        Either.Right(null)
+                    ),
+                    overlayResult.chain(maybeOverlay => 
+                        maybeOverlay.type === 'Just' ? 
+                        removeClass('hidden')(maybeOverlay.value) : 
+                        Either.Right(null)
+                    )
+                ]);
+            };
+
+            const toggleButtonResult = query('#sidebar-toggle');
+            const effects = [];
+
+            if (toggleButtonResult.type === 'Right' && toggleButtonResult.value.type === 'Just') {
+                effects.push(addListener('click', openSidebar)(toggleButtonResult.value.value));
+            }
+
+            if (overlayResult.type === 'Right' && overlayResult.value.type === 'Just') {
+                effects.push(addListener('click', closeSidebar)(overlayResult.value.value));
+            }
+
+            return sequence(effects).map(() => ({ closeSidebar, openSidebar }));
+        }
+    );
+};
+
+// Pure function to create copy buttons effect
+export const createCopyButtonsEffect = () => {
+    return pipe(
+        () => logInfo("[UI Setup] Initializing copy buttons."),
+        () => queryAll('pre'),
+        (preElementsResult) => {
+            if (preElementsResult.type === 'Left') {
+                return preElementsResult;
+            }
+
+            const preElements = preElementsResult.value;
+            const effects = [];
+
+            preElements.forEach(pre => {
+                const parent = pre.parentElement;
+                const button = parent ? parent.querySelector('button') : null;
+                
+                if (button) {
+                    const copyHandler = async () => {
+                        try {
+                            await navigator.clipboard.writeText(pre.innerText);
+                            setTextContent('Copied!')(button);
+                            setTimeout(() => {
+                                setTextContent('Copy')(button);
+                            }, 2000);
+                        } catch (error) {
+                            logError('Failed to copy text:', error);
+                        }
+                    };
+
+                    effects.push(addListener('click', copyHandler)(button));
+                }
+            });
+
+            return sequence(effects);
+        }
+    );
+};
+
+// Pure function to setup all render effects
+export const setupRenderEffects = (basePath) => {
+    const effects = [
+        createLogoSetupEffect(basePath),
+        createSyntaxHighlightingEffect(),
+        createThemeSwitcherEffect(),
+        createSidebarAccordionEffect(),
+        createSidebarActiveLinkEffect(),
+        createMobileSidebarEffect(),
+        createCopyButtonsEffect()
+    ];
+
+    return parallel(effects);
 };
