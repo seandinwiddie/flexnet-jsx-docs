@@ -1,7 +1,9 @@
 // === Core Transform Functions ===
-// Data transformation utilities for the FlexNet framework
+// Pure functional transformation utilities
 
 import { compose } from './composition.js';
+import Maybe from '../types/maybe.js';
+import Either from '../types/either.js';
 
 // Transform HTML content safely
 export const createBreadcrumbSegment = (seg, idx, pathSegments) => {
@@ -16,31 +18,56 @@ export const createBreadcrumbSegment = (seg, idx, pathSegments) => {
     };
 };
 
-// Calculate base path for relative navigation
+/**
+ * Pure function to get the base path for the application
+ * @returns {string} The base path
+ */
 export const getBasePath = () => {
-    const path = window.location.pathname;
-    
-    // Split path and filter out empty segments
-    const segments = path.split('/').filter(Boolean);
-    
-    // Calculate depth: 
-    // - If path ends with .html, the depth is directory levels (segments.length - 1)
-    // - If path ends with / or is a directory, depth is number of directory levels
-    let depth;
-    if (path.endsWith('.html')) {
-        // For files like /getting-started-guide/index.html, we have 1 directory level
-        depth = segments.length - 1;
-    } else {
-        // For directories like /getting-started-guide/ or /getting-started-guide, 
-        // we count the directory segments
-        depth = segments.length;
+    if (typeof window !== 'undefined' && window.location) {
+        const pathname = window.location.pathname;
+        // Remove trailing index.html or trailing slash for base path
+        return pathname.replace(/\/index\.html$/, '').replace(/\/$/, '') || '.';
     }
-    
-    // If we're at root level, return current directory
-    if (depth <= 0) {
-        return '.';
-    }
-    
-    // Return the appropriate number of "../" to get back to root
-    return Array(depth).fill('..').join('/');
+    return '.';
 };
+
+/**
+ * Transforms a URL to be relative to the base path
+ * @param {string} url - The URL to transform
+ * @param {string} basePath - The base path (optional, uses getBasePath() if not provided)
+ * @returns {Either<string, string>} Either containing error or transformed URL
+ */
+export const transformUrl = (url, basePath = null) => {
+    const base = basePath || getBasePath();
+    
+    if (typeof url !== 'string') {
+        return Either.Left('URL must be a string');
+    }
+    
+    if (url.startsWith('http://') || url.startsWith('https://') || url.startsWith('//')) {
+        return Either.Right(url); // Absolute URL, return as-is
+    }
+    
+    const transformedUrl = url.startsWith('./') 
+        ? `${base}/${url.slice(2)}`
+        : url.startsWith('/') 
+        ? `${base}${url}`
+        : `${base}/${url}`;
+    
+    return Either.Right(transformedUrl);
+};
+
+/**
+ * Transforms an object by applying a function to all its values
+ * @param {Function} fn - The transformation function
+ * @param {Object} obj - The object to transform
+ * @returns {Maybe<Object>} Maybe containing the transformed object
+ */
+export const transformObject = (fn, obj) => 
+    Maybe.fromNullable(obj)
+        .map(o => 
+            Object.keys(o).reduce((acc, key) => ({
+                ...acc,
+                [key]: fn(o[key])
+            }), {})
+        );

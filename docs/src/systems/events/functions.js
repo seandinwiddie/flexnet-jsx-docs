@@ -1,5 +1,6 @@
 // === FlexNet Event System ===
 // Pure functional event handling and composition
+// Now organized into individual function modules
 
 import Maybe from '../../core/types/maybe.js';
 import Either from '../../core/types/either.js';
@@ -7,531 +8,92 @@ import Result from '../../core/types/result.js';
 import { compose, pipe, curry } from '../../core/functions/composition.js';
 import { ImmutableMap, ImmutableSet } from '../../utils/immutable.js';
 
-// Core event emitter with functional composition
-export const createEventEmitter = () => {
-    let listeners = ImmutableMap.empty();
-    
-    return Object.freeze({
-        // Subscribe to events
-        on: curry((event, handler) => {
-            if (typeof handler !== 'function') {
-                return Either.Left('Handler must be a function');
-            }
-            
-            const currentListeners = ImmutableMap.get(event)(listeners)
-                .getOrElse(ImmutableSet.empty());
-            const updatedListeners = ImmutableSet.add(handler)(currentListeners);
-            listeners = ImmutableMap.set(event, updatedListeners)(listeners);
-            
-            // Return unsubscribe function
-            return Either.Right(() => {
-                const eventListeners = ImmutableMap.get(event)(listeners);
-                if (eventListeners.type === 'Just') {
-                    const updated = ImmutableSet.delete(handler)(eventListeners.value);
-                    if (ImmutableSet.size(updated) === 0) {
-                        listeners = ImmutableMap.delete(event)(listeners);
-                    } else {
-                        listeners = ImmutableMap.set(event, updated)(listeners);
-                    }
-                }
-                return true;
-            });
-        }),
-        
-        // Subscribe once (auto-unsubscribe after first event)
-        once: curry((event, handler) => {
-            if (typeof handler !== 'function') {
-                return Either.Left('Handler must be a function');
-            }
-            
-            const wrappedHandler = (...args) => {
-                handler(...args);
-                // Auto-unsubscribe
-                const eventListeners = ImmutableMap.get(event)(listeners);
-                if (eventListeners.type === 'Just') {
-                    const updated = ImmutableSet.delete(wrappedHandler)(eventListeners.value);
-                    if (ImmutableSet.size(updated) === 0) {
-                        listeners = ImmutableMap.delete(event)(listeners);
-                    } else {
-                        listeners = ImmutableMap.set(event, updated)(listeners);
-                    }
-                }
-            };
-            
-            const currentListeners = ImmutableMap.get(event)(listeners)
-                .getOrElse(ImmutableSet.empty());
-            const updatedListeners = ImmutableSet.add(wrappedHandler)(currentListeners);
-            listeners = ImmutableMap.set(event, updatedListeners)(listeners);
-            
-            return Either.Right(() => {
-                const eventListeners = ImmutableMap.get(event)(listeners);
-                if (eventListeners.type === 'Just') {
-                    const updated = ImmutableSet.delete(wrappedHandler)(eventListeners.value);
-                    if (ImmutableSet.size(updated) === 0) {
-                        listeners = ImmutableMap.delete(event)(listeners);
-                    } else {
-                        listeners = ImmutableMap.set(event, updated)(listeners);
-                    }
-                }
-                return true;
-            });
-        }),
-        
-        // Emit events to all listeners
-        emit: curry((event, ...args) =>
-            Result.fromTry(() => {
-                const eventListeners = ImmutableMap.get(event)(listeners);
-                
-                if (eventListeners.type === 'Nothing') {
-                    return { event, listenerCount: 0, errors: [] };
-                }
-                
-                const listenerSet = eventListeners.value;
-                const listenerCount = ImmutableSet.size(listenerSet);
-                
-                if (listenerCount === 0) {
-                    return { event, listenerCount: 0, errors: [] };
-                }
-                
-                const errors = [];
-                let successCount = 0;
-                
-                listenerSet.forEach(handler => {
-                    Result.fromTry(() => handler(...args))
-                        .fold(
-                            error => errors.push({
-                                handler: handler.name || 'anonymous',
-                                error: error.message
-                            }),
-                            () => { successCount++; }
-                        );
-                });
-                
-                return {
-                    event,
-                    listenerCount,
-                    successCount,
-                    errors
-                };
-            })
-        ),
-        
-        // Remove all listeners for an event
-        off: (event) => {
-            const hadListeners = ImmutableMap.has(event)(listeners);
-            listeners = ImmutableMap.delete(event)(listeners);
-            return hadListeners;
-        },
-        
-        // Remove all listeners
-        removeAllListeners: () => {
-            const eventCount = ImmutableMap.size(listeners);
-            listeners = ImmutableMap.empty();
-            return eventCount;
-        },
-        
-        // Get listener count for event
-        listenerCount: (event) => {
-            const eventListeners = ImmutableMap.get(event)(listeners);
-            return eventListeners.type === 'Just' 
-                ? ImmutableSet.size(eventListeners.value) 
-                : 0;
-        },
-        
-        // Get all registered events
-        events: () => ImmutableMap.keys(listeners)
-    });
-};
+// ===========================================
+// CORE EVENT SYSTEM IMPORTS
+// ===========================================
 
-// DOM event handling utilities
-export const addDOMListener = curry((element, event, handler, options = {}) =>
-    Result.fromTry(() => {
-        if (!element || !element.addEventListener) {
-            return Either.Left('Invalid element');
-        }
-        
-        if (typeof handler !== 'function') {
-            return Either.Left('Handler must be a function');
-        }
-        
-        // Add event listener with options
-        element.addEventListener(event, handler, options);
-        
-        // Return cleanup function
-        return () => {
-            element.removeEventListener(event, handler, options);
-            return true;
-        };
-    })
-);
+// Core event emitter
+export { createEventEmitter } from './functions/createEventEmitter.js';
 
-export const removeDOMListener = curry((element, event, handler, options = {}) =>
-    Result.fromTry(() => {
-        if (!element || !element.removeEventListener) {
-            return Either.Left('Invalid element');
-        }
-        
-        element.removeEventListener(event, handler, options);
-        return true;
-    })
-);
+// DOM event handling
+export { addDOMListener, removeDOMListener, getEventTarget } from './functions/domEventHandlers.js';
 
-// Event delegation utilities
-export const delegateEvent = curry((container, selector, event, handler) =>
-    Result.fromTry(() => {
-        if (!container || !container.addEventListener) {
-            return Either.Left('Invalid container element');
-        }
-        
-        const delegatedHandler = (e) => {
-            const target = e.target.closest(selector);
-            if (target && container.contains(target)) {
-                handler.call(target, e);
-            }
-        };
-        
-        container.addEventListener(event, delegatedHandler);
-        
-        // Return cleanup function
-        return () => {
-            container.removeEventListener(event, delegatedHandler);
-            return true;
-        };
-    })
-);
+// Event delegation
+export { 
+    delegateEvent, 
+    createDelegatedHandler, 
+    removeDelegatedHandler 
+} from './functions/eventDelegation.js';
 
-// Event composition utilities
-export const composeEventHandlers = (...handlers) =>
-    (event) => {
-        const results = [];
-        
-        for (const handler of handlers) {
-            if (typeof handler === 'function') {
-                try {
-                    const result = handler(event);
-                    results.push({ success: true, result });
-                } catch (error) {
-                    results.push({ success: false, error });
-                }
-            }
-        }
-        
-        return results;
-    };
-
-export const pipeEventHandlers = (...handlers) =>
-    (event) => {
-        let currentEvent = event;
-        const results = [];
-        
-        for (const handler of handlers) {
-            if (typeof handler === 'function') {
-                try {
-                    const result = handler(currentEvent);
-                    results.push({ success: true, result });
-                    
-                    // If handler returns an event-like object, use it for next handler
-                    if (result && typeof result === 'object' && result.type) {
-                        currentEvent = result;
-                    }
-                } catch (error) {
-                    results.push({ success: false, error });
-                    break; // Stop pipe on error
-                }
-            }
-        }
-        
-        return results;
-    };
+// Event composition
+export { 
+    composeEventHandlers, 
+    pipeEventHandlers, 
+    combineEventHandlers 
+} from './functions/eventComposition.js';
 
 // Event filtering and transformation
-export const filterEvents = curry((predicate, handler) =>
-    (event) => {
-        if (predicate(event)) {
-            return handler(event);
-        }
-        return null;
-    }
-);
+export { 
+    filterEvents, 
+    transformEvent, 
+    mapEventData 
+} from './functions/eventFiltering.js';
 
-export const transformEvent = curry((transformer, handler) =>
-    (event) => {
-        try {
-            const transformedEvent = transformer(event);
-            return handler(transformedEvent);
-        } catch (error) {
-            console.error('Event transformation error:', error);
-            return handler(event); // Fallback to original event
-        }
-    }
-);
+// Event timing (debounce/throttle)
+export { 
+    debounceEvent, 
+    throttleEvent, 
+    delayEvent 
+} from './functions/eventTiming.js';
 
-// Debounce and throttle utilities
-export const debounceEvent = curry((delay, handler) => {
-    let timeoutId = null;
-    
-    return (event) => {
-        if (timeoutId) {
-            clearTimeout(timeoutId);
-        }
-        
-        timeoutId = setTimeout(() => {
-            handler(event);
-            timeoutId = null;
-        }, delay);
-    };
-});
+// Event prevention
+export { 
+    preventDefault, 
+    stopPropagation, 
+    stopImmediatePropagation 
+} from './functions/eventPrevention.js';
 
-export const throttleEvent = curry((delay, handler) => {
-    let lastCall = 0;
-    let timeoutId = null;
-    
-    return (event) => {
-        const now = Date.now();
-        
-        if (now - lastCall >= delay) {
-            lastCall = now;
-            handler(event);
-        } else if (!timeoutId) {
-            timeoutId = setTimeout(() => {
-                lastCall = Date.now();
-                handler(event);
-                timeoutId = null;
-            }, delay - (now - lastCall));
-        }
-    };
-});
+// Event validation
+export { validateEvent, isValidEventType } from './functions/eventValidation.js';
 
-// Event prevention utilities
-export const preventDefault = (handler) =>
-    (event) => {
-        event.preventDefault();
-        return handler(event);
-    };
+// Custom events
+export { 
+    createCustomEvent, 
+    dispatchCustomEvent, 
+    isCustomEvent 
+} from './functions/customEvents.js';
 
-export const stopPropagation = (handler) =>
-    (event) => {
-        event.stopPropagation();
-        return handler(event);
-    };
+// Event bus
+export { createEventBus } from './functions/eventBus.js';
 
-export const stopImmediatePropagation = (handler) =>
-    (event) => {
-        event.stopImmediatePropagation();
-        return handler(event);
-    };
+// Keyboard handlers
+export { createKeyboardHandler } from './functions/keyboardHandlers.js';
 
-// Event validation utilities
-export const validateEvent = curry((schema, handler) =>
-    (event) => {
-        const validation = validateEventStructure(schema, event);
-        
-        if (validation.type === 'Right') {
-            return handler(event);
-        } else {
-            console.warn('Event validation failed:', validation.value);
-            return null;
-        }
-    }
-);
+// Mouse handlers
+export { getMousePosition, isInsideElement } from './functions/mouseHandlers.js';
 
-const validateEventStructure = (schema, event) => {
-    if (!schema || typeof schema !== 'object') {
-        return Either.Left('Invalid schema');
-    }
-    
-    if (!event || typeof event !== 'object') {
-        return Either.Left('Invalid event');
-    }
-    
-    try {
-        const errors = [];
-        
-        Object.entries(schema).forEach(([property, validator]) => {
-            if (typeof validator === 'function') {
-                const result = validator(event[property]);
-                if (result && result.type === 'Left') {
-                    errors.push(`${property}: ${result.value}`);
-                }
-            }
-        });
-        
-        return errors.length > 0
-            ? Either.Left(errors.join(', '))
-            : Either.Right(event);
-    } catch (error) {
-        return Either.Left(`Validation error: ${error.message}`);
-    }
-};
+// Event cleanup
+export { createEventCleanup } from './functions/eventCleanup.js';
 
-// Custom event creation
-export const createCustomEvent = (type, detail = {}, options = {}) =>
-    Result.fromTry(() => {
-        // Functional custom event creation
-        const eventConfig = {
-            detail: Object.freeze(detail),
-            bubbles: options.bubbles || false,
-            cancelable: options.cancelable || false,
-            composed: options.composed || false
-        };
-        
-        // Use document.createEvent for constructor-free approach
-        const event = document.createEvent('CustomEvent');
-        event.initCustomEvent(type, eventConfig.bubbles, eventConfig.cancelable, eventConfig.detail);
-        
-        return event;
-    });
+// ===========================================
+// CONVENIENCE EXPORT OBJECT
+// ===========================================
 
-export const dispatchCustomEvent = curry((element, event) =>
-    Result.fromTry(() => {
-        if (!element || !element.dispatchEvent) {
-            return Either.Left('Invalid element');
-        }
-        
-        return element.dispatchEvent(event);
-    })
-);
-
-// Event bus for application-wide events
-export const createEventBus = () => {
-    const emitter = createEventEmitter();
-    const middleware = [];
-    
-    return Object.freeze({
-        // Add middleware for event processing
-        use: (middlewareFn) => {
-            if (typeof middlewareFn === 'function') {
-                middleware.push(middlewareFn);
-                return true;
-            }
-            return false;
-        },
-        
-        // Emit event through middleware chain
-        emit: curry((event, ...args) => {
-            let processedEvent = { type: event, data: args };
-            
-            // Process through middleware
-            for (const mw of middleware) {
-                try {
-                    const result = mw(processedEvent);
-                    if (result) {
-                        processedEvent = result;
-                    }
-                } catch (error) {
-                    console.error('Event middleware error:', error);
-                }
-            }
-            
-            return emitter.emit(processedEvent.type, ...processedEvent.data);
-        }),
-        
-        // Subscribe to events
-        on: emitter.on,
-        once: emitter.once,
-        off: emitter.off,
-        removeAllListeners: emitter.removeAllListeners,
-        listenerCount: emitter.listenerCount,
-        events: emitter.events
-    });
-};
-
-// Keyboard event utilities
-export const createKeyboardHandler = (keyMap) =>
-    (event) => {
-        const key = event.key || event.code;
-        const modifiers = {
-            ctrl: event.ctrlKey,
-            alt: event.altKey,
-            shift: event.shiftKey,
-            meta: event.metaKey
-        };
-        
-        const keyConfig = keyMap[key];
-        if (!keyConfig) return null;
-        
-        // Check if modifiers match
-        const modifierMatch = Object.entries(modifiers).every(([mod, pressed]) => {
-            const required = keyConfig.modifiers && keyConfig.modifiers[mod];
-            return required === undefined || required === pressed;
-        });
-        
-        if (modifierMatch && typeof keyConfig.handler === 'function') {
-            return keyConfig.handler(event);
-        }
-        
-        return null;
-    };
-
-// Mouse event utilities
-export const getMousePosition = (event) =>
-    Maybe.fromNullable(event)
-        .map(e => ({
-            x: e.clientX,
-            y: e.clientY,
-            pageX: e.pageX,
-            pageY: e.pageY,
-            screenX: e.screenX,
-            screenY: e.screenY
-        }));
-
-export const isInsideElement = curry((element, event) =>
-    Maybe.fromNullable(element)
-        .chain(() => getMousePosition(event))
-        .map(pos => {
-            const rect = element.getBoundingClientRect();
-            return pos.x >= rect.left &&
-                   pos.x <= rect.right &&
-                   pos.y >= rect.top &&
-                   pos.y <= rect.bottom;
-        })
-        .getOrElse(false)
-);
-
-// Event cleanup utilities
-export const createEventCleanup = () => {
-    // Functional Set alternative
-    let cleanupFunctions = [];
-    
-    return Object.freeze({
-        add: (cleanupFn) => {
-            if (typeof cleanupFn === 'function' && !cleanupFunctions.includes(cleanupFn)) {
-                cleanupFunctions.push(cleanupFn);
-                return true;
-            }
-            return false;
-        },
-        
-        remove: (cleanupFn) => {
-            const index = cleanupFunctions.indexOf(cleanupFn);
-            if (index !== -1) {
-                cleanupFunctions.splice(index, 1);
-                return true;
-            }
-            return false;
-        },
-        
-        cleanup: () => {
-            const errors = [];
-            
-            cleanupFunctions.forEach(fn => {
-                try {
-                    fn();
-                } catch (error) {
-                    errors.push(error);
-                }
-            });
-            
-            cleanupFunctions = [];
-            
-            return errors.length > 0
-                ? Result.Error(errors)
-                : Result.Ok(true);
-        },
-        
-        size: () => cleanupFunctions.length
-    });
-};
+// Import for re-export in convenience object
+import { createEventEmitter } from './functions/createEventEmitter.js';
+import { addDOMListener, removeDOMListener } from './functions/domEventHandlers.js';
+import { delegateEvent } from './functions/eventDelegation.js';
+import { composeEventHandlers, pipeEventHandlers } from './functions/eventComposition.js';
+import { filterEvents, transformEvent } from './functions/eventFiltering.js';
+import { debounceEvent, throttleEvent } from './functions/eventTiming.js';
+import { preventDefault, stopPropagation, stopImmediatePropagation } from './functions/eventPrevention.js';
+import { validateEvent } from './functions/eventValidation.js';
+import { createCustomEvent, dispatchCustomEvent } from './functions/customEvents.js';
+import { createEventBus } from './functions/eventBus.js';
+import { createKeyboardHandler } from './functions/keyboardHandlers.js';
+import { getMousePosition, isInsideElement } from './functions/mouseHandlers.js';
+import { createEventCleanup } from './functions/eventCleanup.js';
+import { appEventBus, APP_EVENTS } from './appEventBus.js';
 
 // Export event system utilities
 export const EVENT_UTILS = Object.freeze({
@@ -555,5 +117,9 @@ export const EVENT_UTILS = Object.freeze({
     createKeyboardHandler,
     getMousePosition,
     isInsideElement,
-    createEventCleanup
+    createEventCleanup,
+    
+    // Application Event Bus
+    appEventBus,
+    APP_EVENTS
 });

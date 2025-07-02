@@ -11,9 +11,8 @@ import { escape } from '../../security/functions.js';
 export const setupBreadcrumbs = () => {
     console.log("[UI Setup] Initializing breadcrumbs.");
     
-    const breadcrumbsElement = query('#breadcrumbs');
-    if (breadcrumbsElement.type === 'Just') {
-        const container = breadcrumbsElement.value;
+    return query('#breadcrumbs')
+        .map(container => {
             container.innerHTML = '';
             const pathSegments = window.location.pathname.split('/').filter(Boolean);
             
@@ -23,26 +22,32 @@ export const setupBreadcrumbs = () => {
             homeLink.textContent = 'Home';
             container.appendChild(homeLink);
             
-            pathSegments.forEach((seg, idx) => {
-                container.insertAdjacentText('beforeend', ' / ');
-                const segment = createBreadcrumbSegment(seg, idx, pathSegments);
-    
-                if (segment.isLast) {
-                    const breadcrumb = document.createElement('span');
-                    breadcrumb.className = 'text-gray-800 dark:text-gray-200';
-                    breadcrumb.textContent = escape(segment.displayName);
-                    container.appendChild(breadcrumb);
-                } else {
-                    const breadcrumb = document.createElement('a');
-                    breadcrumb.href = segment.path;
-                    breadcrumb.className = 'text-gray-600 dark:text-gray-400 hover:underline';
-                    breadcrumb.textContent = escape(segment.displayName);
-                    container.appendChild(breadcrumb);
-                }
-            });
+            if (pathSegments.length > 0) {
+                pathSegments.forEach((segment, index) => {
+                    // Add separator
+                    const separator = document.createElement('span');
+                    separator.className = 'mx-2 text-gray-400 dark:text-gray-600';
+                    separator.textContent = '>';
+                    container.appendChild(separator);
+                    
+                    const breadcrumb = createBreadcrumbSegment(segment, index, pathSegments);
+                    
+                    if (breadcrumb.isLast) {
+                        const span = document.createElement('span');
+                        span.className = 'text-gray-800 dark:text-gray-200 font-medium';
+                        span.textContent = breadcrumb.displayName;
+                        container.appendChild(span);
+                    } else {
+                        const link = document.createElement('a');
+                        link.href = `${getBasePath()}${breadcrumb.path}`;
+                        link.className = 'text-gray-600 dark:text-gray-400 hover:underline';
+                        link.textContent = breadcrumb.displayName;
+                        container.appendChild(link);
+                    }
+                });
+            }
+            
             return container;
-    } else {
-        console.warn("[UI Setup] Breadcrumbs element #breadcrumbs not found!");
-        return null;
-    }
+        })
+        .getOrElse(null);
 }; 
