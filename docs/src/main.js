@@ -6,7 +6,18 @@ import Result from './core/types/result.js';
 import { pipe } from './core/functions/composition.js';
 import { getBasePath } from './core/functions/transforms.js';
 import { escape } from './security/functions.js';
-import { query, fetchResource, safeSetHTML, loadComponent } from './systems/effects/functions.js';
+import { 
+    query, 
+    fetchResource, 
+    safeSetHTML, 
+    loadComponent,
+    setHTMLEffect,
+    addClassEffect,
+    removeClassEffect,
+    setStyleEffect,
+    addEventListenerEffect,
+    setLocalStorageEffect
+} from './systems/effects/functions.js';
 import { setupUI } from './features/ui-setup/index.js';
 
 import { 
@@ -49,127 +60,155 @@ import {
     sanitizeURL 
 } from './security/xss.js';
 
-document.addEventListener('DOMContentLoaded', () => {
+// Pure functional main application initialization using effect system
+const initializeApplication = () =>
+    executeEffect(logEffect('🚀 Starting FlexNet application initialization'))
+        .then(() => {
+            const extractPageContent = () =>
+                query('#page-content')
+                    .map(element => element.innerHTML)
+                    .getOrElse('<h1>Welcome to FlexNet JSX</h1><p>Your documentation, powered by functional programming.</p>');
 
-    const init = () => {
-        // --- Main Application Logic ---
-        const main = async () => {
-            console.log("Main function started. Preparing to fetch layout.");
-            
-            const pageContentElement = query('#page-content');
-            let pageContent = '';
-            if (pageContentElement.type === 'Just') {
-                pageContent = pageContentElement.value.innerHTML;
-            } else {
-                pageContent = '<h1>Welcome to FlexNet JSX</h1><p>Your documentation, powered by functional programming.</p>';
-            }
-            
-            const basePath = getBasePath();
-            const layoutUrl = `${basePath}/templates/layout.html`;
-            console.log(`Fetching layout from: ${layoutUrl}`);
-
-            const layoutResult = await fetchResource(layoutUrl);
-
-            if (layoutResult.type === 'Error') {
-                console.error("Failed to load layout:", layoutResult.error);
-                const root = query('#root');
-                pipe(
-                    root,
-                    Maybe.map(safeSetHTML(
-                        `<div style="color: red; padding: 2rem; font-family: monospace;">
-                            <h1>Critical Error</h1>
-                            <p>Could not load page layout. Please check the console for more details.</p>
-                            <p><strong>Error:</strong> ${escape(layoutResult.error.message)}</p>
-                        </div>`
-                    ))
-                );
-                return Result.Error(layoutResult.error);
-            }
-            
-            const layoutHtml = layoutResult.value;
-            let containerEl = document.getElementById('root');
-            if (!containerEl) {
-                containerEl = document.body;
-            }
-
-            if (containerEl) {
-                containerEl.innerHTML = layoutHtml;
-
-                // Load template components into their placeholders
-                const headerResult = await loadComponent('header-placeholder', `${basePath}/templates/header.html`);
-                if (headerResult.type === 'Error') {
-                    console.warn('Failed to load header:', headerResult.error);
-                }
+            const initializeMainApp = async () => {
+                const pageContent = extractPageContent();
+                const basePath = getBasePath();
+                const layoutUrl = `${basePath}/templates/layout.html`;
                 
-                const sidebarResult = await loadComponent('sidebar-placeholder', `${basePath}/templates/sidebar.html`);
-                if (sidebarResult.type === 'Error') {
-                    console.warn('Failed to load sidebar:', sidebarResult.error);
-                }
+                await executeEffect(logEffect(`Fetching layout from: ${layoutUrl}`, 'info'));
                 
-                const footerResult = await loadComponent('footer-placeholder', `${basePath}/templates/footer.html`);
-                if (footerResult.type === 'Error') {
-                    console.warn('Failed to load footer:', footerResult.error);
-                }
+                return fetchResource(layoutUrl)
+                    .then(layoutResult => 
+                        layoutResult.type === 'Error'
+                            ? handleLayoutError(layoutResult.error)
+                            : setupApplicationLayout(layoutResult.value, pageContent, basePath)
+                    );
+            };
 
-                const contentPlaceholder = query('#content-placeholder');
-                if (contentPlaceholder.type === 'Just') {
-                    const el = contentPlaceholder.value;
-                    el.innerHTML = pageContent;
-                    el.style.display = 'block'; // Make sure content is visible
-                } else {
-                    console.warn("Content placeholder element #content-placeholder not found!");
-                    // Fallback: try to set content in the main element
-                    const mainElement = query('main');
-                    if (mainElement.type === 'Just') {
-                        mainElement.value.innerHTML = `<div class="max-w-7xl mx-auto">${pageContent}</div>`;
-                    }
-                }
+            const handleLayoutError = (error) => {
+                const errorHtml = `<div style="color: red; padding: 2rem; font-family: monospace;">
+                    <h1>Critical Error</h1>
+                    <p>Could not load page layout. Please check the console for more details.</p>
+                    <p><strong>Error:</strong> ${escape(error.message)}</p>
+                </div>`;
                 
-                // Wait a moment for DOM to settle, then setup UI
-                await new Promise(resolve => setTimeout(resolve, 100));
+                return query('#root')
+                    .map(rootElement => 
+                        executeEffect(logEffect('Rendering error to root element'))
+                            .then(() => safeSetHTML(errorHtml)(rootElement))
+                    )
+                    .getOrElse(
+                        executeEffect(logEffect('No root element found, using body'))
+                            .then(() => safeSetHTML(errorHtml)(document.body))
+                    )
+                    .then(() => Result.Error(error));
+            };
+
+            const setupApplicationLayout = async (layoutHtml, pageContent, basePath) => {
+                const containerElement = Maybe.fromNullable(document.getElementById('root'))
+                    .getOrElse(document.body);
+
+                // Use effect system for DOM manipulation
+                await executeEffect(setHTMLEffect(containerElement, layoutHtml));
+                
+                // Load components using effect composition
+                const componentLoadingEffects = [
+                    loadComponent('header-placeholder', `${basePath}/templates/header.html`),
+                    loadComponent('sidebar-placeholder', `${basePath}/templates/sidebar.html`),
+                    loadComponent('footer-placeholder', `${basePath}/templates/footer.html`)
+                ];
+                
+                const componentResults = await Promise.all(componentLoadingEffects.map(effect => 
+                    effect.then(result => 
+                        result.type === 'Error' 
+                            ? executeEffect(logEffect(`Component load warning: ${result.error}`, 'warn'))
+                            : Result.Ok(result)
+                    )
+                ));
+
+                // Setup content using effect system
+                await setupPageContent(pageContent);
+                
+                // Delay for DOM settling, then setup UI
+                await executeEffect(createAsyncEffect(() => 
+                    new Promise(resolve => setTimeout(resolve, 100))
+                ));
+                
                 const uiResults = await setupUI(basePath);
-                
-                // Setup theme switcher after all components are loaded
-                const themeToggleButton = document.getElementById('theme-toggle');
-                if(themeToggleButton) {
-                    themeToggleButton.addEventListener('click', function() {
-                        const html = document.documentElement;
-                        html.classList.toggle('dark');
-                        
-                        if (html.classList.contains('dark')) {
-                            localStorage.setItem('theme', 'dark');
-                        } else {
-                            localStorage.setItem('theme', 'light');
-                        }
-                    });
-                    console.log("[UI Setup] Theme switcher successfully initialized.");
-                } else {
-                    console.warn("[UI Setup] Theme toggle button #theme-toggle not found after component loading!");
-                }
+                await setupThemeSystem();
                 
                 return Result.Ok(uiResults);
-            } else {
-                const error = new Error('CRITICAL: No container element found (#root or body).');
-                console.error(error.message);
-                return Result.Error(error);
-            }
-        };
+            };
 
-        main().then(result => {
-            if (result.type === 'Error') {
-                console.error('Application initialization failed:', result.error);
-            } else {
-                console.log('Application initialized successfully');
-            }
-        }).catch(console.error);
-    };
-    
-    try {
-        init();
-    } catch (e) {
-        console.error("A critical error occurred during site initialization:", e);
-    }
-});
+            const setupPageContent = async (pageContent) => {
+                const contentPlaceholder = query('#content-placeholder');
+                
+                if (contentPlaceholder.type === 'Just') {
+                    await executeEffect(setHTMLEffect(contentPlaceholder.value, pageContent));
+                    await executeEffect(setStyleEffect(contentPlaceholder.value, 'display', 'block'));
+                } else {
+                    await executeEffect(logEffect('Content placeholder not found, trying main element', 'warn'));
+                    const mainElement = query('main');
+                    if (mainElement.type === 'Just') {
+                        const wrappedContent = `<div class="max-w-7xl mx-auto">${pageContent}</div>`;
+                        await executeEffect(setHTMLEffect(mainElement.value, wrappedContent));
+                    }
+                }
+            };
+
+            const setupThemeSystem = async () => {
+                const themeToggleButton = Maybe.fromNullable(document.getElementById('theme-toggle'));
+                
+                return themeToggleButton
+                    .map(button => {
+                        const themeToggleHandler = () => {
+                            const html = document.documentElement;
+                            const isDark = html.classList.contains('dark');
+                            
+                            if (isDark) {
+                                executeEffect(removeClassEffect(html, 'dark'));
+                                executeEffect(setLocalStorageEffect('theme', 'light'));
+                            } else {
+                                executeEffect(addClassEffect(html, 'dark'));
+                                executeEffect(setLocalStorageEffect('theme', 'dark'));
+                            }
+                        };
+                        
+                        return executeEffect(addEventListenerEffect(button, 'click', themeToggleHandler))
+                            .then(() => executeEffect(logEffect('Theme switcher successfully initialized', 'info')));
+                    })
+                    .getOrElse(
+                        executeEffect(logEffect('Theme toggle button not found after component loading', 'warn'))
+                    );
+            };
+            
+            return initializeMainApp();
+        });
+
+// Use effect system for DOM ready event
+const domReadyEffect = createAsyncEffect(() => 
+    new Promise(resolve => {
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', resolve);
+        } else {
+            resolve();
+        }
+    })
+);
+
+executeEffect(domReadyEffect)
+    .then(() => initializeApplication())
+    .then(result => {
+        if (result && result.type === 'Error') {
+            executeEffect(logEffect(`Application initialization failed: ${result.error}`, 'error'));
+        } else {
+            executeEffect(logEffect('✅ Application initialized successfully', 'info'));
+        }
+    })
+    .catch(error => {
+        executeEffect(logEffect(`Critical error during site initialization: ${error}`, 'error'));
+    });
+
+
 
 // ===========================================
 // FLEXNET FRAMEWORK INITIALIZATION

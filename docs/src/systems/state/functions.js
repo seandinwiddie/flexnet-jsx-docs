@@ -5,11 +5,12 @@ import Maybe from '../../core/types/maybe.js';
 import Either from '../../core/types/either.js';
 import Result from '../../core/types/result.js';
 import { compose, pipe, curry } from '../../core/functions/composition.js';
+import { ImmutableSet, deepFreeze } from '../../utils/immutable.js';
 
 // Core state container with immutable updates
 export const createState = (initialValue) => {
-    let currentState = Object.freeze(initialValue);
-    const subscribers = new Set();
+    let currentState = deepFreeze(initialValue);
+    let subscribers = ImmutableSet.empty();
     
     return Object.freeze({
         // Get current state value
@@ -33,13 +34,10 @@ export const createState = (initialValue) => {
                 const previousState = currentState;
                 currentState = frozenState;
                 
-                // Notify subscribers
+                // Notify subscribers using immutable forEach
                 subscribers.forEach(subscriber => {
-                    try {
-                        subscriber(frozenState, previousState);
-                    } catch (error) {
-                        console.error('State subscriber error:', error);
-                    }
+                    Result.fromTry(() => subscriber(frozenState, previousState))
+                        .mapLeft(error => console.error('State subscriber error:', error));
                 });
                 
                 return frozenState;
@@ -51,29 +49,26 @@ export const createState = (initialValue) => {
                 return Either.Left('Callback must be a function');
             }
             
-            subscribers.add(callback);
+            subscribers = ImmutableSet.add(callback)(subscribers);
             
             // Return unsubscribe function
             return Either.Right(() => {
-                subscribers.delete(callback);
+                subscribers = ImmutableSet.delete(callback)(subscribers);
                 return true;
             });
         },
         
         // Get current subscriber count
-        getSubscriberCount: () => subscribers.size,
+        getSubscriberCount: () => ImmutableSet.size(subscribers),
         
         // Reset state to initial value
         reset: () => {
             const previousState = currentState;
-            currentState = Object.freeze(initialValue);
+            currentState = deepFreeze(initialValue);
             
             subscribers.forEach(subscriber => {
-                try {
-                    subscriber(currentState, previousState);
-                } catch (error) {
-                    console.error('State subscriber error:', error);
-                }
+                Result.fromTry(() => subscriber(currentState, previousState))
+                    .mapLeft(error => console.error('State subscriber error:', error));
             });
             
             return currentState;

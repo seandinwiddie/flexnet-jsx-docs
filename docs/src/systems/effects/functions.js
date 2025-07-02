@@ -5,6 +5,7 @@ import Maybe from '../../core/types/maybe.js';
 import Either from '../../core/types/either.js';
 import Result from '../../core/types/result.js';
 import { compose, pipe, curry } from '../../core/functions/composition.js';
+import { ImmutableMap, ImmutableSet, deepFreeze } from '../../utils/immutable.js';
 import { sanitizeURL } from '../../security/xss.js';
 import { escapeHTML } from '../../security/xss.js';
 

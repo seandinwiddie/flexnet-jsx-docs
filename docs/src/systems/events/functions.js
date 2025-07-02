@@ -5,10 +5,11 @@ import Maybe from '../../core/types/maybe.js';
 import Either from '../../core/types/either.js';
 import Result from '../../core/types/result.js';
 import { compose, pipe, curry } from '../../core/functions/composition.js';
+import { ImmutableMap, ImmutableSet } from '../../utils/immutable.js';
 
 // Core event emitter with functional composition
 export const createEventEmitter = () => {
-    const listeners = new Map();
+    let listeners = ImmutableMap.empty();
     
     return Object.freeze({
         // Subscribe to events
@@ -17,17 +18,20 @@ export const createEventEmitter = () => {
                 return Either.Left('Handler must be a function');
             }
             
-            const eventListeners = listeners.get(event) || new Set();
-            eventListeners.add(handler);
-            listeners.set(event, eventListeners);
+            const currentListeners = ImmutableMap.get(event)(listeners)
+                .getOrElse(ImmutableSet.empty());
+            const updatedListeners = ImmutableSet.add(handler)(currentListeners);
+            listeners = ImmutableMap.set(event, updatedListeners)(listeners);
             
             // Return unsubscribe function
             return Either.Right(() => {
-                const currentListeners = listeners.get(event);
-                if (currentListeners) {
-                    currentListeners.delete(handler);
-                    if (currentListeners.size === 0) {
-                        listeners.delete(event);
+                const eventListeners = ImmutableMap.get(event)(listeners);
+                if (eventListeners.type === 'Just') {
+                    const updated = ImmutableSet.delete(handler)(eventListeners.value);
+                    if (ImmutableSet.size(updated) === 0) {
+                        listeners = ImmutableMap.delete(event)(listeners);
+                    } else {
+                        listeners = ImmutableMap.set(event, updated)(listeners);
                     }
                 }
                 return true;
@@ -43,25 +47,30 @@ export const createEventEmitter = () => {
             const wrappedHandler = (...args) => {
                 handler(...args);
                 // Auto-unsubscribe
-                const currentListeners = listeners.get(event);
-                if (currentListeners) {
-                    currentListeners.delete(wrappedHandler);
-                    if (currentListeners.size === 0) {
-                        listeners.delete(event);
+                const eventListeners = ImmutableMap.get(event)(listeners);
+                if (eventListeners.type === 'Just') {
+                    const updated = ImmutableSet.delete(wrappedHandler)(eventListeners.value);
+                    if (ImmutableSet.size(updated) === 0) {
+                        listeners = ImmutableMap.delete(event)(listeners);
+                    } else {
+                        listeners = ImmutableMap.set(event, updated)(listeners);
                     }
                 }
             };
             
-            const eventListeners = listeners.get(event) || new Set();
-            eventListeners.add(wrappedHandler);
-            listeners.set(event, eventListeners);
+            const currentListeners = ImmutableMap.get(event)(listeners)
+                .getOrElse(ImmutableSet.empty());
+            const updatedListeners = ImmutableSet.add(wrappedHandler)(currentListeners);
+            listeners = ImmutableMap.set(event, updatedListeners)(listeners);
             
             return Either.Right(() => {
-                const currentListeners = listeners.get(event);
-                if (currentListeners) {
-                    currentListeners.delete(wrappedHandler);
-                    if (currentListeners.size === 0) {
-                        listeners.delete(event);
+                const eventListeners = ImmutableMap.get(event)(listeners);
+                if (eventListeners.type === 'Just') {
+                    const updated = ImmutableSet.delete(wrappedHandler)(eventListeners.value);
+                    if (ImmutableSet.size(updated) === 0) {
+                        listeners = ImmutableMap.delete(event)(listeners);
+                    } else {
+                        listeners = ImmutableMap.set(event, updated)(listeners);
                     }
                 }
                 return true;
@@ -71,30 +80,36 @@ export const createEventEmitter = () => {
         // Emit events to all listeners
         emit: curry((event, ...args) =>
             Result.fromTry(() => {
-                const eventListeners = listeners.get(event);
+                const eventListeners = ImmutableMap.get(event)(listeners);
                 
-                if (!eventListeners || eventListeners.size === 0) {
+                if (eventListeners.type === 'Nothing') {
+                    return { event, listenerCount: 0, errors: [] };
+                }
+                
+                const listenerSet = eventListeners.value;
+                const listenerCount = ImmutableSet.size(listenerSet);
+                
+                if (listenerCount === 0) {
                     return { event, listenerCount: 0, errors: [] };
                 }
                 
                 const errors = [];
                 let successCount = 0;
                 
-                eventListeners.forEach(handler => {
-                    try {
-                        handler(...args);
-                        successCount++;
-                    } catch (error) {
-                        errors.push({
-                            handler: handler.name || 'anonymous',
-                            error: error.message
-                        });
-                    }
+                listenerSet.forEach(handler => {
+                    Result.fromTry(() => handler(...args))
+                        .fold(
+                            error => errors.push({
+                                handler: handler.name || 'anonymous',
+                                error: error.message
+                            }),
+                            () => { successCount++; }
+                        );
                 });
                 
                 return {
                     event,
-                    listenerCount: eventListeners.size,
+                    listenerCount,
                     successCount,
                     errors
                 };
@@ -103,26 +118,28 @@ export const createEventEmitter = () => {
         
         // Remove all listeners for an event
         off: (event) => {
-            const hadListeners = listeners.has(event);
-            listeners.delete(event);
+            const hadListeners = ImmutableMap.has(event)(listeners);
+            listeners = ImmutableMap.delete(event)(listeners);
             return hadListeners;
         },
         
         // Remove all listeners
         removeAllListeners: () => {
-            const eventCount = listeners.size;
-            listeners.clear();
+            const eventCount = ImmutableMap.size(listeners);
+            listeners = ImmutableMap.empty();
             return eventCount;
         },
         
         // Get listener count for event
         listenerCount: (event) => {
-            const eventListeners = listeners.get(event);
-            return eventListeners ? eventListeners.size : 0;
+            const eventListeners = ImmutableMap.get(event)(listeners);
+            return eventListeners.type === 'Just' 
+                ? ImmutableSet.size(eventListeners.value) 
+                : 0;
         },
         
         // Get all registered events
-        events: () => Array.from(listeners.keys())
+        events: () => ImmutableMap.keys(listeners)
     });
 };
 

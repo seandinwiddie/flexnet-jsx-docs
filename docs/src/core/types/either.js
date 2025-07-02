@@ -9,6 +9,12 @@ const Either = {
         either.type === 'Right' ? Either.Right(fn(either.value)) : either,
     chain: fn => either =>
         either.type === 'Right' ? fn(either.value) : either,
+    fold: (leftFn, rightFn) => either =>
+        either.type === 'Right' ? rightFn(either.value) : leftFn(either.value),
+    mapLeft: fn => either =>
+        either.type === 'Left' ? Either.Left(fn(either.value)) : either,
+    getOrElse: defaultValue => either =>
+        either.type === 'Right' ? either.value : defaultValue
 };
 
 export default Either;
