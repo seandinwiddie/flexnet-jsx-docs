@@ -1,553 +1,614 @@
 // === FlexNet Render System ===
-// Pure functional rendering with proper effect isolation
+// Pure functional UI rendering with effect isolation
 
 import Maybe from '../../core/types/maybe.js';
 import Either from '../../core/types/either.js';
 import Result from '../../core/types/result.js';
-import { pipe, compose } from '../../core/functions/composition.js';
-import { find } from '../../utils/array.js';
+import { compose, pipe, curry } from '../../core/functions/composition.js';
 import { 
-    query, 
-    queryAll, 
-    addListener, 
-    setAttribute, 
-    addClass, 
-    removeClass, 
-    toggleClass,
-    setTextContent,
-    delay,
-    logInfo,
-    logWarn,
-    logError,
-    sequence,
-    parallel
+    executeEffect, 
+    chainEffects, 
+    parallelEffects,
+    queryEffect,
+    queryAllEffect,
+    getElementByIdEffect,
+    setAttributeEffect,
+    addClassEffect,
+    removeClassEffect,
+    setStyleEffect,
+    addEventListenerEffect,
+    setTextContentEffect,
+    setLocalStorageEffect,
+    getLocalStorageEffect,
+    logEffect,
+    setTimeoutEffect,
+    createAsyncEffect
 } from '../effects/functions.js';
 
-// Pure function to create logo setup effect
-export const createLogoSetupEffect = (basePath) => {
-    const logoSrc = `${basePath}/flexnet.png`;
-    
-    return pipe(
-        () => logInfo("[UI Setup] Initializing logo."),
-        () => query('#logo-image'),
-        (logoResult) => {
-            if (logoResult.type === 'Left') {
-                return logWarn("[UI Setup] Logo element #logo-image not found!");
-            }
+// ===========================================
+// PURE UI STATE FUNCTIONS
+// ===========================================
 
-            return logoResult.chain(maybeElement => {
-                if (maybeElement.type === 'Just') {
-                    const element = maybeElement.value;
-                    return setAttribute('src', logoSrc)(element);
-                }
-                return logWarn("[UI Setup] Logo element #logo-image not found!");
-            });
-        }
-    );
-};
-
-// Pure function to create syntax highlighting effect
-export const createSyntaxHighlightingEffect = () => {
-    return pipe(
-        () => logInfo("[UI Setup] Initializing syntax highlighting."),
-        () => Result.fromTry(() => {
-            if (typeof window !== 'undefined' && window.hljs) {
-                window.hljs.highlightAll();
-                return Either.Right('Syntax highlighting initialized');
-            }
-            return Either.Right('hljs not available');
-        })
-    );
-};
-
-// Pure function to create theme switcher effect
-export const createThemeSwitcherEffect = () => {
-    const themeToggleHandler = () => {
-        const htmlResult = query('html');
-        
-        if (htmlResult.type === 'Right' && htmlResult.value.type === 'Just') {
-            const htmlElement = htmlResult.value.value;
-            const isDark = htmlElement.classList.contains('dark');
-            
-            if (isDark) {
-                removeClass('dark')(htmlElement);
-                // Storage effect should be handled separately
-                if (typeof localStorage !== 'undefined') {
-                    localStorage.setItem('theme', 'light');
-                }
-            } else {
-                addClass('dark')(htmlElement);
-                if (typeof localStorage !== 'undefined') {
-                    localStorage.setItem('theme', 'dark');
-                }
-            }
-        }
-    };
-
-    return pipe(
-        () => logInfo("[UI Setup] Initializing theme switcher."),
-        () => query('#theme-toggle'),
-        (toggleResult) => {
-            if (toggleResult.type === 'Left') {
-                return logWarn("[UI Setup] Theme toggle button #theme-toggle not found!");
-            }
-
-            return toggleResult.chain(maybeButton => {
-                if (maybeButton.type === 'Just') {
-                    const button = maybeButton.value;
-                    return addListener('click', themeToggleHandler)(button);
-                }
-                return logWarn("[UI Setup] Theme toggle button #theme-toggle not found!");
-            });
-        }
-    );
-};
-
-// Pure function to determine active section
-const determineActiveSection = (sections) => {
-    if (typeof window === 'undefined') {
-        return Either.Right(Maybe.Nothing());
-    }
-
-    const currentPath = window.location.pathname;
-    
-    const matchingSections = sections
-        .map(section => {
-            const links = Array.from(section.content.querySelectorAll('a'));
-            const headerLink = section.header.querySelector('a');
-            if (headerLink) links.push(headerLink);
-            
-            const matchingLinks = links.filter(link => {
-                if (!link) return false;
-                const href = link.getAttribute('href');
-                if (!href) return false;
-                
-                const pathMatch = currentPath.endsWith(href) || 
-                                currentPath.includes(href.replace('.html', '')) ||
-                                (href === '/' && currentPath === '/') ||
-                                currentPath.includes(href.replace('/', ''));
-                
-                return pathMatch;
-            });
-            
-            if (matchingLinks.length > 0) {
-                const mostSpecificLink = matchingLinks.reduce((longest, current) => {
-                    const currentHref = current.getAttribute('href') || '';
-                    const longestHref = longest.getAttribute('href') || '';
-                    return currentHref.length > longestHref.length ? current : longest;
-                });
-                
-                return {
-                    section,
-                    matchingLink: mostSpecificLink,
-                    specificity: mostSpecificLink.getAttribute('href').length
-                };
-            }
-            return null;
-        })
-        .filter(match => match !== null);
-
-    if (matchingSections.length === 0) {
-        return Either.Right(Maybe.Nothing());
-    }
-
-    const mostSpecific = matchingSections.reduce((best, current) => {
-        if (current.specificity > best.specificity) {
-            return current;
-        } else if (current.specificity === best.specificity) {
-            const currentHeaderLink = current.section.header.querySelector('a');
-            const bestHeaderLink = best.section.header.querySelector('a');
-            
-            if (currentHeaderLink && bestHeaderLink) {
-                const currentHeaderHref = currentHeaderLink.getAttribute('href') || '';
-                const bestHeaderHref = bestHeaderLink.getAttribute('href') || '';
-                
-                if (currentHeaderHref.length > bestHeaderHref.length) {
-                    return current;
-                }
-            }
-            return best;
-        }
-        return best;
+// UI state representation
+const createUIState = (initialState = {}) =>
+    Object.freeze({
+        theme: 'light',
+        sidebarOpen: false,
+        activeSection: null,
+        expandedSections: [],
+        ...initialState
     });
 
-    return Either.Right(Maybe.Just(mostSpecific.section));
-};
+// Pure state update functions
+export const updateTheme = curry((theme, state) =>
+    Object.freeze({ ...state, theme })
+);
 
-// Pure function to apply section visibility
-const applySectionVisibility = (section, isActive) => {
-    const effects = [];
+export const toggleSidebar = (state) =>
+    Object.freeze({ ...state, sidebarOpen: !state.sidebarOpen })
+);
+
+export const setActiveSection = curry((section, state) =>
+    Object.freeze({ ...state, activeSection: section })
+);
+
+export const toggleSection = curry((sectionId, state) => {
+    const expanded = state.expandedSections || [];
+    const isExpanded = expanded.includes(sectionId);
     
-    if (isActive) {
-        effects.push(removeClass('hidden')(section.content));
-        if (section.icon) {
-            effects.push(setTextContent('▼')(section.icon));
-        }
-    } else {
-        effects.push(addClass('hidden')(section.content));
-        if (section.icon) {
-            effects.push(setTextContent('▶')(section.icon));
-        }
+    return Object.freeze({
+        ...state,
+        expandedSections: isExpanded
+            ? expanded.filter(id => id !== sectionId)
+            : [...expanded, sectionId]
+    });
+});
+
+// ===========================================
+// PURE COMPONENT FUNCTIONS
+// ===========================================
+
+// Logo component configuration
+export const createLogoConfig = (basePath) =>
+    Result.fromTry(() => Object.freeze({
+        selector: '#logo-image',
+        src: `${basePath}/flexnet.png`,
+        alt: 'FlexNet Framework Logo'
+    }));
+
+// Theme switcher configuration
+export const createThemeSwitcherConfig = () =>
+    Object.freeze({
+        selector: '#theme-toggle',
+        darkClass: 'dark',
+        storageKey: 'theme'
+    });
+
+// Sidebar configuration
+export const createSidebarConfig = () =>
+    Object.freeze({
+        sidebarSelector: '#sidebar-placeholder',
+        overlaySelector: '#sidebar-overlay',
+        toggleSelector: '#sidebar-toggle',
+        navSelector: '#sidebar-placeholder nav',
+        headerClass: '.section-header',
+        nestedHeaderClass: '.nested-section-header',
+        hiddenClass: 'hidden',
+        activeClasses: ['bg-blue-500', 'text-white'],
+        inactiveClasses: ['dark:text-gray-300']
+    });
+
+// ===========================================
+// PURE UI LOGIC FUNCTIONS
+// ===========================================
+
+// Calculate which section should be active based on current path
+export const calculateActiveSection = curry((sections, currentPath) => {
+    const matchingSections = sections
+        .map(section => {
+            const links = section.links || [];
+            const headerLink = section.headerLink;
+            const allLinks = headerLink ? [headerLink, ...links] : links;
+            
+            const matches = allLinks
+                .filter(link => link.href)
+                .map(link => ({
+                    href: link.href,
+                    specificity: calculatePathSpecificity(link.href, currentPath)
+                }))
+                .filter(match => match.specificity > 0);
+            
+            const bestMatch = matches.reduce(
+                (best, current) => current.specificity > best.specificity ? current : best,
+                { specificity: 0 }
+            );
+            
+            return {
+                section,
+                specificity: bestMatch.specificity
+            };
+        })
+        .filter(match => match.specificity > 0);
+    
+    if (matchingSections.length === 0) {
+        return Maybe.Nothing();
     }
     
-    effects.push(setAttribute('style', 'cursor: pointer')(section.header));
+    const bestMatch = matchingSections.reduce(
+        (best, current) => current.specificity > best.specificity ? current : best
+    );
     
-    return sequence(effects);
-};
+    return Maybe.Just(bestMatch.section);
+});
 
-// Pure function to create accordion toggle handler
-const createAccordionToggleHandler = (sections, currentSection) => (event) => {
-    // Don't prevent default if clicking on a link
-    if (event.target.tagName === 'A') {
-        return Either.Right('Link clicked, not toggling accordion');
+// Calculate path specificity for link matching
+const calculatePathSpecificity = (href, currentPath) => {
+    if (!href || !currentPath) return 0;
+    
+    // Exact match gets highest score
+    if (currentPath === href || currentPath.endsWith(href)) {
+        return href.length + 1000;
     }
     
-    event.preventDefault();
+    // Partial match
+    if (currentPath.includes(href.replace('.html', '')) || 
+        currentPath.includes(href.replace('/', ''))) {
+        return href.length;
+    }
     
-    const isHidden = currentSection.content.classList.contains('hidden');
+    return 0;
+};
+
+// Extract section data from DOM structure
+export const extractSectionData = (navElement) =>
+    Result.fromTry(() => {
+        const headers = Array.from(navElement.querySelectorAll('.section-header'));
+        
+        return headers
+            .map(header => {
+                const targetId = header.getAttribute('data-target');
+                const content = targetId ? document.getElementById(targetId) : null;
+                const icon = header.querySelector('.accordion-icon');
+                const headerLink = header.querySelector('a');
+                const links = content ? Array.from(content.querySelectorAll('a')) : [];
+                
+                return {
+                    id: targetId,
+                    header,
+                    content,
+                    icon,
+                    headerLink: headerLink ? { href: headerLink.getAttribute('href') } : null,
+                    links: links.map(link => ({ href: link.getAttribute('href') }))
+                };
+            })
+            .filter(section => section.header && section.content && section.id);
+    });
+
+// Generate effects for UI updates
+export const createUIUpdateEffects = (state, config) => {
     const effects = [];
+    
+    // Theme effects
+    if (state.theme) {
+        effects.push(
+            state.theme === 'dark'
+                ? addClassEffect(document.documentElement, 'dark')
+                : removeClassEffect(document.documentElement, 'dark')
+        );
+        effects.push(setLocalStorageEffect('theme', state.theme));
+    }
+    
+    // Sidebar effects
+    if (state.sidebarOpen !== undefined) {
+        const sidebarClass = state.sidebarOpen ? 'translate-x-0' : '-translate-x-full';
+        const overlayClass = state.sidebarOpen ? 'block' : 'hidden';
+        
+        effects.push(
+            executeEffect(queryEffect(config.sidebarSelector))
+                .then(sidebar => sidebar.type === 'Just' 
+                    ? setAttributeEffect(sidebar.value, 'class', sidebarClass)
+                    : null
+                ),
+            executeEffect(queryEffect(config.overlaySelector))
+                .then(overlay => overlay.type === 'Just'
+                    ? setAttributeEffect(overlay.value, 'class', overlayClass)
+                    : null
+                )
+        );
+    }
+    
+    return effects;
+};
+
+// ===========================================
+// EFFECT-BASED COMPONENT SETUP
+// ===========================================
+
+// Pure logo setup using effects
+export const setupLogoEffect = (basePath) =>
+    createLogoConfig(basePath)
+        .chain(config =>
+            createAsyncEffect(async () => {
+                await executeEffect(logEffect('Initializing logo', 'info'));
+                
+                const logoResult = await executeEffect(queryEffect(config.selector));
+                
+                if (logoResult.type === 'Just') {
+                    await executeEffect(setAttributeEffect(logoResult.value, 'src', config.src));
+                    await executeEffect(setAttributeEffect(logoResult.value, 'alt', config.alt));
+                    return logoResult.value;
+                } else {
+                    await executeEffect(logEffect('Logo element not found', 'warn'));
+                    return null;
+                }
+            })
+        );
+
+// Pure syntax highlighting setup using effects
+export const setupSyntaxHighlightingEffect = () =>
+    createAsyncEffect(async () => {
+        await executeEffect(logEffect('Initializing syntax highlighting', 'info'));
+        
+        if (window.hljs) {
+            window.hljs.highlightAll();
+            return 'Syntax highlighting initialized';
+        } else {
+            await executeEffect(logEffect('hljs not available', 'warn'));
+            return null;
+        }
+    });
+
+// Pure theme switcher setup using effects
+export const setupThemeSwitcherEffect = () =>
+    createAsyncEffect(async () => {
+        await executeEffect(logEffect('Initializing theme switcher', 'info'));
+        
+        const config = createThemeSwitcherConfig();
+        const toggleResult = await executeEffect(queryEffect(config.selector));
+        
+        if (toggleResult.type === 'Just') {
+            const button = toggleResult.value;
+            
+            // Load saved theme
+            const savedTheme = await executeEffect(getLocalStorageEffect(config.storageKey));
+            if (savedTheme === 'dark') {
+                await executeEffect(addClassEffect(document.documentElement, config.darkClass));
+            }
+            
+            // Add click handler
+            const clickHandler = async () => {
+                const html = document.documentElement;
+                const isDark = html.classList.contains(config.darkClass);
+                const newTheme = isDark ? 'light' : 'dark';
+                
+                if (isDark) {
+                    await executeEffect(removeClassEffect(html, config.darkClass));
+                } else {
+                    await executeEffect(addClassEffect(html, config.darkClass));
+                }
+                
+                await executeEffect(setLocalStorageEffect(config.storageKey, newTheme));
+            };
+            
+            await executeEffect(addEventListenerEffect(button, 'click', clickHandler));
+            return button;
+        } else {
+            await executeEffect(logEffect('Theme toggle button not found', 'warn'));
+            return null;
+        }
+    });
+
+// Pure sidebar accordion setup using effects
+export const setupSidebarAccordionEffect = () =>
+    createAsyncEffect(async () => {
+        await executeEffect(logEffect('Initializing sidebar accordion', 'info'));
+        
+        const config = createSidebarConfig();
+        
+        // Retry mechanism for navigation discovery
+        const findNavigation = async (attempt = 1, maxAttempts = 5) => {
+            const navResult = await executeEffect(queryEffect(config.navSelector));
+            
+            if (navResult.type === 'Just') {
+                return navResult.value;
+            } else if (attempt < maxAttempts) {
+                await executeEffect(logEffect(`Navigation not found, retrying (${attempt}/${maxAttempts})`, 'info'));
+                await new Promise(resolve => setTimeout(resolve, 100));
+                return findNavigation(attempt + 1, maxAttempts);
+            } else {
+                await executeEffect(logEffect('Navigation not found after retries', 'error'));
+                return null;
+            }
+        };
+        
+        const nav = await findNavigation();
+        if (!nav) return null;
+        
+        // Extract section data
+        const sectionsResult = extractSectionData(nav);
+        if (sectionsResult.type === 'Error') {
+            await executeEffect(logEffect('Failed to extract section data', 'error'));
+            return null;
+        }
+        
+        const sections = sectionsResult.value;
+        const currentPath = window.location.pathname;
+        
+        // Calculate active section
+        const activeSection = calculateActiveSection(sections, currentPath);
+        
+        // Setup accordion state and effects
+        await setupAccordionSections(sections, activeSection, config);
+        await setupNestedSectionsEffect(config);
+        
+        await executeEffect(logEffect('Sidebar accordion setup complete', 'info'));
+        return sections;
+    });
+
+// Setup accordion sections with effects
+const setupAccordionSections = async (sections, activeSection, config) => {
+    for (const section of sections) {
+        const isActive = activeSection.type === 'Just' && activeSection.value.id === section.id;
+        
+        // Set initial state
+        if (isActive) {
+            await executeEffect(removeClassEffect(section.content, config.hiddenClass));
+            if (section.icon) {
+                await executeEffect(setTextContentEffect(section.icon, '▼'));
+            }
+        } else {
+            await executeEffect(addClassEffect(section.content, config.hiddenClass));
+            if (section.icon) {
+                await executeEffect(setTextContentEffect(section.icon, '▶'));
+            }
+        }
+        
+        // Set cursor style
+        await executeEffect(setStyleEffect(section.header, 'cursor', 'pointer'));
+        
+        // Add click handler
+        const clickHandler = async (event) => {
+            if (event.target.tagName === 'A') {
+                return; // Don't interfere with link navigation
+            }
+            
+            event.preventDefault();
+            await toggleAccordionSection(section, sections, config);
+        };
+        
+        await executeEffect(addEventListenerEffect(section.header, 'click', clickHandler));
+    }
+};
+
+// Toggle accordion section with effects
+const toggleAccordionSection = async (targetSection, allSections, config) => {
+    const isHidden = targetSection.content.classList.contains(config.hiddenClass);
     
     if (isHidden) {
         // Hide all other sections
-        sections.forEach(section => {
-            if (section !== currentSection) {
-                effects.push(addClass('hidden')(section.content));
+        for (const section of allSections) {
+            if (section !== targetSection) {
+                await executeEffect(addClassEffect(section.content, config.hiddenClass));
                 if (section.icon) {
-                    effects.push(setTextContent('▶')(section.icon));
+                    await executeEffect(setTextContentEffect(section.icon, '▶'));
                 }
             }
-        });
+        }
         
-        // Show current section
-        effects.push(removeClass('hidden')(currentSection.content));
-        if (currentSection.icon) {
-            effects.push(setTextContent('▼')(currentSection.icon));
+        // Show target section
+        await executeEffect(removeClassEffect(targetSection.content, config.hiddenClass));
+        if (targetSection.icon) {
+            await executeEffect(setTextContentEffect(targetSection.icon, '▼'));
         }
     } else {
-        // Hide current section
-        effects.push(addClass('hidden')(currentSection.content));
-        if (currentSection.icon) {
-            effects.push(setTextContent('▶')(currentSection.icon));
+        // Hide target section
+        await executeEffect(addClassEffect(targetSection.content, config.hiddenClass));
+        if (targetSection.icon) {
+            await executeEffect(setTextContentEffect(targetSection.icon, '▶'));
         }
     }
-    
-    return sequence(effects);
 };
 
-// Pure function to setup accordion sections
-const setupAccordionSections = (sections) => {
-    return pipe(
-        () => determineActiveSection(sections),
-        (activeSectionResult) => {
-            if (activeSectionResult.type === 'Left') {
-                return activeSectionResult;
-            }
-
-            const activeSection = activeSectionResult.value;
-            const effects = [];
-
-            // Apply initial visibility to all sections
-            sections.forEach(section => {
-                const isActive = activeSection.type === 'Just' && activeSection.value === section;
-                effects.push(applySectionVisibility(section, isActive));
-                
-                // Add click handler
-                const toggleHandler = createAccordionToggleHandler(sections, section);
-                effects.push(addListener('click', toggleHandler)(section.header));
-            });
-
-            return sequence(effects);
-        }
-    );
-};
-
-// Pure function to find accordion sections
-const findAccordionSections = (sidebarNav) => {
-    const sectionHeaders = Array.from(sidebarNav.querySelectorAll('.section-header'));
+// Setup nested sections with effects
+const setupNestedSectionsEffect = async (config) => {
+    await executeEffect(logEffect('Setting up nested sections', 'info'));
     
-    const sections = sectionHeaders
-        .map(header => {
-            const targetId = header.getAttribute('data-target');
-            const content = targetId ? document.getElementById(targetId) : null;
-            const icon = header.querySelector('.accordion-icon');
-            return { header, content, icon, targetId };
-        })
-        .filter(section => section.header && section.content);
+    const nestedHeadersResult = await executeEffect(queryAllEffect(config.nestedHeaderClass));
+    const currentPath = window.location.pathname;
     
-    return Either.Right(sections);
-};
-
-// Pure function to attempt accordion setup
-const attemptAccordionSetup = async (attempt = 1, maxAttempts = 5) => {
-    const sidebarNavResult = query('#sidebar-placeholder nav');
-    
-    if (sidebarNavResult.type === 'Left') {
-        if (attempt < maxAttempts) {
-            logInfo(`[Accordion] Attempt ${attempt}: Sidebar nav not found, retrying...`);
-            await delay(100);
-            return attemptAccordionSetup(attempt + 1, maxAttempts);
+    for (const header of nestedHeadersResult) {
+        const targetId = header.getAttribute('data-target');
+        const content = document.getElementById(targetId);
+        const icon = header.querySelector('.accordion-icon');
+        
+        if (!content || !icon) continue;
+        
+        // Determine if section should be active
+        const links = Array.from(content.querySelectorAll('a'));
+        const headerLink = header.querySelector('a');
+        const isActive = [...links, headerLink].some(link => {
+            if (!link) return false;
+            const href = link.getAttribute('href');
+            return href && (currentPath.endsWith(href) || currentPath.includes(href.replace('.html', '')));
+        });
+        
+        // Set initial state
+        if (isActive) {
+            await executeEffect(removeClassEffect(content, config.hiddenClass));
+            await executeEffect(setTextContentEffect(icon, '▼'));
         } else {
-            return logWarn(`[Accordion] Failed to find sidebar nav after ${maxAttempts} attempts`);
+            await executeEffect(addClassEffect(content, config.hiddenClass));
+            await executeEffect(setTextContentEffect(icon, '▶'));
         }
-    }
-
-    return sidebarNavResult.chain(maybeSidebarNav => {
-        if (maybeSidebarNav.type === 'Nothing') {
-            if (attempt < maxAttempts) {
-                return delay(100).then(() => attemptAccordionSetup(attempt + 1, maxAttempts));
+        
+        // Add click handler
+        const clickHandler = async (event) => {
+            if (event.target.tagName === 'A') return;
+            
+            event.preventDefault();
+            event.stopPropagation();
+            
+            const isHidden = content.classList.contains(config.hiddenClass);
+            
+            if (isHidden) {
+                await executeEffect(removeClassEffect(content, config.hiddenClass));
+                await executeEffect(setTextContentEffect(icon, '▼'));
             } else {
-                return logWarn(`[Accordion] Failed to find sidebar nav after ${maxAttempts} attempts`);
+                await executeEffect(addClassEffect(content, config.hiddenClass));
+                await executeEffect(setTextContentEffect(icon, '▶'));
+            }
+        };
+        
+        await executeEffect(addEventListenerEffect(header, 'click', clickHandler));
+    }
+};
+
+// Pure sidebar active link setup using effects
+export const setupSidebarActiveLinkEffect = () =>
+    createAsyncEffect(async () => {
+        await executeEffect(logEffect('Initializing sidebar active link', 'info'));
+        
+        const currentPath = window.location.pathname;
+        const linksResult = await executeEffect(queryAllEffect('#sidebar-placeholder a'));
+        const config = createSidebarConfig();
+        
+        for (const link of linksResult) {
+            const href = link.getAttribute('href');
+            
+            if (href && currentPath.endsWith(href)) {
+                // Add active classes
+                for (const className of config.activeClasses) {
+                    await executeEffect(addClassEffect(link, className));
+                }
+                
+                // Remove inactive classes
+                for (const className of config.inactiveClasses) {
+                    await executeEffect(removeClassEffect(link, className));
+                }
             }
         }
-
-        const sidebarNav = maybeSidebarNav.value;
-        logInfo("[Accordion] Found sidebar nav");
-
-        return pipe(
-            () => findAccordionSections(sidebarNav),
-            (sectionsResult) => {
-                if (sectionsResult.type === 'Left') {
-                    return sectionsResult;
-                }
-
-                const sections = sectionsResult.value;
-                logInfo(`[Accordion] Found ${sections.length} valid sections`);
-
-                return pipe(
-                    () => setupAccordionSections(sections),
-                    () => setupNestedSectionsEffect(),
-                    () => {
-                        logInfo("[Accordion] Setup complete");
-                        return Either.Right(sections);
-                    }
-                );
-            }
-        );
+        
+        return linksResult;
     });
-};
 
-// Pure function to create sidebar accordion effect
-export const createSidebarAccordionEffect = () => {
-    return pipe(
-        () => logInfo("[UI Setup] Initializing sidebar accordion."),
-        () => attemptAccordionSetup()
-    );
-};
-
-// Pure function to setup nested sections
-const setupNestedSectionsEffect = () => {
-    return pipe(
-        () => logInfo("[Nested Accordion] Setting up nested sections"),
-        () => queryAll('.nested-section-header'),
-        (headersResult) => {
-            if (headersResult.type === 'Left') {
-                return headersResult;
+// Pure mobile sidebar setup using effects
+export const setupMobileSidebarEffect = () =>
+    createAsyncEffect(async () => {
+        await executeEffect(logEffect('Initializing mobile sidebar', 'info'));
+        
+        const config = createSidebarConfig();
+        
+        const closeSidebar = async () => {
+            const sidebarResult = await executeEffect(queryEffect(config.sidebarSelector));
+            const overlayResult = await executeEffect(queryEffect(config.overlaySelector));
+            
+            if (sidebarResult.type === 'Just') {
+                await executeEffect(addClassEffect(sidebarResult.value, '-translate-x-full'));
             }
+            if (overlayResult.type === 'Just') {
+                await executeEffect(addClassEffect(overlayResult.value, config.hiddenClass));
+            }
+        };
+        
+        const openSidebar = async () => {
+            const sidebarResult = await executeEffect(queryEffect(config.sidebarSelector));
+            const overlayResult = await executeEffect(queryEffect(config.overlaySelector));
+            
+            if (sidebarResult.type === 'Just') {
+                await executeEffect(removeClassEffect(sidebarResult.value, '-translate-x-full'));
+            }
+            if (overlayResult.type === 'Just') {
+                await executeEffect(removeClassEffect(overlayResult.value, config.hiddenClass));
+            }
+        };
+        
+        // Setup event listeners
+        const toggleResult = await executeEffect(queryEffect(config.toggleSelector));
+        const overlayResult = await executeEffect(queryEffect(config.overlaySelector));
+        
+        if (toggleResult.type === 'Just') {
+            await executeEffect(addEventListenerEffect(toggleResult.value, 'click', openSidebar));
+        }
+        
+        if (overlayResult.type === 'Just') {
+            await executeEffect(addEventListenerEffect(overlayResult.value, 'click', closeSidebar));
+        }
+        
+        return { closeSidebar, openSidebar };
+    });
 
-            const headers = headersResult.value;
-            const currentPath = typeof window !== 'undefined' ? window.location.pathname : '';
-            const effects = [];
-
-            headers.forEach(header => {
-                const targetId = header.getAttribute('data-target');
-                const content = document.getElementById(targetId);
-                const icon = header.querySelector('.accordion-icon');
-                
-                if (!content || !icon) {
-                    logWarn(`[Nested Accordion] Missing content or icon for header:`, header);
-                    return;
-                }
-                
-                // Check if current page is within this nested section
-                const links = Array.from(content.querySelectorAll('a'));
-                const isActive = links.some(link => {
-                    const href = link.getAttribute('href');
-                    return href && (currentPath.endsWith(href) || currentPath.includes(href.replace('.html', '')));
-                });
-                
-                const headerLink = header.querySelector('a');
-                const isHeaderActive = headerLink && currentPath.includes(headerLink.getAttribute('href'));
-                
-                if (isActive || isHeaderActive) {
-                    logInfo(`[Nested Accordion] Auto-expanding nested section: ${targetId}`);
-                    effects.push(removeClass('hidden')(content));
-                    effects.push(setTextContent('▼')(icon));
-                } else {
-                    logInfo(`[Nested Accordion] Keeping nested section collapsed: ${targetId}`);
-                    effects.push(addClass('hidden')(content));
-                    effects.push(setTextContent('▶')(icon));
-                }
-                
-                // Add click handler for toggling
-                const nestedToggleHandler = (event) => {
-                    if (event.target.tagName === 'A') {
-                        logInfo(`[Nested Accordion] Clicked on link, not toggling nested section`);
-                        return Either.Right('Link clicked');
-                    }
-                    
-                    event.preventDefault();
-                    event.stopPropagation();
-                    
-                    const isHidden = content.classList.contains('hidden');
-                    logInfo(`[Nested Accordion] Toggling nested section ${targetId}, currently hidden: ${isHidden}`);
-                    
-                    if (isHidden) {
-                        return sequence([
-                            removeClass('hidden')(content),
-                            setTextContent('▼')(icon)
-                        ]);
-                    } else {
-                        return sequence([
-                            addClass('hidden')(content),
-                            setTextContent('▶')(icon)
-                        ]);
+// Pure copy buttons setup using effects
+export const setupCopyButtonsEffect = () =>
+    createAsyncEffect(async () => {
+        await executeEffect(logEffect('Initializing copy buttons', 'info'));
+        
+        const preElementsResult = await executeEffect(queryAllEffect('pre'));
+        const setupButtons = [];
+        
+        for (const pre of preElementsResult) {
+            const parent = pre.parentElement;
+            const button = parent ? parent.querySelector('button') : null;
+            
+            if (button) {
+                const clickHandler = async () => {
+                    try {
+                        await navigator.clipboard.writeText(pre.innerText);
+                        await executeEffect(setTextContentEffect(button, 'Copied!'));
+                        
+                        // Reset after 2 seconds
+                        await executeEffect(setTimeoutEffect(async () => {
+                            await executeEffect(setTextContentEffect(button, 'Copy'));
+                        }, 2000));
+                    } catch (error) {
+                        await executeEffect(logEffect('Failed to copy text', 'error'));
                     }
                 };
                 
-                effects.push(addListener('click', nestedToggleHandler)(header));
-            });
-
-            logInfo(`[Nested Accordion] Setup complete for ${headers.length} nested sections`);
-            return sequence(effects);
+                await executeEffect(addEventListenerEffect(button, 'click', clickHandler));
+                setupButtons.push(button);
+            }
         }
-    );
-};
+        
+        return setupButtons;
+    });
 
-// Pure function to create sidebar active link effect
-export const createSidebarActiveLinkEffect = () => {
-    return pipe(
-        () => logInfo("[UI Setup] Initializing sidebar active link."),
-        () => {
-            if (typeof window === 'undefined') {
-                return Either.Right([]);
-            }
+// ===========================================
+// COMPONENT ORCHESTRATION
+// ===========================================
 
-            const currentPath = window.location.pathname;
-            const sidebarLinks = Array.from(document.querySelectorAll('#sidebar-placeholder a'));
-            
-            const effects = sidebarLinks
-                .filter(link => currentPath.endsWith(link.getAttribute('href')))
-                .map(link => {
-                    return sequence([
-                        addClass('bg-blue-500')(link),
-                        addClass('text-white')(link),
-                        removeClass('dark:text-gray-300')(link)
-                    ]);
-                });
-
-            return sequence(effects);
+// Initialize all UI components using effects
+export const initializeUI = (basePath) =>
+    createAsyncEffect(async () => {
+        await executeEffect(logEffect('Starting UI initialization', 'info'));
+        
+        const effects = [
+            setupLogoEffect(basePath),
+            setupSyntaxHighlightingEffect(),
+            setupThemeSwitcherEffect(),
+            setupSidebarAccordionEffect(),
+            setupSidebarActiveLinkEffect(),
+            setupMobileSidebarEffect(),
+            setupCopyButtonsEffect()
+        ];
+        
+        try {
+            const results = await Promise.all(effects.map(executeEffect));
+            await executeEffect(logEffect('UI initialization complete', 'info'));
+            return results;
+        } catch (error) {
+            await executeEffect(logEffect('UI initialization failed', 'error'));
+            throw error;
         }
-    );
-};
+    });
 
-// Pure function to create mobile sidebar effects
-export const createMobileSidebarEffect = () => {
-    return pipe(
-        () => logInfo("[UI Setup] Initializing mobile sidebar."),
-        () => {
-            const sidebarResult = query('#sidebar-placeholder');
-            const overlayResult = query('#sidebar-overlay');
-
-            if (sidebarResult.type === 'Left' || overlayResult.type === 'Left') {
-                return logWarn("[Mobile Sidebar] Required elements not found");
-            }
-
-            const closeSidebar = () => {
-                return sequence([
-                    sidebarResult.chain(maybeSidebar => 
-                        maybeSidebar.type === 'Just' ? 
-                        addClass('-translate-x-full')(maybeSidebar.value) : 
-                        Either.Right(null)
-                    ),
-                    overlayResult.chain(maybeOverlay => 
-                        maybeOverlay.type === 'Just' ? 
-                        addClass('hidden')(maybeOverlay.value) : 
-                        Either.Right(null)
-                    )
-                ]);
-            };
-
-            const openSidebar = () => {
-                return sequence([
-                    sidebarResult.chain(maybeSidebar => 
-                        maybeSidebar.type === 'Just' ? 
-                        removeClass('-translate-x-full')(maybeSidebar.value) : 
-                        Either.Right(null)
-                    ),
-                    overlayResult.chain(maybeOverlay => 
-                        maybeOverlay.type === 'Just' ? 
-                        removeClass('hidden')(maybeOverlay.value) : 
-                        Either.Right(null)
-                    )
-                ]);
-            };
-
-            const toggleButtonResult = query('#sidebar-toggle');
-            const effects = [];
-
-            if (toggleButtonResult.type === 'Right' && toggleButtonResult.value.type === 'Just') {
-                effects.push(addListener('click', openSidebar)(toggleButtonResult.value.value));
-            }
-
-            if (overlayResult.type === 'Right' && overlayResult.value.type === 'Just') {
-                effects.push(addListener('click', closeSidebar)(overlayResult.value.value));
-            }
-
-            return sequence(effects).map(() => ({ closeSidebar, openSidebar }));
-        }
-    );
-};
-
-// Pure function to create copy buttons effect
-export const createCopyButtonsEffect = () => {
-    return pipe(
-        () => logInfo("[UI Setup] Initializing copy buttons."),
-        () => queryAll('pre'),
-        (preElementsResult) => {
-            if (preElementsResult.type === 'Left') {
-                return preElementsResult;
-            }
-
-            const preElements = preElementsResult.value;
-            const effects = [];
-
-            preElements.forEach(pre => {
-                const parent = pre.parentElement;
-                const button = parent ? parent.querySelector('button') : null;
-                
-                if (button) {
-                    const copyHandler = async () => {
-                        try {
-                            await navigator.clipboard.writeText(pre.innerText);
-                            setTextContent('Copied!')(button);
-                            setTimeout(() => {
-                                setTextContent('Copy')(button);
-                            }, 2000);
-                        } catch (error) {
-                            logError('Failed to copy text:', error);
-                        }
-                    };
-
-                    effects.push(addListener('click', copyHandler)(button));
-                }
-            });
-
-            return sequence(effects);
-        }
-    );
-};
-
-// Pure function to setup all render effects
-export const setupRenderEffects = (basePath) => {
-    const effects = [
-        createLogoSetupEffect(basePath),
-        createSyntaxHighlightingEffect(),
-        createThemeSwitcherEffect(),
-        createSidebarAccordionEffect(),
-        createSidebarActiveLinkEffect(),
-        createMobileSidebarEffect(),
-        createCopyButtonsEffect()
-    ];
-
-    return parallel(effects);
-};
+// Export pure utility functions
+export const UI_UTILS = Object.freeze({
+    createUIState,
+    updateTheme,
+    toggleSidebar,
+    setActiveSection,
+    toggleSection,
+    calculateActiveSection,
+    extractSectionData,
+    createUIUpdateEffects
+});

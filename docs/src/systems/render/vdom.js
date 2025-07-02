@@ -1,418 +1,566 @@
 // === FlexNet Virtual DOM System ===
-// Pure functional virtual DOM implementation with diffing and patching
+// Pure functional Virtual DOM implementation
 
 import Maybe from '../../core/types/maybe.js';
 import Either from '../../core/types/either.js';
 import Result from '../../core/types/result.js';
-import { compose, pipe } from '../../core/functions/composition.js';
+import { compose, pipe, curry } from '../../core/functions/composition.js';
 
-// Virtual DOM node types
-export const VNodeType = {
-    ELEMENT: 'ELEMENT',
-    TEXT: 'TEXT',
-    FRAGMENT: 'FRAGMENT',
-    COMPONENT: 'COMPONENT'
-};
+// Virtual Node types
+export const VNodeType = Object.freeze({
+    ELEMENT: 'element',
+    TEXT: 'text',
+    COMPONENT: 'component',
+    FRAGMENT: 'fragment'
+});
 
-// Create virtual DOM node - pure function
-export const createVNode = (type, props = {}, children = []) => {
-    // Validate node type
-    if (!type) {
-        return Either.Left('VNode type is required');
-    }
+// Create virtual element node
+export const createElement = (type, props = {}, ...children) =>
+    Result.fromTry(() => {
+        const flatChildren = children
+            .flat(Infinity)
+            .filter(child => child !== null && child !== undefined)
+            .map(child => 
+                typeof child === 'string' || typeof child === 'number'
+                    ? createTextNode(String(child))
+                    : child
+            );
 
-    // Determine node type
-    let nodeType;
-    if (typeof type === 'string') {
-        nodeType = VNodeType.ELEMENT;
-    } else if (typeof type === 'function') {
-        nodeType = VNodeType.COMPONENT;
-    } else if (type === 'FRAGMENT') {
-        nodeType = VNodeType.FRAGMENT;
-    } else {
-        return Either.Left('Invalid VNode type');
-    }
-
-    // Normalize children
-    const normalizedChildren = Array.isArray(children) ? children.flat() : [children];
-    const validChildren = normalizedChildren.filter(child => child != null);
-
-    const vnode = Object.freeze({
-        type,
-        nodeType,
-        props: Object.freeze({ ...props }),
-        children: Object.freeze(validChildren),
-        key: props.key || null,
-        ref: props.ref || null
+        return Object.freeze({
+            type,
+            props: Object.freeze({ ...props }),
+            children: Object.freeze(flatChildren),
+            nodeType: VNodeType.ELEMENT,
+            key: props.key || null,
+            _isVNode: true
+        });
     });
 
-    return Either.Right(vnode);
-};
-
-// Create text virtual node
-export const createTextVNode = (text) => {
-    if (typeof text !== 'string' && typeof text !== 'number') {
-        return Either.Left('Text node must be string or number');
-    }
-
-    const vnode = Object.freeze({
-        type: 'TEXT',
+// Create virtual text node
+export const createTextNode = (text) =>
+    Object.freeze({
+        type: 'text',
+        text: String(text || ''),
         nodeType: VNodeType.TEXT,
-        props: Object.freeze({}),
-        children: Object.freeze([]),
-        text: String(text),
-        key: null,
-        ref: null
+        _isVNode: true
     });
 
-    return Either.Right(vnode);
-};
+// Create virtual component node
+export const createComponent = (Component, props = {}, ...children) =>
+    Result.fromTry(() => {
+        if (typeof Component !== 'function') {
+            throw new Error('Component must be a function');
+        }
 
-// Create fragment virtual node
-export const createFragment = (children = []) => {
-    const normalizedChildren = Array.isArray(children) ? children.flat() : [children];
-    
-    const vnode = Object.freeze({
-        type: 'FRAGMENT',
+        return Object.freeze({
+            type: Component,
+            props: Object.freeze({ 
+                ...props,
+                children: children.length > 0 ? Object.freeze(children) : undefined
+            }),
+            nodeType: VNodeType.COMPONENT,
+            key: props.key || null,
+            _isVNode: true
+        });
+    });
+
+// Create virtual fragment
+export const createFragment = (...children) =>
+    Object.freeze({
+        type: 'fragment',
+        children: Object.freeze(children.flat(Infinity)),
         nodeType: VNodeType.FRAGMENT,
-        props: Object.freeze({}),
-        children: Object.freeze(normalizedChildren),
-        key: null,
-        ref: null
+        _isVNode: true
     });
 
-    return Either.Right(vnode);
-};
+// Virtual DOM validation
+export const isVNode = (node) =>
+    Maybe.fromNullable(node)
+        .map(n => Boolean(n._isVNode))
+        .getOrElse(false);
+
+export const getNodeType = (node) =>
+    Maybe.fromNullable(node)
+        .chain(n => isVNode(n) ? Maybe.Just(n.nodeType) : Maybe.Nothing());
+
+// Virtual DOM tree traversal
+export const walkVTree = curry((visitor, vnode) => {
+    if (!isVNode(vnode)) {
+        return vnode;
+    }
+
+    // Visit current node
+    const visited = visitor(vnode);
+    
+    // Recursively walk children
+    if (visited.children && Array.isArray(visited.children)) {
+        const newChildren = visited.children.map(child => 
+            isVNode(child) ? walkVTree(visitor, child) : child
+        );
+        
+        return Object.freeze({
+            ...visited,
+            children: Object.freeze(newChildren)
+        });
+    }
+
+    return visited;
+});
+
+// Map over virtual DOM tree
+export const mapVTree = curry((mapper, vnode) =>
+    walkVTree(mapper, vnode)
+);
+
+// Filter virtual DOM tree
+export const filterVTree = curry((predicate, vnode) => {
+    if (!isVNode(vnode)) {
+        return vnode;
+    }
+
+    if (!predicate(vnode)) {
+        return null;
+    }
+
+    if (vnode.children && Array.isArray(vnode.children)) {
+        const filteredChildren = vnode.children
+            .map(child => filterVTree(predicate, child))
+            .filter(child => child !== null);
+
+        return Object.freeze({
+            ...vnode,
+            children: Object.freeze(filteredChildren)
+        });
+    }
+
+    return vnode;
+});
 
 // Virtual DOM diffing algorithm
 export const diff = (oldVNode, newVNode) => {
     const patches = [];
 
-    const diffNodes = (oldNode, newNode, index = 0) => {
-        // Case 1: New node doesn't exist (removal)
-        if (!newNode) {
-            patches.push({
-                type: 'REMOVE',
-                index
-            });
-            return patches;
+    // Helper function to create patches
+    const createPatch = (type, path, data) => Object.freeze({
+        type,
+        path: Object.freeze([...path]),
+        data: Object.freeze(data),
+        timestamp: Date.now()
+    });
+
+    // Recursive diff function
+    const diffNodes = (oldNode, newNode, path = []) => {
+        // Both null/undefined - no change
+        if (!oldNode && !newNode) {
+            return;
         }
 
-        // Case 2: Old node doesn't exist (addition)
-        if (!oldNode) {
-            patches.push({
-                type: 'CREATE',
-                index,
-                vnode: newNode
-            });
-            return patches;
+        // New node added
+        if (!oldNode && newNode) {
+            patches.push(createPatch('CREATE', path, { node: newNode }));
+            return;
         }
 
-        // Case 3: Node type changed (replacement)
-        if (oldNode.type !== newNode.type || oldNode.nodeType !== newNode.nodeType) {
-            patches.push({
-                type: 'REPLACE',
-                index,
-                vnode: newNode
-            });
-            return patches;
+        // Node removed
+        if (oldNode && !newNode) {
+            patches.push(createPatch('REMOVE', path, {}));
+            return;
         }
 
-        // Case 4: Text node update
-        if (newNode.nodeType === VNodeType.TEXT) {
-            if (oldNode.text !== newNode.text) {
-                patches.push({
-                    type: 'TEXT',
-                    index,
-                    text: newNode.text
+        // Different node types - replace
+        if (oldNode.nodeType !== newNode.nodeType || oldNode.type !== newNode.type) {
+            patches.push(createPatch('REPLACE', path, { node: newNode }));
+            return;
+        }
+
+        // Text node content changed
+        if (oldNode.nodeType === VNodeType.TEXT && oldNode.text !== newNode.text) {
+            patches.push(createPatch('TEXT', path, { text: newNode.text }));
+            return;
+        }
+
+        // Element or component props changed
+        if (oldNode.nodeType === VNodeType.ELEMENT || oldNode.nodeType === VNodeType.COMPONENT) {
+            const propsDiff = diffProps(oldNode.props || {}, newNode.props || {});
+            if (propsDiff.length > 0) {
+                patches.push(createPatch('PROPS', path, { props: propsDiff }));
+            }
+        }
+
+        // Diff children
+        if (oldNode.children || newNode.children) {
+            diffChildren(
+                oldNode.children || [],
+                newNode.children || [],
+                path
+            );
+        }
+    };
+
+    // Diff properties
+    const diffProps = (oldProps, newProps) => {
+        const propChanges = [];
+        const allKeys = new Set([...Object.keys(oldProps), ...Object.keys(newProps)]);
+
+        allKeys.forEach(key => {
+            if (key === 'children') return; // Handle children separately
+
+            const oldValue = oldProps[key];
+            const newValue = newProps[key];
+
+            if (oldValue !== newValue) {
+                propChanges.push({
+                    key,
+                    oldValue,
+                    newValue,
+                    type: oldValue === undefined ? 'add' : 
+                          newValue === undefined ? 'remove' : 'update'
                 });
             }
-            return patches;
-        }
-
-        // Case 5: Props update
-        const propsDiff = diffProps(oldNode.props, newNode.props);
-        if (propsDiff.length > 0) {
-            patches.push({
-                type: 'PROPS',
-                index,
-                props: propsDiff
-            });
-        }
-
-        // Case 6: Children diff
-        diffChildren(oldNode.children, newNode.children, index, patches);
-
-        return patches;
-    };
-
-    return Either.Right(diffNodes(oldVNode, newVNode));
-};
-
-// Diff props between old and new vnodes
-const diffProps = (oldProps, newProps) => {
-    const patches = [];
-    const allKeys = new Set([...Object.keys(oldProps), ...Object.keys(newProps)]);
-
-    for (const key of allKeys) {
-        const oldValue = oldProps[key];
-        const newValue = newProps[key];
-
-        if (oldValue !== newValue) {
-            if (newValue === undefined) {
-                patches.push({ type: 'REMOVE_PROP', key });
-            } else {
-                patches.push({ type: 'SET_PROP', key, value: newValue });
-            }
-        }
-    }
-
-    return patches;
-};
-
-// Diff children arrays
-const diffChildren = (oldChildren, newChildren, parentIndex, patches) => {
-    const oldLength = oldChildren.length;
-    const newLength = newChildren.length;
-    const maxLength = Math.max(oldLength, newLength);
-
-    for (let i = 0; i < maxLength; i++) {
-        const oldChild = oldChildren[i];
-        const newChild = newChildren[i];
-        const childIndex = parentIndex * 1000 + i; // Simple indexing strategy
-
-        diff(oldChild, newChild).fold(
-            error => console.error('Child diff error:', error),
-            childPatches => patches.push(...childPatches)
-        );
-    }
-};
-
-// Apply patches to real DOM - this isolates side effects
-export const patch = (rootElement, patches) => {
-    if (!rootElement) {
-        return Either.Left('Root element is required for patching');
-    }
-
-    if (!Array.isArray(patches)) {
-        return Either.Left('Patches must be an array');
-    }
-
-    const applyPatch = (element, patchItem) => {
-        return Result.fromTry(() => {
-            switch (patchItem.type) {
-                case 'CREATE':
-                    const newElement = render(patchItem.vnode);
-                    if (newElement.type === 'Right') {
-                        element.appendChild(newElement.value);
-                    }
-                    break;
-
-                case 'REMOVE':
-                    if (element.parentNode) {
-                        element.parentNode.removeChild(element);
-                    }
-                    break;
-
-                case 'REPLACE':
-                    const replacementElement = render(patchItem.vnode);
-                    if (replacementElement.type === 'Right' && element.parentNode) {
-                        element.parentNode.replaceChild(replacementElement.value, element);
-                    }
-                    break;
-
-                case 'TEXT':
-                    element.textContent = patchItem.text;
-                    break;
-
-                case 'PROPS':
-                    patchItem.props.forEach(propPatch => {
-                        if (propPatch.type === 'SET_PROP') {
-                            element.setAttribute(propPatch.key, propPatch.value);
-                        } else if (propPatch.type === 'REMOVE_PROP') {
-                            element.removeAttribute(propPatch.key);
-                        }
-                    });
-                    break;
-
-                default:
-                    throw new Error(`Unknown patch type: ${patchItem.type}`);
-            }
         });
+
+        return propChanges;
     };
 
-    const results = patches.map(patchItem => applyPatch(rootElement, patchItem));
-    const errors = results.filter(result => result.type === 'Error');
+    // Diff children arrays
+    const diffChildren = (oldChildren, newChildren, path) => {
+        const maxLength = Math.max(oldChildren.length, newChildren.length);
 
-    if (errors.length > 0) {
-        return Either.Left(`Patch errors: ${errors.map(e => e.error.message).join(', ')}`);
-    }
+        for (let i = 0; i < maxLength; i++) {
+            const oldChild = oldChildren[i];
+            const newChild = newChildren[i];
+            const childPath = [...path, 'children', i];
 
-    return Either.Right(rootElement);
-};
-
-// Render virtual DOM to real DOM - isolates side effects
-export const render = (vnode) => {
-    if (!vnode) {
-        return Either.Left('VNode is required for rendering');
-    }
-
-    const renderNode = (node) => {
-        return Result.fromTry(() => {
-            switch (node.nodeType) {
-                case VNodeType.TEXT:
-                    return document.createTextNode(node.text);
-
-                case VNodeType.ELEMENT:
-                    const element = document.createElement(node.type);
-                    
-                    // Set props
-                    Object.entries(node.props).forEach(([key, value]) => {
-                        if (key.startsWith('on') && typeof value === 'function') {
-                            // Event listener
-                            const eventName = key.slice(2).toLowerCase();
-                            element.addEventListener(eventName, value);
-                        } else if (key !== 'children' && key !== 'key' && key !== 'ref') {
-                            element.setAttribute(key, value);
-                        }
-                    });
-
-                    // Render children
-                    node.children.forEach(child => {
-                        const childResult = render(child);
-                        if (childResult.type === 'Right') {
-                            element.appendChild(childResult.value);
-                        }
-                    });
-
-                    return element;
-
-                case VNodeType.FRAGMENT:
-                    const fragment = document.createDocumentFragment();
-                    
-                    node.children.forEach(child => {
-                        const childResult = render(child);
-                        if (childResult.type === 'Right') {
-                            fragment.appendChild(childResult.value);
-                        }
-                    });
-
-                    return fragment;
-
-                case VNodeType.COMPONENT:
-                    // For functional components
-                    if (typeof node.type === 'function') {
-                        const componentResult = node.type(node.props);
-                        return render(componentResult);
-                    }
-                    throw new Error('Invalid component type');
-
-                default:
-                    throw new Error(`Unknown node type: ${node.nodeType}`);
-            }
-        });
+            diffNodes(oldChild, newChild, childPath);
+        }
     };
 
-    return renderNode(vnode);
+    // Start diffing from root
+    diffNodes(oldVNode, newVNode);
+
+    return Object.freeze(patches);
 };
 
-// Virtual DOM tree traversal
-export const traverse = (visitor) => (vnode) => {
-    if (!vnode) {
-        return Either.Right(null);
+// Apply patches to virtual DOM
+export const applyPatches = curry((patches, vnode) => {
+    if (!patches.length) {
+        return vnode;
     }
 
-    const visitNode = (node) => {
-        // Visit current node
-        const visitResult = Result.fromTry(() => visitor(node));
+    let result = vnode;
+
+    patches.forEach(patch => {
+        result = applyPatch(patch, result);
+    });
+
+    return result;
+});
+
+// Apply single patch
+const applyPatch = (patch, vnode) => {
+    const { type, path, data } = patch;
+
+    // Helper to navigate to patch location
+    const navigateToPath = (node, pathArray) => {
+        if (pathArray.length === 0) {
+            return node;
+        }
+
+        const [head, ...tail] = pathArray;
         
-        if (visitResult.type === 'Error') {
-            return Either.Left(`Visitor error: ${visitResult.error.message}`);
-        }
-
-        // Visit children
-        if (node.children && node.children.length > 0) {
-            const childResults = node.children.map(child => traverse(visitor)(child));
-            const childErrors = childResults.filter(result => result.type === 'Left');
+        if (head === 'children' && tail.length > 0) {
+            const index = parseInt(tail[0]);
+            const remainingPath = tail.slice(1);
             
-            if (childErrors.length > 0) {
-                return childErrors[0]; // Return first error
+            if (node.children && node.children[index]) {
+                const updatedChild = navigateToPath(node.children[index], remainingPath);
+                const newChildren = [...node.children];
+                newChildren[index] = updatedChild;
+                
+                return Object.freeze({
+                    ...node,
+                    children: Object.freeze(newChildren)
+                });
             }
         }
 
-        return Either.Right(visitResult.value);
+        return node;
     };
 
-    return visitNode(vnode);
+    // Helper to update at path
+    const updateAtPath = (node, pathArray, updater) => {
+        if (pathArray.length === 0) {
+            return updater(node);
+        }
+
+        const [head, ...tail] = pathArray;
+
+        if (head === 'children' && tail.length > 0) {
+            const index = parseInt(tail[0]);
+            const remainingPath = tail.slice(1);
+            
+            if (node.children) {
+                const newChildren = [...node.children];
+                
+                if (remainingPath.length === 0) {
+                    // Direct child operation
+                    newChildren[index] = updater(newChildren[index]);
+                } else {
+                    // Recursive operation
+                    newChildren[index] = updateAtPath(newChildren[index], remainingPath, updater);
+                }
+                
+                return Object.freeze({
+                    ...node,
+                    children: Object.freeze(newChildren)
+                });
+            }
+        }
+
+        return node;
+    };
+
+    switch (type) {
+        case 'CREATE':
+            return updateAtPath(vnode, path, () => data.node);
+
+        case 'REMOVE':
+            return updateAtPath(vnode, path, () => null);
+
+        case 'REPLACE':
+            return updateAtPath(vnode, path, () => data.node);
+
+        case 'TEXT':
+            return updateAtPath(vnode, path, node => Object.freeze({
+                ...node,
+                text: data.text
+            }));
+
+        case 'PROPS':
+            return updateAtPath(vnode, path, node => {
+                const newProps = { ...node.props };
+                
+                data.props.forEach(propChange => {
+                    if (propChange.type === 'remove') {
+                        delete newProps[propChange.key];
+                    } else {
+                        newProps[propChange.key] = propChange.newValue;
+                    }
+                });
+
+                return Object.freeze({
+                    ...node,
+                    props: Object.freeze(newProps)
+                });
+            });
+
+        default:
+            console.warn('Unknown patch type:', type);
+            return vnode;
+    }
 };
 
-// Find nodes by predicate
-export const findNodes = (predicate) => (vnode) => {
-    const found = [];
-    
-    const finder = (node) => {
-        const predicateResult = Result.fromTry(() => predicate(node));
+// Virtual DOM to real DOM conversion
+export const render = (vnode, container) =>
+    Result.fromTry(() => {
+        if (!container || !container.nodeType) {
+            throw new Error('Invalid container element');
+        }
+
+        const domNode = createDOMNode(vnode);
+        container.innerHTML = '';
+        container.appendChild(domNode);
         
-        if (predicateResult.type === 'Ok' && predicateResult.value) {
-            found.push(node);
-        }
+        return container;
+    });
 
-        return Either.Right(node);
-    };
+// Create real DOM node from virtual node
+const createDOMNode = (vnode) => {
+    if (!isVNode(vnode)) {
+        return document.createTextNode(String(vnode || ''));
+    }
 
-    const result = traverse(finder)(vnode);
+    switch (vnode.nodeType) {
+        case VNodeType.TEXT:
+            return document.createTextNode(vnode.text);
+
+        case VNodeType.ELEMENT:
+            const element = document.createElement(vnode.type);
+            
+            // Set properties
+            if (vnode.props) {
+                Object.entries(vnode.props).forEach(([key, value]) => {
+                    if (key === 'children') return;
+                    
+                    if (key.startsWith('on') && typeof value === 'function') {
+                        // Event listener
+                        const eventName = key.slice(2).toLowerCase();
+                        element.addEventListener(eventName, value);
+                    } else if (key === 'className') {
+                        element.className = value;
+                    } else if (key === 'style' && typeof value === 'object') {
+                        Object.assign(element.style, value);
+                    } else {
+                        element.setAttribute(key, value);
+                    }
+                });
+            }
+            
+            // Append children
+            if (vnode.children) {
+                vnode.children.forEach(child => {
+                    const childNode = createDOMNode(child);
+                    element.appendChild(childNode);
+                });
+            }
+            
+            return element;
+
+        case VNodeType.COMPONENT:
+            // Render component
+            const componentResult = vnode.type(vnode.props || {});
+            return createDOMNode(componentResult);
+
+        case VNodeType.FRAGMENT:
+            const fragment = document.createDocumentFragment();
+            
+            if (vnode.children) {
+                vnode.children.forEach(child => {
+                    const childNode = createDOMNode(child);
+                    fragment.appendChild(childNode);
+                });
+            }
+            
+            return fragment;
+
+        default:
+            return document.createTextNode('');
+    }
+};
+
+// Update real DOM with patches
+export const updateDOM = curry((patches, domNode) =>
+    Result.fromTry(() => {
+        patches.forEach(patch => {
+            applyDOMPatch(patch, domNode);
+        });
+        
+        return domNode;
+    })
+);
+
+// Apply single DOM patch
+const applyDOMPatch = (patch, rootNode) => {
+    const { type, path, data } = patch;
     
-    if (result.type === 'Left') {
-        return result;
+    // Navigate to target DOM node
+    const targetNode = navigateDOMPath(rootNode, path);
+    if (!targetNode) return;
+
+    switch (type) {
+        case 'CREATE':
+            const newNode = createDOMNode(data.node);
+            targetNode.appendChild(newNode);
+            break;
+
+        case 'REMOVE':
+            if (targetNode.parentNode) {
+                targetNode.parentNode.removeChild(targetNode);
+            }
+            break;
+
+        case 'REPLACE':
+            const replacementNode = createDOMNode(data.node);
+            if (targetNode.parentNode) {
+                targetNode.parentNode.replaceChild(replacementNode, targetNode);
+            }
+            break;
+
+        case 'TEXT':
+            if (targetNode.nodeType === Node.TEXT_NODE) {
+                targetNode.textContent = data.text;
+            }
+            break;
+
+        case 'PROPS':
+            if (targetNode.nodeType === Node.ELEMENT_NODE) {
+                data.props.forEach(propChange => {
+                    if (propChange.type === 'remove') {
+                        targetNode.removeAttribute(propChange.key);
+                    } else {
+                        targetNode.setAttribute(propChange.key, propChange.newValue);
+                    }
+                });
+            }
+            break;
+    }
+};
+
+// Navigate DOM tree using path
+const navigateDOMPath = (node, path) => {
+    let current = node;
+    
+    for (let i = 0; i < path.length; i++) {
+        const segment = path[i];
+        
+        if (segment === 'children' && i + 1 < path.length) {
+            const index = parseInt(path[i + 1]);
+            current = current.childNodes[index];
+            i++; // Skip the index segment
+        }
+    }
+    
+    return current;
+};
+
+// Virtual DOM utilities
+export const cloneVNode = (vnode) =>
+    Maybe.fromNullable(vnode)
+        .filter(isVNode)
+        .map(node => Object.freeze({
+            ...node,
+            props: node.props ? Object.freeze({ ...node.props }) : undefined,
+            children: node.children ? Object.freeze([...node.children]) : undefined
+        }))
+        .getOrElse(vnode);
+
+export const findVNode = curry((predicate, vnode) => {
+    if (!isVNode(vnode)) {
+        return Maybe.Nothing();
     }
 
-    return Either.Right(found);
-};
-
-// Clone virtual node with modifications
-export const cloneVNode = (vnode, newProps = {}, newChildren = null) => {
-    if (!vnode) {
-        return Either.Left('VNode is required for cloning');
+    if (predicate(vnode)) {
+        return Maybe.Just(vnode);
     }
 
-    const mergedProps = { ...vnode.props, ...newProps };
-    const finalChildren = newChildren !== null ? newChildren : vnode.children;
-
-    return createVNode(vnode.type, mergedProps, finalChildren);
-};
-
-// Validate virtual DOM tree
-export const validateVTree = (vnode) => {
-    const validator = (node) => {
-        if (!node.type || !node.nodeType) {
-            throw new Error('VNode missing required properties');
+    if (vnode.children) {
+        for (const child of vnode.children) {
+            const found = findVNode(predicate, child);
+            if (found.isSome()) {
+                return found;
+            }
         }
+    }
 
-        if (node.nodeType === VNodeType.TEXT && !('text' in node)) {
-            throw new Error('Text VNode missing text property');
-        }
+    return Maybe.Nothing();
+});
 
-        if (!node.props || !Array.isArray(node.children)) {
-            throw new Error('VNode missing props or children');
-        }
-
-        return Either.Right(node);
-    };
-
-    return traverse(validator)(vnode);
-};
-
-// Export VDOM utilities
-export const VDOMUtils = {
-    createVNode,
-    createTextVNode,
+// Export Virtual DOM utilities
+export const VDOM_UTILS = Object.freeze({
+    createElement,
+    createTextNode,
+    createComponent,
     createFragment,
+    isVNode,
+    getNodeType,
+    walkVTree,
+    mapVTree,
+    filterVTree,
     diff,
-    patch,
+    applyPatches,
     render,
-    traverse,
-    findNodes,
+    updateDOM,
     cloneVNode,
-    validateVTree,
+    findVNode,
     VNodeType
-};
+});

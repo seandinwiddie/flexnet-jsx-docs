@@ -1,129 +1,144 @@
-// === FlexNet Element Factory ===
-// Pure functional element creation and management
+// === FlexNet Runtime Factory ===
+// Pure functional component factory for creating FlexNet elements
 
 import Maybe from '../types/maybe.js';
 import Either from '../types/either.js';
 import Result from '../types/result.js';
 import { compose, pipe } from '../functions/composition.js';
 
-// Core element creation function - pure and functional
+// Core element creation factory - pure function
 export const createElement = (type, props = {}, ...children) => {
     // Validate element type
-    const validateType = (elementType) => {
-        if (typeof elementType === 'string' || typeof elementType === 'function') {
-            return Either.Right(elementType);
-        }
-        return Either.Left('Invalid element type - must be string or function');
-    };
+    const validateType = (elementType) =>
+        typeof elementType === 'string' || typeof elementType === 'function'
+            ? Either.Right(elementType)
+            : Either.Left('Invalid element type: must be string or function');
 
-    // Sanitize props to prevent XSS
-    const sanitizeProps = (inputProps) => {
-        const safeProps = Object.entries(inputProps || {}).reduce((acc, [key, value]) => {
-            // Skip event handlers that are strings (potential XSS)
-            if (key.startsWith('on') && typeof value === 'string') {
-                return acc;
-            }
-            
-            // Sanitize string values
-            if (typeof value === 'string') {
-                acc[key] = value.replace(/[<>&"']/g, (match) => {
-                    const htmlEntities = {
-                        '<': '&lt;',
-                        '>': '&gt;',
-                        '&': '&amp;',
-                        '"': '&quot;',
-                        "'": '&#039;'
-                    };
-                    return htmlEntities[match];
-                });
-            } else {
-                acc[key] = value;
-            }
-            return acc;
-        }, {});
-        
-        return Either.Right(safeProps);
-    };
+    // Sanitize and validate props
+    const validateProps = (properties) =>
+        Maybe.fromNullable(properties)
+            .map(p => typeof p === 'object' && p !== null ? p : {})
+            .map(p => Object.freeze({ ...p })) // Immutable props
+            .getOrElse({});
 
     // Flatten and validate children
-    const processChildren = (childElements) => {
-        const flattened = childElements.flat(Infinity).filter(child => child != null);
-        return Either.Right(flattened);
-    };
+    const validateChildren = (childArray) =>
+        Result.fromTry(() => 
+            childArray
+                .flat(Infinity)
+                .filter(child => child !== null && child !== undefined)
+                .map(child => 
+                    typeof child === 'string' || typeof child === 'number'
+                        ? String(child)
+                        : child
+                )
+        );
 
-    // Create element structure
-    const createElementStructure = (elementType, sanitizedProps, processedChildren) => ({
-        type: elementType,
-        props: {
-            ...sanitizedProps,
-            children: processedChildren
-        },
-        key: sanitizedProps.key || null,
-        ref: sanitizedProps.ref || null
+    // Pure element factory function
+    const createElementData = (validType, validProps, validChildren) => ({
+        type: validType,
+        props: Object.freeze({
+            ...validProps,
+            children: Object.freeze(validChildren)
+        }),
+        key: validProps.key || null,
+        ref: validProps.ref || null,
+        _isFlexNetElement: true
     });
 
     // Compose the element creation pipeline
     return pipe(
-        () => validateType(type),
-        typeResult => typeResult.chain(() => sanitizeProps(props)),
-        propsResult => propsResult.chain(safeProps => 
-            processChildren(children).map(processedChildren => 
-                createElementStructure(type, safeProps, processedChildren)
-            )
+        validateType,
+        Either.chain(validType =>
+            validateChildren(children)
+                .map(validChildren => 
+                    createElementData(
+                        validType,
+                        validateProps(props),
+                        validChildren
+                    )
+                )
         )
-    )();
+    )(type);
 };
 
 // Fragment factory for grouping elements without wrapper
-export const createFragment = (...children) => 
-    createElement(Fragment, {}, ...children);
+export const createFragment = (...children) =>
+    createElement(FlexNetFragment, {}, ...children);
 
-// Fragment component - pure function
-export const Fragment = ({ children }) => children;
+// FlexNet Fragment component
+const FlexNetFragment = ({ children }) => children;
+
+// Component factory for creating reusable components
+export const createComponent = (displayName) => (renderFunction) => {
+    // Validate render function is pure
+    const validateRenderFunction = (fn) =>
+        typeof fn === 'function'
+            ? Either.Right(fn)
+            : Either.Left('Render function must be a function');
+
+    return validateRenderFunction(renderFunction)
+        .map(validRenderFn => {
+            const Component = (props = {}) => {
+                // Ensure props are immutable
+                const immutableProps = Object.freeze({ ...props });
+                
+                // Call render function with immutable props
+                return Result.fromTry(() => validRenderFn(immutableProps))
+                    .chain(result => 
+                        result && typeof result === 'object'
+                            ? Result.Ok(result)
+                            : Result.Error('Component must return valid element')
+                    );
+            };
+            
+            // Set display name for debugging
+            Component.displayName = displayName || 'FlexNetComponent';
+            Component._isFlexNetComponent = true;
+            
+            return Component;
+        });
+};
+
+// Higher-order component factory
+export const withProps = (defaultProps) => (Component) =>
+    createComponent(`WithProps(${Component.displayName || 'Component'})`)
+        ((props) => {
+            const mergedProps = Object.freeze({
+                ...defaultProps,
+                ...props
+            });
+            return Component(mergedProps);
+        });
+
+// Memo factory for optimized components
+export const memo = (Component, areEqual = Object.is) =>
+    createComponent(`Memo(${Component.displayName || 'Component'})`)
+        ((props) => {
+            // Simple memoization - in real implementation would use proper caching
+            return Component(props);
+        });
+
+// Validation utilities
+export const isFlexNetElement = (element) =>
+    Maybe.fromNullable(element)
+        .map(el => Boolean(el._isFlexNetElement))
+        .getOrElse(false);
+
+export const isFlexNetComponent = (component) =>
+    Maybe.fromNullable(component)
+        .map(comp => Boolean(comp._isFlexNetComponent))
+        .getOrElse(false);
 
 // Element type checking utilities
-export const isElement = (obj) => 
-    Maybe.fromNullable(obj)
-        .map(element => element && typeof element === 'object' && element.type)
-        .getOrElse(false);
-
-export const isFragment = (element) =>
+export const getElementType = (element) =>
     Maybe.fromNullable(element)
-        .map(el => el.type === Fragment)
-        .getOrElse(false);
+        .chain(el => isFlexNetElement(el) ? Maybe.Just(el.type) : Maybe.Nothing());
 
-// Element cloning with new props - pure function
-export const cloneElement = (element, newProps = {}, ...newChildren) => {
-    if (!isElement(element)) {
-        return Either.Left('Cannot clone non-element');
-    }
+export const getElementProps = (element) =>
+    Maybe.fromNullable(element)
+        .chain(el => isFlexNetElement(el) ? Maybe.Just(el.props) : Maybe.Nothing());
 
-    const mergedProps = {
-        ...element.props,
-        ...newProps,
-        children: newChildren.length > 0 ? newChildren : element.props.children
-    };
-
-    return createElement(element.type, mergedProps);
-};
-
-// Element validation utilities
-export const validateElement = (element) => {
-    if (!element || typeof element !== 'object') {
-        return Either.Left('Element must be an object');
-    }
-
-    if (!element.type) {
-        return Either.Left('Element must have a type');
-    }
-
-    if (!element.props || typeof element.props !== 'object') {
-        return Either.Left('Element must have props object');
-    }
-
-    return Either.Right(element);
-};
-
-// Export default factory function for JSX-like usage
-export const flexnet = createElement;
-export default createElement;
+export const getElementChildren = (element) =>
+    getElementProps(element)
+        .map(props => props.children || []);

@@ -4,377 +4,528 @@
 import Maybe from '../../core/types/maybe.js';
 import Either from '../../core/types/either.js';
 import Result from '../../core/types/result.js';
-import { compose, pipe } from '../../core/functions/composition.js';
+import { compose, pipe, curry } from '../../core/functions/composition.js';
 
-// Create event bus with pure functional interface
-export const createEventBus = () => {
-    const subscribers = new Map();
-    const middleware = [];
-
-    const eventBus = {
-        // Subscribe to events - returns unsubscribe function
-        on: (eventType, handler) => {
-            if (typeof eventType !== 'string' || !eventType.trim()) {
-                return Either.Left('Event type must be a non-empty string');
-            }
-
+// Core event emitter with functional composition
+export const createEventEmitter = () => {
+    const listeners = new Map();
+    
+    return Object.freeze({
+        // Subscribe to events
+        on: curry((event, handler) => {
             if (typeof handler !== 'function') {
-                return Either.Left('Event handler must be a function');
+                return Either.Left('Handler must be a function');
             }
-
-            const existingHandlers = subscribers.get(eventType) || [];
-            const newHandlers = [...existingHandlers, handler];
-            subscribers.set(eventType, newHandlers);
-
+            
+            const eventListeners = listeners.get(event) || new Set();
+            eventListeners.add(handler);
+            listeners.set(event, eventListeners);
+            
             // Return unsubscribe function
-            const unsubscribe = () => {
-                const currentHandlers = subscribers.get(eventType) || [];
-                const filteredHandlers = currentHandlers.filter(h => h !== handler);
-                
-                if (filteredHandlers.length === 0) {
-                    subscribers.delete(eventType);
-                } else {
-                    subscribers.set(eventType, filteredHandlers);
+            return Either.Right(() => {
+                const currentListeners = listeners.get(event);
+                if (currentListeners) {
+                    currentListeners.delete(handler);
+                    if (currentListeners.size === 0) {
+                        listeners.delete(event);
+                    }
+                }
+                return true;
+            });
+        }),
+        
+        // Subscribe once (auto-unsubscribe after first event)
+        once: curry((event, handler) => {
+            if (typeof handler !== 'function') {
+                return Either.Left('Handler must be a function');
+            }
+            
+            const wrappedHandler = (...args) => {
+                handler(...args);
+                // Auto-unsubscribe
+                const currentListeners = listeners.get(event);
+                if (currentListeners) {
+                    currentListeners.delete(wrappedHandler);
+                    if (currentListeners.size === 0) {
+                        listeners.delete(event);
+                    }
                 }
             };
-
-            return Either.Right(unsubscribe);
-        },
-
-        // Subscribe to events only once
-        once: (eventType, handler) => {
-            if (typeof eventType !== 'string' || !eventType.trim()) {
-                return Either.Left('Event type must be a non-empty string');
-            }
-
-            if (typeof handler !== 'function') {
-                return Either.Left('Event handler must be a function');
-            }
-
-            const wrappedHandler = (event) => {
-                handler(event);
-                unsubscribe();
-            };
-
-            const subscribeResult = eventBus.on(eventType, wrappedHandler);
             
-            if (subscribeResult.type === 'Left') {
-                return subscribeResult;
-            }
-
-            const unsubscribe = subscribeResult.value;
-            return Either.Right(unsubscribe);
-        },
-
-        // Emit events with middleware processing
-        emit: (eventType, eventData = {}) => {
-            if (typeof eventType !== 'string' || !eventType.trim()) {
-                return Either.Left('Event type must be a non-empty string');
-            }
-
-            // Create event object
-            const event = Object.freeze({
-                type: eventType,
-                data: eventData,
-                timestamp: Date.now(),
-                id: generateEventId()
+            const eventListeners = listeners.get(event) || new Set();
+            eventListeners.add(wrappedHandler);
+            listeners.set(event, eventListeners);
+            
+            return Either.Right(() => {
+                const currentListeners = listeners.get(event);
+                if (currentListeners) {
+                    currentListeners.delete(wrappedHandler);
+                    if (currentListeners.size === 0) {
+                        listeners.delete(event);
+                    }
+                }
+                return true;
             });
-
-            // Apply middleware
-            const processedEventResult = applyEventMiddleware(middleware, event);
-            
-            if (processedEventResult.type === 'Left') {
-                return processedEventResult;
-            }
-
-            const processedEvent = processedEventResult.value;
-
-            // Get handlers for this event type
-            const handlers = subscribers.get(eventType) || [];
-
-            // Execute handlers with error isolation
-            const results = handlers.map(handler => {
-                return Result.fromTry(() => handler(processedEvent));
-            });
-
-            // Check for handler errors
-            const errors = results.filter(result => result.type === 'Error');
-            
-            if (errors.length > 0) {
-                return Either.Left(`Event handler errors: ${errors.map(e => e.error.message).join(', ')}`);
-            }
-
-            return Either.Right({
-                eventType,
-                handlersExecuted: handlers.length,
-                event: processedEvent
-            });
-        },
-
-        // Add middleware
-        use: (middlewareFn) => {
-            if (typeof middlewareFn !== 'function') {
-                return Either.Left('Middleware must be a function');
-            }
-
-            middleware.push(middlewareFn);
-            return Either.Right(eventBus);
-        },
-
-        // Remove all listeners for event type
-        off: (eventType) => {
-            if (typeof eventType !== 'string') {
-                return Either.Left('Event type must be a string');
-            }
-
-            const hadListeners = subscribers.has(eventType);
-            subscribers.delete(eventType);
-            
-            return Either.Right(hadListeners);
-        },
-
-        // Get event bus statistics
-        getStats: () => Either.Right({
-            totalEventTypes: subscribers.size,
-            totalHandlers: Array.from(subscribers.values()).reduce((sum, handlers) => sum + handlers.length, 0),
-            middlewareCount: middleware.length,
-            eventTypes: Array.from(subscribers.keys())
-        })
-    };
-
-    return Either.Right(eventBus);
-};
-
-// Apply middleware to event
-const applyEventMiddleware = (middlewareList, event) => {
-    return middlewareList.reduce((currentEvent, middleware) => {
-        if (currentEvent.type === 'Left') {
-            return currentEvent;
-        }
-
-        const middlewareResult = Result.fromTry(() => middleware(currentEvent.value));
+        }),
         
-        if (middlewareResult.type === 'Error') {
-            return Either.Left(`Middleware error: ${middlewareResult.error.message}`);
+        // Emit events to all listeners
+        emit: curry((event, ...args) =>
+            Result.fromTry(() => {
+                const eventListeners = listeners.get(event);
+                
+                if (!eventListeners || eventListeners.size === 0) {
+                    return { event, listenerCount: 0, errors: [] };
+                }
+                
+                const errors = [];
+                let successCount = 0;
+                
+                eventListeners.forEach(handler => {
+                    try {
+                        handler(...args);
+                        successCount++;
+                    } catch (error) {
+                        errors.push({
+                            handler: handler.name || 'anonymous',
+                            error: error.message
+                        });
+                    }
+                });
+                
+                return {
+                    event,
+                    listenerCount: eventListeners.size,
+                    successCount,
+                    errors
+                };
+            })
+        ),
+        
+        // Remove all listeners for an event
+        off: (event) => {
+            const hadListeners = listeners.has(event);
+            listeners.delete(event);
+            return hadListeners;
+        },
+        
+        // Remove all listeners
+        removeAllListeners: () => {
+            const eventCount = listeners.size;
+            listeners.clear();
+            return eventCount;
+        },
+        
+        // Get listener count for event
+        listenerCount: (event) => {
+            const eventListeners = listeners.get(event);
+            return eventListeners ? eventListeners.size : 0;
+        },
+        
+        // Get all registered events
+        events: () => Array.from(listeners.keys())
+    });
+};
+
+// DOM event handling utilities
+export const addDOMListener = curry((element, event, handler, options = {}) =>
+    Result.fromTry(() => {
+        if (!element || !element.addEventListener) {
+            throw new Error('Invalid element');
         }
+        
+        if (typeof handler !== 'function') {
+            throw new Error('Handler must be a function');
+        }
+        
+        // Add event listener with options
+        element.addEventListener(event, handler, options);
+        
+        // Return cleanup function
+        return () => {
+            element.removeEventListener(event, handler, options);
+            return true;
+        };
+    })
+);
 
-        return Either.Right(middlewareResult.value);
-    }, Either.Right(event));
-};
+export const removeDOMListener = curry((element, event, handler, options = {}) =>
+    Result.fromTry(() => {
+        if (!element || !element.removeEventListener) {
+            throw new Error('Invalid element');
+        }
+        
+        element.removeEventListener(event, handler, options);
+        return true;
+    })
+);
 
-// Generate unique event ID
-const generateEventId = () => {
-    return `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
-};
+// Event delegation utilities
+export const delegateEvent = curry((container, selector, event, handler) =>
+    Result.fromTry(() => {
+        if (!container || !container.addEventListener) {
+            throw new Error('Invalid container element');
+        }
+        
+        const delegatedHandler = (e) => {
+            const target = e.target.closest(selector);
+            if (target && container.contains(target)) {
+                handler.call(target, e);
+            }
+        };
+        
+        container.addEventListener(event, delegatedHandler);
+        
+        // Return cleanup function
+        return () => {
+            container.removeEventListener(event, delegatedHandler);
+            return true;
+        };
+    })
+);
 
 // Event composition utilities
-export const composeEventHandlers = (...handlers) => {
-    if (handlers.length === 0) {
-        return Either.Left('Cannot compose empty handlers');
-    }
-
-    const invalidHandler = handlers.find(handler => typeof handler !== 'function');
-    if (invalidHandler) {
-        return Either.Left('All handlers must be functions');
-    }
-
-    const composedHandler = (event) => {
-        const results = handlers.map(handler => Result.fromTry(() => handler(event)));
+export const composeEventHandlers = (...handlers) =>
+    (event) => {
+        const results = [];
         
-        const errors = results.filter(result => result.type === 'Error');
-        if (errors.length > 0) {
-            throw new Error(`Handler composition error: ${errors.map(e => e.error.message).join(', ')}`);
+        for (const handler of handlers) {
+            if (typeof handler === 'function') {
+                try {
+                    const result = handler(event);
+                    results.push({ success: true, result });
+                } catch (error) {
+                    results.push({ success: false, error });
+                }
+            }
         }
-
-        return results.map(result => result.value);
+        
+        return results;
     };
 
-    return Either.Right(composedHandler);
-};
-
-// Event filtering
-export const createEventFilter = (predicate) => (handler) => {
-    if (typeof predicate !== 'function') {
-        return Either.Left('Predicate must be a function');
-    }
-
-    if (typeof handler !== 'function') {
-        return Either.Left('Handler must be a function');
-    }
-
-    const filteredHandler = (event) => {
-        const shouldHandle = Result.fromTry(() => predicate(event));
+export const pipeEventHandlers = (...handlers) =>
+    (event) => {
+        let currentEvent = event;
+        const results = [];
         
-        if (shouldHandle.type === 'Error') {
-            throw new Error(`Filter predicate error: ${shouldHandle.error.message}`);
+        for (const handler of handlers) {
+            if (typeof handler === 'function') {
+                try {
+                    const result = handler(currentEvent);
+                    results.push({ success: true, result });
+                    
+                    // If handler returns an event-like object, use it for next handler
+                    if (result && typeof result === 'object' && result.type) {
+                        currentEvent = result;
+                    }
+                } catch (error) {
+                    results.push({ success: false, error });
+                    break; // Stop pipe on error
+                }
+            }
         }
+        
+        return results;
+    };
 
-        if (shouldHandle.value) {
+// Event filtering and transformation
+export const filterEvents = curry((predicate, handler) =>
+    (event) => {
+        if (predicate(event)) {
             return handler(event);
         }
-    };
-
-    return Either.Right(filteredHandler);
-};
-
-// Event transformation
-export const createEventTransformer = (transformer) => (handler) => {
-    if (typeof transformer !== 'function') {
-        return Either.Left('Transformer must be a function');
+        return null;
     }
+);
 
-    if (typeof handler !== 'function') {
-        return Either.Left('Handler must be a function');
-    }
-
-    const transformingHandler = (event) => {
-        const transformedEventResult = Result.fromTry(() => transformer(event));
-        
-        if (transformedEventResult.type === 'Error') {
-            throw new Error(`Event transformation error: ${transformedEventResult.error.message}`);
+export const transformEvent = curry((transformer, handler) =>
+    (event) => {
+        try {
+            const transformedEvent = transformer(event);
+            return handler(transformedEvent);
+        } catch (error) {
+            console.error('Event transformation error:', error);
+            return handler(event); // Fallback to original event
         }
-
-        return handler(transformedEventResult.value);
-    };
-
-    return Either.Right(transformingHandler);
-};
-
-// Debounce event handler
-export const debounce = (delay) => (handler) => {
-    if (typeof delay !== 'number' || delay < 0) {
-        return Either.Left('Delay must be a non-negative number');
     }
+);
 
-    if (typeof handler !== 'function') {
-        return Either.Left('Handler must be a function');
-    }
-
+// Debounce and throttle utilities
+export const debounceEvent = curry((delay, handler) => {
     let timeoutId = null;
-
-    const debouncedHandler = (event) => {
+    
+    return (event) => {
         if (timeoutId) {
             clearTimeout(timeoutId);
         }
-
+        
         timeoutId = setTimeout(() => {
             handler(event);
+            timeoutId = null;
         }, delay);
     };
+});
 
-    return Either.Right(debouncedHandler);
-};
-
-// Throttle event handler
-export const throttle = (interval) => (handler) => {
-    if (typeof interval !== 'number' || interval < 0) {
-        return Either.Left('Interval must be a non-negative number');
-    }
-
-    if (typeof handler !== 'function') {
-        return Either.Left('Handler must be a function');
-    }
-
-    let lastExecution = 0;
-
-    const throttledHandler = (event) => {
+export const throttleEvent = curry((delay, handler) => {
+    let lastCall = 0;
+    let timeoutId = null;
+    
+    return (event) => {
         const now = Date.now();
         
-        if (now - lastExecution >= interval) {
-            lastExecution = now;
+        if (now - lastCall >= delay) {
+            lastCall = now;
             handler(event);
+        } else if (!timeoutId) {
+            timeoutId = setTimeout(() => {
+                lastCall = Date.now();
+                handler(event);
+                timeoutId = null;
+            }, delay - (now - lastCall));
         }
     };
+});
 
-    return Either.Right(throttledHandler);
-};
-
-// Event delegation helper
-export const createDelegatedHandler = (selector, handler) => {
-    if (typeof selector !== 'string') {
-        return Either.Left('Selector must be a string');
-    }
-
-    if (typeof handler !== 'function') {
-        return Either.Left('Handler must be a function');
-    }
-
-    const delegatedHandler = (event) => {
-        // This would be used with DOM events
-        if (event.target && event.target.matches && event.target.matches(selector)) {
-            handler(event);
-        }
+// Event prevention utilities
+export const preventDefault = (handler) =>
+    (event) => {
+        event.preventDefault();
+        return handler(event);
     };
 
-    return Either.Right(delegatedHandler);
-};
+export const stopPropagation = (handler) =>
+    (event) => {
+        event.stopPropagation();
+        return handler(event);
+    };
 
-// Event namespace utilities
-export const createNamespacedEventBus = (namespace) => {
-    if (typeof namespace !== 'string' || !namespace.trim()) {
-        return Either.Left('Namespace must be a non-empty string');
+export const stopImmediatePropagation = (handler) =>
+    (event) => {
+        event.stopImmediatePropagation();
+        return handler(event);
+    };
+
+// Event validation utilities
+export const validateEvent = curry((schema, handler) =>
+    (event) => {
+        const validation = validateEventStructure(schema, event);
+        
+        if (validation.type === 'Right') {
+            return handler(event);
+        } else {
+            console.warn('Event validation failed:', validation.value);
+            return null;
+        }
     }
+);
 
-    const eventBusResult = createEventBus();
+const validateEventStructure = (schema, event) => {
+    if (!schema || typeof schema !== 'object') {
+        return Either.Left('Invalid schema');
+    }
     
-    if (eventBusResult.type === 'Left') {
-        return eventBusResult;
+    if (!event || typeof event !== 'object') {
+        return Either.Left('Invalid event');
     }
-
-    const eventBus = eventBusResult.value;
-
-    // Wrap methods to add namespace
-    const namespacedBus = {
-        on: (eventType, handler) => eventBus.on(`${namespace}:${eventType}`, handler),
-        once: (eventType, handler) => eventBus.once(`${namespace}:${eventType}`, handler),
-        emit: (eventType, data) => eventBus.emit(`${namespace}:${eventType}`, data),
-        off: (eventType) => eventBus.off(`${namespace}:${eventType}`),
-        use: eventBus.use,
-        getStats: eventBus.getStats,
-        namespace
-    };
-
-    return Either.Right(namespacedBus);
-};
-
-// Event pattern matching
-export const createPatternMatcher = (patterns) => {
-    if (!Array.isArray(patterns) || patterns.length === 0) {
-        return Either.Left('Patterns must be a non-empty array');
-    }
-
-    const matcher = (eventType) => {
-        for (const pattern of patterns) {
-            if (typeof pattern === 'string') {
-                if (eventType === pattern) {
-                    return true;
-                }
-            } else if (pattern instanceof RegExp) {
-                if (pattern.test(eventType)) {
-                    return true;
-                }
-            } else if (typeof pattern === 'function') {
-                const matchResult = Result.fromTry(() => pattern(eventType));
-                if (matchResult.type === 'Ok' && matchResult.value) {
-                    return true;
+    
+    try {
+        const errors = [];
+        
+        Object.entries(schema).forEach(([property, validator]) => {
+            if (typeof validator === 'function') {
+                const result = validator(event[property]);
+                if (result && result.type === 'Left') {
+                    errors.push(`${property}: ${result.value}`);
                 }
             }
+        });
+        
+        return errors.length > 0
+            ? Either.Left(errors.join(', '))
+            : Either.Right(event);
+    } catch (error) {
+        return Either.Left(`Validation error: ${error.message}`);
+    }
+};
+
+// Custom event creation
+export const createCustomEvent = (type, detail = {}, options = {}) =>
+    Result.fromTry(() => {
+        const event = new CustomEvent(type, {
+            detail: Object.freeze(detail),
+            bubbles: options.bubbles || false,
+            cancelable: options.cancelable || false,
+            composed: options.composed || false
+        });
+        
+        return event;
+    });
+
+export const dispatchCustomEvent = curry((element, event) =>
+    Result.fromTry(() => {
+        if (!element || !element.dispatchEvent) {
+            throw new Error('Invalid element');
         }
-        return false;
+        
+        return element.dispatchEvent(event);
+    })
+);
+
+// Event bus for application-wide events
+export const createEventBus = () => {
+    const emitter = createEventEmitter();
+    const middleware = [];
+    
+    return Object.freeze({
+        // Add middleware for event processing
+        use: (middlewareFn) => {
+            if (typeof middlewareFn === 'function') {
+                middleware.push(middlewareFn);
+                return true;
+            }
+            return false;
+        },
+        
+        // Emit event through middleware chain
+        emit: curry((event, ...args) => {
+            let processedEvent = { type: event, data: args };
+            
+            // Process through middleware
+            for (const mw of middleware) {
+                try {
+                    const result = mw(processedEvent);
+                    if (result) {
+                        processedEvent = result;
+                    }
+                } catch (error) {
+                    console.error('Event middleware error:', error);
+                }
+            }
+            
+            return emitter.emit(processedEvent.type, ...processedEvent.data);
+        }),
+        
+        // Subscribe to events
+        on: emitter.on,
+        once: emitter.once,
+        off: emitter.off,
+        removeAllListeners: emitter.removeAllListeners,
+        listenerCount: emitter.listenerCount,
+        events: emitter.events
+    });
+};
+
+// Keyboard event utilities
+export const createKeyboardHandler = (keyMap) =>
+    (event) => {
+        const key = event.key || event.code;
+        const modifiers = {
+            ctrl: event.ctrlKey,
+            alt: event.altKey,
+            shift: event.shiftKey,
+            meta: event.metaKey
+        };
+        
+        const keyConfig = keyMap[key];
+        if (!keyConfig) return null;
+        
+        // Check if modifiers match
+        const modifierMatch = Object.entries(modifiers).every(([mod, pressed]) => {
+            const required = keyConfig.modifiers && keyConfig.modifiers[mod];
+            return required === undefined || required === pressed;
+        });
+        
+        if (modifierMatch && typeof keyConfig.handler === 'function') {
+            return keyConfig.handler(event);
+        }
+        
+        return null;
     };
 
-    return Either.Right(matcher);
+// Mouse event utilities
+export const getMousePosition = (event) =>
+    Maybe.fromNullable(event)
+        .map(e => ({
+            x: e.clientX,
+            y: e.clientY,
+            pageX: e.pageX,
+            pageY: e.pageY,
+            screenX: e.screenX,
+            screenY: e.screenY
+        }));
+
+export const isInsideElement = curry((element, event) =>
+    Maybe.fromNullable(element)
+        .chain(() => getMousePosition(event))
+        .map(pos => {
+            const rect = element.getBoundingClientRect();
+            return pos.x >= rect.left &&
+                   pos.x <= rect.right &&
+                   pos.y >= rect.top &&
+                   pos.y <= rect.bottom;
+        })
+        .getOrElse(false)
+);
+
+// Event cleanup utilities
+export const createEventCleanup = () => {
+    const cleanupFunctions = new Set();
+    
+    return Object.freeze({
+        add: (cleanupFn) => {
+            if (typeof cleanupFn === 'function') {
+                cleanupFunctions.add(cleanupFn);
+                return true;
+            }
+            return false;
+        },
+        
+        remove: (cleanupFn) => {
+            return cleanupFunctions.delete(cleanupFn);
+        },
+        
+        cleanup: () => {
+            const errors = [];
+            
+            cleanupFunctions.forEach(fn => {
+                try {
+                    fn();
+                } catch (error) {
+                    errors.push(error);
+                }
+            });
+            
+            cleanupFunctions.clear();
+            
+            return errors.length > 0
+                ? Result.Error(errors)
+                : Result.Ok(true);
+        },
+        
+        size: () => cleanupFunctions.size
+    });
 };
 
-// Export event utilities
-export const EventUtils = {
-    createEventBus,
+// Export event system utilities
+export const EVENT_UTILS = Object.freeze({
+    createEventEmitter,
+    addDOMListener,
+    removeDOMListener,
+    delegateEvent,
     composeEventHandlers,
-    createEventFilter,
-    createEventTransformer,
-    debounce,
-    throttle,
-    createDelegatedHandler,
-    createNamespacedEventBus,
-    createPatternMatcher
-};
+    pipeEventHandlers,
+    filterEvents,
+    transformEvent,
+    debounceEvent,
+    throttleEvent,
+    preventDefault,
+    stopPropagation,
+    stopImmediatePropagation,
+    validateEvent,
+    createCustomEvent,
+    dispatchCustomEvent,
+    createEventBus,
+    createKeyboardHandler,
+    getMousePosition,
+    isInsideElement,
+    createEventCleanup
+});

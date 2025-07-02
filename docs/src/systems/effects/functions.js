@@ -1,447 +1,637 @@
 // === FlexNet Effects System ===
-// Complete side effect isolation and management
+// Comprehensive side effect isolation with pure functional interfaces
 
 import Maybe from '../../core/types/maybe.js';
 import Either from '../../core/types/either.js';
 import Result from '../../core/types/result.js';
-import { pipe } from '../../core/functions/composition.js';
-import { sanitizeUrl } from '../../security/functions.js';
+import { compose, pipe, curry } from '../../core/functions/composition.js';
+import { sanitizeURL } from '../../security/xss.js';
+import { escapeHTML } from '../../security/xss.js';
+
+// ===========================================
+// EFFECT TYPES AND EXECUTION ENGINE
+// ===========================================
 
 // Effect type definitions
-export const EffectType = {
-    DOM_QUERY: 'DOM_QUERY',
-    DOM_MUTATE: 'DOM_MUTATE',
-    HTTP_REQUEST: 'HTTP_REQUEST',
-    TIMER: 'TIMER',
-    EVENT_LISTENER: 'EVENT_LISTENER',
-    CONSOLE_LOG: 'CONSOLE_LOG',
-    LOCAL_STORAGE: 'LOCAL_STORAGE'
-};
+export const EffectType = Object.freeze({
+    DOM: 'dom',
+    HTTP: 'http',
+    STORAGE: 'storage',
+    TIMER: 'timer',
+    RANDOM: 'random',
+    DATETIME: 'datetime',
+    LOG: 'log',
+    BROWSER_API: 'browser_api',
+    ANIMATION: 'animation',
+    ASYNC: 'async'
+});
 
-// Create effect container - pure function
-export const createEffect = (type, operation, cleanup = null) => {
-    if (!type || !operation) {
-        return Either.Left('Effect type and operation are required');
-    }
-
-    if (typeof operation !== 'function') {
-        return Either.Left('Effect operation must be a function');
-    }
-
-    const effect = Object.freeze({
+// Core Effect structure
+export const createEffect = (type, operation, payload = {}) =>
+    Object.freeze({
         type,
         operation,
-        cleanup: cleanup || (() => {}),
-        id: generateEffectId(),
-        timestamp: Date.now()
+        payload: Object.freeze(payload),
+        timestamp: Date.now(),
+        _isEffect: true
     });
 
-    return Either.Right(effect);
-};
+// Effect execution engine
+export const executeEffect = (effect) =>
+    Result.fromTry(() => {
+        if (!effect || !effect._isEffect) {
+            throw new Error('Invalid effect object');
+        }
 
-// Effect execution with proper isolation
-export const runEffect = (effect) => {
-    if (!effect || typeof effect !== 'object') {
-        return Either.Left('Invalid effect object');
-    }
-
-    return Result.fromTry(() => {
-        return effect.operation();
-    }).fold(
-        error => Either.Left(`Effect execution failed: ${error.message}`),
-        value => Either.Right(value)
-    );
-};
-
-// DOM Query Effects - READ ONLY
-export const query = (selector) => {
-    const queryEffect = createEffect(EffectType.DOM_QUERY, () => {
-        const element = document.querySelector(selector);
-        return Maybe.fromNullable(element);
+        switch (effect.type) {
+            case EffectType.DOM:
+                return executeDOMEffect(effect);
+            case EffectType.HTTP:
+                return executeHTTPEffect(effect);
+            case EffectType.STORAGE:
+                return executeStorageEffect(effect);
+            case EffectType.TIMER:
+                return executeTimerEffect(effect);
+            case EffectType.RANDOM:
+                return executeRandomEffect(effect);
+            case EffectType.DATETIME:
+                return executeDateTimeEffect(effect);
+            case EffectType.LOG:
+                return executeLogEffect(effect);
+            case EffectType.BROWSER_API:
+                return executeBrowserAPIEffect(effect);
+            case EffectType.ANIMATION:
+                return executeAnimationEffect(effect);
+            case EffectType.ASYNC:
+                return executeAsyncEffect(effect);
+            default:
+                throw new Error(`Unknown effect type: ${effect.type}`);
+        }
     });
 
-    if (queryEffect.type === 'Left') {
-        return queryEffect;
-    }
+// ===========================================
+// DOM EFFECTS
+// ===========================================
 
-    return runEffect(queryEffect.value);
-};
+// DOM query effects
+export const queryEffect = (selector) =>
+    createEffect(EffectType.DOM, 'query', { selector });
 
-export const queryAll = (selector) => {
-    const queryAllEffect = createEffect(EffectType.DOM_QUERY, () => {
-        return Array.from(document.querySelectorAll(selector));
-    });
+export const queryAllEffect = (selector) =>
+    createEffect(EffectType.DOM, 'queryAll', { selector });
 
-    if (queryAllEffect.type === 'Left') {
-        return queryAllEffect;
-    }
+export const getElementByIdEffect = (id) =>
+    createEffect(EffectType.DOM, 'getElementById', { id });
 
-    return runEffect(queryAllEffect.value);
-};
+// DOM manipulation effects
+export const setTextContentEffect = (element, text) =>
+    createEffect(EffectType.DOM, 'setTextContent', { element, text });
 
-// DOM Mutation Effects - ISOLATED WRITES
-export const safeSetHTML = (html) => (element) => {
-    const mutationEffect = createEffect(EffectType.DOM_MUTATE, () => {
-        if (!element) throw new Error('Element is null');
-        
-        element.innerHTML = '';
-        const parsed = new DOMParser().parseFromString(html, 'text/html');
-        Array.from(parsed.body.childNodes).forEach(node => {
-            if (node) element.appendChild(node.cloneNode(true));
-        });
-        
-        return element;
-    });
+export const setHTMLEffect = (element, html) =>
+    createEffect(EffectType.DOM, 'setHTML', { element, html });
 
-    if (mutationEffect.type === 'Left') {
-        return mutationEffect;
-    }
+export const setAttributeEffect = (element, name, value) =>
+    createEffect(EffectType.DOM, 'setAttribute', { element, name, value });
 
-    return runEffect(mutationEffect.value);
-};
+export const removeAttributeEffect = (element, name) =>
+    createEffect(EffectType.DOM, 'removeAttribute', { element, name });
 
-export const setTextContent = (text) => (element) => {
-    const mutationEffect = createEffect(EffectType.DOM_MUTATE, () => {
-        if (!element) throw new Error('Element is null');
-        element.textContent = text;
-        return element;
-    });
+export const addClassEffect = (element, className) =>
+    createEffect(EffectType.DOM, 'addClass', { element, className });
 
-    if (mutationEffect.type === 'Left') {
-        return mutationEffect;
-    }
+export const removeClassEffect = (element, className) =>
+    createEffect(EffectType.DOM, 'removeClass', { element, className });
 
-    return runEffect(mutationEffect.value);
-};
+export const setStyleEffect = (element, property, value) =>
+    createEffect(EffectType.DOM, 'setStyle', { element, property, value });
 
-export const setAttribute = (key, value) => (element) => {
-    const mutationEffect = createEffect(EffectType.DOM_MUTATE, () => {
-        if (!element) throw new Error('Element is null');
-        element.setAttribute(key, value);
-        return element;
-    });
+// DOM event effects
+export const addEventListenerEffect = (element, event, handler, options = {}) =>
+    createEffect(EffectType.DOM, 'addEventListener', { element, event, handler, options });
 
-    if (mutationEffect.type === 'Left') {
-        return mutationEffect;
-    }
+export const removeEventListenerEffect = (element, event, handler, options = {}) =>
+    createEffect(EffectType.DOM, 'removeEventListener', { element, event, handler, options });
 
-    return runEffect(mutationEffect.value);
-};
+// DOM creation effects
+export const createElementEffect = (tagName) =>
+    createEffect(EffectType.DOM, 'createElement', { tagName });
 
-export const addClass = (className) => (element) => {
-    const mutationEffect = createEffect(EffectType.DOM_MUTATE, () => {
-        if (!element) throw new Error('Element is null');
-        element.classList.add(className);
-        return element;
-    });
+export const appendChildEffect = (parent, child) =>
+    createEffect(EffectType.DOM, 'appendChild', { parent, child });
 
-    if (mutationEffect.type === 'Left') {
-        return mutationEffect;
-    }
+export const removeChildEffect = (parent, child) =>
+    createEffect(EffectType.DOM, 'removeChild', { parent, child });
 
-    return runEffect(mutationEffect.value);
-};
+// Focus and scroll effects
+export const focusEffect = (element) =>
+    createEffect(EffectType.DOM, 'focus', { element });
 
-export const removeClass = (className) => (element) => {
-    const mutationEffect = createEffect(EffectType.DOM_MUTATE, () => {
-        if (!element) throw new Error('Element is null');
-        element.classList.remove(className);
-        return element;
-    });
+export const scrollToEffect = (element, options = {}) =>
+    createEffect(EffectType.DOM, 'scrollTo', { element, options });
 
-    if (mutationEffect.type === 'Left') {
-        return mutationEffect;
-    }
+// DOM effect executor
+const executeDOMEffect = (effect) => {
+    const { operation, payload } = effect;
 
-    return runEffect(mutationEffect.value);
-};
+    switch (operation) {
+        case 'query':
+            return Maybe.fromNullable(document.querySelector(payload.selector));
 
-export const toggleClass = (className) => (element) => {
-    const mutationEffect = createEffect(EffectType.DOM_MUTATE, () => {
-        if (!element) throw new Error('Element is null');
-        element.classList.toggle(className);
-        return element;
-    });
+        case 'queryAll':
+            return Array.from(document.querySelectorAll(payload.selector));
 
-    if (mutationEffect.type === 'Left') {
-        return mutationEffect;
-    }
+        case 'getElementById':
+            return Maybe.fromNullable(document.getElementById(payload.id));
 
-    return runEffect(mutationEffect.value);
-};
-
-// Event Listener Effects - ISOLATED EVENT HANDLING
-export const addListener = (event, handler) => (element) => {
-    const listenerEffect = createEffect(
-        EffectType.EVENT_LISTENER,
-        () => {
-            if (!element) throw new Error('Element is null');
-            element.addEventListener(event, handler);
-            return element;
-        },
-        () => {
-            if (element) {
-                element.removeEventListener(event, handler);
+        case 'setTextContent':
+            if (payload.element && payload.element.nodeType) {
+                payload.element.textContent = escapeHTML(payload.text);
+                return payload.element;
             }
-        }
-    );
+            throw new Error('Invalid element for setTextContent');
 
-    if (listenerEffect.type === 'Left') {
-        return listenerEffect;
-    }
-
-    return runEffect(listenerEffect.value);
-};
-
-export const removeListener = (event, handler) => (element) => {
-    const removeEffect = createEffect(EffectType.EVENT_LISTENER, () => {
-        if (!element) throw new Error('Element is null');
-        element.removeEventListener(event, handler);
-        return element;
-    });
-
-    if (removeEffect.type === 'Left') {
-        return removeEffect;
-    }
-
-    return runEffect(removeEffect.value);
-};
-
-// Timer Effects - ISOLATED ASYNC OPERATIONS
-export const delay = (ms) => {
-    const timerEffect = createEffect(EffectType.TIMER, () => {
-        return new Promise(resolve => setTimeout(resolve, ms));
-    });
-
-    if (timerEffect.type === 'Left') {
-        return timerEffect;
-    }
-
-    return runEffect(timerEffect.value);
-};
-
-export const interval = (callback, ms) => {
-    let intervalId = null;
-
-    const intervalEffect = createEffect(
-        EffectType.TIMER,
-        () => {
-            intervalId = setInterval(callback, ms);
-            return intervalId;
-        },
-        () => {
-            if (intervalId) {
-                clearInterval(intervalId);
+        case 'setHTML':
+            if (payload.element && payload.element.nodeType) {
+                payload.element.innerHTML = escapeHTML(payload.html);
+                return payload.element;
             }
-        }
-    );
+            throw new Error('Invalid element for setHTML');
 
-    if (intervalEffect.type === 'Left') {
-        return intervalEffect;
+        case 'setAttribute':
+            if (payload.element && payload.element.setAttribute) {
+                payload.element.setAttribute(payload.name, payload.value);
+                return payload.element;
+            }
+            throw new Error('Invalid element for setAttribute');
+
+        case 'removeAttribute':
+            if (payload.element && payload.element.removeAttribute) {
+                payload.element.removeAttribute(payload.name);
+                return payload.element;
+            }
+            throw new Error('Invalid element for removeAttribute');
+
+        case 'addClass':
+            if (payload.element && payload.element.classList) {
+                payload.element.classList.add(payload.className);
+                return payload.element;
+            }
+            throw new Error('Invalid element for addClass');
+
+        case 'removeClass':
+            if (payload.element && payload.element.classList) {
+                payload.element.classList.remove(payload.className);
+                return payload.element;
+            }
+            throw new Error('Invalid element for removeClass');
+
+        case 'setStyle':
+            if (payload.element && payload.element.style) {
+                payload.element.style[payload.property] = payload.value;
+                return payload.element;
+            }
+            throw new Error('Invalid element for setStyle');
+
+        case 'addEventListener':
+            if (payload.element && payload.element.addEventListener) {
+                payload.element.addEventListener(payload.event, payload.handler, payload.options);
+                return () => payload.element.removeEventListener(payload.event, payload.handler, payload.options);
+            }
+            throw new Error('Invalid element for addEventListener');
+
+        case 'removeEventListener':
+            if (payload.element && payload.element.removeEventListener) {
+                payload.element.removeEventListener(payload.event, payload.handler, payload.options);
+                return true;
+            }
+            throw new Error('Invalid element for removeEventListener');
+
+        case 'createElement':
+            return document.createElement(payload.tagName);
+
+        case 'appendChild':
+            if (payload.parent && payload.child && payload.parent.appendChild) {
+                payload.parent.appendChild(payload.child);
+                return payload.parent;
+            }
+            throw new Error('Invalid elements for appendChild');
+
+        case 'removeChild':
+            if (payload.parent && payload.child && payload.parent.removeChild) {
+                payload.parent.removeChild(payload.child);
+                return payload.parent;
+            }
+            throw new Error('Invalid elements for removeChild');
+
+        case 'focus':
+            if (payload.element && payload.element.focus) {
+                payload.element.focus();
+                return payload.element;
+            }
+            throw new Error('Invalid element for focus');
+
+        case 'scrollTo':
+            if (payload.element && payload.element.scrollTo) {
+                payload.element.scrollTo(payload.options);
+                return payload.element;
+            }
+            throw new Error('Invalid element for scrollTo');
+
+        default:
+            throw new Error(`Unknown DOM operation: ${operation}`);
     }
-
-    return runEffect(intervalEffect.value);
 };
 
-// HTTP Effects - ISOLATED NETWORK OPERATIONS
-export const fetchResource = async (url) => {
-    const httpEffect = createEffect(EffectType.HTTP_REQUEST, async () => {
-        const urlValidation = sanitizeUrl(url);
-        if (urlValidation.type === 'Left') {
-            throw new Error(`Invalid URL: ${urlValidation.value}`);
-        }
+// ===========================================
+// HTTP EFFECTS
+// ===========================================
 
-        const response = await fetch(url);
+export const httpGetEffect = (url, options = {}) =>
+    createEffect(EffectType.HTTP, 'get', { url, options });
+
+export const httpPostEffect = (url, body, options = {}) =>
+    createEffect(EffectType.HTTP, 'post', { url, body, options });
+
+export const httpPutEffect = (url, body, options = {}) =>
+    createEffect(EffectType.HTTP, 'put', { url, body, options });
+
+export const httpDeleteEffect = (url, options = {}) =>
+    createEffect(EffectType.HTTP, 'delete', { url, options });
+
+const executeHTTPEffect = async (effect) => {
+    const { operation, payload } = effect;
+    
+    // Validate URL
+    const urlValidation = sanitizeURL(payload.url);
+    if (urlValidation.type === 'Left') {
+        throw new Error(`Invalid URL: ${urlValidation.value}`);
+    }
+
+    const requestOptions = {
+        method: operation.toUpperCase(),
+        headers: {
+            'Content-Type': 'application/json',
+            ...payload.options.headers
+        },
+        ...payload.options
+    };
+
+    if (payload.body && (operation === 'post' || operation === 'put')) {
+        requestOptions.body = typeof payload.body === 'string' 
+            ? payload.body 
+            : JSON.stringify(payload.body);
+    }
+
+    try {
+        const response = await fetch(payload.url, requestOptions);
+        
         if (!response.ok) {
-            throw new Error(`Request failed for ${url}: ${response.statusText}`);
+            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
         }
-        return await response.text();
-    });
 
-    if (httpEffect.type === 'Left') {
-        return Either.Left(httpEffect.value);
-    }
+        const contentType = response.headers.get('content-type');
+        let data;
 
-    try {
-        const result = await runEffect(httpEffect.value);
-        return result.fold(
-            error => Either.Left(new Error(error)),
-            value => Either.Right(value)
-        );
-    } catch (e) {
-        console.error(`[fetchResource] A critical error occurred fetching ${url}:`, e);
-        return Either.Left(e);
-    }
-};
-
-// Console Effects - ISOLATED LOGGING
-export const logInfo = (message, ...args) => {
-    const logEffect = createEffect(EffectType.CONSOLE_LOG, () => {
-        console.log(message, ...args);
-        return message;
-    });
-
-    if (logEffect.type === 'Left') {
-        return logEffect;
-    }
-
-    return runEffect(logEffect.value);
-};
-
-export const logError = (message, ...args) => {
-    const logEffect = createEffect(EffectType.CONSOLE_LOG, () => {
-        console.error(message, ...args);
-        return message;
-    });
-
-    if (logEffect.type === 'Left') {
-        return logEffect;
-    }
-
-    return runEffect(logEffect.value);
-};
-
-export const logWarn = (message, ...args) => {
-    const logEffect = createEffect(EffectType.CONSOLE_LOG, () => {
-        console.warn(message, ...args);
-        return message;
-    });
-
-    if (logEffect.type === 'Left') {
-        return logEffect;
-    }
-
-    return runEffect(logEffect.value);
-};
-
-// Local Storage Effects - ISOLATED STORAGE OPERATIONS
-export const getFromStorage = (key) => {
-    const storageEffect = createEffect(EffectType.LOCAL_STORAGE, () => {
-        return Maybe.fromNullable(localStorage.getItem(key));
-    });
-
-    if (storageEffect.type === 'Left') {
-        return storageEffect;
-    }
-
-    return runEffect(storageEffect.value);
-};
-
-export const setToStorage = (key, value) => {
-    const storageEffect = createEffect(EffectType.LOCAL_STORAGE, () => {
-        localStorage.setItem(key, value);
-        return value;
-    });
-
-    if (storageEffect.type === 'Left') {
-        return storageEffect;
-    }
-
-    return runEffect(storageEffect.value);
-};
-
-export const removeFromStorage = (key) => {
-    const storageEffect = createEffect(EffectType.LOCAL_STORAGE, () => {
-        localStorage.removeItem(key);
-        return key;
-    });
-
-    if (storageEffect.type === 'Left') {
-        return storageEffect;
-    }
-
-    return runEffect(storageEffect.value);
-};
-
-// Component Loading Effect - ISOLATED ASYNC COMPONENT LOADING
-export const loadComponent = async (placeholderId, url) => {
-    const result = await fetchResource(url);
-
-    if (result.type === 'Left') {
-        logWarn(`Error loading component ${url}:`, result.value);
-        return Either.Left(result.value);
-    }
-
-    const html = result.value;
-    const queryResult = query(`#${placeholderId}`);
-    
-    if (queryResult.type === 'Left') {
-        return queryResult;
-    }
-
-    const maybePlaceholder = queryResult.value;
-    
-    if (maybePlaceholder.type === 'Nothing') {
-        logWarn(`Placeholder element #${placeholderId} not found in the layout.`);
-        return Either.Left(new Error('Placeholder not found'));
-    }
-
-    const element = maybePlaceholder.value;
-    const htmlResult = safeSetHTML(html)(element);
-    
-    return htmlResult.fold(
-        error => Either.Left(new Error(`Failed to set HTML: ${error}`)),
-        value => Either.Right(value)
-    );
-};
-
-// Effect Composition - Combine multiple effects
-export const sequence = (effects) => {
-    if (!Array.isArray(effects)) {
-        return Either.Left('Effects must be an array');
-    }
-
-    const sequenceEffect = createEffect('SEQUENCE', () => {
-        const results = [];
-        for (const effect of effects) {
-            const result = runEffect(effect);
-            if (result.type === 'Left') {
-                throw new Error(`Effect sequence failed: ${result.value}`);
-            }
-            results.push(result.value);
+        if (contentType && contentType.includes('application/json')) {
+            data = await response.json();
+        } else {
+            data = await response.text();
         }
-        return results;
-    });
 
-    if (sequenceEffect.type === 'Left') {
-        return sequenceEffect;
-    }
-
-    return runEffect(sequenceEffect.value);
-};
-
-// Parallel effect execution
-export const parallel = async (effects) => {
-    if (!Array.isArray(effects)) {
-        return Either.Left('Effects must be an array');
-    }
-
-    try {
-        const promises = effects.map(effect => {
-            const result = runEffect(effect);
-            return result.fold(
-                error => Promise.reject(new Error(error)),
-                value => Promise.resolve(value)
-            );
-        });
-
-        const results = await Promise.all(promises);
-        return Either.Right(results);
+        return {
+            status: response.status,
+            statusText: response.statusText,
+            headers: Object.fromEntries(response.headers.entries()),
+            data
+        };
     } catch (error) {
-        return Either.Left(`Parallel effect execution failed: ${error.message}`);
+        throw new Error(`HTTP request failed: ${error.message}`);
     }
 };
 
-// Generate unique effect ID
-const generateEffectId = () => {
-    return `effect_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+// ===========================================
+// STORAGE EFFECTS
+// ===========================================
+
+export const setLocalStorageEffect = (key, value) =>
+    createEffect(EffectType.STORAGE, 'setLocalStorage', { key, value });
+
+export const getLocalStorageEffect = (key) =>
+    createEffect(EffectType.STORAGE, 'getLocalStorage', { key });
+
+export const removeLocalStorageEffect = (key) =>
+    createEffect(EffectType.STORAGE, 'removeLocalStorage', { key });
+
+export const clearLocalStorageEffect = () =>
+    createEffect(EffectType.STORAGE, 'clearLocalStorage', {});
+
+export const setSessionStorageEffect = (key, value) =>
+    createEffect(EffectType.STORAGE, 'setSessionStorage', { key, value });
+
+export const getSessionStorageEffect = (key) =>
+    createEffect(EffectType.STORAGE, 'getSessionStorage', { key });
+
+const executeStorageEffect = (effect) => {
+    const { operation, payload } = effect;
+
+    switch (operation) {
+        case 'setLocalStorage':
+            localStorage.setItem(payload.key, JSON.stringify(payload.value));
+            return true;
+
+        case 'getLocalStorage':
+            const localValue = localStorage.getItem(payload.key);
+            return localValue ? JSON.parse(localValue) : null;
+
+        case 'removeLocalStorage':
+            localStorage.removeItem(payload.key);
+            return true;
+
+        case 'clearLocalStorage':
+            localStorage.clear();
+            return true;
+
+        case 'setSessionStorage':
+            sessionStorage.setItem(payload.key, JSON.stringify(payload.value));
+            return true;
+
+        case 'getSessionStorage':
+            const sessionValue = sessionStorage.getItem(payload.key);
+            return sessionValue ? JSON.parse(sessionValue) : null;
+
+        default:
+            throw new Error(`Unknown storage operation: ${operation}`);
+    }
 };
+
+// ===========================================
+// TIMER EFFECTS
+// ===========================================
+
+export const setTimeoutEffect = (callback, delay) =>
+    createEffect(EffectType.TIMER, 'setTimeout', { callback, delay });
+
+export const setIntervalEffect = (callback, interval) =>
+    createEffect(EffectType.TIMER, 'setInterval', { callback, interval });
+
+export const clearTimeoutEffect = (timeoutId) =>
+    createEffect(EffectType.TIMER, 'clearTimeout', { timeoutId });
+
+export const clearIntervalEffect = (intervalId) =>
+    createEffect(EffectType.TIMER, 'clearInterval', { intervalId });
+
+const executeTimerEffect = (effect) => {
+    const { operation, payload } = effect;
+
+    switch (operation) {
+        case 'setTimeout':
+            return setTimeout(payload.callback, payload.delay);
+
+        case 'setInterval':
+            return setInterval(payload.callback, payload.interval);
+
+        case 'clearTimeout':
+            clearTimeout(payload.timeoutId);
+            return true;
+
+        case 'clearInterval':
+            clearInterval(payload.intervalId);
+            return true;
+
+        default:
+            throw new Error(`Unknown timer operation: ${operation}`);
+    }
+};
+
+// ===========================================
+// RANDOM EFFECTS
+// ===========================================
+
+export const randomNumberEffect = (min = 0, max = 1) =>
+    createEffect(EffectType.RANDOM, 'number', { min, max });
+
+export const randomIntegerEffect = (min, max) =>
+    createEffect(EffectType.RANDOM, 'integer', { min, max });
+
+export const randomUUIDEffect = () =>
+    createEffect(EffectType.RANDOM, 'uuid', {});
+
+const executeRandomEffect = (effect) => {
+    const { operation, payload } = effect;
+
+    switch (operation) {
+        case 'number':
+            return Math.random() * (payload.max - payload.min) + payload.min;
+
+        case 'integer':
+            return Math.floor(Math.random() * (payload.max - payload.min + 1)) + payload.min;
+
+        case 'uuid':
+            return crypto.randomUUID();
+
+        default:
+            throw new Error(`Unknown random operation: ${operation}`);
+    }
+};
+
+// ===========================================
+// DATETIME EFFECTS
+// ===========================================
+
+export const getCurrentTimeEffect = () =>
+    createEffect(EffectType.DATETIME, 'getCurrentTime', {});
+
+export const getDateEffect = () =>
+    createEffect(EffectType.DATETIME, 'getDate', {});
+
+export const formatDateEffect = (date, format) =>
+    createEffect(EffectType.DATETIME, 'formatDate', { date, format });
+
+const executeDateTimeEffect = (effect) => {
+    const { operation, payload } = effect;
+
+    switch (operation) {
+        case 'getCurrentTime':
+            return Date.now();
+
+        case 'getDate':
+            return new Date();
+
+        case 'formatDate':
+            return new Intl.DateTimeFormat(navigator.language, payload.format).format(payload.date);
+
+        default:
+            throw new Error(`Unknown datetime operation: ${operation}`);
+    }
+};
+
+// ===========================================
+// LOGGING EFFECTS
+// ===========================================
+
+export const logEffect = (message, level = 'info') =>
+    createEffect(EffectType.LOG, 'log', { message, level });
+
+export const logErrorEffect = (error, context = {}) =>
+    createEffect(EffectType.LOG, 'error', { error, context });
+
+const executeLogEffect = (effect) => {
+    const { operation, payload } = effect;
+    const timestamp = new Date().toISOString();
+
+    switch (operation) {
+        case 'log':
+            const logMessage = `[${timestamp}] ${payload.message}`;
+            switch (payload.level) {
+                case 'error':
+                    console.error(logMessage);
+                    break;
+                case 'warn':
+                    console.warn(logMessage);
+                    break;
+                case 'debug':
+                    console.debug(logMessage);
+                    break;
+                default:
+                    console.info(logMessage);
+            }
+            return true;
+
+        case 'error':
+            console.error(`[${timestamp}] ERROR:`, payload.error, payload.context);
+            return true;
+
+        default:
+            throw new Error(`Unknown log operation: ${operation}`);
+    }
+};
+
+// ===========================================
+// BROWSER API EFFECTS
+// ===========================================
+
+export const getGeolocationEffect = (options = {}) =>
+    createEffect(EffectType.BROWSER_API, 'geolocation', { options });
+
+export const showNotificationEffect = (title, options = {}) =>
+    createEffect(EffectType.BROWSER_API, 'notification', { title, options });
+
+const executeBrowserAPIEffect = async (effect) => {
+    const { operation, payload } = effect;
+
+    switch (operation) {
+        case 'geolocation':
+            return new Promise((resolve, reject) => {
+                if (!navigator.geolocation) {
+                    reject(new Error('Geolocation not supported'));
+                    return;
+                }
+
+                navigator.geolocation.getCurrentPosition(
+                    position => resolve({
+                        latitude: position.coords.latitude,
+                        longitude: position.coords.longitude,
+                        accuracy: position.coords.accuracy
+                    }),
+                    error => reject(new Error(`Geolocation error: ${error.message}`)),
+                    payload.options
+                );
+            });
+
+        case 'notification':
+            if (!('Notification' in window)) {
+                throw new Error('Notifications not supported');
+            }
+
+            const permission = await Notification.requestPermission();
+            if (permission === 'granted') {
+                return new Notification(payload.title, payload.options);
+            } else {
+                throw new Error('Notification permission denied');
+            }
+
+        default:
+            throw new Error(`Unknown browser API operation: ${operation}`);
+    }
+};
+
+// ===========================================
+// ANIMATION EFFECTS
+// ===========================================
+
+export const requestAnimationFrameEffect = (callback) =>
+    createEffect(EffectType.ANIMATION, 'requestAnimationFrame', { callback });
+
+export const cancelAnimationFrameEffect = (id) =>
+    createEffect(EffectType.ANIMATION, 'cancelAnimationFrame', { id });
+
+const executeAnimationEffect = (effect) => {
+    const { operation, payload } = effect;
+
+    switch (operation) {
+        case 'requestAnimationFrame':
+            return requestAnimationFrame(payload.callback);
+
+        case 'cancelAnimationFrame':
+            cancelAnimationFrame(payload.id);
+            return true;
+
+        default:
+            throw new Error(`Unknown animation operation: ${operation}`);
+    }
+};
+
+// ===========================================
+// ASYNC EFFECTS
+// ===========================================
+
+export const createAsyncEffect = (asyncFunction) =>
+    createEffect(EffectType.ASYNC, 'execute', { asyncFunction });
+
+const executeAsyncEffect = async (effect) => {
+    const { operation, payload } = effect;
+
+    switch (operation) {
+        case 'execute':
+            return await payload.asyncFunction();
+
+        default:
+            throw new Error(`Unknown async operation: ${operation}`);
+    }
+};
+
+// ===========================================
+// EFFECT COMPOSITION AND UTILITIES
+// ===========================================
+
+// Chain multiple effects
+export const chainEffects = (...effects) =>
+    effects.reduce(async (prevPromise, effect) => {
+        await prevPromise;
+        return executeEffect(effect);
+    }, Promise.resolve());
+
+// Run effects in parallel
+export const parallelEffects = (...effects) =>
+    Promise.all(effects.map(executeEffect));
+
+// Effect error handling
+export const safeExecuteEffect = (effect) =>
+    executeEffect(effect)
+        .then(result => Result.Ok(result))
+        .catch(error => Result.Error(error));
+
+// Effect batching
+export const batchEffects = (effects) =>
+    Result.fromTry(() => effects.map(executeEffect));
 
 // Export all effect utilities
-export const EffectUtils = {
+export const EFFECT_UTILS = Object.freeze({
+    EffectType,
     createEffect,
-    runEffect,
-    sequence,
-    parallel,
-    EffectType
-};
+    executeEffect,
+    chainEffects,
+    parallelEffects,
+    safeExecuteEffect,
+    batchEffects
+});

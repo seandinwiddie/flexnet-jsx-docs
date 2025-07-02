@@ -1,279 +1,240 @@
-// === FlexNet Transform System ===
-// Pure functional element transformation and processing
+// === FlexNet Runtime Transform ===
+// Pure functional data transformation utilities for FlexNet runtime
 
 import Maybe from '../types/maybe.js';
 import Either from '../types/either.js';
 import Result from '../types/result.js';
-import { compose, pipe } from '../functions/composition.js';
+import { compose, pipe, curry } from '../functions/composition.js';
 
-// Transform an element tree - pure function
-export const transformElement = (transformer) => (element) => {
-    if (!element || typeof element !== 'object') {
-        return Either.Left('Invalid element for transformation');
-    }
+// Core transformation functions for FlexNet elements
+export const transformElement = curry((transformFn, element) =>
+    Maybe.fromNullable(element)
+        .chain(el => 
+            el._isFlexNetElement 
+                ? Maybe.Just(transformFn(el))
+                : Maybe.Nothing()
+        )
+);
 
-    const transformSingle = (elem) => {
-        // Apply transformer to current element
-        const transformedResult = transformer(elem);
-        
-        if (transformedResult.type === 'Left') {
-            return transformedResult;
-        }
+// Transform element props while maintaining immutability
+export const transformProps = curry((propTransformer, element) =>
+    Maybe.fromNullable(element)
+        .chain(el => el._isFlexNetElement ? Maybe.Just(el) : Maybe.Nothing())
+        .map(el => ({
+            ...el,
+            props: Object.freeze({
+                ...el.props,
+                ...propTransformer(el.props)
+            })
+        }))
+        .map(Object.freeze)
+);
 
-        const transformed = transformedResult.value;
+// Transform element children recursively
+export const transformChildren = curry((childTransformer, element) =>
+    Maybe.fromNullable(element)
+        .chain(el => el._isFlexNetElement ? Maybe.Just(el) : Maybe.Nothing())
+        .map(el => ({
+            ...el,
+            props: Object.freeze({
+                ...el.props,
+                children: Object.freeze(
+                    (el.props.children || []).map(childTransformer)
+                )
+            })
+        }))
+        .map(Object.freeze)
+);
 
-        // Recursively transform children if they exist
-        if (transformed.props && transformed.props.children) {
-            const transformedChildren = transformed.props.children.map(child => {
-                if (typeof child === 'object' && child !== null) {
-                    return transformElement(transformer)(child);
-                }
-                return Either.Right(child);
-            });
+// Deep transformation of element tree
+export const transformTree = curry((elementTransformer, childTransformer, element) =>
+    pipe(
+        transformElement(elementTransformer),
+        Maybe.chain(transformChildren(child =>
+            child && typeof child === 'object' && child._isFlexNetElement
+                ? transformTree(elementTransformer, childTransformer, child)
+                : childTransformer(child)
+        ))
+    )(element)
+);
 
-            // Check if any child transformation failed
-            const failed = transformedChildren.find(result => result.type === 'Left');
-            if (failed) {
-                return failed;
-            }
+// Props transformation utilities
+export const addProp = curry((key, value, props) =>
+    Object.freeze({ ...props, [key]: value })
+);
 
-            // Extract successful transformations
-            const successfulChildren = transformedChildren.map(result => result.value);
+export const removeProp = curry((key, props) => {
+    const { [key]: removed, ...rest } = props;
+    return Object.freeze(rest);
+});
 
-            return Either.Right({
-                ...transformed,
-                props: {
-                    ...transformed.props,
-                    children: successfulChildren
-                }
-            });
-        }
+export const updateProp = curry((key, updater, props) =>
+    Maybe.fromNullable(props[key])
+        .map(updater)
+        .map(newValue => addProp(key, newValue, props))
+        .getOrElse(props)
+);
 
-        return Either.Right(transformed);
-    };
+// CSS class transformation utilities
+export const addClass = curry((className, props) =>
+    pipe(
+        props => props.className || '',
+        existingClasses => existingClasses 
+            ? `${existingClasses} ${className}`.trim()
+            : className,
+        newClasses => addProp('className', newClasses, props)
+    )(props)
+);
 
-    return transformSingle(element);
-};
+export const removeClass = curry((className, props) =>
+    pipe(
+        props => props.className || '',
+        existingClasses => existingClasses
+            .split(' ')
+            .filter(cls => cls !== className)
+            .join(' ')
+            .trim(),
+        newClasses => newClasses 
+            ? addProp('className', newClasses, props)
+            : removeProp('className', props)
+    )(props)
+);
 
-// Map transformation over element children
-export const mapChildren = (mapper) => (element) => {
-    if (!element.props || !element.props.children) {
-        return Either.Right(element);
-    }
+export const toggleClass = curry((className, props) => {
+    const existingClasses = (props.className || '').split(' ');
+    return existingClasses.includes(className)
+        ? removeClass(className, props)
+        : addClass(className, props);
+});
 
-    const mappedChildren = element.props.children.map(mapper);
-    
-    return Either.Right({
-        ...element,
-        props: {
-            ...element.props,
-            children: mappedChildren
-        }
-    });
-};
+// Style transformation utilities
+export const addStyle = curry((styleKey, styleValue, props) =>
+    pipe(
+        props => props.style || {},
+        existingStyles => Object.freeze({
+            ...existingStyles,
+            [styleKey]: styleValue
+        }),
+        newStyles => addProp('style', newStyles, props)
+    )(props)
+);
 
-// Filter element children based on predicate
-export const filterChildren = (predicate) => (element) => {
-    if (!element.props || !element.props.children) {
-        return Either.Right(element);
-    }
+export const removeStyle = curry((styleKey, props) =>
+    pipe(
+        props => props.style || {},
+        existingStyles => {
+            const { [styleKey]: removed, ...rest } = existingStyles;
+            return Object.freeze(rest);
+        },
+        newStyles => Object.keys(newStyles).length > 0
+            ? addProp('style', newStyles, props)
+            : removeProp('style', props)
+    )(props)
+);
 
-    const filteredChildren = element.props.children.filter(predicate);
-    
-    return Either.Right({
-        ...element,
-        props: {
-            ...element.props,
-            children: filteredChildren
-        }
-    });
-};
+// Data attribute transformations
+export const addDataAttribute = curry((key, value, props) =>
+    addProp(`data-${key}`, value, props)
+);
 
-// Transform element props - pure function
-export const transformProps = (propsTransformer) => (element) => {
-    if (!element || !element.props) {
-        return Either.Left('Element must have props to transform');
-    }
+export const removeDataAttribute = curry((key, props) =>
+    removeProp(`data-${key}`, props)
+);
 
-    const transformedPropsResult = propsTransformer(element.props);
-    
-    if (transformedPropsResult.type === 'Left') {
-        return transformedPropsResult;
-    }
+// Event handler transformations
+export const addEventHandler = curry((eventName, handler, props) =>
+    typeof handler === 'function'
+        ? addProp(`on${eventName.charAt(0).toUpperCase()}${eventName.slice(1)}`, handler, props)
+        : props
+);
 
-    return Either.Right({
-        ...element,
-        props: transformedPropsResult.value
-    });
-};
+export const removeEventHandler = curry((eventName, props) =>
+    removeProp(`on${eventName.charAt(0).toUpperCase()}${eventName.slice(1)}`, props)
+);
 
-// Flatten nested element structures
-export const flatten = (element) => {
-    if (!element) {
-        return Either.Right([]);
-    }
+// Conditional transformations
+export const when = curry((predicate, transformer, element) =>
+    predicate(element) 
+        ? transformer(element)
+        : element
+);
 
-    if (Array.isArray(element)) {
-        const flattened = element.reduce((acc, child) => {
-            const childResult = flatten(child);
-            if (childResult.type === 'Right') {
-                return acc.concat(childResult.value);
-            }
-            return acc;
-        }, []);
-        return Either.Right(flattened);
-    }
+export const unless = curry((predicate, transformer, element) =>
+    when(element => !predicate(element), transformer, element)
+);
 
-    if (typeof element === 'object' && element.type) {
-        return Either.Right([element]);
-    }
+// Element filtering and mapping
+export const filterChildren = curry((predicate, element) =>
+    transformChildren(children => 
+        Array.isArray(children) 
+            ? children.filter(predicate)
+            : predicate(children) ? children : null
+    , element)
+);
 
-    return Either.Right([element]);
-};
+export const mapChildren = curry((mapper, element) =>
+    transformChildren(children =>
+        Array.isArray(children)
+            ? children.map(mapper)
+            : mapper(children)
+    , element)
+);
 
-// Normalize element structure - ensure consistent format
-export const normalize = (element) => {
-    if (element === null || element === undefined) {
-        return Either.Right(null);
-    }
+// Element cloning with transformations
+export const cloneElement = (element, propOverrides = {}, ...newChildren) =>
+    Maybe.fromNullable(element)
+        .chain(el => el._isFlexNetElement ? Maybe.Just(el) : Maybe.Nothing())
+        .map(el => Object.freeze({
+            ...el,
+            props: Object.freeze({
+                ...el.props,
+                ...propOverrides,
+                children: newChildren.length > 0 
+                    ? Object.freeze(newChildren.flat(Infinity))
+                    : el.props.children
+            })
+        }))
+        .getOrElse(element);
 
-    if (typeof element === 'string' || typeof element === 'number') {
-        return Either.Right(element);
-    }
+// Serialization utilities for debugging
+export const elementToString = (element) =>
+    Maybe.fromNullable(element)
+        .chain(el => el._isFlexNetElement ? Maybe.Just(el) : Maybe.Nothing())
+        .map(el => {
+            const type = typeof el.type === 'string' ? el.type : el.type.name || 'Component';
+            const props = Object.entries(el.props)
+                .filter(([key]) => key !== 'children')
+                .map(([key, value]) => `${key}="${value}"`)
+                .join(' ');
+            const children = el.props.children || [];
+            
+            return children.length > 0
+                ? `<${type}${props ? ' ' + props : ''}>${children.length} children</${type}>`
+                : `<${type}${props ? ' ' + props : ''} />`;
+        })
+        .getOrElse('Invalid Element');
 
-    if (Array.isArray(element)) {
-        const normalizedChildren = element.map(normalize);
-        const failed = normalizedChildren.find(result => result.type === 'Left');
-        if (failed) {
-            return failed;
-        }
-        
-        const successful = normalizedChildren.map(result => result.value);
-        return Either.Right(successful);
-    }
+// Element validation utilities
+export const validateElement = (element) =>
+    Maybe.fromNullable(element)
+        .chain(el => el._isFlexNetElement ? Maybe.Just(el) : Maybe.Nothing())
+        .chain(el => 
+            el.type && el.props !== undefined
+                ? Maybe.Just(el)
+                : Maybe.Nothing()
+        );
 
-    if (typeof element === 'object' && element.type) {
-        const normalizedProps = element.props || {};
-        const normalizedChildren = normalizedProps.children || [];
+// Composition helpers for chaining transformations
+export const composeTransforms = (...transforms) =>
+    element => transforms.reduce((acc, transform) => 
+        Maybe.fromNullable(acc)
+            .chain(transform)
+            .getOrElse(acc)
+    , element);
 
-        const childrenResult = normalize(normalizedChildren);
-        if (childrenResult.type === 'Left') {
-            return childrenResult;
-        }
-
-        return Either.Right({
-            type: element.type,
-            props: {
-                ...normalizedProps,
-                children: childrenResult.value
-            },
-            key: element.key || null,
-            ref: element.ref || null
-        });
-    }
-
-    return Either.Left('Unable to normalize element');
-};
-
-// Apply a series of transformations in sequence
-export const applyTransformations = (transformations) => (element) => {
-    return transformations.reduce((currentResult, transformation) => {
-        if (currentResult.type === 'Left') {
-            return currentResult;
-        }
-        return transformation(currentResult.value);
-    }, Either.Right(element));
-};
-
-// Traverse element tree with visitor pattern
-export const traverse = (visitor) => (element) => {
-    const visitElement = (elem) => {
-        // Visit current element
-        const visitResult = visitor(elem);
-        if (visitResult.type === 'Left') {
-            return visitResult;
-        }
-
-        // Visit children if they exist
-        if (elem.props && elem.props.children) {
-            const childResults = elem.props.children.map(child => {
-                if (typeof child === 'object' && child !== null && child.type) {
-                    return traverse(visitor)(child);
-                }
-                return Either.Right(child);
-            });
-
-            const failed = childResults.find(result => result.type === 'Left');
-            if (failed) {
-                return failed;
-            }
-        }
-
-        return visitResult;
-    };
-
-    return visitElement(element);
-};
-
-// Extract specific elements by type
-export const extractByType = (targetType) => (element) => {
-    const extracted = [];
-    
-    const extractor = (elem) => {
-        if (elem.type === targetType) {
-            extracted.push(elem);
-        }
-        return Either.Right(elem);
-    };
-
-    const result = traverse(extractor)(element);
-    if (result.type === 'Left') {
-        return result;
-    }
-
-    return Either.Right(extracted);
-};
-
-// Count elements by type
-export const countByType = (targetType) => (element) => {
-    let count = 0;
-    
-    const counter = (elem) => {
-        if (elem.type === targetType) {
-            count++;
-        }
-        return Either.Right(elem);
-    };
-
-    const result = traverse(counter)(element);
-    if (result.type === 'Left') {
-        return result;
-    }
-
-    return Either.Right(count);
-};
-
-// Compose multiple transformers into one
-export const composeTransformers = (...transformers) => (element) => {
-    return transformers.reduceRight((currentElement, transformer) => {
-        if (currentElement.type === 'Left') {
-            return currentElement;
-        }
-        return transformer(currentElement.value);
-    }, Either.Right(element));
-};
-
-// Export transformation utilities
-export const TransformUtils = {
-    transformElement,
-    mapChildren,
-    filterChildren,
-    transformProps,
-    flatten,
-    normalize,
-    applyTransformations,
-    traverse,
-    extractByType,
-    countByType,
-    composeTransformers
-};
+export const pipeTransforms = (...transforms) =>
+    element => transforms.reduce((acc, transform) =>
+        Maybe.fromNullable(acc)
+            .chain(transform)
+            .getOrElse(acc)
+    , element);
