@@ -57,7 +57,7 @@ import {
 
 import { 
     createCSPPolicy,
-    SECURE_POLICIES as PREDEFINED_POLICIES 
+    SECURE_POLICIES 
 } from './security/csp.js';
 
 import { 
@@ -224,7 +224,7 @@ const initializeFlexNet = async (basePath = '.') => {
         
         // Apply security policies
         await executeEffect(logEffect('🔒 Applying security policies', 'info'));
-        const cspPolicy = createCSPPolicy(PREDEFINED_POLICIES.DEVELOPMENT);
+                        const cspPolicy = createCSPPolicy(SECURE_POLICIES.DEVELOPMENT);
         await executeEffect(cspPolicy);
         
         // Initialize all UI components

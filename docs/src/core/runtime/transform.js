@@ -16,6 +16,18 @@ export const transformElement = curry((transformFn, element) =>
         )
 );
 
+// Apply transformation safely to any element
+export const applyTransformation = curry((transformation, element) =>
+    Result.fromTry(() => transformation(element))
+        .fold(
+            error => {
+                console.warn('Transformation failed:', error);
+                return element; // Return original element on error
+            },
+            result => result
+        )
+);
+
 // Transform element props while maintaining immutability
 export const transformProps = curry((propTransformer, element) =>
     Maybe.fromNullable(element)

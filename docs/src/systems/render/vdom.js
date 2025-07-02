@@ -6,7 +6,7 @@ import Either from '../../core/types/either.js';
 import Result from '../../core/types/result.js';
 import { compose, pipe, curry } from '../../core/functions/composition.js';
 import { deepFreeze } from '../../utils/immutable.js';
-import { sanitizeHTML, escapeHTML } from '../../security/xss.js';
+import { escapeHTML } from '../../security/xss.js';
 
 // ===========================================
 // VIRTUAL NODE TYPES
@@ -418,7 +418,7 @@ const sanitizeProps = (props) => {
     
     Object.entries(props || {}).forEach(([key, value]) => {
         if (typeof value === 'string' && !key.startsWith('on')) {
-            sanitized[key] = sanitizeHTML(value);
+            sanitized[key] = escapeHTML(value);
         } else {
             sanitized[key] = value;
         }
