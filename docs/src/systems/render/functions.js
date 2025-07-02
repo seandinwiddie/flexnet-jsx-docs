@@ -47,7 +47,6 @@ export const updateTheme = curry((theme, state) =>
 
 export const toggleSidebar = (state) =>
     Object.freeze({ ...state, sidebarOpen: !state.sidebarOpen })
-);
 
 export const setActiveSection = curry((section, state) =>
     Object.freeze({ ...state, activeSection: section })

@@ -2,12 +2,12 @@
 // Aggregates all UI setup functions for the application
 
 import {
-    setupLogo,
-    setupSyntaxHighlighting,
-    setupSidebarAccordion,
-    setupSidebarActiveLink,
-    setupMobileSidebar,
-    setupCopyButtons
+    setupLogoEffect as setupLogo,
+    setupSyntaxHighlightingEffect as setupSyntaxHighlighting,
+    setupSidebarAccordionEffect as setupSidebarAccordion,
+    setupSidebarActiveLinkEffect as setupSidebarActiveLink,
+    setupMobileSidebarEffect as setupMobileSidebar,
+    setupCopyButtonsEffect as setupCopyButtons
 } from '../../systems/render/functions.js';
 
 import { setupBreadcrumbs } from '../navigation/functions.js';

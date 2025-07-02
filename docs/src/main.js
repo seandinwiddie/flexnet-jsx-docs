@@ -57,11 +57,11 @@ import {
 
 import { 
     createCSPPolicy,
-    PREDEFINED_POLICIES 
+    SECURE_POLICIES as PREDEFINED_POLICIES 
 } from './security/csp.js';
 
 import { 
-    sanitizeHTML,
+    escapeHTML as sanitizeHTML,
     sanitizeURL 
 } from './security/xss.js';
 
