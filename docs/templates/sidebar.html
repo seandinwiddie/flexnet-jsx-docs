@@ -8,10 +8,13 @@
 </div>
 <nav class="p-4">
     <div class="mb-6">
-        <h3 class="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-3">
-            <a href="/getting-started-guide/" class="block text-gray-700 dark:text-gray-300 hover:text-primary">Getting Started Guide</a>
+        <h3 class="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-3 cursor-pointer section-header" data-target="getting-started-content">
+            <span class="flex items-center">
+                <span class="accordion-icon mr-2">▶</span>
+                <a href="/getting-started-guide/" class="text-gray-700 dark:text-gray-300 hover:text-primary">Getting Started Guide</a>
+            </span>
         </h3>
-        <ul class="space-y-2 pl-4">
+        <ul class="space-y-2 pl-4 section-content hidden" id="getting-started-content">
             <li><a href="/getting-started-guide/project-setup.html" class="block text-gray-700 dark:text-gray-300 hover:text-primary">Project Setup</a></li>
             <li><a href="/getting-started-guide/core-concepts.html" class="block text-gray-700 dark:text-gray-300 hover:text-primary">Core Concepts</a></li>
             <li><a href="/getting-started-guide/development-workflow.html" class="block text-gray-700 dark:text-gray-300 hover:text-primary">Development Workflow</a></li>
@@ -19,33 +22,44 @@
         </ul>
     </div>
     <div class="mb-6">
-        <h3 class="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-3">Reference Guides</h3>
-        <ul class="space-y-2 pl-4">
+        <h3 class="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-3 cursor-pointer section-header" data-target="reference-guides-content">
+            <span class="flex items-center">
+                <span class="accordion-icon mr-2">▶</span>
+                <span>Reference Guides</span>
+            </span>
+        </h3>
+        <ul class="space-y-2 pl-4 section-content hidden" id="reference-guides-content">
             <li><a href="/reference-guides/folders.html" class="block text-gray-700 dark:text-gray-300 hover:text-primary">Folders</a></li>
-            <li>
-                <h3 class="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-3">
-                    <a href="/reference-guides/project-from-scratch/" class="block text-gray-700 dark:text-gray-300 hover:text-primary">Project From Scratch</a>
-                </h3>
-                <ul class="space-y-2 pl-4">
-                    <li><a href="/reference-guides/project-from-scratch/initialize-project.html" class="block text-gray-700 dark:text-gray-300 hover:text-primary">Initialize Project</a></li>
-                    <li><a href="/reference-guides/project-from-scratch/implementing-core-types.html" class="block text-gray-700 dark:text-gray-300 hover:text-primary">Implementing Core Types</a></li>
-                    <li><a href="/reference-guides/project-from-scratch/implementing-core-functions.html" class="block text-gray-700 dark:text-gray-300 hover:text-primary">Implementing Core Functions</a></li>
-                    <li><a href="/reference-guides/project-from-scratch/setting-up-the-runtime.html" class="block text-gray-700 dark:text-gray-300 hover:text-primary">Setting Up the Runtime</a></li>
-                    <li><a href="/reference-guides/project-from-scratch/implementing-core-systems.html" class="block text-gray-700 dark:text-gray-300 hover:text-primary">Implementing Core Systems</a></li>
-                    <li><a href="/reference-guides/project-from-scratch/implementing-security-functions.html" class="block text-gray-700 dark:text-gray-300 hover:text-primary">Implementing Security Functions</a></li>
-                    <li><a href="/reference-guides/project-from-scratch/creating-utility-functions.html" class="block text-gray-700 dark:text-gray-300 hover:text-primary">Creating Utility Functions</a></li>
-                    <li><a href="/reference-guides/project-from-scratch/implementing-a-feature-module.html" class="block text-gray-700 dark:text-gray-300 hover:text-primary">Implementing a Feature Module</a></li>
-                    <li><a href="/reference-guides/project-from-scratch/setting-up-tests.html" class="block text-gray-700 dark:text-gray-300 hover:text-primary">Setting Up Tests</a></li>
-                    <li><a href="/reference-guides/project-from-scratch/running-your-flexnet-application.html" class="block text-gray-700 dark:text-gray-300 hover:text-primary">Running Your FlexNet Application</a></li>
+            <li class="mt-4">
+                <div class="text-sm font-medium text-gray-600 dark:text-gray-400 mb-2 cursor-pointer nested-section-header" data-target="project-from-scratch-items">
+                    <span class="flex items-center">
+                        <span class="accordion-icon mr-2">▶</span>
+                        <a href="/reference-guides/project-from-scratch/" class="text-gray-700 dark:text-gray-300 hover:text-primary">Project From Scratch</a>
+                    </span>
+                </div>
+                <ul class="space-y-1 pl-6 hidden nested-section-content" id="project-from-scratch-items">
+                    <li><a href="/reference-guides/project-from-scratch/initialize-project.html" class="block text-gray-600 dark:text-gray-400 hover:text-primary text-sm">Initialize Project</a></li>
+                    <li><a href="/reference-guides/project-from-scratch/implementing-core-types.html" class="block text-gray-600 dark:text-gray-400 hover:text-primary text-sm">Implementing Core Types</a></li>
+                    <li><a href="/reference-guides/project-from-scratch/implementing-core-functions.html" class="block text-gray-600 dark:text-gray-400 hover:text-primary text-sm">Implementing Core Functions</a></li>
+                    <li><a href="/reference-guides/project-from-scratch/setting-up-the-runtime.html" class="block text-gray-600 dark:text-gray-400 hover:text-primary text-sm">Setting Up the Runtime</a></li>
+                    <li><a href="/reference-guides/project-from-scratch/implementing-core-systems.html" class="block text-gray-600 dark:text-gray-400 hover:text-primary text-sm">Implementing Core Systems</a></li>
+                    <li><a href="/reference-guides/project-from-scratch/implementing-security-functions.html" class="block text-gray-600 dark:text-gray-400 hover:text-primary text-sm">Implementing Security Functions</a></li>
+                    <li><a href="/reference-guides/project-from-scratch/creating-utility-functions.html" class="block text-gray-600 dark:text-gray-400 hover:text-primary text-sm">Creating Utility Functions</a></li>
+                    <li><a href="/reference-guides/project-from-scratch/implementing-a-feature-module.html" class="block text-gray-600 dark:text-gray-400 hover:text-primary text-sm">Implementing a Feature Module</a></li>
+                    <li><a href="/reference-guides/project-from-scratch/setting-up-tests.html" class="block text-gray-600 dark:text-gray-400 hover:text-primary text-sm">Setting Up Tests</a></li>
+                    <li><a href="/reference-guides/project-from-scratch/running-your-flexnet-application.html" class="block text-gray-600 dark:text-gray-400 hover:text-primary text-sm">Running Your FlexNet Application</a></li>
                 </ul>
             </li>
         </ul>
     </div>
     <div class="mb-6">
-        <h3 class="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-3">
-            <a href="/architecture-overview/" class="block text-gray-700 dark:text-gray-300 hover:text-primary">Architecture Overview</a>
+        <h3 class="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-3 cursor-pointer section-header" data-target="architecture-overview-content">
+            <span class="flex items-center">
+                <span class="accordion-icon mr-2">▶</span>
+                <a href="/architecture-overview/" class="text-gray-700 dark:text-gray-300 hover:text-primary">Architecture Overview</a>
+            </span>
         </h3>
-        <ul class="space-y-2 pl-4">
+        <ul class="space-y-2 pl-4 section-content hidden" id="architecture-overview-content">
             <li><a href="/architecture-overview/project-structure.html" class="block text-gray-700 dark:text-gray-300 hover:text-primary">Project Structure</a></li>
             <li><a href="/architecture-overview/core-operating-schema.html" class="block text-gray-700 dark:text-gray-300 hover:text-primary">Core Operating Schema</a></li>
             <li><a href="/architecture-overview/development-standards.html" class="block text-gray-700 dark:text-gray-300 hover:text-primary">Development Standards</a></li>
@@ -53,10 +67,13 @@
         </ul>
     </div>
     <div class="mb-6">
-        <h3 class="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-3">
-            <a href="/api-reference/" class="block text-gray-700 dark:text-gray-300 hover:text-primary">API Reference</a>
+        <h3 class="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-3 cursor-pointer section-header" data-target="api-reference-content">
+            <span class="flex items-center">
+                <span class="accordion-icon mr-2">▶</span>
+                <a href="/api-reference/" class="text-gray-700 dark:text-gray-300 hover:text-primary">API Reference</a>
+            </span>
         </h3>
-        <ul class="space-y-2 pl-4">
+        <ul class="space-y-2 pl-4 section-content hidden" id="api-reference-content">
             <li><a href="/api-reference/core-types.html" class="block text-gray-700 dark:text-gray-300 hover:text-primary">Core Types</a></li>
             <li><a href="/api-reference/core-functions.html" class="block text-gray-700 dark:text-gray-300 hover:text-primary">Core Functions</a></li>
             <li><a href="/api-reference/system-apis.html" class="block text-gray-700 dark:text-gray-300 hover:text-primary">System APIs</a></li>
@@ -66,10 +83,13 @@
         </ul>
     </div>
     <div class="mb-6">
-        <h3 class="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-3">
-            <a href="/http-system/" class="block text-gray-700 dark:text-gray-300 hover:text-primary">HTTP System</a>
+        <h3 class="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-3 cursor-pointer section-header" data-target="http-system-content">
+            <span class="flex items-center">
+                <span class="accordion-icon mr-2">▶</span>
+                <a href="/http-system/" class="text-gray-700 dark:text-gray-300 hover:text-primary">HTTP System</a>
+            </span>
         </h3>
-        <ul class="space-y-2 pl-4">
+        <ul class="space-y-2 pl-4 section-content hidden" id="http-system-content">
             <li><a href="/http-system/overview.html" class="block text-gray-700 dark:text-gray-300 hover:text-primary">Overview</a></li>
             <li><a href="/http-system/core-types.html" class="block text-gray-700 dark:text-gray-300 hover:text-primary">Core Types</a></li>
             <li><a href="/http-system/http-client-api.html" class="block text-gray-700 dark:text-gray-300 hover:text-primary">HTTP Client API</a></li>
@@ -79,10 +99,13 @@
         </ul>
     </div>
     <div class="mb-6">
-        <h3 class="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-3">
-            <a href="/security-practices/" class="block text-gray-700 dark:text-gray-300 hover:text-primary">Security Practices</a>
+        <h3 class="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-3 cursor-pointer section-header" data-target="security-practices-content">
+            <span class="flex items-center">
+                <span class="accordion-icon mr-2">▶</span>
+                <a href="/security-practices/" class="text-gray-700 dark:text-gray-300 hover:text-primary">Security Practices</a>
+            </span>
         </h3>
-        <ul class="space-y-2 pl-4">
+        <ul class="space-y-2 pl-4 section-content hidden" id="security-practices-content">
             <li><a href="/security-practices/xss-prevention.html" class="block text-gray-700 dark:text-gray-300 hover:text-primary">XSS Prevention</a></li>
             <li><a href="/security-practices/state-management-security.html" class="block text-gray-700 dark:text-gray-300 hover:text-primary">State Management Security</a></li>
             <li><a href="/security-practices/error-handling.html" class="block text-gray-700 dark:text-gray-300 hover:text-primary">Error Handling</a></li>
@@ -91,10 +114,13 @@
         </ul>
     </div>
     <div class="mb-6">
-        <h3 class="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-3">
-            <a href="/consistency-analysis/" class="block text-gray-700 dark:text-gray-300 hover:text-primary">Consistency Analysis</a>
+        <h3 class="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-3 cursor-pointer section-header" data-target="consistency-analysis-content">
+            <span class="flex items-center">
+                <span class="accordion-icon mr-2">▶</span>
+                <a href="/consistency-analysis/" class="text-gray-700 dark:text-gray-300 hover:text-primary">Consistency Analysis</a>
+            </span>
         </h3>
-        <ul class="space-y-2 pl-4">
+        <ul class="space-y-2 pl-4 section-content hidden" id="consistency-analysis-content">
             <li><a href="/consistency-analysis/directory-structure-alignment.html" class="block text-gray-700 dark:text-gray-300 hover:text-primary">Directory Structure Alignment</a></li>
             <li><a href="/consistency-analysis/technical-standards.html" class="block text-gray-700 dark:text-gray-300 hover:text-primary">Technical Standards</a></li>
             <li><a href="/consistency-analysis/compliance-status.html" class="block text-gray-700 dark:text-gray-300 hover:text-primary">Compliance Status</a></li>
@@ -104,8 +130,13 @@
         </ul>
     </div>
     <div class="mb-6">
-        <h3 class="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-3">Base Documentation</h3>
-        <ul class="space-y-2 pl-4">
+        <h3 class="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-3 cursor-pointer section-header" data-target="base-documentation-content">
+            <span class="flex items-center">
+                <span class="accordion-icon mr-2">▶</span>
+                <span>Base Documentation</span>
+            </span>
+        </h3>
+        <ul class="space-y-2 pl-4 section-content hidden" id="base-documentation-content">
             <li><a href="/base/getting-started-guide.html" class="block text-gray-700 dark:text-gray-300 hover:text-primary">Getting Started Guide</a></li>
             <li><a href="/base/architecture-overview.html" class="block text-gray-700 dark:text-gray-300 hover:text-primary">Architecture Overview</a></li>
             <li><a href="/base/api-reference.html" class="block text-gray-700 dark:text-gray-300 hover:text-primary">API Reference</a></li>
