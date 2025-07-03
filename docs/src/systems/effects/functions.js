@@ -13,8 +13,9 @@ export { parallelEffects } from './functions/parallelEffects.js';
 // DOM Query Effects
 export { query, queryAll } from './functions/domQuery.js';
 
-// DOM Manipulation Effects
-export { 
+// Import functions to make them available in this module's scope
+import { Effect } from './functions/effect.js';
+import { 
     setHTML,
     setText,
     addClass,
@@ -23,25 +24,35 @@ export {
     setAttribute,
     setStyle 
 } from './functions/domManipulation.js';
-
-// Event Effects
-export { addEventListener, removeEventListener } from './functions/eventEffects.js';
-
-// HTTP Effects
-export { httpGet, httpPost, httpPut, httpDelete } from './functions/httpEffects.js';
-
-// Storage Effects
-export { 
+import { addEventListener, removeEventListener } from './functions/eventEffects.js';
+import { httpGet, httpPost, httpPut, httpDelete } from './functions/httpEffects.js';
+import { 
     setLocalStorage, 
     getLocalStorage, 
     removeLocalStorage 
 } from './functions/storageEffects.js';
+import { delay, timeout, interval } from './functions/timerEffects.js';
+import { log, logError } from './functions/logEffects.js';
 
-// Timer Effects
-export { delay, timeout, interval } from './functions/timerEffects.js';
-
-// Log Effects
-export { log, logError } from './functions/logEffects.js';
+// Re-export the functions
+export { 
+    setHTML,
+    setText,
+    addClass,
+    removeClass,
+    hasClass,
+    setAttribute,
+    setStyle 
+};
+export { addEventListener, removeEventListener };
+export { httpGet, httpPost, httpPut, httpDelete };
+export { 
+    setLocalStorage, 
+    getLocalStorage, 
+    removeLocalStorage 
+};
+export { delay, timeout, interval };
+export { log, logError };
 
 // Utility Effects
 export { loadComponent, fetchResource, safeSetHTML } from './functions/utilityEffects.js';

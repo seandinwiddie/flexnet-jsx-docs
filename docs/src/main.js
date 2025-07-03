@@ -7,7 +7,7 @@ import Either from './core/types/either.js';
 import Result from './core/types/result.js';
 import { pipe, compose } from './core/functions/composition.js';
 import { getBasePath } from './core/functions/transforms.js';
-import { escape } from './security/functions.js';
+import { sanitize, escape } from './security/functions.js';
 import { 
     query, 
     fetchResource, 
@@ -40,20 +40,22 @@ import { createElement } from './core/runtime/factory.js';
  * @returns {string} The page content HTML
  */
 const extractPageContent = () =>
-    query('#page-content')
-        .map(element => element.innerHTML)
-        .getOrElse('');
+    pipe(
+        Maybe.fromNullable,
+        Maybe.map(element => element.innerHTML),
+        Maybe.getOrElse('')
+    )(document.getElementById('page-content'));
 
 /**
  * Pure function to create error HTML
  * @param {string} error - Error message
- * @returns {string} Escaped error HTML
+ * @returns {string} Sanitized error HTML
  */
 const createErrorHTML = (error) => `
     <div style="color: red; padding: 2rem; font-family: monospace;">
         <h1>Critical Error</h1>
         <p>Could not load page layout. Please check the console for more details.</p>
-        <p><strong>Error:</strong> ${escape(error.message || error)}</p>
+        <p><strong>Error:</strong> ${sanitize(error.message || error)}</p>
     </div>
 `;
 
@@ -111,26 +113,31 @@ const processComponentResults = (componentResults) =>
  * @param {string} pageContent - The page content HTML
  * @returns {Promise<Either>} Either containing the result
  */
-const setupPageContent = (pageContent) => {
+const setupPageContent = async (pageContent) => {
     const setupContentPlaceholder = (element) =>
         chainEffects(
             setHTML(element, pageContent),
             setStyle(element, 'display', 'block')
         );
-    
+
     const setupMainElement = (element) => {
         const wrappedContent = `<div class="max-w-7xl mx-auto">${pageContent}</div>`;
         return executeEffect(setHTML(element, wrappedContent));
     };
+
+    const placeholderMaybe = await executeEffect(query('#content-placeholder'));
     
-    return query('#content-placeholder')
-        .map(setupContentPlaceholder)
-        .getOrElse(() =>
-            pipe(
-                () => executeEffect(log('Content placeholder not found, trying main element', 'warn')),
-                () => query('main').map(setupMainElement).getOrElse(null)
-            )()
-        );
+    return Maybe.fold(
+        async () => {
+            await executeEffect(log('Content placeholder not found, trying main element', 'warn'));
+            const mainMaybe = await executeEffect(query('main'));
+            return Maybe.fold(
+                () => Promise.resolve(),
+                setupMainElement
+            )(mainMaybe);
+        },
+        setupContentPlaceholder
+    )(placeholderMaybe);
 };
 
 /**
@@ -141,22 +148,22 @@ const createThemeToggleHandler = () => async () => {
     const html = document.documentElement;
     const isDarkResult = await executeEffect(hasClass(html, 'dark'));
     
-    const isDark = isDarkResult.fold(
-        () => false,  // Error case
+    return Maybe.fold(
+        () => false,
         (hasClass) => hasClass
-    );
-    
-    const themeEffects = isDark
-        ? [
-            removeClass(html, 'dark'),
-            setLocalStorage('theme', 'light')
-          ]
-        : [
-            addClass(html, 'dark'),
-            setLocalStorage('theme', 'dark')
-          ];
-    
-    return chainEffects(...themeEffects);
+    )(isDarkResult).then(isDark => {
+        const themeEffects = isDark
+            ? [
+                removeClass(html, 'dark'),
+                setLocalStorage('theme', 'light')
+            ]
+            : [
+                addClass(html, 'dark'),
+                setLocalStorage('theme', 'dark')
+            ];
+        
+        return chainEffects(...themeEffects);
+    });
 };
 
 /**
@@ -166,16 +173,16 @@ const createThemeToggleHandler = () => async () => {
 const setupThemeSystem = () => {
     const themeToggleHandler = createThemeToggleHandler();
     
-    return Maybe.fromNullable(document.getElementById('theme-toggle'))
-        .map(button =>
-            chainEffects(
+    return pipe(
+        Maybe.fromNullable,
+        Maybe.fold(
+            () => executeEffect(log('Theme toggle button not found after component loading', 'warn')),
+            (button) => chainEffects(
                 addEventListener(button, 'click', themeToggleHandler),
                 log('Theme switcher successfully initialized', 'info')
             )
         )
-        .getOrElse(
-            executeEffect(log('Theme toggle button not found after component loading', 'warn'))
-        );
+    )(document.getElementById('theme-toggle'));
 };
 
 /**
@@ -185,64 +192,62 @@ const setupThemeSystem = () => {
  * @param {string} basePath - Base path for resources
  * @returns {Promise<Either>} Result containing the setup outcome
  */
-const setupApplicationLayout = (layoutHtml, pageContent, basePath) =>
-    Result.fromTry(async () => {
-        const containerElement = Maybe.fromNullable(document.getElementById('root'))
-            .getOrElse(document.body);
+const setupApplicationLayout = async (layoutHtml, pageContent, basePath) => {
+    const containerElement = pipe(
+        Maybe.fromNullable,
+        Maybe.getOrElse(document.body)
+    )(document.getElementById('root'));
 
-        // Use effect composition for DOM manipulation
-        await executeEffect(setHTML(containerElement, layoutHtml));
-        
-        // Load components using effect composition
-        const componentEffects = createComponentLoadingEffects(basePath);
-        const componentResults = await Promise.all(componentEffects);
-        
-        await processComponentResults(componentResults);
-        
-        // Setup page content
-        await setupPageContent(pageContent);
-        
-        // Setup theme system
-        await setupThemeSystem();
-        
-        // Initialize UI
-        await initializeUI();
-        
-        return Either.Right('Application layout setup complete');
-    });
+    // Use effect composition for DOM manipulation
+    await executeEffect(setHTML(containerElement, layoutHtml));
+    
+    // Load components using effect composition
+    const componentEffects = createComponentLoadingEffects(basePath);
+    const componentResults = await Promise.all(componentEffects);
+    
+    await processComponentResults(componentResults);
+
+    await setupPageContent(pageContent);
+
+    // Setup theme system after components are loaded
+    await setupThemeSystem();
+};
 
 /**
- * Pure function for main application initialization
+ * Main application initialization function
  * @param {string} basePath - Base path for resources
- * @returns {Promise<Either>} Either containing initialization result
+ * @returns {Promise<Result>} A promise that resolves with the outcome
  */
-const initializeMainApp = (basePath = '.') => 
-    Result.fromTry(async () => {
-        const pageContent = extractPageContent();
-        const layoutUrl = `${basePath}/templates/layout.html`;
-        
-        await executeEffect(log(`Fetching layout from: ${layoutUrl}`, 'info'));
-        
-        const layoutResult = await fetchResource(layoutUrl);
-        
-        return layoutResult.fold(
-            error => handleLayoutError(error),
-            layoutHtml => setupApplicationLayout(layoutHtml, pageContent, basePath)
-        );
-    });
+const initializeMainApp = async (basePath = '.') => {
+    const layoutResult = await executeEffect(fetchResource(`${basePath}/templates/layout.html`));
+
+    return Either.fold(
+        error => {
+            handleLayoutError(error);
+            return Result.Error(error);
+        },
+        async (layoutHtml) => {
+            const pageContent = extractPageContent();
+            await setupApplicationLayout(layoutHtml, pageContent, basePath);
+            return Result.Ok('Application initialized successfully');
+        }
+    )(layoutResult);
+};
 
 /**
- * Pure functional main application initialization
- * @returns {Promise} Promise that resolves when initialization completes
+ * Pure functional application initialization pipeline
+ * @returns {Promise<Result>} A promise that resolves with the final outcome
  */
 const initializeApplication = () =>
     pipe(
-        () => executeEffect(log('🚀 Starting FlexNet application initialization')),
-        () => {
-            const basePath = getBasePath();
-            return initializeMainApp(basePath);
-        }
-    )();
+        initializeMainApp,
+        (appPromise) => appPromise.then(res => 
+            Result.fold(
+                error => executeEffect(log(`Application failed: ${error}`, 'error')),
+                () => executeEffect(log('FlexNet application setup complete', 'info'))
+            )(res)
+        )
+    )('.');
 
 // ===========================================
 // PURE FUNCTIONAL COMPONENT CREATORS
@@ -255,7 +260,7 @@ const initializeApplication = () =>
  * @returns {Object} Button element configuration
  */
 const createSecureButton = (text, onClick) => {
-    const safeText = escape(text);
+    const safeText = sanitize(text);
     
     const buttonConfig = {
         tagName: 'button',
@@ -352,28 +357,23 @@ const getPerformanceMetrics = () => {
  */
 const initializeFlexNet = (basePath = '.') =>
     pipe(
-        () => executeEffect(log('FlexNet Framework initializing...', 'info')),
-        () => initializeMainApp(basePath),
-        (result) => result.then(outcome => {
-            executeEffect(log('FlexNet Framework initialization complete', 'info'));
-            return outcome;
-        })
+        () => executeEffect(log(`Starting FlexNet application initialization`)),
+        () => initializeApplication(),
     )();
 
-// Use effect system for DOM ready event
-executeEffect(createDOMReadyEffect(() => {
-    initializeApplication()
-        .then(result => {
-            if (result.type === 'Error') {
-                executeEffect(log(`Initialization failed: ${result.error}`, 'error'));
-            } else {
-                executeEffect(log('Application initialized successfully', 'info'));
-            }
-        })
-        .catch(error => {
-            executeEffect(log(`Critical initialization error: ${error.message}`, 'error'));
-        });
-}));
+// ===========================================
+// SCRIPT EXECUTION
+// ===========================================
+
+// Initialize the application with the correct base path
+// The result is a promise that resolves when initialization is complete
+const initializationPromise = initializeFlexNet('.');
+
+initializationPromise.then(() => {
+    console.log('[INFO] FlexNet initialization sequence finished.');
+}).catch(err => {
+    console.error('[CRITICAL] Unhandled error during FlexNet initialization:', err);
+});
 
 // ===========================================
 // FRAMEWORK EXPORTS
@@ -399,7 +399,7 @@ export const FlexNet = Object.freeze({
     executeEffect,
     
     // Security (pure functions)
-    escape,
+    sanitize,
     
     // Utilities (pure functions)
     enableDebugMode,

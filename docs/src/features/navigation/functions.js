@@ -5,7 +5,7 @@ import Maybe from '../../core/types/maybe.js';
 import { pipe } from '../../core/functions/composition.js';
 import { query } from '../../systems/effects/functions.js';
 import { createBreadcrumbSegment, getBasePath } from '../../core/functions/transforms.js';
-import { escape } from '../../security/functions.js';
+import { sanitize } from '../../security/functions.js';
 
 // Setup breadcrumb navigation
 export const setupBreadcrumbs = () => {

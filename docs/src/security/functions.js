@@ -4,7 +4,13 @@
 import { compose } from '../core/functions/composition.js';
 import Either from '../core/types/either.js';
 
-// HTML escape function to prevent XSS
+// HTML sanitize function matching documented API
+export const sanitize = input =>
+    Either.fromNullable(input)
+        .map(str => str.replace(/[<>&]/g, ''))
+        .getOrElse('');
+
+// HTML escape function to prevent XSS (alias for compatibility)
 export const escape = str => compose(
     String,
     s => s.replace(/&/g, '&amp;')
