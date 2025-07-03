@@ -89,9 +89,9 @@ const handleLayoutError = (error) =>
  * @returns {Array<Promise>} Array of component loading promises
  */
 const createComponentLoadingEffects = (basePath) => [
-    loadComponent('header-placeholder', `${basePath}/templates/header.html`),
-    loadComponent('sidebar-placeholder', `${basePath}/templates/sidebar.html`),
-    loadComponent('footer-placeholder', `${basePath}/templates/footer.html`)
+    executeEffect(loadComponent('header-placeholder', `${basePath}/templates/header.html`)),
+    executeEffect(loadComponent('sidebar-placeholder', `${basePath}/templates/sidebar.html`)),
+    executeEffect(loadComponent('footer-placeholder', `${basePath}/templates/footer.html`))
 ];
 
 /**
@@ -202,8 +202,7 @@ const setupApplicationLayout = async (layoutHtml, pageContent, basePath) => {
     await executeEffect(setHTML(containerElement, layoutHtml));
     
     // Load components using effect composition
-    const componentEffects = createComponentLoadingEffects(basePath);
-    const componentResults = await Promise.all(componentEffects);
+    const componentResults = await Promise.all(createComponentLoadingEffects(basePath));
     
     await processComponentResults(componentResults);
 

@@ -1,14 +1,12 @@
 // === Core Effect Type ===
-// Matches the documented Effect API exactly
+// A more robust, functional Effect type implementation
 
-export const Effect = {
-    of: value => ({ 
-        type: 'Effect', 
-        run: typeof value === 'function' ? value : () => value 
-    }),
-    map: fn => effect =>
-        Effect.of(() => fn(effect.run())),
-    chain: fn => effect =>
-        Effect.of(() => fn(effect.run()).run()),
-    run: effect => effect.run()
-}; 
+const Effect = (run) => ({
+    run,
+    map: (fn) => Effect(() => fn(run())),
+    chain: (fn) => Effect(() => fn(run()).run())
+});
+
+Effect.of = (value) => Effect(() => value);
+
+export { Effect }; 
