@@ -193,10 +193,70 @@ Components automatically coordinate through the event system, enabling:
 - **Centralized Logging** - All events can be tracked and debugged
 - **Coordinated UI Updates** - Theme changes, state updates propagate automatically
 - **Better Testing** - Event-driven interactions are easier to test
-- **Analytics Integration** - Event bus provides natural analytics hooks 
+- **Analytics Integration** - Event bus provides natural analytics hooks
+
+## Core Architecture Highlights
+
+### Project Structure
+The framework follows a standardized directory structure:
+
+```
+my-flexnet-project/
+├── src/
+│   ├── core/                    # Core FlexNet engine functionality
+│   │   ├── runtime/            # Core FlexNet runtime implementation
+│   │   ├── types/              # Core type system (Maybe, Either, Result)
+│   │   └── functions/          # Core functions (composition, transforms)
+│   ├── systems/                # System implementations
+│   │   ├── render/             # Rendering system with VDOM
+│   │   ├── state/              # Immutable state management
+│   │   ├── effects/            # Effect handling and isolation
+│   │   └── events/             # Event system and coordination
+│   ├── features/               # Application feature implementations
+│   ├── security/               # Security functions and XSS prevention
+│   └── utils/                  # Utility functions
+├── tests/                      # Comprehensive test suite
+└── public/                     # Static assets
+```
+
+### Type System
+
+FlexNet provides three core types for safe programming:
+
+- **`Maybe<T>`**: Handles optional values that might be missing
+- **`Either<L, R>`**: Represents operations that can result in success (`Right`) or failure (`Left`)
+- **`Result<T, E>`**: Represents the outcome of operations that might fail
+
+### Security Features
+
+- **XSS Prevention**: Automatic content sanitization and safe DOM manipulation
+- **Input Validation**: Comprehensive validation functions for user inputs
+- **Secure State Management**: Immutable state prevents accidental mutations
+- **Effect Isolation**: Side effects are contained within the effect system
+
+## Version Information
+
+- **Framework Version**: 1.0.0
+- **Documentation Version**: Latest
+- **Last Updated**: 2025-01-31
+- **Compatibility**: Modern browsers with ES6+ support
+
+## Contributing
+
+The FlexNet Framework follows strict functional programming principles. When contributing:
+
+1. **Maintain Purity**: All functions should be pure with no side effects
+2. **Use Type System**: Leverage Maybe, Either, and Result types appropriately
+3. **Follow Standards**: Adhere to the development standards outlined in the documentation
+4. **Test Thoroughly**: Include comprehensive tests for all functionality
+5. **Document Clearly**: Provide clear documentation with examples
 
 ## ⚠️ **Minor Areas for Improvement**
 
 1. **File Size**: `main.js` at 413 lines could be more modular
 2. **Documentation**: Some utility functions extend beyond core documented API
 3. **Complexity**: Effect system has many files (good modularity but complex)
+
+---
+
+*The FlexNet Framework represents a modern approach to functional web development, prioritizing purity, safety, and maintainability over traditional imperative patterns.*
