@@ -7,7 +7,7 @@ import Either from '../../../core/types/either.js';
 import Maybe from '../../../core/types/maybe.js';
 
 /**
- * Pure effect to make a GET request
+ * Pure effect to make a GET request (synchronous with XMLHttpRequest)
  * @param {string} url - URL to fetch
  * @param {Object} options - Request options
  * @returns {Effect} Effect that returns Either<Error, Response>
@@ -21,26 +21,33 @@ export const httpGet = (url, options = {}) =>
 
         const validateOptions = (opts) =>
             opts && typeof opts === 'object'
-                ? Either.Right({ ...opts, method: 'GET' })
-                : Either.Right({ method: 'GET' });
+                ? Either.Right({ ...opts })
+                : Either.Right({});
 
         return Either.chain(validUrl =>
             Either.chain(validOptions => {
                 try {
-                    return fetch(validUrl, validOptions)
-                        .then(response => {
-                            if (!response.ok) {
-                                return Either.Left(`HTTP Error: ${response.status} ${response.statusText}`);
-                            }
-                            
-                            return response.text().then(data => Either.Right({
-                                status: response.status,
-                                statusText: response.statusText,
-                                headers: Object.fromEntries(response.headers.entries()),
-                                data: data
-                            }));
-                        })
-                        .catch(error => Either.Left(`Network Error: ${error.message}`));
+                    const xhr = new XMLHttpRequest();
+                    xhr.open('GET', validUrl, false); // Synchronous request
+                    
+                    // Set headers if provided
+                    if (validOptions.headers) {
+                        Object.entries(validOptions.headers).forEach(([key, value]) => {
+                            xhr.setRequestHeader(key, value);
+                        });
+                    }
+                    
+                    xhr.send();
+                    
+                    if (xhr.status >= 200 && xhr.status < 300) {
+                        return Either.Right({
+                            status: xhr.status,
+                            statusText: xhr.statusText,
+                            data: xhr.responseText
+                        });
+                    } else {
+                        return Either.Left(`HTTP Error: ${xhr.status} ${xhr.statusText}`);
+                    }
                 } catch (error) {
                     return Either.Left(`Request failed: ${error.message}`);
                 }

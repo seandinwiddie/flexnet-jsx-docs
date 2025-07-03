@@ -54,21 +54,21 @@ import { createElement } from './core/runtime/factory.js';
  * @returns {Effect} Effect that returns Either<Error, string>
  */
 const extractPageContentEffect = () =>
-    Effect(() =>
-        executeEffect(queryById('page-content'))
-            .chain(maybeElement =>
-                Maybe.fold(
-                    () => Either.Right(''),
-                    element => {
-                        try {
-                            return Either.Right(element.innerHTML || '');
-                        } catch (error) {
-                            return Either.Left(`Failed to extract content: ${error.message}`);
-                        }
+    Effect(() => {
+        const elementResult = queryById('page-content').run();
+        return Either.chain(maybeElement =>
+            Maybe.fold(
+                () => Either.Right(''),
+                element => {
+                    try {
+                        return Either.Right(element.innerHTML || '');
+                    } catch (error) {
+                        return Either.Left(`Failed to extract content: ${error.message}`);
                     }
-                )(maybeElement)
-            )
-    );
+                }
+            )(maybeElement)
+        )(elementResult);
+    });
 
 /**
  * Pure function to create error HTML
@@ -96,17 +96,17 @@ const handleLayoutErrorEffect = (error) =>
     Effect(() => {
         const errorHtml = createErrorHTML(error);
         
-        return executeEffect(queryById('root'))
-            .chain(maybeRoot =>
-                Maybe.fold(
-                    () => {
-                        // Fallback to body if root not found
-                        executeEffect(log('No root element found, using body', 'warn'));
-                        return executeEffect(setHTML(document.body, errorHtml));
-                    },
-                    rootElement => executeEffect(setHTML(rootElement, errorHtml))
-                )(maybeRoot)
-            );
+        const rootResult = queryById('root').run();
+        return Either.chain(maybeRoot =>
+            Maybe.fold(
+                () => {
+                    // Fallback to body if root not found - log as side effect
+                    Either.fold(() => {}, () => {})(log('No root element found, using body', 'warn').run());
+                    return setHTML(document.body, errorHtml).run();
+                },
+                rootElement => setHTML(rootElement, errorHtml).run()
+            )(maybeRoot)
+        )(rootResult);
     });
 
 /**
@@ -115,14 +115,14 @@ const handleLayoutErrorEffect = (error) =>
  * @returns {Effect} Effect that returns Either<Error, string>
  */
 const fetchResourceEffect = (url) =>
-    Effect(() => 
-        executeEffect(httpGet(url))
-            .chain(response => 
-                response && response.status === 200
-                    ? Either.Right(response.data)
-                    : Either.Left(`Failed to fetch ${url}: ${response ? response.statusText : 'Unknown error'}`)
-            )
-    );
+    Effect(() => {
+        const responseResult = httpGet(url).run();
+        return Either.chain(response => 
+            response && response.status === 200
+                ? Either.Right(response.data)
+                : Either.Left(`Failed to fetch ${url}: ${response ? response.statusText : 'Unknown error'}`)
+        )(responseResult);
+    });
 
 /**
  * Pure effect to load a component into a placeholder
@@ -131,18 +131,18 @@ const fetchResourceEffect = (url) =>
  * @returns {Effect} Effect that returns Either<Error, Element>
  */
 const loadComponentEffect = (placeholderId, templateUrl) =>
-    Effect(() =>
-        executeEffect(fetchResourceEffect(templateUrl))
-            .chain(templateContent =>
-                executeEffect(queryById(placeholderId))
-                    .chain(maybePlaceholder =>
-                        Maybe.fold(
-                            () => Either.Left(`Placeholder not found: ${placeholderId}`),
-                            placeholder => executeEffect(setHTML(placeholder, templateContent))
-                        )(maybePlaceholder)
-                    )
-            )
-    );
+    Effect(() => {
+        const templateResult = fetchResourceEffect(templateUrl).run();
+        return Either.chain(templateContent => {
+            const placeholderResult = queryById(placeholderId).run();
+            return Either.chain(maybePlaceholder =>
+                Maybe.fold(
+                    () => Either.Left(`Placeholder not found: ${placeholderId}`),
+                    placeholder => setHTML(placeholder, templateContent).run()
+                )(maybePlaceholder)
+            )(placeholderResult);
+        })(templateResult);
+    });
 
 /**
  * Pure effect to create component loading effects
@@ -157,7 +157,12 @@ const createComponentLoadingEffects = (basePath) =>
             loadComponentEffect('footer-placeholder', `${basePath}/templates/footer.html`)
         ];
 
-        return Either.Right(componentEffects.map(effect => executeEffect(effect)));
+        const results = componentEffects.map(effect => effect.run());
+        const errors = results.filter(result => result.type === 'Left');
+        
+        return errors.length > 0
+            ? Either.Left(errors[0].value)  // Return first error
+            : Either.Right(results.map(result => result.value));
     });
 
 /**
@@ -169,27 +174,28 @@ const setupPageContentEffect = (pageContent) =>
     Effect(() => {
         const wrappedContent = `<div class="max-w-7xl mx-auto">${pageContent}</div>`;
         
-        return executeEffect(queryById('content-placeholder'))
-            .chain(maybeContentPlaceholder =>
-                Maybe.fold(
-                    () => {
-                        executeEffect(log('Content placeholder not found, trying main element', 'warn'));
-                        return executeEffect(query('main'))
-                            .chain(maybeMain =>
-                                Maybe.fold(
-                                    () => Either.Right(null), // No main element found
-                                    mainElement => executeEffect(setHTML(mainElement, wrappedContent))
-                                )(maybeMain)
-                            );
-                    },
-                    contentPlaceholder => {
-                        return chainEffects(
-                            setHTML(contentPlaceholder, pageContent),
-                            setStyle(contentPlaceholder, 'display', 'block')
-                        );
-                    }
-                )(maybeContentPlaceholder)
-            );
+        const contentPlaceholderResult = queryById('content-placeholder').run();
+        return Either.chain(maybeContentPlaceholder =>
+            Maybe.fold(
+                () => {
+                    // Log warning as side effect
+                    Either.fold(() => {}, () => {})(log('Content placeholder not found, trying main element', 'warn').run());
+                    const mainResult = query('main').run();
+                    return Either.chain(maybeMain =>
+                        Maybe.fold(
+                            () => Either.Right(null), // No main element found
+                            mainElement => setHTML(mainElement, wrappedContent).run()
+                        )(maybeMain)
+                    )(mainResult);
+                },
+                contentPlaceholder => {
+                    const htmlResult = setHTML(contentPlaceholder, pageContent).run();
+                    return Either.chain(() => 
+                        setStyle(contentPlaceholder, 'display', 'block').run()
+                    )(htmlResult);
+                }
+            )(maybeContentPlaceholder)
+        )(contentPlaceholderResult);
     });
 
 /**
@@ -198,9 +204,7 @@ const setupPageContentEffect = (pageContent) =>
  * @returns {Effect} Effect that returns Either<Error, boolean>
  */
 const hasDarkClassEffect = (element) =>
-    Effect(() => 
-        executeEffect(hasClass(element, 'dark'))
-    );
+    Effect(() => hasClass(element, 'dark').run());
 
 /**
  * Pure effect to create theme toggle handler
@@ -212,20 +216,25 @@ const createThemeToggleHandlerEffect = () =>
             Effect(() => {
                 const htmlElement = document.documentElement;
                 
-                return executeEffect(hasDarkClassEffect(htmlElement))
-                    .chain(isDark => {
-                        const themeEffects = isDark
-                            ? [
-                                removeClass(htmlElement, 'dark'),
-                                setLocalStorage('theme', 'light')
-                            ]
-                            : [
-                                addClass(htmlElement, 'dark'),
-                                setLocalStorage('theme', 'dark')
-                            ];
-                        
-                        return parallelEffects(...themeEffects);
-                    });
+                const isDarkResult = hasDarkClassEffect(htmlElement).run();
+                return Either.chain(isDark => {
+                    const themeEffects = isDark
+                        ? [
+                            removeClass(htmlElement, 'dark'),
+                            setLocalStorage('theme', 'light')
+                        ]
+                        : [
+                            addClass(htmlElement, 'dark'),
+                            setLocalStorage('theme', 'dark')
+                        ];
+                    
+                    const results = themeEffects.map(effect => effect.run());
+                    const errors = results.filter(result => result.type === 'Left');
+                    
+                    return errors.length > 0
+                        ? Either.Left(errors[0].value)
+                        : Either.Right('Theme toggled successfully');
+                })(isDarkResult);
             });
         
         return Either.Right(toggleHandler);
@@ -236,25 +245,26 @@ const createThemeToggleHandlerEffect = () =>
  * @returns {Effect} Effect that returns Either<Error, Success>
  */
 const setupThemeSystemEffect = () =>
-    Effect(() =>
-        executeEffect(createThemeToggleHandlerEffect())
-            .chain(themeHandler =>
-                executeEffect(queryById('theme-toggle'))
-                    .chain(maybeToggleButton =>
-                        Maybe.fold(
-                            () => {
-                                executeEffect(log('Theme toggle button not found after component loading', 'warn'));
-                                return Either.Right(null);
-                            },
-                            toggleButton => 
-                                chainEffects(
-                                    addEventListener(toggleButton, 'click', themeHandler),
-                                    log('Theme switcher successfully initialized', 'info')
-                                )
-                        )(maybeToggleButton)
-                    )
-            )
-    );
+    Effect(() => {
+        const themeHandlerResult = createThemeToggleHandlerEffect().run();
+        return Either.chain(themeHandler => {
+            const toggleButtonResult = queryById('theme-toggle').run();
+            return Either.chain(maybeToggleButton =>
+                Maybe.fold(
+                    () => {
+                        Either.fold(() => {}, () => {})(log('Theme toggle button not found after component loading', 'warn').run());
+                        return Either.Right(null);
+                    },
+                    toggleButton => {
+                        const addEventResult = addEventListener(toggleButton, 'click', themeHandler).run();
+                        return Either.chain(() => 
+                            log('Theme switcher successfully initialized', 'info').run()
+                        )(addEventResult);
+                    }
+                )(maybeToggleButton)
+            )(toggleButtonResult);
+        })(themeHandlerResult);
+    });
 
 /**
  * Pure effect to setup application layout
@@ -264,19 +274,27 @@ const setupThemeSystemEffect = () =>
  * @returns {Effect} Effect that returns Either<Error, Success>
  */
 const setupApplicationLayoutEffect = (layoutHtml, pageContent, basePath) =>
-    Effect(() =>
-        executeEffect(queryById('root'))
-            .chain(maybeRoot => {
-                const containerElement = Maybe.getOrElse(document.body)(maybeRoot);
-                
-                return chainEffects(
-                    setHTML(containerElement, layoutHtml),
-                    createComponentLoadingEffects(basePath),
-                    setupPageContentEffect(pageContent),
-                    setupThemeSystemEffect()
-                );
-            })
-    );
+    Effect(() => {
+        const rootResult = queryById('root').run();
+        return Either.chain(maybeRoot => {
+            const containerElement = Maybe.getOrElse(document.body)(maybeRoot);
+            
+            // Execute effects in sequence
+            const htmlResult = setHTML(containerElement, layoutHtml).run();
+            if (htmlResult.type === 'Left') return htmlResult;
+            
+            const componentsResult = createComponentLoadingEffects(basePath).run();
+            if (componentsResult.type === 'Left') return componentsResult;
+            
+            const contentResult = setupPageContentEffect(pageContent).run();
+            if (contentResult.type === 'Left') return contentResult;
+            
+            const themeResult = setupThemeSystemEffect().run();
+            if (themeResult.type === 'Left') return themeResult;
+            
+            return Either.Right('Application layout setup complete');
+        })(rootResult);
+    });
 
 /**
  * Pure effect for main application initialization
@@ -284,15 +302,15 @@ const setupApplicationLayoutEffect = (layoutHtml, pageContent, basePath) =>
  * @returns {Effect} Effect that returns Either<Error, Success>
  */
 const initializeMainAppEffect = (basePath = '.') =>
-    Effect(() =>
-        executeEffect(fetchResourceEffect(`${basePath}/templates/layout.html`))
-            .chain(layoutHtml =>
-                executeEffect(extractPageContentEffect())
-                    .chain(pageContent =>
-                        executeEffect(setupApplicationLayoutEffect(layoutHtml, pageContent, basePath))
-                    )
-            )
-    );
+    Effect(() => {
+        const layoutResult = fetchResourceEffect(`${basePath}/templates/layout.html`).run();
+        return Either.chain(layoutHtml => {
+            const contentResult = extractPageContentEffect().run();
+            return Either.chain(pageContent => 
+                setupApplicationLayoutEffect(layoutHtml, pageContent, basePath).run()
+            )(contentResult);
+        })(layoutResult);
+    });
 
 /**
  * Pure effect for complete application initialization pipeline
@@ -300,20 +318,20 @@ const initializeMainAppEffect = (basePath = '.') =>
  * @returns {Effect} Effect that returns Either<Error, Success>
  */
 const initializeApplicationEffect = (basePath = '.') =>
-    Effect(() =>
-        executeEffect(initializeMainAppEffect(basePath))
-            .fold(
-                error => {
-                    executeEffect(handleLayoutErrorEffect(error));
-                    executeEffect(logError(`Application failed: ${error}`));
-                    return Either.Left(error);
-                },
-                success => {
-                    executeEffect(logInfo('FlexNet application setup complete'));
-                    return Either.Right(success);
-                }
-            )
-    );
+    Effect(() => {
+        const mainAppResult = initializeMainAppEffect(basePath).run();
+        return Either.fold(
+            error => {
+                Either.fold(() => {}, () => {})(handleLayoutErrorEffect(error).run());
+                Either.fold(() => {}, () => {})(logError(`Application failed: ${error}`).run());
+                return Either.Left(error);
+            },
+            success => {
+                Either.fold(() => {}, () => {})(logInfo('FlexNet application setup complete').run());
+                return Either.Right(success);
+            }
+        )(mainAppResult);
+    });
 
 // ===========================================
 // PURE FUNCTIONAL COMPONENT CREATORS
@@ -346,11 +364,12 @@ const createSecureButtonConfig = (text, onClick) =>
  * Pure function to create theme switcher configuration
  * @returns {Either} Either containing theme switcher config or error
  */
-const createThemeSwitcherConfig = () =>
-    executeEffect(createThemeToggleHandlerEffect())
-        .chain(themeHandler =>
-            createSecureButtonConfig('Toggle Theme', themeHandler)
-        );
+const createThemeSwitcherConfig = () => {
+    const handlerResult = createThemeToggleHandlerEffect().run();
+    return Either.chain(themeHandler =>
+        createSecureButtonConfig('Toggle Theme', themeHandler)
+    )(handlerResult);
+};
 
 // ===========================================
 // PERFORMANCE AND DEBUGGING UTILITIES
@@ -413,13 +432,13 @@ const enableDebugModeEffect = () =>
     Effect(() => {
         const debugUtilities = Object.freeze({
             logPerformance: () => 
-                executeEffect(log(`Performance: ${JSON.stringify(getPerformanceMetrics())}`, 'debug')),
+                log(`Performance: ${JSON.stringify(getPerformanceMetrics())}`, 'debug').run(),
             validateState: () => {
                 const validation = Object.freeze({ isValid: true });
-                executeEffect(log(
+                Either.fold(() => {}, () => {})(log(
                     `State validation: ${validation.isValid ? 'VALID' : 'INVALID'}`, 
                     validation.isValid ? 'info' : 'error'
-                ));
+                ).run());
                 return validation;
             }
         });
@@ -427,7 +446,7 @@ const enableDebugModeEffect = () =>
         // Attach to window for debugging (effect)
         if (typeof window !== 'undefined') {
             window.FlexNetDebug = debugUtilities;
-            executeEffect(log('Debug mode enabled - utilities available at window.FlexNetDebug', 'info'));
+            Either.fold(() => {}, () => {})(log('Debug mode enabled - utilities available at window.FlexNetDebug', 'info').run());
         }
 
         return Either.Right(debugUtilities);
@@ -443,13 +462,19 @@ const enableDebugModeEffect = () =>
  * @returns {Effect} Effect that returns Either<Error, Success>
  */
 const initializeFlexNetEffect = (basePath = '.') =>
-    Effect(() =>
-        chainEffects(
-            log('Starting FlexNet application initialization'),
-            initializeApplicationEffect(basePath),
-            enableDebugModeEffect()
-        )
-    );
+    Effect(() => {
+        // Execute effects in sequence
+        const logResult = log('Starting FlexNet application initialization').run();
+        if (logResult.type === 'Left') return logResult;
+        
+        const appResult = initializeApplicationEffect(basePath).run();
+        if (appResult.type === 'Left') return appResult;
+        
+        const debugResult = enableDebugModeEffect().run();
+        if (debugResult.type === 'Left') return debugResult;
+        
+        return Either.Right('FlexNet initialization complete');
+    });
 
 // ===========================================
 // SAFE SCRIPT EXECUTION
@@ -469,10 +494,28 @@ const safeExecuteInitialization = () =>
 const initializationResult = safeExecuteInitialization();
 
 Result.fold(
-    error => executeEffect(logError(`Unhandled error during FlexNet initialization: ${error}`)),
+    error => {
+        const logResult = executeEffect(logError(`Unhandled error during FlexNet initialization: ${error}`));
+        Either.fold(
+            logErr => console.error('Failed to log error:', logErr),
+            () => {} // Log succeeded
+        )(logResult);
+    },
     result => Either.fold(
-        error => executeEffect(logError(`FlexNet initialization failed: ${error}`)),
-        () => executeEffect(logInfo('FlexNet initialization sequence finished'))
+        error => {
+            const logResult = executeEffect(logError(`FlexNet initialization failed: ${error}`));
+            Either.fold(
+                logErr => console.error('Failed to log error:', logErr),
+                () => {} // Log succeeded
+            )(logResult);
+        },
+        () => {
+            const logResult = executeEffect(logInfo('FlexNet initialization sequence finished'));
+            Either.fold(
+                logErr => console.error('Failed to log info:', logErr),
+                () => {} // Log succeeded
+            )(logResult);
+        }
     )(result)
 )(initializationResult);
 
@@ -507,3 +550,8 @@ export const FlexNet = Object.freeze({
     Either,
     Result
 });
+
+// Make FlexNet available globally for debugging and external access
+if (typeof window !== 'undefined') {
+    window.FlexNet = FlexNet;
+}
